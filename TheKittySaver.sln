@@ -1,0 +1,23 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheKittySaver.Domain", "src\TheKittySaver.Domain\TheKittySaver.Domain.csproj", "{7F6FD3EE-8D7D-425C-9B2F-ED6F029BBB96}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{749848F0-8BDE-49A1-B13A-948013E5C9BD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{D7E265E7-B9B7-4623-AE53-F4E8AA78A498}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7F6FD3EE-8D7D-425C-9B2F-ED6F029BBB96}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F6FD3EE-8D7D-425C-9B2F-ED6F029BBB96}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F6FD3EE-8D7D-425C-9B2F-ED6F029BBB96}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F6FD3EE-8D7D-425C-9B2F-ED6F029BBB96}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{7F6FD3EE-8D7D-425C-9B2F-ED6F029BBB96} = {749848F0-8BDE-49A1-B13A-948013E5C9BD}
+	EndGlobalSection
+EndGlobal
