@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheKittySaver.Domain", "src\TheKittySaver.Domain\TheKittySaver.Domain.csproj", "{7F6FD3EE-8D7D-425C-9B2F-ED6F029BBB96}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheKittySaver.Domain", "src\BoundedContexts\AdoptionSystem\TheKittySaver.AdoptionSystem.Domain\TheKittySaver.AdoptionSystem.Domain.csproj", "{7F6FD3EE-8D7D-425C-9B2F-ED6F029BBB96}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{749848F0-8BDE-49A1-B13A-948013E5C9BD}"
 EndProject
