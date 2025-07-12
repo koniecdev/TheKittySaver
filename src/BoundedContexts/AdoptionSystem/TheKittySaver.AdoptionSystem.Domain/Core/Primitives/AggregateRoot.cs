@@ -1,21 +1,32 @@
-﻿using TheKittySaver.Domain.Core.Events;
+﻿using TheKittySaver.AdoptionSystem.Domain.Core.Events;
 
-namespace TheKittySaver.Domain.Core.Primitives;
+namespace TheKittySaver.AdoptionSystem.Domain.Core.Primitives;
 
-public abstract class AggregateRoot : Entity
+
+public interface IAggregateRoot
 {
-    private readonly List<IDomainEvent> _domainEvents = [];
-    
-    public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
+    IReadOnlyCollection<IDomainEvent> GetDomainEvents();
+    void ClearDomainEvents();
+}
 
+public abstract class AggregateRoot<TId> : Entity<TId>, IAggregateRoot where TId : struct
+{
+    public IReadOnlyCollection<IDomainEvent> GetDomainEvents() => _domainEvents.ToList();
+    
     public void ClearDomainEvents() => _domainEvents.Clear();
     
-    protected void AddDomainEvent(IDomainEvent domainEvent) => _domainEvents.Add(domainEvent);
+    protected void RaiseDomainEvent(IDomainEvent domainEvent)
+    {
+        _domainEvents.Add(domainEvent);
+    }
     
-    /// <remarks>
-    /// Required by EF Core.
-    /// </remarks>
-    protected AggregateRoot()
+    protected AggregateRoot(TId id) : base(id)
     {
     }
+    
+    private AggregateRoot()
+    {
+    }
+    
+    private readonly List<IDomainEvent> _domainEvents = [];
 }

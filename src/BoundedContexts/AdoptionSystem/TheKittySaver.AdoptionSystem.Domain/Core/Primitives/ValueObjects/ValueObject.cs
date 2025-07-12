@@ -1,4 +1,4 @@
-﻿namespace TheKittySaver.Domain.Core.Primitives;
+﻿namespace TheKittySaver.AdoptionSystem.Domain.Core.Primitives.ValueObjects;
 
 public abstract class ValueObject : IEquatable<ValueObject>
 {

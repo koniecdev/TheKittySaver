@@ -1,8 +1,6 @@
-﻿using TheKittySaver.Domain.Core.Guards;
+﻿namespace TheKittySaver.AdoptionSystem.Domain.Core.Primitives;
 
-namespace TheKittySaver.Domain.Core.Primitives;
-
-public abstract class Entity : IEquatable<Entity>
+public abstract class Entity<TId>(TId id) : IEquatable<Entity<TId>> where TId : struct
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="Entity"/> class.
@@ -10,16 +8,16 @@ public abstract class Entity : IEquatable<Entity>
     /// <remarks>
     /// Required by EF Core.
     /// </remarks>
-    protected Entity()
+    protected Entity() : this(default)
     {
     }
 
     /// <summary>
     /// Gets or sets the entity identifier.
     /// </summary>
-    public Guid Id { get; } = Guid.NewGuid();
+    public TId Id { get; } = id;
 
-    public static bool operator ==(Entity? a, Entity? b)
+    public static bool operator ==(Entity<TId>? a, Entity<TId>? b)
     {
         if (a is null && b is null)
         {
@@ -34,17 +32,17 @@ public abstract class Entity : IEquatable<Entity>
         return a.Equals(b);
     }
 
-    public static bool operator !=(Entity a, Entity b) => !(a == b);
+    public static bool operator !=(Entity<TId> a, Entity<TId> b) => !(a == b);
 
     /// <inheritdoc />
-    public bool Equals(Entity? other)
+    public bool Equals(Entity<TId>? other)
     {
         if (other is null)
         {
             return false;
         }
 
-        return ReferenceEquals(this, other) || Id == other.Id;
+        return ReferenceEquals(this, other) || Id.Equals(other.Id);
     }
 
     /// <inheritdoc />
@@ -65,17 +63,7 @@ public abstract class Entity : IEquatable<Entity>
             return false;
         }
 
-        if (obj is not Entity other)
-        {
-            return false;
-        }
-
-        if (Id == Guid.Empty || other.Id == Guid.Empty)
-        {
-            return false;
-        }
-
-        return Id == other.Id;
+        return obj is Entity<TId> other && Id.Equals(other.Id);
     }
 
     /// <inheritdoc />

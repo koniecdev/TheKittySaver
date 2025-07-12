@@ -7,7 +7,19 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Aggregates\PersonAggregate\" />
+      <PackageReference Include="StronglyTypedId" Version="0.2.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Core\Primitives\ValueObjects\ValueObject.cs">
+        <Generator>MSBuild:GenerateCodeFromAttributes</Generator>
+      </Compile>
+      <Compile Update="Aggregates\PersonAggregate\IdentityId.cs">
+        <Generator>MSBuild:GenerateCodeFromAttributes</Generator>
+      </Compile>
+      <Compile Update="Aggregates\PersonAggregate\AddressId.cs">
+        <Generator>MSBuild:GenerateCodeFromAttributes</Generator>
+      </Compile>
     </ItemGroup>
 
 </Project>

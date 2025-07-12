@@ -1,4 +1,4 @@
-﻿namespace TheKittySaver.Domain.Core.Primitives.Results;
+﻿namespace TheKittySaver.AdoptionSystem.Domain.Core.Primitives.Results;
 
 /// <summary>
 /// Represents a result of some operation, with status information and possibly an error.
