@@ -1,4 +1,4 @@
-﻿namespace TheKittySaver.Domain.Core.Primitives.Results;
+﻿namespace TheKittySaver.AdoptionSystem.Domain.Core.Primitives.Results;
 
 /// <summary>
 /// Contains extension methods for the result class.
