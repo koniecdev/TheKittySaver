@@ -10,26 +10,26 @@ public sealed partial class PolishZipCode : ValueObject
     public const int Length = 6;
     private const string ZipCodePattern = @"^\d{2}-\d{3}$";
     public string Value { get; }
-    
     public override string ToString() => Value;
     public static implicit operator string(PolishZipCode value) => value.Value;
-    
+
     public static Result<PolishZipCode> Create(string value)
     {
-        var result = Result.Create(value.Trim(), DomainErrors.PolishAddressEntity.ZipCodeProperty.NullOrEmpty)
+        Result<PolishZipCode> result = Result
+            .Create(value.Trim(), DomainErrors.PolishAddressEntity.ZipCodeProperty.NullOrEmpty)
             .Ensure(v => !string.IsNullOrWhiteSpace(v), DomainErrors.PolishAddressEntity.ZipCodeProperty.NullOrEmpty)
             .Ensure(v => ZipCodeRegex().IsMatch(v), DomainErrors.PolishAddressEntity.ZipCodeProperty.InvalidFormat)
             .Map(v => new PolishZipCode(v));
         return result;
     }
-    
+
     private PolishZipCode(string value) => Value = value;
 
     protected override IEnumerable<object> GetAtomicValues()
     {
         yield return Value;
     }
-    
+
     [GeneratedRegex(ZipCodePattern)]
     private static partial Regex ZipCodeRegex();
 }

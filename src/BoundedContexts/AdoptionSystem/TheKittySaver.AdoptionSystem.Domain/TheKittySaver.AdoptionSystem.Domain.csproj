@@ -7,19 +7,20 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="StronglyTypedId" Version="0.2.1" />
+      <PackageReference Include="libphonenumber-csharp" />
     </ItemGroup>
 
     <ItemGroup>
       <Compile Update="Core\Primitives\ValueObjects\ValueObject.cs">
         <Generator>MSBuild:GenerateCodeFromAttributes</Generator>
       </Compile>
-      <Compile Update="Aggregates\PersonAggregate\IdentityId.cs">
-        <Generator>MSBuild:GenerateCodeFromAttributes</Generator>
-      </Compile>
-      <Compile Update="Aggregates\PersonAggregate\AddressId.cs">
-        <Generator>MSBuild:GenerateCodeFromAttributes</Generator>
-      </Compile>
     </ItemGroup>
-
+    
+    <ItemGroup>
+        <InternalsVisibleTo Include="TheKittySaver.AdoptionSystem.Domain.Tests.Unit" />
+    </ItemGroup>
+    
+    <ItemGroup>
+      <ProjectReference Include="..\TheKittySaver.AdoptionSystem.Primitives\TheKittySaver.AdoptionSystem.Primitives.csproj" />
+    </ItemGroup>
 </Project>
