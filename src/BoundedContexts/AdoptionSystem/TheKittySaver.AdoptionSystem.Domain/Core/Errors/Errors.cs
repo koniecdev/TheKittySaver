@@ -50,7 +50,8 @@ public static class DomainErrors
         public static class PhoneNumberProperty
         {
             public static Error NullOrEmpty => Required(nameof(Person), nameof(Person.PhoneNumber));
-            public static Error LongerThanAllowed => TooLong(nameof(Person), nameof(Person.Username), PhoneNumber.MaxLength);
+            public static Error LongerThanAllowed => TooLong(nameof(Person), nameof(Person.PhoneNumber), PhoneNumber.MaxLength);
+            public static Error InvalidFormat => BadFormat(nameof(Person), nameof(Person.PhoneNumber));
         }
     }
 

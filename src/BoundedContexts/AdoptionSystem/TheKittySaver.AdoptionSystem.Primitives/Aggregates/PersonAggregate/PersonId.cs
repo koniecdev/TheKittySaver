@@ -1,4 +1,4 @@
-﻿namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate;
+﻿namespace TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
 
 [StronglyTypedId(jsonConverter: StronglyTypedIdJsonConverter.SystemTextJson)]
 public partial struct PersonId;

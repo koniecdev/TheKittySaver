@@ -15,13 +15,24 @@ public sealed partial class Email : ValueObject
     public override string ToString() => Value;
     public static implicit operator string(Email value) => value.Value;
     
-    public static Result<Email> Create(string value) =>
-        Result.Create(value, DomainErrors.PersonEntity.EmailProperty.NullOrEmpty)
+    public static Result<Email> Create(string value)
+    {
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+        // ReSharper disable once UseNullPropagation
+        if (value is not null)
+        {
+            value = value.Trim();
+        }
+        
+        Result<Email> result = Result.Create(value, DomainErrors.PersonEntity.EmailProperty.NullOrEmpty)
             .Ensure(v => !string.IsNullOrWhiteSpace(v), DomainErrors.PersonEntity.EmailProperty.NullOrEmpty)
             .Ensure(v => v.Length <= MaxLength, DomainErrors.PersonEntity.EmailProperty.LongerThanAllowed)
             .Ensure(v => EmailRegex.IsMatch(v), DomainErrors.PersonEntity.EmailProperty.InvalidFormat)
             .Map(v => new Email(v));
-    
+        
+        return result;
+    }
+
     private Email(string value) => Value = value;
 
     protected override IEnumerable<object> GetAtomicValues()
