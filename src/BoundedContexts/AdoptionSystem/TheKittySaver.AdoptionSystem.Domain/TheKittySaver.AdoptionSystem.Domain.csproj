@@ -11,16 +11,16 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Compile Update="Core\Primitives\ValueObjects\ValueObject.cs">
-        <Generator>MSBuild:GenerateCodeFromAttributes</Generator>
-      </Compile>
-    </ItemGroup>
-    
-    <ItemGroup>
         <InternalsVisibleTo Include="TheKittySaver.AdoptionSystem.Domain.Tests.Unit" />
     </ItemGroup>
     
     <ItemGroup>
       <ProjectReference Include="..\TheKittySaver.AdoptionSystem.Primitives\TheKittySaver.AdoptionSystem.Primitives.csproj" />
+    </ItemGroup>
+    
+    <ItemGroup>
+      <Compile Update="Core\Primitives\BuildingBlocks\ValueObject.cs">
+        <Generator>MSBuild:GenerateCodeFromAttributes</Generator>
+      </Compile>
     </ItemGroup>
 </Project>

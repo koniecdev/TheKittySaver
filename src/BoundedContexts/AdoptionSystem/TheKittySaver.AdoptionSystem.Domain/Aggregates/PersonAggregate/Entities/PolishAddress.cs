@@ -1,6 +1,7 @@
 ﻿using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.ValueObjects;
 using TheKittySaver.AdoptionSystem.Domain.Core.Enums;
 using TheKittySaver.AdoptionSystem.Domain.Core.Primitives;
+using TheKittySaver.AdoptionSystem.Domain.Core.Primitives.BuildingBlocks;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.Entities;

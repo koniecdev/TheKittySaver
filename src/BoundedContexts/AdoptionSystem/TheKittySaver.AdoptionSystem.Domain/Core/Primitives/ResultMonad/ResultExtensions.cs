@@ -1,4 +1,6 @@
-﻿namespace TheKittySaver.AdoptionSystem.Domain.Core.Primitives.Results;
+﻿using TheKittySaver.AdoptionSystem.Domain.Core.Primitives.BuildingBlocks;
+
+namespace TheKittySaver.AdoptionSystem.Domain.Core.Primitives.ResultMonad;
 
 /// <summary>
 /// Contains extension methods for the result class.

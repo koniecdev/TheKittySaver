@@ -1,6 +1,6 @@
 ﻿using TheKittySaver.AdoptionSystem.Domain.Core.Events;
 
-namespace TheKittySaver.AdoptionSystem.Domain.Core.Primitives;
+namespace TheKittySaver.AdoptionSystem.Domain.Core.Primitives.BuildingBlocks;
 
 
 public interface IAggregateRoot

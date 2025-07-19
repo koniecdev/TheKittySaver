@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.Entities;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.ValueObjects;
 using TheKittySaver.AdoptionSystem.Domain.Core.Primitives;
+using TheKittySaver.AdoptionSystem.Domain.Core.Primitives.BuildingBlocks;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 

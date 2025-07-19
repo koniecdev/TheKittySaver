@@ -1,5 +1,5 @@
 ﻿using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.ValueObjects;
-using TheKittySaver.AdoptionSystem.Domain.Core.Primitives.Results;
+using TheKittySaver.AdoptionSystem.Domain.Core.Primitives.ResultMonad;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.Factories;
 

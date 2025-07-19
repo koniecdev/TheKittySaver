@@ -1,6 +1,4 @@
-﻿using TheKittySaver.AdoptionSystem.Domain.Core.Primitives.ValueObjects;
-
-namespace TheKittySaver.AdoptionSystem.Domain.Core.Primitives;
+﻿namespace TheKittySaver.AdoptionSystem.Domain.Core.Primitives.BuildingBlocks;
 
 /// <summary>
 /// Represents a concrete domain error.

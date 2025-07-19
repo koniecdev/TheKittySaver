@@ -1,6 +1,6 @@
 ﻿using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
-using TheKittySaver.AdoptionSystem.Domain.Core.Primitives.Results;
-using TheKittySaver.AdoptionSystem.Domain.Core.Primitives.ValueObjects;
+using TheKittySaver.AdoptionSystem.Domain.Core.Primitives.BuildingBlocks;
+using TheKittySaver.AdoptionSystem.Domain.Core.Primitives.ResultMonad;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.ValueObjects;
 

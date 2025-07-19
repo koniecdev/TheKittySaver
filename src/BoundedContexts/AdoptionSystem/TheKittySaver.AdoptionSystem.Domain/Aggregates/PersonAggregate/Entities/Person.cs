@@ -2,7 +2,8 @@
 using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 using TheKittySaver.AdoptionSystem.Domain.Core.Guards;
 using TheKittySaver.AdoptionSystem.Domain.Core.Primitives;
-using TheKittySaver.AdoptionSystem.Domain.Core.Primitives.Results;
+using TheKittySaver.AdoptionSystem.Domain.Core.Primitives.BuildingBlocks;
+using TheKittySaver.AdoptionSystem.Domain.Core.Primitives.ResultMonad;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.Entities;
@@ -10,7 +11,7 @@ namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.Entitie
 public sealed class Person : AggregateRoot<PersonId>
 {
     private readonly List<PolishAddress> _polishAddresses = [];
-    public IdentityId IdentityId { get; private set; } = Primitives.Aggregates.PersonAggregate.IdentityId.Empty;
+    public IdentityId IdentityId { get; private set; } = IdentityId.Empty;
     public Username Username { get; private set; }
     public Email Email { get; private set; }
     public PhoneNumber PhoneNumber { get; private set; }
@@ -19,7 +20,7 @@ public sealed class Person : AggregateRoot<PersonId>
     public Result SetIdentityId(IdentityId identityId)
     {
         Ensure.NotEmpty(identityId.Value);
-        if (IdentityId != Primitives.Aggregates.PersonAggregate.IdentityId.Empty)
+        if (IdentityId != IdentityId.Empty)
         {
             return Result.Failure(DomainErrors.PersonEntity.IdentityIdProperty.AlreadyHasBeenSet);
         }
