@@ -8,9 +8,11 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection serviceCollection)
     {
-        serviceCollection.AddScoped<LibPhoneNumberSpecification>();
-        serviceCollection.AddScoped<IValidPhoneNumberSpecification>(sp => sp.GetRequiredService<LibPhoneNumberSpecification>());
-        serviceCollection.AddScoped<IPhoneNumberNormalizer>(sp => sp.GetRequiredService<LibPhoneNumberSpecification>());
+        serviceCollection.AddScoped<LibPhoneNumberValidator>();
+        serviceCollection.AddScoped<IValidPhoneNumberSpecification>(sp 
+            => sp.GetRequiredService<LibPhoneNumberValidator>());
+        serviceCollection.AddScoped<IPhoneNumberNormalizer>(sp 
+            => sp.GetRequiredService<LibPhoneNumberNormalizer>());
         return serviceCollection;
     }
 }

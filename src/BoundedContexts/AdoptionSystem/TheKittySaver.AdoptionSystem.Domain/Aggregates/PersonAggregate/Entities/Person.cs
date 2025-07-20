@@ -132,7 +132,7 @@ public sealed class Person : AggregateRoot<PersonId>
             return Result.Failure(DomainErrors.PolishAddressEntity.NotFound(id));
         }
 
-        _polishAddresses.Remove(maybePolishAddress);
+        _polishAddresses.Remove(maybePolishAddress.Value);
         return Result.Success();
     }
     
