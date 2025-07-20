@@ -1,8 +1,7 @@
 ﻿// Domain/Aggregates/PersonAggregate/ValueObjects/PhoneNumber.cs
 
 using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
-using TheKittySaver.AdoptionSystem.Domain.Core.Primitives.Results;
-using TheKittySaver.AdoptionSystem.Domain.Core.Primitives.ValueObjects;
+using TheKittySaver.AdoptionSystem.Domain.Core.Primitives.BuildingBlocks;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.ValueObjects;
 
@@ -25,7 +24,7 @@ public sealed class PhoneNumber : ValueObject
     internal static PhoneNumber CreateUnsafe(string value)
     {
         ArgumentNullException.ThrowIfNull(value);
-        PhoneNumber instance = new(value);
+        PhoneNumber instance = new(value.Trim());
         return instance;
     }
     

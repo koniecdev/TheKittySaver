@@ -1,4 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
+using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Core.Guards;
 
@@ -11,11 +12,29 @@ public static class Ensure
     /// <param name="argumentName">Automatically resolved with CallerArgumentExpression
     /// attribute name of the argument being checked.</param>
     /// <exception cref="ArgumentException">if the specified value is empty.</exception>
-    public static void NotEmpty(
-        Guid value,
+    public static void HasValue<TEnum>(
+        TEnum value,
         [CallerArgumentExpression(nameof(value))] string argumentName = "")
+        where TEnum : struct, Enum
     {
-        if (value == Guid.Empty)
+        if (Convert.ToInt32(value) == 0)
+        {
+            throw new ArgumentException($"{argumentName} must have a valid value.", argumentName);
+        }
+    }
+    
+    /// <summary>
+    /// Ensures that the specified <see cref="Guid"/> value is not empty.
+    /// </summary>
+    /// <param name="id">The ID to check.</param>
+    /// <param name="argumentName">Automatically resolved with CallerArgumentExpression
+    /// attribute name of the argument being checked.</param>
+    /// <exception cref="ArgumentException">if the specified value is empty.</exception>
+    public static void NotEmpty<T>(
+        T id,
+        [CallerArgumentExpression(nameof(id))] string argumentName = "") where T : IStronglyTypedId
+    {
+        if (id.Value == Guid.Empty)
         {
             throw new ArgumentException($"{argumentName} cannot be empty.", argumentName);
         }

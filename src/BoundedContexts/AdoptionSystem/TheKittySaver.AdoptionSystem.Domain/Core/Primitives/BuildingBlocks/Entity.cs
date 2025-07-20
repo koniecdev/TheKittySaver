@@ -1,4 +1,4 @@
-﻿namespace TheKittySaver.AdoptionSystem.Domain.Core.Primitives;
+﻿namespace TheKittySaver.AdoptionSystem.Domain.Core.Primitives.BuildingBlocks;
 
 public abstract class Entity<TId>(TId id) : IEquatable<Entity<TId>> where TId : struct
 {

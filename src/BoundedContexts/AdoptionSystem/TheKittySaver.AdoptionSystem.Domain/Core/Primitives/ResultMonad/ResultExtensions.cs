@@ -1,4 +1,6 @@
-﻿namespace TheKittySaver.AdoptionSystem.Domain.Core.Primitives.Results;
+﻿using TheKittySaver.AdoptionSystem.Domain.Core.Primitives.BuildingBlocks;
+
+namespace TheKittySaver.AdoptionSystem.Domain.Core.Primitives.ResultMonad;
 
 /// <summary>
 /// Contains extension methods for the result class.
@@ -47,7 +49,7 @@ public static class ResultExtensions
     /// <returns>
     /// The success result with the bound value if the current result is a success result, otherwise a failure result.
     /// </returns>
-    public static async Task<Result> Bind<TIn>(this Result<TIn> result, Func<TIn, Task<Result>> func) =>
+    public static async Task<Result> BindAsync<TIn>(this Result<TIn> result, Func<TIn, Task<Result>> func) =>
         result.IsSuccess ? await func(result.Value) : Result.Failure(result.Error);
 
     /// <summary>
@@ -101,4 +103,7 @@ public static class ResultExtensions
 
         return result.IsSuccess ? onSuccess(result.Value) : onFailure(result.Error);
     }
+    
+    public static Result<string> TrimValue(this Result<string> result) 
+        => result.Map(value => value.Trim());
 }

@@ -2,7 +2,7 @@
 using Shouldly;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.ValueObjects;
 using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
-using TheKittySaver.AdoptionSystem.Domain.Core.Primitives.Results;
+using TheKittySaver.AdoptionSystem.Domain.Core.Primitives.ResultMonad;
 using TheKittySaver.AdoptionSystem.Domain.Tests.Unit.Shared;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Tests.Unit.Aggregates.PersonAggregate.ValueObjects;

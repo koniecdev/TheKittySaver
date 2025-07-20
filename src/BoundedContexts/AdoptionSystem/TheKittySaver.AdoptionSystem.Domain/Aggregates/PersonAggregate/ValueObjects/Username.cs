@@ -1,6 +1,6 @@
 ﻿using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
-using TheKittySaver.AdoptionSystem.Domain.Core.Primitives.Results;
-using TheKittySaver.AdoptionSystem.Domain.Core.Primitives.ValueObjects;
+using TheKittySaver.AdoptionSystem.Domain.Core.Primitives.BuildingBlocks;
+using TheKittySaver.AdoptionSystem.Domain.Core.Primitives.ResultMonad;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.ValueObjects;
 
@@ -13,7 +13,8 @@ public sealed class Username : ValueObject
     public static implicit operator string(Username value) => value.Value;
     
     public static Result<Username> Create(string value) =>
-        Result.Create(value, DomainErrors.PersonEntity.EmailProperty.NullOrEmpty)
+        Result.Create(value, DomainErrors.PersonEntity.UsernameProperty.NullOrEmpty)
+            .TrimValue()
             .Ensure(v => !string.IsNullOrWhiteSpace(v), DomainErrors.PersonEntity.UsernameProperty.NullOrEmpty)
             .Ensure(v => v.Length <= MaxLength, DomainErrors.PersonEntity.UsernameProperty.LongerThanAllowed)
             .Map(v => new Username(v));

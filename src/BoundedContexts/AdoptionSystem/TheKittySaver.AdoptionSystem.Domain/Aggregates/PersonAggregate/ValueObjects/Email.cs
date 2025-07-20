@@ -1,7 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
-using TheKittySaver.AdoptionSystem.Domain.Core.Primitives.Results;
-using TheKittySaver.AdoptionSystem.Domain.Core.Primitives.ValueObjects;
+using TheKittySaver.AdoptionSystem.Domain.Core.Primitives.BuildingBlocks;
+using TheKittySaver.AdoptionSystem.Domain.Core.Primitives.ResultMonad;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.ValueObjects;
 
@@ -17,19 +17,12 @@ public sealed partial class Email : ValueObject
     
     public static Result<Email> Create(string value)
     {
-        // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
-        // ReSharper disable once UseNullPropagation
-        if (value is not null)
-        {
-            value = value.Trim();
-        }
-        
         Result<Email> result = Result.Create(value, DomainErrors.PersonEntity.EmailProperty.NullOrEmpty)
+            .TrimValue()
             .Ensure(v => !string.IsNullOrWhiteSpace(v), DomainErrors.PersonEntity.EmailProperty.NullOrEmpty)
             .Ensure(v => v.Length <= MaxLength, DomainErrors.PersonEntity.EmailProperty.LongerThanAllowed)
             .Ensure(v => EmailRegex.IsMatch(v), DomainErrors.PersonEntity.EmailProperty.InvalidFormat)
             .Map(v => new Email(v));
-        
         return result;
     }
 
