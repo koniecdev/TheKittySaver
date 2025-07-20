@@ -13,14 +13,15 @@ public sealed class BuildingNumber : ValueObject
     
     public static Result<BuildingNumber> Create(string value)
     {
-        if (string.IsNullOrWhiteSpace(value))
-        {
-            return Result.Failure<BuildingNumber>(DomainErrors.PolishAddressEntity.BuildingNumberProperty.NullOrEmpty);
-        }
-        
-        return value.Length > MaxLength 
-            ? Result.Failure<BuildingNumber>(DomainErrors.PolishAddressEntity.BuildingNumberProperty.LongerThanAllowed)
-            : Result.Success(new BuildingNumber(value));
+        Result<BuildingNumber> result = 
+            Result.Create(value, DomainErrors.PolishAddressEntity.BuildingNumberProperty.NullOrEmpty)
+                .TrimValue()
+                .Ensure(v => 
+                    !string.IsNullOrWhiteSpace(v), DomainErrors.PolishAddressEntity.BuildingNumberProperty.NullOrEmpty)
+                .Ensure(v =>
+                    v.Length <= MaxLength, DomainErrors.PolishAddressEntity.BuildingNumberProperty.LongerThanAllowed)
+                .Map(v => new BuildingNumber(v));
+        return result;
     }
 
     private BuildingNumber(string value) => Value = value;

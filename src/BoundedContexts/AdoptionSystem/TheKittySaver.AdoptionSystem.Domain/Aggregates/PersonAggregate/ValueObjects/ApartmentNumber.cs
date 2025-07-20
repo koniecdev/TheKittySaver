@@ -12,15 +12,15 @@ public sealed class ApartmentNumber : ValueObject
     public static implicit operator string(ApartmentNumber value) => value.Value;
     public static Result<ApartmentNumber> Create(string value)
     {
-        if (string.IsNullOrWhiteSpace(value))
-        {
-            return Result.Failure<ApartmentNumber>(DomainErrors.PolishAddressEntity.ApartmentNumberProperty.NullOrEmpty);
-        }
-
-        return value.Length > MaxLength
-            ? Result.Failure<ApartmentNumber>(
-                DomainErrors.PolishAddressEntity.ApartmentNumberProperty.LongerThanAllowed)
-            : Result.Success(new ApartmentNumber(value));
+        Result<ApartmentNumber> result = 
+            Result.Create(value, DomainErrors.PolishAddressEntity.ApartmentNumberProperty.NullOrEmpty)
+                .TrimValue()
+                .Ensure(v => 
+                    !string.IsNullOrWhiteSpace(v), DomainErrors.PolishAddressEntity.ApartmentNumberProperty.NullOrEmpty)
+                .Ensure(v =>
+                    v.Length <= MaxLength, DomainErrors.PolishAddressEntity.ApartmentNumberProperty.LongerThanAllowed)
+                .Map(v => new ApartmentNumber(v));
+        return result;
     }
     
     private ApartmentNumber(string value) => Value = value;

@@ -24,7 +24,7 @@ public sealed class PhoneNumber : ValueObject
     internal static PhoneNumber CreateUnsafe(string value)
     {
         ArgumentNullException.ThrowIfNull(value);
-        PhoneNumber instance = new(value);
+        PhoneNumber instance = new(value.Trim());
         return instance;
     }
     

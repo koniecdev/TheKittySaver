@@ -14,7 +14,8 @@ public sealed class City : ValueObject
     
     public static Result<City> Create(string value)
     {
-        var result = Result.Create(value, DomainErrors.PolishAddressEntity.CityProperty.NullOrEmpty)
+        Result<City> result = Result.Create(value, DomainErrors.PolishAddressEntity.CityProperty.NullOrEmpty)
+            .TrimValue()
             .Ensure(v => !string.IsNullOrWhiteSpace(v), DomainErrors.PolishAddressEntity.CityProperty.NullOrEmpty)
             .Ensure(v => v.Length <= MaxLength, DomainErrors.PolishAddressEntity.CityProperty.LongerThanAllowed)
             .Map(v => new City(v));

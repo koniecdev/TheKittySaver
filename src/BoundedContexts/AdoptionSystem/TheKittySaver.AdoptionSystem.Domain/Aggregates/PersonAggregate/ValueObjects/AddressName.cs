@@ -14,7 +14,8 @@ public sealed class AddressName : ValueObject
     
     public static Result<AddressName> Create(string value)
     {
-        var result = Result.Create(value, DomainErrors.PolishAddressEntity.NameProperty.NullOrEmpty)
+        Result<AddressName> result = Result.Create(value, DomainErrors.PolishAddressEntity.NameProperty.NullOrEmpty)
+            .TrimValue()
             .Ensure(v => !string.IsNullOrWhiteSpace(v), DomainErrors.PolishAddressEntity.NameProperty.NullOrEmpty)
             .Ensure(v => v.Length <= MaxLength, DomainErrors.PolishAddressEntity.NameProperty.LongerThanAllowed)
             .Map(v => new AddressName(v));

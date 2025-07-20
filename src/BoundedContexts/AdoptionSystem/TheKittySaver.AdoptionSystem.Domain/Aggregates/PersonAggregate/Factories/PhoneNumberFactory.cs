@@ -21,6 +21,7 @@ public sealed class PhoneNumberFactory : IPhoneNumberFactory
     public Result<PhoneNumber> Create(string value)
     {
         Result<PhoneNumber> result = Result.Create(value, DomainErrors.PersonEntity.PhoneNumberProperty.NullOrEmpty)
+            .TrimValue()
             .Ensure(v => !string.IsNullOrWhiteSpace(v), 
                 DomainErrors.PersonEntity.PhoneNumberProperty.NullOrEmpty)
             .Ensure(v => v.Length <= PhoneNumber.MaxLength, 
