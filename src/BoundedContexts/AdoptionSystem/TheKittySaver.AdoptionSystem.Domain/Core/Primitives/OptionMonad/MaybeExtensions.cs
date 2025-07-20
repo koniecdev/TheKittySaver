@@ -34,13 +34,29 @@ public static class MaybeExtensions
     /// <returns>
     /// The result of the on-success function if the maybe has a value, otherwise the result of the failure result.
     /// </returns>
-    public static async Task<TOut> Match<TIn, TOut>(
+    public static async Task<TOut> MatchAsync<TIn, TOut>(
         this Task<Maybe<TIn>> resultTask,
         Func<TIn, TOut> onSuccess,
         Func<TOut> onFailure) where TIn : class
     {
         Maybe<TIn> maybe = await resultTask;
 
+        return maybe.HasValue ? onSuccess(maybe.Value) : onFailure();
+    }
+    
+    public static TOut Match<TIn, TOut>(
+        this Maybe<TIn> maybe,
+        Func<TIn, TOut> onSuccess,
+        Func<TOut> onFailure) where TIn : class
+    {
+        return maybe.HasValue ? onSuccess(maybe.Value) : onFailure();
+    }
+    
+    public static TOut? MatchSafely<TIn, TOut>(
+        this Maybe<TIn> maybe,
+        Func<TIn, TOut> onSuccess,
+        Func<TOut?> onFailure) where TIn : class
+    {
         return maybe.HasValue ? onSuccess(maybe.Value) : onFailure();
     }
 }
