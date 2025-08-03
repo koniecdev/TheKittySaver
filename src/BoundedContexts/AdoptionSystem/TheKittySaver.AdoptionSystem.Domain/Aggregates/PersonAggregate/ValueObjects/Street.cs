@@ -16,10 +16,10 @@ public sealed class Street : ValueObject
     {
         Result<Street> result = Result.Create(value, DomainErrors.PolishAddressEntity.StreetProperty.NullOrEmpty)
             .TrimValue()
-            .Ensure(v 
-                => !string.IsNullOrWhiteSpace(v), DomainErrors.PolishAddressEntity.StreetProperty.NullOrEmpty)
-            .Ensure(v 
-                => v.Length <= MaxLength, DomainErrors.PolishAddressEntity.StreetProperty.LongerThanAllowed)
+            .Ensure(v => !string.IsNullOrWhiteSpace(v),
+                DomainErrors.PolishAddressEntity.StreetProperty.NullOrEmpty)
+            .Ensure(v => v.Length <= MaxLength,
+                DomainErrors.PolishAddressEntity.StreetProperty.LongerThanAllowed)
             .Map(v => new Street(v));
         return result;
     }

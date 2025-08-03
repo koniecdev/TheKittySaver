@@ -8,6 +8,7 @@ public sealed class BuildingNumber : ValueObject
 {
     public const int MaxLength = 10;
     public string Value { get; }
+    
     public override string ToString() => Value;
     public static implicit operator string(BuildingNumber value) => value.Value;
     
@@ -16,8 +17,8 @@ public sealed class BuildingNumber : ValueObject
         Result<BuildingNumber> result = 
             Result.Create(value, DomainErrors.PolishAddressEntity.BuildingNumberProperty.NullOrEmpty)
                 .TrimValue()
-                .Ensure(v => 
-                    !string.IsNullOrWhiteSpace(v), DomainErrors.PolishAddressEntity.BuildingNumberProperty.NullOrEmpty)
+                .Ensure(v => !string.IsNullOrWhiteSpace(v),
+                    DomainErrors.PolishAddressEntity.BuildingNumberProperty.NullOrEmpty)
                 .Ensure(v =>
                     v.Length <= MaxLength, DomainErrors.PolishAddressEntity.BuildingNumberProperty.LongerThanAllowed)
                 .Map(v => new BuildingNumber(v));

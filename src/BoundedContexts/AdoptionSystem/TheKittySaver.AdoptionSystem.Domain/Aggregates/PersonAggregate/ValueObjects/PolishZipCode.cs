@@ -18,10 +18,10 @@ public sealed partial class PolishZipCode : ValueObject
         Result<PolishZipCode> result = Result
             .Create(value, DomainErrors.PolishAddressEntity.ZipCodeProperty.NullOrEmpty)
             .TrimValue()
-            .Ensure(v 
-                => !string.IsNullOrWhiteSpace(v), DomainErrors.PolishAddressEntity.ZipCodeProperty.NullOrEmpty)
-            .Ensure(v 
-                => ZipCodeRegex().IsMatch(v), DomainErrors.PolishAddressEntity.ZipCodeProperty.InvalidFormat)
+            .Ensure(v => !string.IsNullOrWhiteSpace(v),
+                DomainErrors.PolishAddressEntity.ZipCodeProperty.NullOrEmpty)
+            .Ensure(v => ZipCodeRegex().IsMatch(v),
+                DomainErrors.PolishAddressEntity.ZipCodeProperty.InvalidFormat)
             .Map(v => new PolishZipCode(v));
         return result;
     }
