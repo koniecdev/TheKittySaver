@@ -1,5 +1,4 @@
-﻿using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.ValueObjects;
-using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
+﻿using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 using TheKittySaver.AdoptionSystem.Domain.Core.Primitives.ResultMonad;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.Specifications;
 

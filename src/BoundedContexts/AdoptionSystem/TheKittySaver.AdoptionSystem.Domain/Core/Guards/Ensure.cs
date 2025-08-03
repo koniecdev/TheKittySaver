@@ -1,5 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
-using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
+using TheKittySaver.AdoptionSystem.Primitives.Common;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Core.Guards;
 

@@ -1,4 +1,4 @@
-﻿namespace TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
+﻿namespace TheKittySaver.AdoptionSystem.Primitives.Common;
 
 public interface IStronglyTypedId
 {

@@ -1,5 +1,4 @@
-﻿using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.ValueObjects;
-using TheKittySaver.AdoptionSystem.Domain.Core.Primitives.ResultMonad;
+﻿using TheKittySaver.AdoptionSystem.Domain.Core.Primitives.ResultMonad;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
 using Email = TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.Email;

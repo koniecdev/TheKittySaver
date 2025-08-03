@@ -1,7 +1,7 @@
 ﻿// Infrastructure/PhoneValidation/LibPhoneNumberValidator.cs
 
 using PhoneNumbers;
-using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.Specifications;
+using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.Specifications;
 
 namespace TheKittySaver.AdoptionSystem.Infrastructure.Specifications;
 

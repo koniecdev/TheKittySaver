@@ -1,7 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-
-namespace TheKittySaver.AdoptionSystem.Domain.Core.Primitives.OptionMonad;
+﻿namespace TheKittySaver.AdoptionSystem.Domain.Core.Primitives.OptionMonad;
 
 /// <summary>
 /// Contains extension methods for the maybe class.

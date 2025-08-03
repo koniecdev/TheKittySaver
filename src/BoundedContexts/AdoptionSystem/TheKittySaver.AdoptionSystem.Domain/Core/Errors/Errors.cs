@@ -1,11 +1,11 @@
-﻿using System.Diagnostics;
-using System.Linq.Expressions;
-using System.Runtime.CompilerServices;
+﻿using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Entities;
+using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.ValueObjects;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.Entities;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.ValueObjects;
-using TheKittySaver.AdoptionSystem.Domain.Core.Primitives;
 using TheKittySaver.AdoptionSystem.Domain.Core.Primitives.BuildingBlocks;
+using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
+using Email = TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.Email;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 
@@ -38,6 +38,14 @@ public static class DomainErrors
     private static Error MustBeEmpty(string entity, string property, string propertyThatIsEmpty) 
         => new($"{entity}.{property}.MustBeEmpty",
             $"The {property.ToLower()} must be empty, when {propertyThatIsEmpty.ToLower()} is empty");
+    
+    private static Error BelowValue<T>(string entity, string property, T actualValue, T minimalValue) where T : struct
+        => new($"{entity}.{property}.BelowValue", 
+            $"The {property.ToLower()} has been set with value '{actualValue}', and it is below the minimum required value '{minimalValue}'.");
+    
+    private static Error AboveValue<T>(string entity, string property, T actualValue, T maximumValue) where T : struct
+        => new($"{entity}.{property}.AboveValue", 
+            $"The {property.ToLower()} has been set with value '{actualValue}', and it is above the maximum required value '{maximumValue}'.");
     
     private static Error CustomMessage(string entity, string property, string message) 
         => new($"{entity}.{property}.InvalidValue", message);
@@ -112,7 +120,7 @@ public static class DomainErrors
                     phoneNumber);
         }
     }
-
+    
     public static class PolishAddressEntity
     {
         public static Error NotFound(PolishAddressId polishAddressId) 
@@ -226,20 +234,43 @@ public static class DomainErrors
                     nameof(PolishAddress),
                     nameof(PolishAddress.ApartmentNumber),
                     ApartmentNumber.MaxLength);
-            public static Error InvalidFormat 
-                => BadFormat(
-                    nameof(PolishAddress), 
-                    nameof(PolishAddress.ApartmentNumber));
-            public static Error MustBeEmptyWhenStreetIsEmpty
-                => MustBeEmpty(
-                    nameof(PolishAddress),
-                    nameof(PolishAddress.ApartmentNumber),
-                    nameof(PolishAddress.Street));
             public static Error MustBeEmptyWhenBuildingNumberIsEmpty
                 => MustBeEmpty(
                     nameof(PolishAddress),
                     nameof(PolishAddress.ApartmentNumber),
                     nameof(PolishAddress.BuildingNumber));
+        }
+    }
+    
+    public static class CatEntity
+    {
+        public static class CatNameProperty
+        {
+            public static Error NullOrEmpty 
+                => Required(
+                    nameof(Cat),
+                    nameof(Cat.Name));
+            public static Error LongerThanAllowed 
+                => TooLong(
+                    nameof(Cat),
+                    nameof(Cat.Name),
+                    CatName.MaxLength);
+        }
+        
+        public static class CatAgeProperty
+        {
+            public static Error BelowMinimalAllowedValue(int actualValue, int minimumValue) 
+                => BelowValue(
+                    nameof(Cat),
+                    nameof(Cat.Age),
+                    actualValue,
+                    minimumValue);
+            public static Error AboveMaximumAllowedValue(int actualValue, int maximumValue)
+                => AboveValue(
+                    nameof(Cat),
+                    nameof(Cat.Age),
+                    actualValue,
+                    maximumValue);
         }
     }
 }
