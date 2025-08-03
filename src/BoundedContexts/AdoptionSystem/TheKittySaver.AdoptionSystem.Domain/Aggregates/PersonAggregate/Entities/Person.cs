@@ -2,10 +2,10 @@
 using TheKittySaver.AdoptionSystem.Domain.Core.Enums;
 using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 using TheKittySaver.AdoptionSystem.Domain.Core.Guards;
-using TheKittySaver.AdoptionSystem.Domain.Core.Primitives;
 using TheKittySaver.AdoptionSystem.Domain.Core.Primitives.BuildingBlocks;
 using TheKittySaver.AdoptionSystem.Domain.Core.Primitives.OptionMonad;
 using TheKittySaver.AdoptionSystem.Domain.Core.Primitives.ResultMonad;
+using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.Entities;
@@ -13,11 +13,12 @@ namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.Entitie
 public sealed class Person : AggregateRoot<PersonId>
 {
     private readonly List<PolishAddress> _polishAddresses = [];
+    public IReadOnlyList<PolishAddress> PolishAddresses => _polishAddresses.AsReadOnly();
+    
     public IdentityId IdentityId { get; private set; } = IdentityId.Empty;
     public Username Username { get; private set; }
     public Email Email { get; private set; }
     public PhoneNumber PhoneNumber { get; private set; }
-    public IReadOnlyList<PolishAddress> PolishAddresses => _polishAddresses.AsReadOnly();
 
     public Result<PolishAddressId> AddPolishAddress(
         AddressName name,

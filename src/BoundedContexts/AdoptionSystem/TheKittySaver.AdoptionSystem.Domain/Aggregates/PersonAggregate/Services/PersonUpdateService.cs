@@ -5,7 +5,9 @@ using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 using TheKittySaver.AdoptionSystem.Domain.Core.Guards;
 using TheKittySaver.AdoptionSystem.Domain.Core.Primitives.OptionMonad;
 using TheKittySaver.AdoptionSystem.Domain.Core.Primitives.ResultMonad;
+using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
+using Email = TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.Email;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.Services;
 

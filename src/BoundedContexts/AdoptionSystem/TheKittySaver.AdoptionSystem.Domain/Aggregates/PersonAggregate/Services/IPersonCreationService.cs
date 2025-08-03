@@ -1,6 +1,8 @@
 ﻿using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.Entities;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.ValueObjects;
 using TheKittySaver.AdoptionSystem.Domain.Core.Primitives.ResultMonad;
+using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects;
+using Email = TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.Email;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.Services;
 
