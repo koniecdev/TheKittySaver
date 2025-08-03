@@ -1,9 +1,9 @@
-﻿using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.Specifications;
-using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.ValueObjects;
+﻿using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.ValueObjects;
 using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 using TheKittySaver.AdoptionSystem.Domain.Core.Primitives.ResultMonad;
+using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.Specifications;
 
-namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.Factories;
+namespace TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.Factories;
 
 public sealed class PhoneNumberFactory : IPhoneNumberFactory
 {

@@ -1,9 +1,8 @@
 ﻿// Domain/Aggregates/PersonAggregate/ValueObjects/PhoneNumber.cs
 
-using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 using TheKittySaver.AdoptionSystem.Domain.Core.Primitives.BuildingBlocks;
 
-namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.ValueObjects;
+namespace TheKittySaver.AdoptionSystem.Domain.SharedValueObjects;
 
 public sealed class PhoneNumber : ValueObject
 {

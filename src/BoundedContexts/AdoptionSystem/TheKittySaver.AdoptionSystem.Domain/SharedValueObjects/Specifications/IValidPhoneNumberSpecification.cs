@@ -1,4 +1,4 @@
-﻿namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.Specifications;
+﻿namespace TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.Specifications;
 
 public interface IValidPhoneNumberSpecification
 {

@@ -2,7 +2,7 @@
 using TheKittySaver.AdoptionSystem.Domain.Core.Primitives.BuildingBlocks;
 using TheKittySaver.AdoptionSystem.Domain.Core.Primitives.ResultMonad;
 
-namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.ValueObjects;
+namespace TheKittySaver.AdoptionSystem.Domain.SharedValueObjects;
 
 public sealed class BuildingNumber : ValueObject
 {
