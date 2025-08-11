@@ -22,7 +22,10 @@ public sealed class CatName : ValueObject
         return result;
     }
 
-    private CatName(string value) => Value = value;
+    private CatName(string value)
+    {
+        Value = value;
+    }
 
     protected override IEnumerable<object> GetAtomicValues()
     {

@@ -9,23 +9,52 @@ public sealed class CatAge : ValueObject
     public const int MinimumAllowedValue = 0;
     public const int MaximumAllowedValue = 38;
     public int Value { get; }
-
-    public override string ToString() => Value.ToString();
-    public static implicit operator int(CatAge value) => value.Value;
-
+    
+    public AdoptionPriorityScore CalculatePriorityScore()
+    {
+        decimal points = Value switch
+        {
+            >= 10 => 30,
+            >= 7 => 25,
+            >= 5 => 20,
+            >= 3 => 15,
+            >= 1 => 10,
+            _ => 5
+        };
+        
+        Result<AdoptionPriorityScore> result = AdoptionPriorityScore.Create(points);
+        
+        return result.IsSuccess
+            ? result.Value
+            : throw new InvalidOperationException("Something went wrong while calculating priority points");
+    }
+    
     public static Result<CatAge> Create(int value)
     {
-        Result<CatAge> result = Result.Success(value)
-            .Ensure(v => v >= MinimumAllowedValue , 
-                DomainErrors.CatEntity.CatAgeProperty.BelowMinimalAllowedValue(value, MinimumAllowedValue))
-            .Ensure(v => v <= MaximumAllowedValue, 
-                DomainErrors.CatEntity.CatAgeProperty.AboveMaximumAllowedValue(value, MaximumAllowedValue))
-            .Map(v => new CatAge(v));
-        return result;
+        switch (value)
+        {
+            case < MinimumAllowedValue:
+                return Result.Failure<CatAge>(
+                    DomainErrors.CatEntity.CatAgeProperty
+                        .BelowMinimalAllowedValue(value, MinimumAllowedValue));
+            case > MaximumAllowedValue:
+                return Result.Failure<CatAge>(
+                    DomainErrors.CatEntity.CatAgeProperty
+                        .AboveMaximumAllowedValue(value, MaximumAllowedValue));
+            default:
+            {
+                CatAge instance = new(value);
+                return Result.Success(instance);
+            }
+        }
     }
 
-    private CatAge(int value) => Value = value;
+    private CatAge(int value)
+    {
+        Value = value;
+    }
 
+    public override string ToString() => Value.ToString();
     protected override IEnumerable<object> GetAtomicValues()
     {
         yield return Value;

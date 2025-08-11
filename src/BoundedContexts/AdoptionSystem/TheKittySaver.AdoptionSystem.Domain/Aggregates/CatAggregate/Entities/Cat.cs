@@ -1,6 +1,6 @@
-﻿using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Enums;
-using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.ValueObjects;
+﻿using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.ValueObjects;
 using TheKittySaver.AdoptionSystem.Domain.Core.Primitives.BuildingBlocks;
+using TheKittySaver.AdoptionSystem.Domain.Core.Primitives.ResultMonad;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Entities;
@@ -9,7 +9,7 @@ public sealed class Cat : AggregateRoot<CatId>
 {
     public CatName Name { get; private set; }
     public CatAge Age { get; private set; }
-    public bool IsMale { get; private set; }
+    public CatGender Gender { get; private set; }
     public HealthStatus HealthStatus { get; private set; }
     public SpecialNeedsStatus SpecialNeeds { get; private set; }
     public Temperament Temperament { get; private set; }
@@ -17,10 +17,29 @@ public sealed class Cat : AggregateRoot<CatId>
     public ListingSource ListingSource { get; private set; }
     public CatColor Color { get; private set; }
 
-    public static Cat Create(
+    /// <summary>
+    /// Oblicza priorytet adopcji dla kota. Im wyższa wartość, tym większa potrzeba adopcji.
+    /// </summary>
+    public Result<AdoptionPriorityScore> CalculateAdoptionPriority()
+    {
+        decimal priority = 0;
+
+        priority += Age.CalculatePriorityScore().Value;
+        priority += HealthStatus.CalculatePriorityScore().Value;
+        priority += SpecialNeeds.CalculatePriorityPoints().Value;
+        priority += Temperament.CalculatePriorityScore().Value;
+        priority += AdoptionHistory.CalculatePriorityPoints().Value;
+        priority += ListingSource.CalculatePriorityScore().Value;
+        priority += Color.CalculatePriorityScore().Value;
+        priority += Gender.CalculatePriorityScore().Value;
+
+        return AdoptionPriorityScore.Create(priority);
+    }
+    
+    public static Result<Cat> Create(
         CatName name,
         CatAge age,
-        bool isMale,
+        CatGender gender,
         HealthStatus healthStatus,
         SpecialNeedsStatus specialNeeds,
         Temperament temperament,
@@ -28,26 +47,37 @@ public sealed class Cat : AggregateRoot<CatId>
         ListingSource listingSource,
         CatColor color)
     {
+        ArgumentNullException.ThrowIfNull(name);
+        ArgumentNullException.ThrowIfNull(age);
+        ArgumentNullException.ThrowIfNull(gender);
+        ArgumentNullException.ThrowIfNull(healthStatus);
+        ArgumentNullException.ThrowIfNull(specialNeeds);
+        ArgumentNullException.ThrowIfNull(temperament);
+        ArgumentNullException.ThrowIfNull(adoptionHistory);
+        ArgumentNullException.ThrowIfNull(listingSource);
+        ArgumentNullException.ThrowIfNull(color);
+        
         CatId id = CatId.New();
         Cat instance = new(
             id, 
             name, 
             age, 
-            isMale,
+            gender,
             healthStatus,
             specialNeeds,
             temperament,
             adoptionHistory,
             listingSource,
             color);
-        return instance;
+        
+        return Result.Success(instance);
     }
     
     private Cat(
         CatId id,
         CatName name,
         CatAge age,
-        bool isMale,
+        CatGender gender,
         HealthStatus healthStatus,
         SpecialNeedsStatus specialNeeds,
         Temperament temperament,
@@ -57,79 +87,12 @@ public sealed class Cat : AggregateRoot<CatId>
     {
         Name = name;
         Age = age;
-        IsMale = isMale;
+        Gender = gender;
         HealthStatus = healthStatus;
         SpecialNeeds = specialNeeds;
         Temperament = temperament;
         AdoptionHistory = adoptionHistory;
         ListingSource = listingSource;
         Color = color;
-    }
-    
-    /// <summary>
-    /// Oblicza priorytet adopcji dla kota. Im wyższa wartość, tym większa potrzeba adopcji.
-    /// </summary>
-    public AdoptionPriorityScore CalculateAdoptionPriority()
-    {
-        decimal priority = 0;
-
-        priority += Age.Value switch
-        {
-            >= 10 => 30,
-            >= 7 => 25,
-            >= 5 => 20,
-            >= 3 => 15,
-            >= 1 => 10,
-            _ => 5
-        };
-
-        priority += HealthStatus switch
-        {
-            HealthStatus.Critical => 40,
-            HealthStatus.ChronicIllness => 35,
-            HealthStatus.Recovering => 25,
-            HealthStatus.MinorIssues => 15,
-            _ => 0
-        };
-        
-        priority += SpecialNeeds.CalculatePriorityPoints();
-        
-        priority += Temperament switch
-        {
-            Temperament.Aggressive => 15,
-            Temperament.VeryTimid => 12,
-            Temperament.Timid => 8,
-            Temperament.Independent => 5,
-            _ => 0
-        };
-        
-        priority += AdoptionHistory.CalculatePriorityPoints();
-        
-        priority += ListingSource.Type switch
-        {
-            ListingSourceType.PrivatePersonUrgent => 20,
-            ListingSourceType.PrivatePerson => 10,
-            ListingSourceType.SmallRescueGroup => 8,
-            ListingSourceType.Foundation => 5,
-            ListingSourceType.Shelter => 3,
-            _ => 0
-        };
-        
-        priority += Color switch
-        {
-            CatColor.Black => 10,
-            CatColor.BlackAndWhite => 7,
-            CatColor.Tortoiseshell => 5,
-            CatColor.Tabby => 3,
-            _ => 0
-        };
-
-        if (IsMale)
-        {
-            priority += 5;
-        }
-
-        AdoptionPriorityScore score = AdoptionPriorityScore.Create(priority);
-        return score;
     }
 }

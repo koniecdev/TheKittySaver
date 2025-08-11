@@ -272,5 +272,71 @@ public static class DomainErrors
                     actualValue,
                     maximumValue);
         }
+        
+        public static class AdoptionHistoryProperty
+        {
+            public static Error CountTooLow
+                => CustomMessage(nameof(Cat), nameof(Cat.AdoptionHistory.ReturnCount),
+                    "If cat has been returned, then it must has been returned at least one time.");
+            public static Error LastReturnTooFarInPast
+                => CustomMessage(nameof(Cat), nameof(Cat.AdoptionHistory.LastReturnDate),
+                    "Invalid last return date has been provided.");
+            public static Error LastReturnReasonIsEmpty
+                => Required(nameof(Cat), nameof(Cat.AdoptionHistory.LastReturnReason));
+        }
+        
+        public static class ListingSourceProperty
+        {
+            public static Error SourceNameIsNullOrEmpty 
+                => Required(
+                    nameof(Cat),
+                    $"{nameof(Cat.ListingSource)}.{nameof(Cat.ListingSource.SourceName)}");
+            
+            public static Error SourceNameIsLongerThanAllowed 
+                => TooLong(
+                    nameof(Cat),
+                    $"{nameof(Cat.ListingSource)}.{nameof(Cat.ListingSource.SourceName)}",
+                    ListingSource.MaxSourceNameLength);
+            
+            public static Error TypeIsUnset 
+                => Required(
+                    nameof(Cat),
+                    $"{nameof(Cat.SpecialNeeds)}.{nameof(Cat.ListingSource.Type)}");
+        }
+        
+        public static class SpecialNeedsStatusProperty
+        {
+            public static Error DescriptionIsNullOrEmpty 
+                => Required(
+                    nameof(Cat),
+                    $"{nameof(Cat.SpecialNeeds)}.{nameof(Cat.SpecialNeeds.Description)}");
+            
+            public static Error DescriptionIsLongerThanAllowed 
+                => TooLong(
+                    nameof(Cat),
+                    $"{nameof(Cat.SpecialNeeds)}.{nameof(Cat.SpecialNeeds.Description)}",
+                    SpecialNeedsStatus.MaxDescriptionLength);
+            
+            public static Error SpecialNeedsSeverityIsUnset 
+                => Required(
+                    nameof(Cat),
+                    $"{nameof(Cat.SpecialNeeds)}.{nameof(Cat.SpecialNeeds.SeverityType)}");
+        }
+    }
+    
+    public static class AdoptionPriorityScoreValueObject
+    {
+        public static Error BelowMinimalAllowedValue(decimal actualValue, decimal minimumValue) 
+            => BelowValue(
+                nameof(Cat),
+                nameof(AdoptionPriorityScore),
+                actualValue,
+                minimumValue);
+        public static Error AboveMaximumAllowedValue(decimal actualValue, decimal maximumValue)
+            => AboveValue(
+                nameof(Cat),
+                nameof(AdoptionPriorityScore),
+                actualValue,
+                maximumValue);
     }
 }

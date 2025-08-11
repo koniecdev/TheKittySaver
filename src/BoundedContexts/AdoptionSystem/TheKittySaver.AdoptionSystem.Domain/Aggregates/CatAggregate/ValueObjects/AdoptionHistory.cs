@@ -10,26 +10,57 @@ public sealed class AdoptionHistory : ValueObject
     public DateTime? LastReturnDate { get; }
     public string? LastReturnReason { get; }
     
-    public static AdoptionHistory NeverAdopted() 
-        => new(0, null, null);
-    
-    public static Result<AdoptionHistory> Returned(int count, DateTime lastReturn, string reason)
+    public AdoptionPriorityScore CalculatePriorityPoints()
     {
-        if (count < 0)
+        if (ReturnCount == 0)
         {
-            return Result.Failure<AdoptionHistory>(DomainErrors.CatEntity.AdoptionHistory.CountTooLow);
-        }
-        if (lastReturn < DateTime.UnixEpoch)
-        {
-            return Result.Failure<AdoptionHistory>(DomainErrors.CatEntity.AdoptionHistory.LastReturnTooFarInPast);
-        }
-        if (string.IsNullOrWhiteSpace(reason))
-        {
-            return Result.Failure<AdoptionHistory>(DomainErrors.CatEntity.AdoptionHistory.NoReasonProvided);
+            Result<AdoptionPriorityScore> zeroAdoptionPriorityScoreResult = AdoptionPriorityScore.Create(0);
+            return zeroAdoptionPriorityScoreResult.IsSuccess
+                ? zeroAdoptionPriorityScoreResult.Value
+                : throw new InvalidOperationException("Something went wrong while calculating priority points");
         }
         
-        AdoptionHistory instance = new(count, lastReturn, reason);
-        return instance;
+        int basePoints = ReturnCount * 10;
+        
+        int resultPoints = Math.Min(basePoints, 25);
+        
+        Result<AdoptionPriorityScore> result = AdoptionPriorityScore.Create(resultPoints);
+        
+        return result.IsSuccess
+            ? result.Value
+            : throw new InvalidOperationException("Something went wrong while calculating priority points");
+    }
+    
+    public static AdoptionHistory CatHasNeverBeenAdopted() 
+        => new(0, null, null);
+    
+    public static Result<AdoptionHistory> CatHasBeenReturned(
+        int countHowManyTimesWasTheCatReturned,
+        DateTime lastReturn,
+        string reason)
+    {
+        if (countHowManyTimesWasTheCatReturned < 0)
+        {
+            return Result.Failure<AdoptionHistory>(
+                DomainErrors.CatEntity.AdoptionHistoryProperty.CountTooLow);
+        }
+    
+        if (lastReturn < DateTime.UnixEpoch)
+        {
+            return Result.Failure<AdoptionHistory>(
+                DomainErrors.CatEntity.AdoptionHistoryProperty.LastReturnTooFarInPast);
+        }
+    
+        if (string.IsNullOrWhiteSpace(reason))
+        {
+            return Result.Failure<AdoptionHistory>(
+                DomainErrors.CatEntity.AdoptionHistoryProperty.LastReturnReasonIsEmpty);
+        }
+    
+        string trimmedReason = reason.Trim();
+        AdoptionHistory adoptionHistory = new(countHowManyTimesWasTheCatReturned, lastReturn, trimmedReason);
+    
+        return Result.Success(adoptionHistory);
     }
 
     private AdoptionHistory(int returnCount, DateTime? lastReturnDate, string? lastReturnReason)
@@ -39,18 +70,6 @@ public sealed class AdoptionHistory : ValueObject
         LastReturnReason = lastReturnReason;
     }
     
-    public decimal CalculatePriorityPoints()
-    {
-        if (ReturnCount == 0)
-        {
-            return 0;
-        }
-        
-        int basePoints = ReturnCount * 10;
-        
-        return Math.Min(basePoints, 25);
-    }
-
     protected override IEnumerable<object> GetAtomicValues()
     {
         yield return ReturnCount;

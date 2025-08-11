@@ -106,4 +106,7 @@ public static class ResultExtensions
     
     public static Result<string> TrimValue(this Result<string> result) 
         => result.Map(value => value.Trim());
+    
+    public static Result<string> EnsureNotEmpty(this Result<string> result, Error error)
+        => result.Ensure(v => !string.IsNullOrWhiteSpace(v), error);
 }
