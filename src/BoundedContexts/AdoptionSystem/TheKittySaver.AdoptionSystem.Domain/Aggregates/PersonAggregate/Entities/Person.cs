@@ -155,27 +155,31 @@ public sealed class Person : AggregateRoot<PersonId>
         Username = username;
     }
     
-    internal void UpdateEmail(Email email)
+    public void UpdateEmail(Email email)
     {
         ArgumentNullException.ThrowIfNull(email);
         Email = email;
     }
     
-    internal void UpdatePhoneNumber(PhoneNumber phoneNumber)
+    public void UpdatePhoneNumber(PhoneNumber phoneNumber)
     {
         ArgumentNullException.ThrowIfNull(phoneNumber);
         PhoneNumber = phoneNumber;
     }
     
-    internal static Person Create(Username username, Email email, PhoneNumber phoneNumber)
+    public static Result<Person> Create(
+        Username username,
+        Email email,
+        PhoneNumber phoneNumber)
     {
         ArgumentNullException.ThrowIfNull(username);
         ArgumentNullException.ThrowIfNull(email);
         ArgumentNullException.ThrowIfNull(phoneNumber);
         
         PersonId id = PersonId.New();
-        Person person = new(id, username, email, phoneNumber);
-        return person;
+        Person instance = new(id, username, email, phoneNumber);
+        
+        return Result.Success(instance);
     }
 
     private Person(

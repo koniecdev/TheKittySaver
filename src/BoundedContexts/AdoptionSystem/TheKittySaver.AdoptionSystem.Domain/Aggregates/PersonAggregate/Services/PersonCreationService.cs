@@ -37,8 +37,10 @@ public sealed class PersonCreationService : IPersonCreationService
             return Result.Failure<Person>(DomainErrors.PersonEntity.PhoneNumberProperty.AlreadyTaken(phoneNumber));
         }
 
-        Person person = Person.Create(username, email, phoneNumber);
+        Result<Person> createPersonResult = Person.Create(username, email, phoneNumber);
         
-        return Result.Success(person);
+        return createPersonResult.IsFailure 
+            ? Result.Failure<Person>(createPersonResult.Error) 
+            : Result.Success(createPersonResult.Value);
     }
 }
