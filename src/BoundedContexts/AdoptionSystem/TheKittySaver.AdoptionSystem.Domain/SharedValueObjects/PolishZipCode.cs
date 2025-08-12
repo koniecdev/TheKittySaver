@@ -7,27 +7,37 @@ namespace TheKittySaver.AdoptionSystem.Domain.SharedValueObjects;
 
 public sealed partial class PolishZipCode : ValueObject
 {
-    public const int Length = 6;
     private const string ZipCodePattern = @"^\d{2}-\d{3}$";
+    public const int Length = 6;
     public string Value { get; }
-    public override string ToString() => Value;
-    public static implicit operator string(PolishZipCode value) => value.Value;
 
     public static Result<PolishZipCode> Create(string value)
     {
-        Result<PolishZipCode> result = Result
-            .Create(value, DomainErrors.PolishAddressEntity.ZipCodeProperty.NullOrEmpty)
-            .TrimValue()
-            .Ensure(v => !string.IsNullOrWhiteSpace(v),
-                DomainErrors.PolishAddressEntity.ZipCodeProperty.NullOrEmpty)
-            .Ensure(v => ZipCodeRegex().IsMatch(v),
-                DomainErrors.PolishAddressEntity.ZipCodeProperty.InvalidFormat)
-            .Map(v => new PolishZipCode(v));
-        return result;
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return Result.Failure<PolishZipCode>(
+                DomainErrors.PolishAddressEntity.ZipCodeProperty.NullOrEmpty);
+        }
+        
+        string trimmedValue = value.Trim();
+        
+        if (trimmedValue.Length != Length || !ZipCodeRegex().IsMatch(trimmedValue))
+        {
+            return Result.Failure<PolishZipCode>(
+                DomainErrors.PolishAddressEntity.ZipCodeProperty.InvalidFormat);
+        }
+        
+        PolishZipCode instance = new(trimmedValue);
+        return Result.Success(instance);
     }
 
-    private PolishZipCode(string value) => Value = value;
+    private PolishZipCode(string value)
+    {
+        Value = value;
+    }
 
+    public override string ToString() => Value;
+    public static implicit operator string(PolishZipCode value) => value.Value;
     protected override IEnumerable<object> GetAtomicValues()
     {
         yield return Value;

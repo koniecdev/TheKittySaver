@@ -9,18 +9,31 @@ public sealed class Username : ValueObject
     public const int MaxLength = 150;
     public string Value { get; }
     
-    public override string ToString() => Value;
-    public static implicit operator string(Username value) => value.Value;
-    
-    public static Result<Username> Create(string value) =>
-        Result.Create(value, DomainErrors.PersonEntity.UsernameProperty.NullOrEmpty)
-            .TrimValue()
-            .Ensure(v => !string.IsNullOrWhiteSpace(v), DomainErrors.PersonEntity.UsernameProperty.NullOrEmpty)
-            .Ensure(v => v.Length <= MaxLength, DomainErrors.PersonEntity.UsernameProperty.LongerThanAllowed)
-            .Map(v => new Username(v));
-    
-    private Username(string value) => Value = value;
+    public static Result<Username> Create(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return Result.Failure<Username>(DomainErrors.PersonEntity.UsernameProperty.NullOrEmpty);
+        }
 
+        string trimmedValue = value.Trim();
+        
+        if (trimmedValue.Length > MaxLength)
+        {
+            return Result.Failure<Username>(DomainErrors.PersonEntity.UsernameProperty.LongerThanAllowed);
+        }
+
+        Username instance = new(trimmedValue);
+        return Result.Success(instance);
+    }
+    
+    private Username(string value)
+    {
+        Value = value;
+    }
+
+    public static implicit operator string(Username value) => value.Value;
+    public override string ToString() => Value;
     protected override IEnumerable<object> GetAtomicValues()
     {
         yield return Value;

@@ -9,21 +9,31 @@ public sealed class AddressName : ValueObject
     public const int MaxLength = 150;
     public string Value { get; }
     
-    public override string ToString() => Value;
-    public static implicit operator string(AddressName value) => value.Value;
-    
     public static Result<AddressName> Create(string value)
     {
-        Result<AddressName> result = Result.Create(value, DomainErrors.PolishAddressEntity.NameProperty.NullOrEmpty)
-            .TrimValue()
-            .Ensure(v => !string.IsNullOrWhiteSpace(v), DomainErrors.PolishAddressEntity.NameProperty.NullOrEmpty)
-            .Ensure(v => v.Length <= MaxLength, DomainErrors.PolishAddressEntity.NameProperty.LongerThanAllowed)
-            .Map(v => new AddressName(v));
-        return result;
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return Result.Failure<AddressName>(DomainErrors.PolishAddressEntity.NameProperty.NullOrEmpty);
+        }
+
+        string trimmedValue = value.Trim();
+        
+        if (trimmedValue.Length > MaxLength)
+        {
+            return Result.Failure<AddressName>(DomainErrors.PolishAddressEntity.NameProperty.LongerThanAllowed);
+        }
+
+        AddressName instance = new(trimmedValue);
+        return Result.Success(instance);
     }
 
-    private AddressName(string value) => Value = value;
+    private AddressName(string value)
+    {
+        Value = value;
+    }
 
+    public static implicit operator string(AddressName value) => value.Value;
+    public override string ToString() => Value;
     protected override IEnumerable<object> GetAtomicValues()
     {
         yield return Value;

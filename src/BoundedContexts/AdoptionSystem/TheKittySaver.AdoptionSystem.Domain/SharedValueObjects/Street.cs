@@ -9,23 +9,31 @@ public sealed class Street : ValueObject
     public const int MaxLength = 200;
     public string Value { get; }
     
-    public override string ToString() => Value;
-    public static implicit operator string(Street value) => value.Value;
-    
     public static Result<Street> Create(string value)
     {
-        Result<Street> result = Result.Create(value, DomainErrors.PolishAddressEntity.StreetProperty.NullOrEmpty)
-            .TrimValue()
-            .Ensure(v => !string.IsNullOrWhiteSpace(v),
-                DomainErrors.PolishAddressEntity.StreetProperty.NullOrEmpty)
-            .Ensure(v => v.Length <= MaxLength,
-                DomainErrors.PolishAddressEntity.StreetProperty.LongerThanAllowed)
-            .Map(v => new Street(v));
-        return result;
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return Result.Failure<Street>(DomainErrors.PolishAddressEntity.StreetProperty.NullOrEmpty);
+        }
+        
+        string trimmedValue = value.Trim();
+        
+        if (trimmedValue.Length > MaxLength)
+        {
+            return Result.Failure<Street>(DomainErrors.PolishAddressEntity.StreetProperty.LongerThanAllowed);
+        }
+        
+        Street instance = new(trimmedValue);
+        return Result.Success(instance);
     }
 
-    private Street(string value) => Value = value;
+    private Street(string value)
+    {
+        Value = value;
+    }
 
+    public static implicit operator string(Street value) => value.Value;
+    public override string ToString() => Value;
     protected override IEnumerable<object> GetAtomicValues()
     {
         yield return Value;

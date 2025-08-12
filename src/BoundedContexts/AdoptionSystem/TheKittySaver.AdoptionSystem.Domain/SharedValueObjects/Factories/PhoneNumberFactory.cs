@@ -19,21 +19,29 @@ public sealed class PhoneNumberFactory : IPhoneNumberFactory
     
     public Result<PhoneNumber> Create(string value)
     {
-        Result<PhoneNumber> result = Result.Create(value, DomainErrors.PersonEntity.PhoneNumberProperty.NullOrEmpty)
-            .TrimValue()
-            .Ensure(v => !string.IsNullOrWhiteSpace(v), 
-                DomainErrors.PersonEntity.PhoneNumberProperty.NullOrEmpty)
-            .Ensure(v => v.Length <= PhoneNumber.MaxLength, 
-                DomainErrors.PersonEntity.PhoneNumberProperty.LongerThanAllowed)
-            .Ensure(v => _specification.IsSatisfiedBy(v),
-                DomainErrors.PersonEntity.PhoneNumberProperty.InvalidFormat)
-            .Map(v =>
-            {
-                string normalized = _phoneNumberNormalizer.Normalize(v);
-                PhoneNumber instance = PhoneNumber.CreateUnsafe(normalized);
-                return instance;
-            });
-
-        return result;
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return Result.Failure<PhoneNumber>(
+                DomainErrors.PersonEntity.PhoneNumberProperty.NullOrEmpty);
+        }
+        
+        string trimmedValue = value.Trim();
+        
+        if (trimmedValue.Length > PhoneNumber.MaxLength)
+        {
+            return Result.Failure<PhoneNumber>(
+                DomainErrors.PersonEntity.PhoneNumberProperty.LongerThanAllowed);
+        }
+        
+        if (!_specification.IsSatisfiedBy(trimmedValue))
+        {
+            return Result.Failure<PhoneNumber>(
+                DomainErrors.PersonEntity.PhoneNumberProperty.InvalidFormat);
+        }
+        
+        string normalized = _phoneNumberNormalizer.Normalize(trimmedValue);
+        PhoneNumber instance = PhoneNumber.CreateUnsafe(normalized);
+        
+        return Result.Success(instance);
     }
 }

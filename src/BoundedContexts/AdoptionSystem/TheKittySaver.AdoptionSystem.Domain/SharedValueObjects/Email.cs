@@ -12,22 +12,36 @@ public sealed partial class Email : ValueObject
     private static readonly Regex EmailRegex = MailRegex();
     public string Value { get; }
     
-    public override string ToString() => Value;
-    public static implicit operator string(Email value) => value.Value;
-    
     public static Result<Email> Create(string value)
     {
-        Result<Email> result = Result.Create(value, DomainErrors.PersonEntity.EmailProperty.NullOrEmpty)
-            .TrimValue()
-            .Ensure(v => !string.IsNullOrWhiteSpace(v), DomainErrors.PersonEntity.EmailProperty.NullOrEmpty)
-            .Ensure(v => v.Length <= MaxLength, DomainErrors.PersonEntity.EmailProperty.LongerThanAllowed)
-            .Ensure(v => EmailRegex.IsMatch(v), DomainErrors.PersonEntity.EmailProperty.InvalidFormat)
-            .Map(v => new Email(v));
-        return result;
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return Result.Failure<Email>(DomainErrors.PersonEntity.EmailProperty.NullOrEmpty);
+        }
+        
+        string trimmedValue = value.Trim();
+        
+        if (trimmedValue.Length > MaxLength)
+        {
+            return Result.Failure<Email>(DomainErrors.PersonEntity.EmailProperty.LongerThanAllowed);
+        }
+        
+        if (!EmailRegex.IsMatch(trimmedValue))
+        {
+            return Result.Failure<Email>(DomainErrors.PersonEntity.EmailProperty.InvalidFormat);
+        }
+        
+        Email instance = new(trimmedValue);
+        return Result.Success(instance);
     }
 
-    private Email(string value) => Value = value;
+    private Email(string value)
+    {
+        Value = value;
+    }
 
+    public static implicit operator string(Email value) => value.Value;
+    public override string ToString() => Value;
     protected override IEnumerable<object> GetAtomicValues()
     {
         yield return Value;

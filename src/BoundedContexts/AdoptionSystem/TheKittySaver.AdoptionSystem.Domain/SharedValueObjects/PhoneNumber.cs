@@ -7,11 +7,7 @@ namespace TheKittySaver.AdoptionSystem.Domain.SharedValueObjects;
 public sealed class PhoneNumber : ValueObject
 {
     public const int MaxLength = 30;
-    
     public string Value { get; }
-    
-    public override string ToString() => Value;
-    public static implicit operator string(PhoneNumber value) => value.Value;
     
     /// <summary>
     /// This method should only be called by respected PhoneNumberFactory that check for phoneNumber invariants. 
@@ -32,6 +28,8 @@ public sealed class PhoneNumber : ValueObject
         Value = value;
     }
     
+    public static implicit operator string(PhoneNumber value) => value.Value;
+    public override string ToString() => Value;
     protected override IEnumerable<object> GetAtomicValues()
     {
         yield return Value;
