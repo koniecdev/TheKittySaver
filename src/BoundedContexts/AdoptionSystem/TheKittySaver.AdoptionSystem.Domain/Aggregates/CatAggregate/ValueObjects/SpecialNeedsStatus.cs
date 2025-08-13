@@ -21,7 +21,7 @@ public sealed class SpecialNeedsStatus : ValueObject
     public string? Description { get; }
     public SpecialNeedsSeverityType SeverityType { get; }
     
-    public AdoptionPriorityScore CalculatePriorityPoints()
+    public Result<AdoptionPriorityScore> CalculatePriorityPoints()
     {
         int points = SeverityType switch
         {
@@ -33,10 +33,7 @@ public sealed class SpecialNeedsStatus : ValueObject
         };
 
         Result<AdoptionPriorityScore> result = AdoptionPriorityScore.Create(points);
-        
-        return result.IsSuccess
-            ? result.Value
-            : throw new InvalidOperationException("Something went wrong while calculating priority points");
+        return result;   
     }
     
     public static SpecialNeedsStatus None() => new(false, null, SpecialNeedsSeverityType.None);

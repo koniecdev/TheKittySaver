@@ -21,7 +21,7 @@ public sealed class ListingSource : ValueObject
     public ListingSourceType Type { get; }
     public string SourceName { get; }
     
-    public AdoptionPriorityScore CalculatePriorityScore()
+    public Result<AdoptionPriorityScore> CalculatePriorityScore()
     {
         decimal points = Type switch
         {

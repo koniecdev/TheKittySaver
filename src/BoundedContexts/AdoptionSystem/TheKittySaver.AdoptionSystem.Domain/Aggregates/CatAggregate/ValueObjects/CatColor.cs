@@ -22,7 +22,7 @@ public sealed class CatColor : ValueObject
     
     public ColorType Value { get; }
     
-    public AdoptionPriorityScore CalculatePriorityScore()
+    public Result<AdoptionPriorityScore> CalculatePriorityScore()
     {
         decimal points = Value switch
         {
@@ -34,10 +34,7 @@ public sealed class CatColor : ValueObject
         };
         
         Result<AdoptionPriorityScore> result = AdoptionPriorityScore.Create(points);
-        
-        return result.IsSuccess
-            ? result.Value
-            : throw new InvalidOperationException("Something went wrong while calculating priority points");
+        return result;
     }
     
     public static CatColor Black() => new(ColorType.Black);

@@ -10,7 +10,7 @@ public sealed class AdoptionHistory : ValueObject
     public DateTime? LastReturnDate { get; }
     public string? LastReturnReason { get; }
     
-    public AdoptionPriorityScore CalculatePriorityPoints()
+    public Result<AdoptionPriorityScore> CalculatePriorityPoints()
     {
         if (ReturnCount == 0)
         {
@@ -25,10 +25,7 @@ public sealed class AdoptionHistory : ValueObject
         int resultPoints = Math.Min(basePoints, 25);
         
         Result<AdoptionPriorityScore> result = AdoptionPriorityScore.Create(resultPoints);
-        
-        return result.IsSuccess
-            ? result.Value
-            : throw new InvalidOperationException("Something went wrong while calculating priority points");
+        return result;
     }
     
     public static AdoptionHistory CatHasNeverBeenAdopted() 

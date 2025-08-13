@@ -10,7 +10,7 @@ public sealed class CatAge : ValueObject
     public const int MaximumAllowedValue = 38;
     public int Value { get; }
     
-    public AdoptionPriorityScore CalculatePriorityScore()
+    public Result<AdoptionPriorityScore> CalculatePriorityScore()
     {
         decimal points = Value switch
         {
@@ -23,10 +23,8 @@ public sealed class CatAge : ValueObject
         };
         
         Result<AdoptionPriorityScore> result = AdoptionPriorityScore.Create(points);
-        
-        return result.IsSuccess
-            ? result.Value
-            : throw new InvalidOperationException("Something went wrong while calculating priority points");
+
+        return result;
     }
     
     public static Result<CatAge> Create(int value)

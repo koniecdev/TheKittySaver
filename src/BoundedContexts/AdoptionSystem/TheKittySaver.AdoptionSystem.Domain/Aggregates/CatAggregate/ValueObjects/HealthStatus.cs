@@ -18,7 +18,7 @@ public sealed class HealthStatus : ValueObject
     
     public StatusType Value { get; }
     
-    public AdoptionPriorityScore CalculatePriorityScore()
+    public Result<AdoptionPriorityScore> CalculatePriorityScore()
     {
         decimal points = Value switch
         {
@@ -30,10 +30,8 @@ public sealed class HealthStatus : ValueObject
         };
         
         Result<AdoptionPriorityScore> result = AdoptionPriorityScore.Create(points);
-        
-        return result.IsSuccess
-            ? result.Value
-            : throw new InvalidOperationException("Something went wrong while calculating priority points");
+
+        return result;
     }
     
     public static HealthStatus Healthy() => new(StatusType.Healthy);
