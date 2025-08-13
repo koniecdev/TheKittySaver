@@ -196,10 +196,10 @@ public sealed class Person : AggregateRoot<PersonId>
     private bool IsAddressNameTaken(AddressName name, PolishAddressId? idToExcludeInSearch = null)
     {
         bool isTaken = _polishAddresses.Any(address => 
-            address.Name == name && 
-            (idToExcludeInSearch is null || address.Id != idToExcludeInSearch.Value));
+            address.Name == name
+            && (idToExcludeInSearch is null || address.Id != idToExcludeInSearch.Value));
         return isTaken;
-    }
+    }   
     
     private Maybe<PolishAddress> GetPolishAddressById(PolishAddressId id)
     {
