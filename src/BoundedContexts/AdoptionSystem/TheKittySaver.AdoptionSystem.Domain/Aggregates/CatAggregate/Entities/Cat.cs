@@ -17,21 +17,31 @@ public sealed class Cat : AggregateRoot<CatId>
     public ListingSource ListingSource { get; private set; }
     public CatColor Color { get; private set; }
 
-    /// <summary>
-    /// Oblicza priorytet adopcji dla kota. Im wyższa wartość, tym większa potrzeba adopcji.
-    /// </summary>
     public Result<AdoptionPriorityScore> CalculateAdoptionPriority()
     {
-        decimal priority = 0;
+        Func<Result<AdoptionPriorityScore>>[] calculators =
+        [
+            () => Age.CalculatePriorityScore(),
+            () => HealthStatus.CalculatePriorityScore(),
+            () => SpecialNeeds.CalculatePriorityPoints(),
+            () => Temperament.CalculatePriorityScore(),
+            () => AdoptionHistory.CalculatePriorityPoints(),
+            () => ListingSource.CalculatePriorityScore(),
+            () => Color.CalculatePriorityScore(),
+            () => Gender.CalculatePriorityScore()
+        ];
 
-        priority += Age.CalculatePriorityScore().Value;
-        priority += HealthStatus.CalculatePriorityScore().Value;
-        priority += SpecialNeeds.CalculatePriorityPoints().Value;
-        priority += Temperament.CalculatePriorityScore().Value;
-        priority += AdoptionHistory.CalculatePriorityPoints().Value;
-        priority += ListingSource.CalculatePriorityScore().Value;
-        priority += Color.CalculatePriorityScore().Value;
-        priority += Gender.CalculatePriorityScore().Value;
+        decimal priority = 0;
+        foreach (Func<Result<AdoptionPriorityScore>> calculator in calculators)
+        {
+            Result<AdoptionPriorityScore> result = calculator();
+            if (result.IsFailure)
+            {
+                return result;
+            }
+        
+            priority += result.Value.Value;
+        }
 
         return AdoptionPriorityScore.Create(priority);
     }
