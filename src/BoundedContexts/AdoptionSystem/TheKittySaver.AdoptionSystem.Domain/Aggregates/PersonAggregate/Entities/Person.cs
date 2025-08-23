@@ -149,25 +149,28 @@ public sealed class Person : AggregateRoot<PersonId>
         return Result.Success();
     }
     
-    public void UpdateUsername(Username username)
+    internal Result UpdateUsername(Username username)
     {
         ArgumentNullException.ThrowIfNull(username);
         Username = username;
+        return Result.Success();
     }
     
-    public void UpdateEmail(Email email)
+    internal Result UpdateEmail(Email email)
     {
         ArgumentNullException.ThrowIfNull(email);
         Email = email;
+        return Result.Success();
     }
     
-    public void UpdatePhoneNumber(PhoneNumber phoneNumber)
+    internal Result UpdatePhoneNumber(PhoneNumber phoneNumber)
     {
         ArgumentNullException.ThrowIfNull(phoneNumber);
         PhoneNumber = phoneNumber;
+        return Result.Success();
     }
     
-    public static Result<Person> Create(
+    internal static Result<Person> Create(
         Username username,
         Email email,
         PhoneNumber phoneNumber)

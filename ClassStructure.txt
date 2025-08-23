@@ -2,6 +2,8 @@
 {
     enums definitions
     
+    private static readonly values
+    
     private consts
     public consts
     
@@ -20,6 +22,8 @@
     implicit operators
     tostring override
     equality contract
+    
+    compiled regex
 }
 
 public sealed class Entity

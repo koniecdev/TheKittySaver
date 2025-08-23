@@ -32,8 +32,8 @@ public sealed class Street : ValueObject
         Value = value;
     }
 
-    public static implicit operator string(Street value) => value.Value;
     public override string ToString() => Value;
+    public static implicit operator string(Street value) => value.Value;
     protected override IEnumerable<object> GetAtomicValues()
     {
         yield return Value;

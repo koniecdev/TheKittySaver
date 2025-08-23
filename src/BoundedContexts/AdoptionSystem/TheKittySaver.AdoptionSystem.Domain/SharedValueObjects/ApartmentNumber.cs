@@ -7,6 +7,7 @@ namespace TheKittySaver.AdoptionSystem.Domain.SharedValueObjects;
 public sealed class ApartmentNumber : ValueObject
 {
     public const int MaxLength = 10;
+    
     public string Value { get; }
     
     public static Result<ApartmentNumber> Create(string value)
@@ -17,15 +18,15 @@ public sealed class ApartmentNumber : ValueObject
                 DomainErrors.PolishAddressEntity.ApartmentNumberProperty.NullOrEmpty);
         }
         
-        string trimmedValue = value.Trim();
+        value = value.Trim();
         
-        if (trimmedValue.Length > MaxLength)
+        if (value.Length > MaxLength)
         {
             return Result.Failure<ApartmentNumber>(
                 DomainErrors.PolishAddressEntity.ApartmentNumberProperty.LongerThanAllowed);
         }
         
-        ApartmentNumber instance = new(trimmedValue);
+        ApartmentNumber instance = new(value);
         return Result.Success(instance);
     }
     
@@ -34,8 +35,8 @@ public sealed class ApartmentNumber : ValueObject
         Value = value;
     }
 
-    public static implicit operator string(ApartmentNumber value) => value.Value;
     public override string ToString() => Value;
+    public static implicit operator string(ApartmentNumber value) => value.Value;
     protected override IEnumerable<object> GetAtomicValues()
     {
         yield return Value;

@@ -10,11 +10,11 @@ namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.Service
 
 public sealed class PersonCreationService : IPersonCreationService
 {
-    private readonly IPersonRepository _personRepository;
+    private readonly IPersonUniquenessRepository _personUniquenessRepository;
 
-    public PersonCreationService(IPersonRepository personRepository)
+    public PersonCreationService(IPersonUniquenessRepository personUniquenessRepository)
     {
-        _personRepository = personRepository;
+        _personUniquenessRepository = personUniquenessRepository;
     }
 
     public async Task<Result<Person>> CreateAsync(
@@ -27,20 +27,18 @@ public sealed class PersonCreationService : IPersonCreationService
         ArgumentNullException.ThrowIfNull(email);
         ArgumentNullException.ThrowIfNull(phoneNumber);
         
-        if (await _personRepository.IsEmailTakenAsync(email, cancellationToken: cancellationToken))
+        if (await _personUniquenessRepository.IsEmailTakenAsync(email, cancellationToken: cancellationToken))
         {
             return Result.Failure<Person>(DomainErrors.PersonEntity.EmailProperty.AlreadyTaken(email));
         }
 
-        if (await _personRepository.IsPhoneNumberTakenAsync(phoneNumber, cancellationToken: cancellationToken))
+        if (await _personUniquenessRepository.IsPhoneNumberTakenAsync(phoneNumber, cancellationToken: cancellationToken))
         {
             return Result.Failure<Person>(DomainErrors.PersonEntity.PhoneNumberProperty.AlreadyTaken(phoneNumber));
         }
 
         Result<Person> createPersonResult = Person.Create(username, email, phoneNumber);
         
-        return createPersonResult.IsFailure 
-            ? Result.Failure<Person>(createPersonResult.Error) 
-            : Result.Success(createPersonResult.Value);
+        return createPersonResult;
     }
 }

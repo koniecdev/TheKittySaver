@@ -20,7 +20,6 @@ public class LibPhoneNumberNormalizer : IPhoneNumberNormalizer
         {
             PhoneNumber parsedNumber;
             
-            // Ta sama logika parsowania co w walidatorze
             if (phoneNumber.StartsWith('+') || phoneNumber.StartsWith("00"))
             {
                 parsedNumber = _phoneNumberUtil.Parse(phoneNumber, null);
@@ -30,8 +29,6 @@ public class LibPhoneNumberNormalizer : IPhoneNumberNormalizer
                 parsedNumber = _phoneNumberUtil.Parse(phoneNumber, "PL");
             }
             
-            // Normalizuj do formatu E164 (np. +48123456789)
-            // Ten format jest uniwersalny i jednoznaczny
             string normalized = _phoneNumberUtil.Format(parsedNumber, PhoneNumberFormat.E164);
             return normalized;
         }

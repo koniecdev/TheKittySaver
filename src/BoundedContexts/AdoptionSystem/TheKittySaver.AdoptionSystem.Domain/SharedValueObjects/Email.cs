@@ -7,9 +7,11 @@ namespace TheKittySaver.AdoptionSystem.Domain.SharedValueObjects;
 
 public sealed partial class Email : ValueObject
 {
+    private static readonly Regex EmailRegex = MailRegex();
+    
     public const int MaxLength = 250;
     public const string RegexPattern = @"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$";
-    private static readonly Regex EmailRegex = MailRegex();
+    
     public string Value { get; }
     
     public static Result<Email> Create(string value)
@@ -19,19 +21,19 @@ public sealed partial class Email : ValueObject
             return Result.Failure<Email>(DomainErrors.PersonEntity.EmailProperty.NullOrEmpty);
         }
         
-        string trimmedValue = value.Trim();
+        value = value.Trim();
         
-        if (trimmedValue.Length > MaxLength)
+        if (value.Length > MaxLength)
         {
             return Result.Failure<Email>(DomainErrors.PersonEntity.EmailProperty.LongerThanAllowed);
         }
         
-        if (!EmailRegex.IsMatch(trimmedValue))
+        if (!EmailRegex.IsMatch(value))
         {
             return Result.Failure<Email>(DomainErrors.PersonEntity.EmailProperty.InvalidFormat);
         }
         
-        Email instance = new(trimmedValue);
+        Email instance = new(value);
         return Result.Success(instance);
     }
 
@@ -40,8 +42,8 @@ public sealed partial class Email : ValueObject
         Value = value;
     }
 
-    public static implicit operator string(Email value) => value.Value;
     public override string ToString() => Value;
+    public static implicit operator string(Email value) => value.Value;
     protected override IEnumerable<object> GetAtomicValues()
     {
         yield return Value;

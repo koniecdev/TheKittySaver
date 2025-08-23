@@ -7,6 +7,7 @@ namespace TheKittySaver.AdoptionSystem.Domain.SharedValueObjects;
 public sealed class City : ValueObject
 {
     public const int MaxLength = 100;
+    
     public string Value { get; }
     
     public static Result<City> Create(string value)
@@ -16,14 +17,14 @@ public sealed class City : ValueObject
             return Result.Failure<City>(DomainErrors.PolishAddressEntity.CityProperty.NullOrEmpty);
         }
         
-        string trimmedValue = value.Trim();
+        value = value.Trim();
         
-        if (trimmedValue.Length > MaxLength)
+        if (value.Length > MaxLength)
         {
             return Result.Failure<City>(DomainErrors.PolishAddressEntity.CityProperty.LongerThanAllowed);
         }
         
-        City instance = new(trimmedValue);
+        City instance = new(value);
         return Result.Success(instance);
     }
 
@@ -32,8 +33,8 @@ public sealed class City : ValueObject
         Value = value;
     }
     
-    public static implicit operator string(City value) => value.Value;
     public override string ToString() => Value;
+    public static implicit operator string(City value) => value.Value;
     protected override IEnumerable<object> GetAtomicValues()
     {
         yield return Value;

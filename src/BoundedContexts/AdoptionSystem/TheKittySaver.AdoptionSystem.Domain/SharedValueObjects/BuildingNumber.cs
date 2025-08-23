@@ -7,10 +7,9 @@ namespace TheKittySaver.AdoptionSystem.Domain.SharedValueObjects;
 public sealed class BuildingNumber : ValueObject
 {
     public const int MaxLength = 10;
+    
     public string Value { get; }
     
-    public override string ToString() => Value;
-    public static implicit operator string(BuildingNumber value) => value.Value;
     
     public static Result<BuildingNumber> Create(string value)
     {
@@ -20,19 +19,25 @@ public sealed class BuildingNumber : ValueObject
                 DomainErrors.PolishAddressEntity.BuildingNumberProperty.NullOrEmpty);
         }
         
-        string trimmedValue = value.Trim();
+        value = value.Trim();
         
-        if (trimmedValue.Length > MaxLength)
+        if (value.Length > MaxLength)
         {
             return Result.Failure<BuildingNumber>(
                 DomainErrors.PolishAddressEntity.BuildingNumberProperty.LongerThanAllowed);
         }
         
-        BuildingNumber instance = new(trimmedValue);
+        BuildingNumber instance = new(value);
         return Result.Success(instance);
     }
 
-    private BuildingNumber(string value) => Value = value;
+    private BuildingNumber(string value)
+    {
+        Value = value;
+    }
+
+    public override string ToString() => Value;
+    public static implicit operator string(BuildingNumber value) => value.Value;
 
     protected override IEnumerable<object> GetAtomicValues()
     {

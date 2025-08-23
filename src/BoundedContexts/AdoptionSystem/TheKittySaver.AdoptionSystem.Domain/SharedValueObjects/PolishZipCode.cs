@@ -7,8 +7,11 @@ namespace TheKittySaver.AdoptionSystem.Domain.SharedValueObjects;
 
 public sealed partial class PolishZipCode : ValueObject
 {
-    private const string ZipCodePattern = @"^\d{2}-\d{3}$";
-    public const int Length = 6;
+    private static readonly Regex PolishZipCodeRegex = ZipCodeRegex();
+    
+    public const int RequiredLength = 6;
+    public const string ZipCodePattern = @"^\d{2}-\d{3}$";
+    
     public string Value { get; }
 
     public static Result<PolishZipCode> Create(string value)
@@ -19,15 +22,15 @@ public sealed partial class PolishZipCode : ValueObject
                 DomainErrors.PolishAddressEntity.ZipCodeProperty.NullOrEmpty);
         }
         
-        string trimmedValue = value.Trim();
+        value = value.Trim();
         
-        if (trimmedValue.Length != Length || !ZipCodeRegex().IsMatch(trimmedValue))
+        if (value.Length != RequiredLength || !PolishZipCodeRegex.IsMatch(value))
         {
             return Result.Failure<PolishZipCode>(
                 DomainErrors.PolishAddressEntity.ZipCodeProperty.InvalidFormat);
         }
         
-        PolishZipCode instance = new(trimmedValue);
+        PolishZipCode instance = new(value);
         return Result.Success(instance);
     }
 
