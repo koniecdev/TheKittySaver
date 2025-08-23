@@ -1,4 +1,5 @@
-﻿using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
+﻿using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Entities;
+using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 using TheKittySaver.AdoptionSystem.Domain.Core.Primitives.BuildingBlocks;
 using TheKittySaver.AdoptionSystem.Domain.Core.Primitives.ResultMonad;
 
@@ -8,18 +9,23 @@ public sealed class CatName : ValueObject
 {
     public const int MaxLength = 50;
     public string Value { get; }
-
-    public override string ToString() => Value;
-    public static implicit operator string(CatName value) => value.Value;
-
+    
     public static Result<CatName> Create(string value)
     {
-        Result<CatName> result = Result.Create(value, DomainErrors.CatEntity.CatNameProperty.NullOrEmpty)
-            .TrimValue()
-            .Ensure(v => !string.IsNullOrWhiteSpace(v), DomainErrors.CatEntity.CatNameProperty.NullOrEmpty)
-            .Ensure(v => v.Length <= MaxLength, DomainErrors.CatEntity.CatNameProperty.LongerThanAllowed)
-            .Map(v => new CatName(v));
-        return result;
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return Result.Failure<CatName>(DomainErrors.CatEntity.CatNameProperty.NullOrEmpty);
+        }
+        
+        value = value.Trim();
+        
+        if (value.Length > MaxLength)
+        {
+            return Result.Failure<CatName>(DomainErrors.CatEntity.CatNameProperty.LongerThanAllowed);
+        }
+
+        CatName instance = new(value);
+        return Result.Success(instance);
     }
 
     private CatName(string value)
@@ -27,6 +33,8 @@ public sealed class CatName : ValueObject
         Value = value;
     }
 
+    public override string ToString() => Value;
+    public static implicit operator string(CatName value) => value.Value;
     protected override IEnumerable<object> GetAtomicValues()
     {
         yield return Value;

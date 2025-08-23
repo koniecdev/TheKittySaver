@@ -15,9 +15,7 @@ public sealed class AdoptionHistory : ValueObject
         if (ReturnCount == 0)
         {
             Result<AdoptionPriorityScore> zeroAdoptionPriorityScoreResult = AdoptionPriorityScore.Create(0);
-            return zeroAdoptionPriorityScoreResult.IsSuccess
-                ? zeroAdoptionPriorityScoreResult.Value
-                : throw new InvalidOperationException("Something went wrong while calculating priority points");
+            return zeroAdoptionPriorityScoreResult;
         }
         
         int basePoints = ReturnCount * 10;
@@ -28,7 +26,7 @@ public sealed class AdoptionHistory : ValueObject
         return result;
     }
     
-    public static AdoptionHistory CatHasNeverBeenAdopted() 
+    public static AdoptionHistory CatHasNeverBeenAdopted 
         => new(0, null, null);
     
     public static Result<AdoptionHistory> CatHasBeenReturned(
@@ -54,8 +52,8 @@ public sealed class AdoptionHistory : ValueObject
                 DomainErrors.CatEntity.AdoptionHistoryProperty.LastReturnReasonIsEmpty);
         }
     
-        string trimmedReason = reason.Trim();
-        AdoptionHistory adoptionHistory = new(countHowManyTimesWasTheCatReturned, lastReturn, trimmedReason);
+        reason = reason.Trim();
+        AdoptionHistory adoptionHistory = new(countHowManyTimesWasTheCatReturned, lastReturn, reason);
     
         return Result.Success(adoptionHistory);
     }

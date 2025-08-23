@@ -16,14 +16,14 @@ public sealed class Username : ValueObject
             return Result.Failure<Username>(DomainErrors.PersonEntity.UsernameProperty.NullOrEmpty);
         }
 
-        string trimmedValue = value.Trim();
+        value = value.Trim();
         
-        if (trimmedValue.Length > MaxLength)
+        if (value.Length > MaxLength)
         {
             return Result.Failure<Username>(DomainErrors.PersonEntity.UsernameProperty.LongerThanAllowed);
         }
 
-        Username instance = new(trimmedValue);
+        Username instance = new(value);
         return Result.Success(instance);
     }
     

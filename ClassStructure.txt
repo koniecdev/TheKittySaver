@@ -1,0 +1,41 @@
+﻿public sealed class ValueObject
+{
+    enums definitions
+    
+    private consts
+    public consts
+    
+    fields
+    
+    properties
+    
+    methods
+    
+    factory methods
+    private constructor
+    ef core constructor
+    
+    helper functions
+    
+    implicit operators
+    tostring override
+    equality contract
+}
+
+public sealed class Entity
+{
+    private consts
+    public consts
+    
+    fields
+    
+    properties
+    
+    methods
+    
+    factory methods
+    private constructor
+    ef core constructor
+    
+    helper functions
+}

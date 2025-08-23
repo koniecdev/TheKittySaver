@@ -30,7 +30,10 @@ public sealed class AdoptionPriorityScore : ValueObject
         }
     }
 
-    private AdoptionPriorityScore(decimal value) => Value = value;
+    private AdoptionPriorityScore(decimal value)
+    {
+        Value = value;
+    }
 
     protected override IEnumerable<object> GetAtomicValues()
     {

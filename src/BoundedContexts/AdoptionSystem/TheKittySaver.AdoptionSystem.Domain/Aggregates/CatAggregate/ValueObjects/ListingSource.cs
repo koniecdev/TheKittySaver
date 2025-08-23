@@ -15,12 +15,12 @@ public sealed class ListingSource : ValueObject
         PrivatePerson,
         PrivatePersonUrgent
     }
-    
+
     public const int MaxSourceNameLength = 100;
-    
+
     public ListingSourceType Type { get; }
     public string SourceName { get; }
-    
+
     public Result<AdoptionPriorityScore> CalculatePriorityScore()
     {
         decimal points = Type switch
@@ -32,41 +32,25 @@ public sealed class ListingSource : ValueObject
             ListingSourceType.Shelter => 3,
             _ => 0
         };
-        
-        Result<AdoptionPriorityScore> result = AdoptionPriorityScore.Create(points);
-        
-        return result.IsSuccess
-            ? result.Value
-            : throw new InvalidOperationException("Something went wrong while calculating priority points");
-    }
-    
-    public static Result<ListingSource> PrivatePerson(string name, bool isUrgent = false)
-    {
-        ListingSourceType type = isUrgent 
-            ? ListingSourceType.PrivatePersonUrgent 
-            : ListingSourceType.PrivatePerson;
 
-        Result<ListingSource> result = Create(type, name);
+        Result<AdoptionPriorityScore> result = AdoptionPriorityScore.Create(points);
+
         return result;
     }
-    
-    public static Result<ListingSource> Shelter(string shelterName) 
-    {
-        Result<ListingSource> result = Create(ListingSourceType.Shelter, shelterName);
-        return result;
-    }
-    
+
+    public static Result<ListingSource> PrivatePerson(string name, bool isUrgent = false)
+        => Create(isUrgent
+            ? ListingSourceType.PrivatePersonUrgent
+            : ListingSourceType.PrivatePerson, name);
+
+    public static Result<ListingSource> Shelter(string shelterName)
+        => Create(ListingSourceType.Shelter, shelterName);
+
     public static Result<ListingSource> Foundation(string foundationName)
-    {
-        Result<ListingSource> result = Create(ListingSourceType.Foundation, foundationName);
-        return result;
-    }
-    
+        => Create(ListingSourceType.Foundation, foundationName);
+
     public static Result<ListingSource> RescueGroup(string groupName)
-    {
-        Result<ListingSource> result = Create(ListingSourceType.SmallRescueGroup, groupName);
-        return result;
-    }
+        => Create(ListingSourceType.SmallRescueGroup, groupName);
 
     private static Result<ListingSource> Create(ListingSourceType type, string sourceName)
     {
@@ -74,7 +58,7 @@ public sealed class ListingSource : ValueObject
         {
             return Result.Failure<ListingSource>(DomainErrors.CatEntity.ListingSourceProperty.TypeIsUnset);
         }
-        
+
         if (string.IsNullOrWhiteSpace(sourceName))
         {
             return Result.Failure<ListingSource>(DomainErrors.CatEntity.ListingSourceProperty.SourceNameIsNullOrEmpty);
@@ -86,12 +70,12 @@ public sealed class ListingSource : ValueObject
             return Result.Failure<ListingSource>(
                 DomainErrors.CatEntity.ListingSourceProperty.SourceNameIsLongerThanAllowed);
         }
-        
+
         ListingSource instance = new(type, sourceName);
-        
+
         return Result.Success(instance);
     }
-    
+
     private ListingSource(ListingSourceType type, string sourceName)
     {
         Type = type;

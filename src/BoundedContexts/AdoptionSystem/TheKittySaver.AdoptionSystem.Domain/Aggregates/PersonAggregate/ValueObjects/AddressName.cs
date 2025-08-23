@@ -16,14 +16,14 @@ public sealed class AddressName : ValueObject
             return Result.Failure<AddressName>(DomainErrors.PolishAddressEntity.NameProperty.NullOrEmpty);
         }
 
-        string trimmedValue = value.Trim();
+        value = value.Trim();
         
-        if (trimmedValue.Length > MaxLength)
+        if (value.Length > MaxLength)
         {
             return Result.Failure<AddressName>(DomainErrors.PolishAddressEntity.NameProperty.LongerThanAllowed);
         }
 
-        AddressName instance = new(trimmedValue);
+        AddressName instance = new(value);
         return Result.Success(instance);
     }
 

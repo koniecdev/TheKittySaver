@@ -15,7 +15,6 @@ public sealed class CatGender : ValueObject
     
     public GenderType Value { get; }
     
-    
     public Result<AdoptionPriorityScore> CalculatePriorityScore()
     {
         decimal points = Value switch
