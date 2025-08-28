@@ -34,7 +34,7 @@ public sealed class ApartmentNumber : ValueObject
     {
         Value = value;
     }
-
+    
     public override string ToString() => Value;
     public static implicit operator string(ApartmentNumber value) => value.Value;
     protected override IEnumerable<object> GetAtomicValues()

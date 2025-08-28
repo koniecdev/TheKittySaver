@@ -35,13 +35,13 @@ public sealed class Maybe<T> : IEquatable<Maybe<T>> where T : class
     /// Gets the default empty instance.
     /// </summary>
     public static Maybe<T> None => new(null);
-
+    
     /// <summary>
     /// Creates a new <see cref="Maybe{T}"/> instance based on the specified value.
     /// </summary>
     /// <param name="value">The value.</param>
     /// <returns>The new <see cref="Maybe{T}"/> instance.</returns>
-    public static Maybe<T> From(T value) => new(value);
+    public static Maybe<T> From(T? value) => new(value);
 
     public static implicit operator Maybe<T>(T value) => From(value);
 

@@ -1,6 +1,7 @@
 ﻿using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.ValueObjects;
 using TheKittySaver.AdoptionSystem.Domain.Core.Enums;
 using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
+using TheKittySaver.AdoptionSystem.Domain.Core.Extensions;
 using TheKittySaver.AdoptionSystem.Domain.Core.Guards;
 using TheKittySaver.AdoptionSystem.Domain.Core.Primitives.BuildingBlocks;
 using TheKittySaver.AdoptionSystem.Domain.Core.Primitives.OptionMonad;
@@ -12,32 +13,25 @@ namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.Entitie
 
 public sealed class Person : AggregateRoot<PersonId>
 {
-    private readonly List<PolishAddress> _polishAddresses = [];
-    public IReadOnlyList<PolishAddress> PolishAddresses => _polishAddresses.AsReadOnly();
+    private readonly List<Address> _addresses = [];
+    public IReadOnlyList<Address> Addresses => _addresses.AsReadOnly();
     
     public IdentityId IdentityId { get; private set; } = IdentityId.Empty;
     public Username Username { get; private set; }
     public Email Email { get; private set; }
     public PhoneNumber PhoneNumber { get; private set; }
 
-    public Result<PolishAddressId> AddPolishAddress(
+    public Result<PolishAddressId> AddAddress(
+        CountryCode countryCode,
         AddressName name,
-        PolandVoivodeship voivodeship,
-        PolandCounty county,
-        PolishZipCode zipCode,
+        AddressRegion region,
         City city,
-        Maybe<Street> maybeStreet,
-        Maybe<BuildingNumber> maybeBuildingNumber,
-        Maybe<ApartmentNumber> maybeApartmentNumber)
+        Maybe<AddressLine> maybeLine)
     {
+        Ensure.HasValue(countryCode);
         ArgumentNullException.ThrowIfNull(name);
-        Ensure.HasValue(voivodeship);
-        Ensure.HasValue(county);
-        ArgumentNullException.ThrowIfNull(zipCode);
+        ArgumentNullException.ThrowIfNull(region);
         ArgumentNullException.ThrowIfNull(city);
-        ArgumentNullException.ThrowIfNull(maybeStreet);
-        ArgumentNullException.ThrowIfNull(maybeBuildingNumber);
-        ArgumentNullException.ThrowIfNull(maybeApartmentNumber);
         
         if (IsAddressNameTaken(name))
         {
@@ -45,43 +39,40 @@ public sealed class Person : AggregateRoot<PersonId>
                 DomainErrors.PolishAddressEntity.NameProperty.AlreadyTaken(name));
         }
         
-        Result<PolishAddress> createAddressResult = PolishAddress.Create(
-            Id,
-            name,
-            voivodeship,
-            county,
-            zipCode,
-            city,
-            maybeStreet,
-            maybeBuildingNumber,
-            maybeApartmentNumber);
+        Result<Address> createAddressResult = Address.Create(
+            personId: Id,
+            countryCode: countryCode,
+            name: name,
+            region: region,
+            city: city,
+            maybeLine: maybeLine);
         
         if (createAddressResult.IsFailure)
         {
             return Result.Failure<PolishAddressId>(createAddressResult.Error);
         }
         
-        _polishAddresses.Add(createAddressResult.Value);
-        return createAddressResult.Value.Id;
+        _addresses.Add(createAddressResult.Value);
+        return Result.Success(createAddressResult.Value.Id);
     }
 
-    public Result UpdatePolishAddressName(PolishAddressId id, AddressName updatedName)
+    public Result UpdateAddressName(AddressId addressId, AddressName updatedName)
     {
-        Ensure.NotEmpty(id);
+        Ensure.NotEmpty(addressId);
         ArgumentNullException.ThrowIfNull(updatedName);
         
-        Maybe<PolishAddress> maybePolishAddress = GetPolishAddressById(id);
-        if (maybePolishAddress.HasNoValue)
+        Maybe<Address> maybeAddress = GetAddressById(addressId);
+        if (maybeAddress.HasNoValue)
         {
-            return Result.Failure(DomainErrors.PolishAddressEntity.NotFound(id));
+            return Result.Failure(DomainErrors.AddressEntity.NotFound(addressId));
         }
 
-        if (IsAddressNameTaken(updatedName, id))
+        if (IsAddressNameTaken(updatedName, addressId))
         {
             return Result.Failure(DomainErrors.PolishAddressEntity.NameProperty.AlreadyTaken(updatedName));
         }
 
-        maybePolishAddress.Value.UpdateName(updatedName);
+        maybeAddress.Value.UpdateName(updatedName);
         
         return Result.Success();
     }
@@ -204,11 +195,9 @@ public sealed class Person : AggregateRoot<PersonId>
         return isTaken;
     }   
     
-    private Maybe<PolishAddress> GetPolishAddressById(PolishAddressId id)
+    private Maybe<Address> GetAddressById(AddressId id)
     {
-        PolishAddress? polishAddress = _polishAddresses.FirstOrDefault(x => x.Id == id);
-        return polishAddress is not null
-            ? Maybe<PolishAddress>.From(polishAddress)
-            : Maybe<PolishAddress>.None;
+        Maybe<Address> maybeAddress = _addresses.GetByIdOrDefault(id);
+        return maybeAddress;
     } 
 }

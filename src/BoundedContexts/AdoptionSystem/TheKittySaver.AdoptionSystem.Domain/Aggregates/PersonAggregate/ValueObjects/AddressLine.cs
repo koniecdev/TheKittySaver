@@ -2,39 +2,38 @@
 using TheKittySaver.AdoptionSystem.Domain.Core.Primitives.BuildingBlocks;
 using TheKittySaver.AdoptionSystem.Domain.Core.Primitives.ResultMonad;
 
-namespace TheKittySaver.AdoptionSystem.Domain.SharedValueObjects;
+namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.ValueObjects;
 
-public sealed class Street : ValueObject
+public sealed class AddressLine : ValueObject
 {
-    public const int MaxLength = 200;
-    
+    public const int MaxLength = 500;
     public string Value { get; }
     
-    public static Result<Street> Create(string value)
+    public static Result<AddressLine> Create(string value)
     {
         if (string.IsNullOrWhiteSpace(value))
         {
-            return Result.Failure<Street>(DomainErrors.PolishAddressEntity.StreetProperty.NullOrEmpty);
+            return Result.Failure<AddressLine>(DomainErrors.PolishAddressEntity.NameProperty.NullOrEmpty);
         }
-        
+
         value = value.Trim();
         
         if (value.Length > MaxLength)
         {
-            return Result.Failure<Street>(DomainErrors.PolishAddressEntity.StreetProperty.LongerThanAllowed);
+            return Result.Failure<AddressLine>(DomainErrors.PolishAddressEntity.NameProperty.LongerThanAllowed);
         }
-        
-        Street instance = new(value);
+
+        AddressLine instance = new(value);
         return Result.Success(instance);
     }
 
-    private Street(string value)
+    private AddressLine(string value)
     {
         Value = value;
     }
 
+    public static implicit operator string(AddressLine value) => value.Value;
     public override string ToString() => Value;
-    public static implicit operator string(Street value) => value.Value;
     protected override IEnumerable<object> GetAtomicValues()
     {
         yield return Value;

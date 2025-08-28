@@ -21,6 +21,9 @@
       <Compile Update="Aggregates\PersonAggregate\PersonId.cs">
         <Generator>MSBuild:GenerateCodeFromAttributes</Generator>
       </Compile>
+      <Compile Update="Aggregates\PersonAggregate\AddressId.cs">
+        <Generator>MSBuild:GenerateCodeFromAttributes</Generator>
+      </Compile>
     </ItemGroup>
 
 </Project>
