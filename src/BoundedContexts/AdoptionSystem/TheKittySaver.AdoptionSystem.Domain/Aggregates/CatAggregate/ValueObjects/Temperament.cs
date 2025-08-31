@@ -18,21 +18,6 @@ public sealed class Temperament : ValueObject
     
     public TemperamentType Value { get; }
     
-    public Result<AdoptionPriorityScore> CalculatePriorityScore()
-    {
-        decimal points = Value switch
-        {
-            TemperamentType.Aggressive => 15,
-            TemperamentType.VeryTimid => 12,
-            TemperamentType.Timid => 8,
-            TemperamentType.Independent => 5,
-            _ => 0
-        };
-        
-        Result<AdoptionPriorityScore> result = AdoptionPriorityScore.Create(points);
-        return result;
-    }
-    
     public static Temperament Friendly() => new(TemperamentType.Friendly);
     public static Temperament Independent() => new(TemperamentType.Independent);
     public static Temperament Timid() => new(TemperamentType.Timid);

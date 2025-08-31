@@ -10,22 +10,6 @@ public sealed class AdoptionHistory : ValueObject
     public DateTime? LastReturnDate { get; }
     public string? LastReturnReason { get; }
     
-    public Result<AdoptionPriorityScore> CalculatePriorityPoints()
-    {
-        if (ReturnCount == 0)
-        {
-            Result<AdoptionPriorityScore> zeroAdoptionPriorityScoreResult = AdoptionPriorityScore.Create(0);
-            return zeroAdoptionPriorityScoreResult;
-        }
-        
-        int basePoints = ReturnCount * 10;
-        
-        int resultPoints = Math.Min(basePoints, 25);
-        
-        Result<AdoptionPriorityScore> result = AdoptionPriorityScore.Create(resultPoints);
-        return result;
-    }
-    
     public static AdoptionHistory CatHasNeverBeenAdopted 
         => new(0, null, null);
     

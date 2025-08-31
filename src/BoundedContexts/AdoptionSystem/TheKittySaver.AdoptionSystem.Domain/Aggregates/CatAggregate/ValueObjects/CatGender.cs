@@ -15,18 +15,6 @@ public sealed class CatGender : ValueObject
     
     public GenderType Value { get; }
     
-    public Result<AdoptionPriorityScore> CalculatePriorityScore()
-    {
-        decimal points = Value switch
-        {
-            GenderType.Male => 5,
-            _ => 0
-        };
-        
-        Result<AdoptionPriorityScore> result = AdoptionPriorityScore.Create(points);
-        return result;
-    }
-    
     public bool IsMale => Value is GenderType.Male;
     public bool IsFemale => Value is GenderType.Female;
     

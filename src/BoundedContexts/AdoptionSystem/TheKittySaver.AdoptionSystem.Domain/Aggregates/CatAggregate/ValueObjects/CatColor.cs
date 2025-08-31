@@ -22,21 +22,6 @@ public sealed class CatColor : ValueObject
     
     public ColorType Value { get; }
     
-    public Result<AdoptionPriorityScore> CalculatePriorityScore()
-    {
-        decimal points = Value switch
-        {
-            ColorType.Black => 10,
-            ColorType.BlackAndWhite => 7,
-            ColorType.Tortoiseshell => 5,
-            ColorType.Tabby => 3,
-            _ => 0
-        };
-        
-        Result<AdoptionPriorityScore> result = AdoptionPriorityScore.Create(points);
-        return result;
-    }
-    
     public static CatColor Black() => new(ColorType.Black);
     public static CatColor White() => new(ColorType.White);
     public static CatColor Orange() => new(ColorType.Orange);

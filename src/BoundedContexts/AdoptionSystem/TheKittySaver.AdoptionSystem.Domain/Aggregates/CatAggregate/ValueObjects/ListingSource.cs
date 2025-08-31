@@ -20,24 +20,7 @@ public sealed class ListingSource : ValueObject
 
     public ListingSourceType Type { get; }
     public string SourceName { get; }
-
-    public Result<AdoptionPriorityScore> CalculatePriorityScore()
-    {
-        decimal points = Type switch
-        {
-            ListingSourceType.PrivatePersonUrgent => 20,
-            ListingSourceType.PrivatePerson => 10,
-            ListingSourceType.SmallRescueGroup => 8,
-            ListingSourceType.Foundation => 5,
-            ListingSourceType.Shelter => 3,
-            _ => 0
-        };
-
-        Result<AdoptionPriorityScore> result = AdoptionPriorityScore.Create(points);
-
-        return result;
-    }
-
+    
     public static Result<ListingSource> PrivatePerson(string name, bool isUrgent = false)
         => Create(isUrgent
             ? ListingSourceType.PrivatePersonUrgent

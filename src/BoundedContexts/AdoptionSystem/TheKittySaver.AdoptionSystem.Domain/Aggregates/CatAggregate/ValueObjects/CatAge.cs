@@ -10,23 +10,6 @@ public sealed class CatAge : ValueObject
     public const int MaximumAllowedValue = 38;
     public int Value { get; }
     
-    public Result<AdoptionPriorityScore> CalculatePriorityScore()
-    {
-        decimal points = Value switch
-        {
-            >= 10 => 30,
-            >= 7 => 25,
-            >= 5 => 20,
-            >= 3 => 15,
-            >= 1 => 10,
-            _ => 5
-        };
-        
-        Result<AdoptionPriorityScore> result = AdoptionPriorityScore.Create(points);
-
-        return result;
-    }
-    
     public static Result<CatAge> Create(int value)
     {
         switch (value)

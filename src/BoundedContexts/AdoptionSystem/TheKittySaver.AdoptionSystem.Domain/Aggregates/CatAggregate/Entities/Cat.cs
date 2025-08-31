@@ -16,35 +16,6 @@ public sealed class Cat : AggregateRoot<CatId>
     public AdoptionHistory AdoptionHistory { get; private set; }
     public ListingSource ListingSource { get; private set; }
     public CatColor Color { get; private set; }
-
-    public Result<AdoptionPriorityScore> CalculateAdoptionPriority()
-    {
-        Func<Result<AdoptionPriorityScore>>[] calculators =
-        [
-            () => Age.CalculatePriorityScore(),
-            () => HealthStatus.CalculatePriorityScore(),
-            () => SpecialNeeds.CalculatePriorityPoints(),
-            () => Temperament.CalculatePriorityScore(),
-            () => AdoptionHistory.CalculatePriorityPoints(),
-            () => ListingSource.CalculatePriorityScore(),
-            () => Color.CalculatePriorityScore(),
-            () => Gender.CalculatePriorityScore()
-        ];
-
-        decimal priority = 0;
-        foreach (Func<Result<AdoptionPriorityScore>> calculator in calculators)
-        {
-            Result<AdoptionPriorityScore> result = calculator();
-            if (result.IsFailure)
-            {
-                return result;
-            }
-        
-            priority += result.Value.Value;
-        }
-
-        return AdoptionPriorityScore.Create(priority);
-    }
     
     public static Result<Cat> Create(
         CatName name,

@@ -18,22 +18,6 @@ public sealed class HealthStatus : ValueObject
     
     public StatusType Value { get; }
     
-    public Result<AdoptionPriorityScore> CalculatePriorityScore()
-    {
-        decimal points = Value switch
-        {
-            StatusType.Critical => 40,
-            StatusType.ChronicIllness => 35,
-            StatusType.Recovering => 25,
-            StatusType.MinorIssues => 15,
-            _ => 0
-        };
-        
-        Result<AdoptionPriorityScore> result = AdoptionPriorityScore.Create(points);
-
-        return result;
-    }
-    
     public static HealthStatus Healthy() => new(StatusType.Healthy);
     public static HealthStatus MinorIssues() => new(StatusType.MinorIssues);
     public static HealthStatus Recovering() => new(StatusType.Recovering);

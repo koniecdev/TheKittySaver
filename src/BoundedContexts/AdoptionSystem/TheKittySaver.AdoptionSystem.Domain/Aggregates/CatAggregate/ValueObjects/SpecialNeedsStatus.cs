@@ -21,21 +21,6 @@ public sealed class SpecialNeedsStatus : ValueObject
     public string? Description { get; }
     public SpecialNeedsSeverityType SeverityType { get; }
     
-    public Result<AdoptionPriorityScore> CalculatePriorityPoints()
-    {
-        int points = SeverityType switch
-        {
-            SpecialNeedsSeverityType.Severe => 25, // np. paraliż, ślepota
-            SpecialNeedsSeverityType.Moderate => 15, // np. brak oka, FIV+
-            SpecialNeedsSeverityType.Minor => 8, // np. alergia pokarmowa
-            SpecialNeedsSeverityType.None => 0,
-            _ => 0
-        };
-
-        Result<AdoptionPriorityScore> result = AdoptionPriorityScore.Create(points);
-        return result;   
-    }
-    
     public static SpecialNeedsStatus None() => new(false, null, SpecialNeedsSeverityType.None);
     public static Result<SpecialNeedsStatus> Create(string description, SpecialNeedsSeverityType severityType)
     {
