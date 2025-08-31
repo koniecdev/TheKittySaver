@@ -25,22 +25,22 @@ public sealed class PhoneNumberFactory : IPhoneNumberFactory
                 DomainErrors.PersonEntity.PhoneNumberProperty.NullOrEmpty);
         }
         
-        string trimmedValue = value.Trim();
+        value = value.Trim();
         
-        if (trimmedValue.Length > PhoneNumber.MaxLength)
+        if (value.Length > PhoneNumber.MaxLength)
         {
             return Result.Failure<PhoneNumber>(
                 DomainErrors.PersonEntity.PhoneNumberProperty.LongerThanAllowed);
         }
         
-        if (!_specification.IsSatisfiedBy(trimmedValue))
+        if (!_specification.IsSatisfiedBy(value))
         {
             return Result.Failure<PhoneNumber>(
                 DomainErrors.PersonEntity.PhoneNumberProperty.InvalidFormat);
         }
         
-        string normalized = _phoneNumberNormalizer.Normalize(trimmedValue);
-        PhoneNumber instance = PhoneNumber.CreateUnsafe(normalized);
+        value = _phoneNumberNormalizer.Normalize(value);
+        PhoneNumber instance = PhoneNumber.CreateUnsafe(value);
         
         return Result.Success(instance);
     }

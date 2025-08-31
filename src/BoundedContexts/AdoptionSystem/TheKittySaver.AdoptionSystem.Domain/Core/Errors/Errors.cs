@@ -54,7 +54,7 @@ public static class DomainErrors
     {
         public static Error NotFound(PersonId id) 
             => HasNotBeenFound(
-                nameof(PolishAddress),
+                nameof(Person),
                 id.Value);
         public static class IdentityIdProperty
         {
@@ -121,124 +121,68 @@ public static class DomainErrors
         }
     }
     
-    public static class PolishAddressEntity
+    public static class AddressEntity
     {
-        public static Error NotFound(PolishAddressId polishAddressId) 
+        public static Error NotFound(AddressId addressId) 
             => HasNotBeenFound(
-                nameof(PolishAddress),
-                polishAddressId.Value);
+                nameof(Address),
+                addressId.Value);
         
         public static class NameProperty
         {
             public static Error AlreadyTaken(AddressName name)
                 => AlreadyHasBeenTaken(
-                    nameof(PolishAddress),
-                    nameof(PolishAddress.Name),
+                    nameof(Address),
+                    nameof(Address.Name),
                     name);
             public static Error NullOrEmpty
                 => Required(
-                    nameof(PolishAddress),
-                    nameof(PolishAddress.Name));
+                    nameof(Address),
+                    nameof(Address.Name));
             public static Error LongerThanAllowed 
+                => TooLong(
+                    nameof(Address),
+                    nameof(Address.Name),
+                    AddressName.MaxLength);
+        }
+        
+        public static class RegionProperty
+        {
+            public static Error NullOrEmpty
                 => Required(
-                    nameof(PolishAddress),
-                    nameof(PolishAddress.Name));
+                    nameof(Address),
+                    nameof(Address.Region));
+            public static Error LongerThanAllowed
+                => TooLong(
+                    nameof(Address),
+                    nameof(Address.Region),
+                    AddressRegion.MaxLength);
         }
-        
-        public static class VoivodeshipProperty
-        {
-            public static Error InvalidValue 
-                => ValueInvalid(
-                    nameof(PolishAddress),
-                    nameof(PolishAddress.Voivodeship));
-        }
-        
-        public static class CountyProperty
-        {
-            public static Error InvalidValue 
-                => ValueInvalid(
-                    nameof(PolishAddress),
-                    nameof(PolishAddress.County));
-        }
-        
-         public static class ZipCodeProperty
-        {
-            public static Error NullOrEmpty 
-                => Required(
-                    nameof(PolishAddress),
-                    nameof(PolishAddress.ZipCode));
-            public static Error InvalidFormat 
-                => BadFormat(
-                    nameof(PolishAddress),
-                    nameof(PolishAddress.ZipCode));
-        }
-        
+
         public static class CityProperty
         {
-            public static Error NullOrEmpty 
+            public static Error NullOrEmpty
                 => Required(
-                    nameof(PolishAddress),
-                    nameof(PolishAddress.City));
-            public static Error LongerThanAllowed 
+                    nameof(Address),
+                    nameof(Address.City));
+            public static Error LongerThanAllowed
                 => TooLong(
-                    nameof(PolishAddress),
-                    nameof(PolishAddress.City),
-                    City.MaxLength);
+                    nameof(Address),
+                    nameof(Address.City),
+                    AddressLine.MaxLength);
         }
         
-        public static class StreetProperty
+        public static class LineProperty
         {
-            public static Error NullOrEmpty 
+            public static Error NullOrEmpty
                 => Required(
-                    nameof(PolishAddress),
-                    nameof(PolishAddress.Street));
-            public static Error LongerThanAllowed 
+                    nameof(Address),
+                    nameof(Address.Line));
+            public static Error LongerThanAllowed
                 => TooLong(
-                    nameof(PolishAddress),
-                    nameof(PolishAddress.Street),
-                    Street.MaxLength);
-        }
-        
-        public static class BuildingNumberProperty
-        {
-            public static Error NullOrEmpty 
-                => Required(
-                    nameof(PolishAddress),
-                    nameof(PolishAddress.BuildingNumber));
-            public static Error LongerThanAllowed 
-                => TooLong(
-                    nameof(PolishAddress),
-                    nameof(PolishAddress.BuildingNumber),
-                    BuildingNumber.MaxLength);
-            public static Error InvalidFormat 
-                => BadFormat(
-                    nameof(PolishAddress),
-                    nameof(PolishAddress.BuildingNumber));
-
-            public static Error MustBeEmptyWhenStreetIsEmpty
-                => CustomMessage(
-                    nameof(PolishAddress),
-                    nameof(PolishAddress.BuildingNumber),
-                    "'BuildingNumber' must be empty, when 'Street' is empty");
-
-        }
-        
-        public static class ApartmentNumberProperty
-        {
-            public static Error NullOrEmpty 
-                => Required(
-                    nameof(PolishAddress),
-                    nameof(PolishAddress.ApartmentNumber));
-            public static Error LongerThanAllowed 
-                => TooLong(
-                    nameof(PolishAddress),
-                    nameof(PolishAddress.ApartmentNumber),
-                    ApartmentNumber.MaxLength);
-            public static Error MustBeEmptyWhenBuildingNumberIsEmpty
-                => MustBeEmpty(
-                    nameof(PolishAddress),
-                    nameof(PolishAddress.ApartmentNumber),
-                    nameof(PolishAddress.BuildingNumber));
+                    nameof(Address),
+                    nameof(Address.Line),
+                    AddressLine.MaxLength);
         }
     }
     

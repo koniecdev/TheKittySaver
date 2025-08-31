@@ -16,7 +16,7 @@ public sealed class Address : Entity<AddressId>
     public CountryCode CountryCode { get; }
     public AddressName Name { get; private set; }
     public AddressRegion Region { get; private set; }
-    public City City { get; private set; }
+    public AddressCity City { get; private set; }
     public AddressLine? Line { get; private set; }
 
     internal Result UpdateName(AddressName name)
@@ -33,16 +33,16 @@ public sealed class Address : Entity<AddressId>
         return Result.Success();
     }
 
-    internal Result UpdateCity(City city)
+    internal Result UpdateCity(AddressCity city)
     {
         ArgumentNullException.ThrowIfNull(city);
         City = city;
         return Result.Success();
     }
 
-    internal Result UpdateLine(AddressLine? line)
+    internal Result UpdateLine(Maybe<AddressLine> maybeLine)
     {
-        Line = line;
+        Line = maybeLine.HasValue ? maybeLine.Value : null;
         return Result.Success();
     }
     
@@ -51,7 +51,7 @@ public sealed class Address : Entity<AddressId>
         CountryCode countryCode,
         AddressName name,
         AddressRegion region,
-        City city,
+        AddressCity city,
         Maybe<AddressLine> maybeLine)
     {
         Ensure.NotEmpty(personId);
@@ -69,7 +69,7 @@ public sealed class Address : Entity<AddressId>
         CountryCode countryCode,
         AddressName name,
         AddressRegion region,
-        City city,
+        AddressCity city,
         AddressLine? line)
     {
         PersonId = personId;

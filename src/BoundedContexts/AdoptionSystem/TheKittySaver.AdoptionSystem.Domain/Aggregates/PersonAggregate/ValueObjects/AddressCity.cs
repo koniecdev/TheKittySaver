@@ -2,43 +2,39 @@
 using TheKittySaver.AdoptionSystem.Domain.Core.Primitives.BuildingBlocks;
 using TheKittySaver.AdoptionSystem.Domain.Core.Primitives.ResultMonad;
 
-namespace TheKittySaver.AdoptionSystem.Domain.SharedValueObjects;
+namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.ValueObjects;
 
-public sealed class BuildingNumber : ValueObject
+public sealed class AddressCity : ValueObject
 {
-    public const int MaxLength = 10;
+    public const int MaxLength = 100;
     
     public string Value { get; }
     
-    
-    public static Result<BuildingNumber> Create(string value)
+    public static Result<AddressCity> Create(string value)
     {
         if (string.IsNullOrWhiteSpace(value))
         {
-            return Result.Failure<BuildingNumber>(
-                DomainErrors.PolishAddressEntity.BuildingNumberProperty.NullOrEmpty);
+            return Result.Failure<AddressCity>(DomainErrors.AddressEntity.CityProperty.NullOrEmpty);
         }
         
         value = value.Trim();
         
         if (value.Length > MaxLength)
         {
-            return Result.Failure<BuildingNumber>(
-                DomainErrors.PolishAddressEntity.BuildingNumberProperty.LongerThanAllowed);
+            return Result.Failure<AddressCity>(DomainErrors.AddressEntity.CityProperty.LongerThanAllowed);
         }
         
-        BuildingNumber instance = new(value);
+        AddressCity instance = new(value);
         return Result.Success(instance);
     }
 
-    private BuildingNumber(string value)
+    private AddressCity(string value)
     {
         Value = value;
     }
-
+    
     public override string ToString() => Value;
-    public static implicit operator string(BuildingNumber value) => value.Value;
-
+    public static implicit operator string(AddressCity value) => value.Value;
     protected override IEnumerable<object> GetAtomicValues()
     {
         yield return Value;

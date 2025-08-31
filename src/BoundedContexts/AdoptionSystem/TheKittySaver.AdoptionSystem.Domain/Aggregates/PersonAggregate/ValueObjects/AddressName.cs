@@ -13,14 +13,14 @@ public sealed class AddressName : ValueObject
     {
         if (string.IsNullOrWhiteSpace(value))
         {
-            return Result.Failure<AddressName>(DomainErrors.PolishAddressEntity.NameProperty.NullOrEmpty);
+            return Result.Failure<AddressName>(DomainErrors.AddressEntity.NameProperty.NullOrEmpty);
         }
 
         value = value.Trim();
         
         if (value.Length > MaxLength)
         {
-            return Result.Failure<AddressName>(DomainErrors.PolishAddressEntity.NameProperty.LongerThanAllowed);
+            return Result.Failure<AddressName>(DomainErrors.AddressEntity.NameProperty.LongerThanAllowed);
         }
 
         AddressName instance = new(value);
@@ -32,8 +32,8 @@ public sealed class AddressName : ValueObject
         Value = value;
     }
 
-    public static implicit operator string(AddressName value) => value.Value;
     public override string ToString() => Value;
+    public static implicit operator string(AddressName value) => value.Value;
     protected override IEnumerable<object> GetAtomicValues()
     {
         yield return Value;

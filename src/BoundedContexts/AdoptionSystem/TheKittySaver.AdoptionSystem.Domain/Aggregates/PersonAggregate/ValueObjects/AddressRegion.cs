@@ -13,14 +13,14 @@ public sealed class AddressRegion : ValueObject
     {
         if (string.IsNullOrWhiteSpace(value))
         {
-            return Result.Failure<AddressRegion>(DomainErrors.PolishAddressEntity.NameProperty.NullOrEmpty);
+            return Result.Failure<AddressRegion>(DomainErrors.AddressEntity.RegionProperty.NullOrEmpty);
         }
 
         value = value.Trim();
         
         if (value.Length > MaxLength)
         {
-            return Result.Failure<AddressRegion>(DomainErrors.PolishAddressEntity.NameProperty.LongerThanAllowed);
+            return Result.Failure<AddressRegion>(DomainErrors.AddressEntity.RegionProperty.LongerThanAllowed);
         }
 
         AddressRegion instance = new(value);
@@ -32,8 +32,8 @@ public sealed class AddressRegion : ValueObject
         Value = value;
     }
 
-    public static implicit operator string(AddressRegion value) => value.Value;
     public override string ToString() => Value;
+    public static implicit operator string(AddressRegion value) => value.Value;
     protected override IEnumerable<object> GetAtomicValues()
     {
         yield return Value;

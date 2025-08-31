@@ -12,9 +12,6 @@
     </ItemGroup>
     
     <ItemGroup>
-      <Compile Update="Aggregates\PersonAggregate\PolishAddressId.cs">
-        <Generator>MSBuild:GenerateCodeFromAttributes</Generator>
-      </Compile>
       <Compile Update="Aggregates\PersonAggregate\IdentityId.cs">
         <Generator>MSBuild:GenerateCodeFromAttributes</Generator>
       </Compile>

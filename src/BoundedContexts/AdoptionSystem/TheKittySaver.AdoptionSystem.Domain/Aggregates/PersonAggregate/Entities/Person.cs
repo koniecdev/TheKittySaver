@@ -21,22 +21,21 @@ public sealed class Person : AggregateRoot<PersonId>
     public Email Email { get; private set; }
     public PhoneNumber PhoneNumber { get; private set; }
 
-    public Result<PolishAddressId> AddAddress(
+    public Result<AddressId> AddAddress(
         CountryCode countryCode,
         AddressName name,
         AddressRegion region,
-        City city,
+        AddressCity addressCity,
         Maybe<AddressLine> maybeLine)
     {
         Ensure.HasValue(countryCode);
         ArgumentNullException.ThrowIfNull(name);
         ArgumentNullException.ThrowIfNull(region);
-        ArgumentNullException.ThrowIfNull(city);
+        ArgumentNullException.ThrowIfNull(addressCity);
         
-        if (IsAddressNameTaken(name))
+        if (IsAddressNameTaken(name, ValueMaybe<AddressId>.None()))
         {
-            return Result.Failure<PolishAddressId>(
-                DomainErrors.PolishAddressEntity.NameProperty.AlreadyTaken(name));
+            return Result.Failure<AddressId>(DomainErrors.AddressEntity.NameProperty.AlreadyTaken(name));
         }
         
         Result<Address> createAddressResult = Address.Create(
@@ -44,12 +43,12 @@ public sealed class Person : AggregateRoot<PersonId>
             countryCode: countryCode,
             name: name,
             region: region,
-            city: city,
+            city: addressCity,
             maybeLine: maybeLine);
         
         if (createAddressResult.IsFailure)
         {
-            return Result.Failure<PolishAddressId>(createAddressResult.Error);
+            return Result.Failure<AddressId>(createAddressResult.Error);
         }
         
         _addresses.Add(createAddressResult.Value);
@@ -69,63 +68,62 @@ public sealed class Person : AggregateRoot<PersonId>
 
         if (IsAddressNameTaken(updatedName, addressId))
         {
-            return Result.Failure(DomainErrors.PolishAddressEntity.NameProperty.AlreadyTaken(updatedName));
+            return Result.Failure(DomainErrors.AddressEntity.NameProperty.AlreadyTaken(updatedName));
         }
 
-        maybeAddress.Value.UpdateName(updatedName);
+        Result updateNameResult = maybeAddress.Value.UpdateName(updatedName);
         
-        return Result.Success();
+        return updateNameResult;
     }
     
-    public Result UpdatePolishAddressDetails(
-        PolishAddressId id,
-        PolandVoivodeship updatedVoivodeship,
-        PolandCounty updatedCounty,
-        PolishZipCode updatedZipCode,
-        City updatedCity,
-        Maybe<Street> updatedMaybeStreet,
-        Maybe<BuildingNumber> updatedMaybeBuildingNumber,
-        Maybe<ApartmentNumber> updatedMaybeApartmentNumber)
+    public Result UpdateAddressDetails(
+        AddressId id,
+        AddressRegion region,
+        AddressCity addressCity,
+        Maybe<AddressLine> maybeLine)
     {
         Ensure.NotEmpty(id);
-        Ensure.HasValue(updatedVoivodeship);
-        Ensure.HasValue(updatedCounty);
-        ArgumentNullException.ThrowIfNull(updatedZipCode);
-        ArgumentNullException.ThrowIfNull(updatedCity);
-        ArgumentNullException.ThrowIfNull(updatedMaybeStreet);
-        ArgumentNullException.ThrowIfNull(updatedMaybeBuildingNumber);
-        ArgumentNullException.ThrowIfNull(updatedMaybeApartmentNumber);
+        ArgumentNullException.ThrowIfNull(region);
+        ArgumentNullException.ThrowIfNull(addressCity);
         
-        Maybe<PolishAddress> maybePolishAddress = GetPolishAddressById(id);
-        if (maybePolishAddress.HasNoValue)
+        Maybe<Address> maybeAddressThatWeWantToUpdate = GetAddressById(id);
+        if (maybeAddressThatWeWantToUpdate.HasNoValue)
         {
-            return Result.Failure(DomainErrors.PolishAddressEntity.NotFound(id));
+            return Result.Failure(DomainErrors.AddressEntity.NotFound(id));
         }
 
-        Result updateResult = maybePolishAddress.Value.UpdateAddress(
-            updatedVoivodeship,
-            updatedCounty,
-            updatedZipCode,
-            updatedCity,
-            updatedMaybeStreet,
-            updatedMaybeBuildingNumber,
-            updatedMaybeApartmentNumber);
+        Result updateRegionResult = maybeAddressThatWeWantToUpdate.Value.UpdateRegion(region);
+        if (updateRegionResult.IsFailure)
+        {
+            return updateRegionResult;
+        }
         
-        return updateResult;
+        Result updateCityResult = maybeAddressThatWeWantToUpdate.Value.UpdateCity(addressCity);
+        if (updateCityResult.IsFailure)
+        {
+            return updateCityResult;
+        }
+        
+        Result updateLineResult = maybeAddressThatWeWantToUpdate.Value.UpdateLine(maybeLine);
+        return updateLineResult.IsFailure 
+            ? updateLineResult 
+            : Result.Success();
     }
     
-    public Result DeletePolishAddress(PolishAddressId id)
+    public Result DeleteAddress(AddressId id)
     {
         Ensure.NotEmpty(id);
         
-        Maybe<PolishAddress> maybePolishAddress = GetPolishAddressById(id);
-        if (maybePolishAddress.HasNoValue)
+        Maybe<Address> maybeAddress = GetAddressById(id);
+        if (maybeAddress.HasNoValue)
         {
-            return Result.Failure(DomainErrors.PolishAddressEntity.NotFound(id));
+            return Result.Failure(DomainErrors.AddressEntity.NotFound(id));
         }
 
-        _polishAddresses.Remove(maybePolishAddress.Value);
-        return Result.Success();
+        return _addresses.Remove(maybeAddress.Value)
+            ? Result.Success() 
+            : throw new InvalidOperationException(
+                "Address was not found in the list of addresses even though it was supposed to be there.");
     }
     
     public Result SetIdentityId(IdentityId identityId)
@@ -187,11 +185,17 @@ public sealed class Person : AggregateRoot<PersonId>
         PhoneNumber = phoneNumber;
     }
 
-    private bool IsAddressNameTaken(AddressName name, PolishAddressId? idToExcludeInSearch = null)
+    private bool IsAddressNameTaken(AddressName name, ValueMaybe<AddressId> maybeIdToExcludeInSearch)
     {
-        bool isTaken = _polishAddresses.Any(address => 
-            address.Name == name
-            && (idToExcludeInSearch is null || address.Id != idToExcludeInSearch.Value));
+        IEnumerable<Address> isAddressTakenQuery = _addresses;
+        
+        if (maybeIdToExcludeInSearch.HasValue)
+        {
+            isAddressTakenQuery = isAddressTakenQuery.Where(address => address.Id != maybeIdToExcludeInSearch.Value);
+        }
+        
+        bool isTaken = isAddressTakenQuery.Any(address => address.Name == name);
+        
         return isTaken;
     }   
     
