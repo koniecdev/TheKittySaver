@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="StronglyTypedId" />
+        <PackageReference Include="System.Text.Json" />
+    </ItemGroup>
+    
+    <ItemGroup>
+      <Compile Update="Aggregates\PersonAggregate\IdentityId.cs">
+        <Generator>MSBuild:GenerateCodeFromAttributes</Generator>
+      </Compile>
+      <Compile Update="Aggregates\PersonAggregate\PersonId.cs">
+        <Generator>MSBuild:GenerateCodeFromAttributes</Generator>
+      </Compile>
+      <Compile Update="Aggregates\PersonAggregate\AddressId.cs">
+        <Generator>MSBuild:GenerateCodeFromAttributes</Generator>
+      </Compile>
+    </ItemGroup>
+    
+    <ItemGroup>
+      <Folder Include="Aggregates\PersonAggregate\Enums\" />
+    </ItemGroup>
+
+</Project>

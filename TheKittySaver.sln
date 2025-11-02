@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheKittySaver.Domain", "src\BoundedContexts\AdoptionSystem\TheKittySaver.AdoptionSystem.Domain\TheKittySaver.AdoptionSystem.Domain.csproj", "{7F6FD3EE-8D7D-425C-9B2F-ED6F029BBB96}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheKittySaver.Domain", "src\AdoptionSystem\TheKittySaver.AdoptionSystem.Domain\TheKittySaver.AdoptionSystem.Domain.csproj", "{7F6FD3EE-8D7D-425C-9B2F-ED6F029BBB96}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{749848F0-8BDE-49A1-B13A-948013E5C9BD}"
 EndProject
@@ -16,25 +16,25 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		ClassStructure.txt = ClassStructure.txt
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheKittySaver.AdoptionSystem.Infrastructure", "src\BoundedContexts\AdoptionSystem\TheKittySaver.AdoptionSystem.Infrastructure\TheKittySaver.AdoptionSystem.Infrastructure.csproj", "{CEEAD516-ED18-40A6-8308-ECB3E460412B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheKittySaver.AdoptionSystem.Infrastructure", "src\AdoptionSystem\TheKittySaver.AdoptionSystem.Infrastructure\TheKittySaver.AdoptionSystem.Infrastructure.csproj", "{CEEAD516-ED18-40A6-8308-ECB3E460412B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheKittySaver.AdoptionSystem.Persistence", "src\BoundedContexts\AdoptionSystem\TheKittySaver.AdoptionSystem.Persistence\TheKittySaver.AdoptionSystem.Persistence.csproj", "{14098AF1-4B12-4FDC-A7A8-1DC179CCA85E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheKittySaver.AdoptionSystem.Persistence", "src\AdoptionSystem\TheKittySaver.AdoptionSystem.Persistence\TheKittySaver.AdoptionSystem.Persistence.csproj", "{14098AF1-4B12-4FDC-A7A8-1DC179CCA85E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheKittySaver.AdoptionSystem.Domain.EntityFramework", "src\BoundedContexts\AdoptionSystem\TheKittySaver.AdoptionSystem.Domain.EntityFramework\TheKittySaver.AdoptionSystem.Domain.EntityFramework.csproj", "{AB54D5F5-8C17-476F-BB16-175BEE403ACD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheKittySaver.AdoptionSystem.Domain.EntityFramework", "src\AdoptionSystem\TheKittySaver.AdoptionSystem.Domain.EntityFramework\TheKittySaver.AdoptionSystem.Domain.EntityFramework.csproj", "{AB54D5F5-8C17-476F-BB16-175BEE403ACD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheKittySaver.AdoptionSystem.Slices", "src\BoundedContexts\AdoptionSystem\TheKittySaver.AdoptionSystem.Slices\TheKittySaver.AdoptionSystem.Slices.csproj", "{FE7C58BD-33A4-43DC-8E18-F32EB79DEE2F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheKittySaver.AdoptionSystem.Slices", "src\AdoptionSystem\TheKittySaver.AdoptionSystem.Slices\TheKittySaver.AdoptionSystem.Slices.csproj", "{FE7C58BD-33A4-43DC-8E18-F32EB79DEE2F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheKittySaver.AdoptionSystem.API", "src\BoundedContexts\AdoptionSystem\TheKittySaver.AdoptionSystem.API\TheKittySaver.AdoptionSystem.API.csproj", "{EF08D62E-7007-4D13-BF69-0080B05F4392}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheKittySaver.AdoptionSystem.API", "src\AdoptionSystem\TheKittySaver.AdoptionSystem.API\TheKittySaver.AdoptionSystem.API.csproj", "{EF08D62E-7007-4D13-BF69-0080B05F4392}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheKittySaver.AdoptionSystem.ReadModels", "src\BoundedContexts\AdoptionSystem\TheKittySaver.AdoptionSystem.ReadModels\TheKittySaver.AdoptionSystem.ReadModels.csproj", "{3802B9C7-331F-47CC-8066-B1E1FCC8F5FC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheKittySaver.AdoptionSystem.ReadModels", "src\AdoptionSystem\TheKittySaver.AdoptionSystem.ReadModels\TheKittySaver.AdoptionSystem.ReadModels.csproj", "{3802B9C7-331F-47CC-8066-B1E1FCC8F5FC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheKittySaver.AdoptionSystem.ReadModels.EntityFramework", "src\BoundedContexts\AdoptionSystem\TheKittySaver.AdoptionSystem.ReadModels.EntityFramework\TheKittySaver.AdoptionSystem.ReadModels.EntityFramework.csproj", "{FF37E434-21C6-4B76-B0B6-6411F246D276}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheKittySaver.AdoptionSystem.ReadModels.EntityFramework", "src\AdoptionSystem\TheKittySaver.AdoptionSystem.ReadModels.EntityFramework\TheKittySaver.AdoptionSystem.ReadModels.EntityFramework.csproj", "{FF37E434-21C6-4B76-B0B6-6411F246D276}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheKittySaver.AdoptionSystem.Primitives", "src\BoundedContexts\AdoptionSystem\TheKittySaver.AdoptionSystem.Primitives\TheKittySaver.AdoptionSystem.Primitives.csproj", "{5DFFADFD-865D-44DD-AF6D-297A9F14D176}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheKittySaver.AdoptionSystem.Primitives", "src\AdoptionSystem\TheKittySaver.AdoptionSystem.Primitives\TheKittySaver.AdoptionSystem.Primitives.csproj", "{5DFFADFD-865D-44DD-AF6D-297A9F14D176}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{1121B2CB-1F63-46AC-8773-6246B51E71DA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheKittySaver.AdoptionSystem.Contracts", "src\BoundedContexts\AdoptionSystem\TheKittySaver.AdoptionSystem.Contracts\TheKittySaver.AdoptionSystem.Contracts.csproj", "{D0DFBF02-8B3D-4C9C-99B5-0B16EF255C78}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheKittySaver.AdoptionSystem.Contracts", "src\AdoptionSystem\TheKittySaver.AdoptionSystem.Contracts\TheKittySaver.AdoptionSystem.Contracts.csproj", "{D0DFBF02-8B3D-4C9C-99B5-0B16EF255C78}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "EntityFrameworkRelated", "EntityFrameworkRelated", "{B51AE6DA-2019-425F-9B6D-2C101122CF6B}"
 EndProject
