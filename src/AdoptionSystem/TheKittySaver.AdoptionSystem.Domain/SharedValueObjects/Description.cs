@@ -1,11 +1,11 @@
 ﻿using TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
 
-namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAggregate.ValueObjects;
+namespace TheKittySaver.AdoptionSystem.Domain.SharedValueObjects;
 
 public sealed class Description : ValueObject
 {
-    public const int MaxLength = 150;
+    public const int MaxLength = 400;
     public string Value { get; }
 
     public static Result<Description> Create(string value)

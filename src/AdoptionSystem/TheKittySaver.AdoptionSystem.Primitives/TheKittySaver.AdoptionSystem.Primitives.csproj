@@ -22,9 +22,5 @@
         <Generator>MSBuild:GenerateCodeFromAttributes</Generator>
       </Compile>
     </ItemGroup>
-    
-    <ItemGroup>
-      <Folder Include="Aggregates\PersonAggregate\Enums\" />
-    </ItemGroup>
 
 </Project>

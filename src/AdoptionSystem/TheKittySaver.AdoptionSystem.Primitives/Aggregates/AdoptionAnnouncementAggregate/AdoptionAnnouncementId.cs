@@ -1,0 +1,4 @@
+﻿namespace TheKittySaver.AdoptionSystem.Primitives.Aggregates.AdoptionAnnouncementAggregate;
+
+[StronglyTypedId(jsonConverter: StronglyTypedIdJsonConverter.SystemTextJson)]
+public partial struct AdoptionAnnouncementId : IStronglyTypedId;

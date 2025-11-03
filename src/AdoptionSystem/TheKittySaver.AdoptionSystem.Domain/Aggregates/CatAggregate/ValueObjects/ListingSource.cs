@@ -23,9 +23,6 @@ public sealed class ListingSource : ValueObject
     public static Result<ListingSource> Foundation(string foundationName)
         => Create(ListingSourceType.Foundation, foundationName);
 
-    public static Result<ListingSource> RescueGroup(string groupName)
-        => Create(ListingSourceType.SmallRescueGroup, groupName);
-
     private static Result<ListingSource> Create(ListingSourceType type, string sourceName)
     {
         if (type is ListingSourceType.Unset)

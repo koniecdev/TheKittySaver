@@ -1,10 +1,9 @@
 ﻿using Bogus;
 using Shouldly;
-using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.ValueObjects;
 using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
-using TheKittySaver.AdoptionSystem.Domain.Core.Primitives.ResultMonad;
+using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
+using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects;
 using TheKittySaver.AdoptionSystem.Domain.Tests.Unit.Shared;
-using Email = TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.Email;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Tests.Unit.Aggregates.PersonAggregate.ValueObjects;
 
@@ -27,7 +26,7 @@ public class EmailTests
         result.Value.ShouldBeOfType<Email>();
         result.Value.Value.ShouldBe(value);
         result.Value.ToString().ShouldBe(value);
-        value = result.Value;
+        value = result.Value.Value;
         value.ShouldBeOfType<string>();
     }
     

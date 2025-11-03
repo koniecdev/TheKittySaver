@@ -5,7 +5,6 @@ public enum ListingSourceType
     Unset,
     Shelter,
     Foundation,
-    SmallRescueGroup,
     PrivatePerson,
     PrivatePersonUrgent
 }

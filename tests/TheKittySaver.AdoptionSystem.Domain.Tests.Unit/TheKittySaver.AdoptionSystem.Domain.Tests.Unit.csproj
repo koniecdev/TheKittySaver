@@ -21,6 +21,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\src\AdoptionSystem\TheKittySaver.AdoptionSystem.Domain\TheKittySaver.AdoptionSystem.Domain.csproj" />
       <ProjectReference Include="..\..\src\BoundedContexts\AdoptionSystem\TheKittySaver.AdoptionSystem.Domain\TheKittySaver.AdoptionSystem.Domain.csproj" />
     </ItemGroup>
 

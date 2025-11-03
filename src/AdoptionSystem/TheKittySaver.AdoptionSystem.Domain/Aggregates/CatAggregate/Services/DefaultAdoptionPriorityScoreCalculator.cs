@@ -104,10 +104,9 @@ public sealed class DefaultAdoptionPriorityScoreCalculator : IAdoptionPrioritySc
         decimal points = listingSource.Type switch
         {
             ListingSourceType.PrivatePersonUrgent => 20,
-            ListingSourceType.PrivatePerson => 10,
-            ListingSourceType.SmallRescueGroup => 8,
-            ListingSourceType.Foundation => 5,
-            ListingSourceType.Shelter => 3,
+            ListingSourceType.PrivatePerson => 18,
+            ListingSourceType.Foundation => 10,
+            ListingSourceType.Shelter => 5,
             _ => 0
         };
         
