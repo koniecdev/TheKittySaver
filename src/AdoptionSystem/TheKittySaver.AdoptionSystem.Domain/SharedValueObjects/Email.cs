@@ -18,19 +18,19 @@ public sealed partial class Email : ValueObject
     {
         if (string.IsNullOrWhiteSpace(value))
         {
-            return Result.Failure<Email>(DomainErrors.PersonAggregatePersonEntity.EmailProperty.NullOrEmpty);
+            return Result.Failure<Email>(DomainErrors.PersonEntity.EmailValueObject.NullOrEmpty);
         }
-        
+
         value = value.Trim();
-        
+
         if (value.Length > MaxLength)
         {
-            return Result.Failure<Email>(DomainErrors.PersonAggregatePersonEntity.EmailProperty.LongerThanAllowed);
+            return Result.Failure<Email>(DomainErrors.PersonEntity.EmailValueObject.LongerThanAllowed);
         }
-        
+
         if (!EmailRegex.IsMatch(value))
         {
-            return Result.Failure<Email>(DomainErrors.PersonAggregatePersonEntity.EmailProperty.InvalidFormat);
+            return Result.Failure<Email>(DomainErrors.PersonEntity.EmailValueObject.InvalidFormat);
         }
         
         Email instance = new(value);

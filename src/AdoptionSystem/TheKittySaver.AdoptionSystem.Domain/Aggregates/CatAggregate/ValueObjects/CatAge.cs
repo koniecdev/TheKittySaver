@@ -16,11 +16,11 @@ public sealed class CatAge : ValueObject
         {
             case < MinimumAllowedValue:
                 return Result.Failure<CatAge>(
-                    DomainErrors.CatEntity.CatAgeProperty
+                    DomainErrors.CatEntity.AgeValueObject
                         .BelowMinimalAllowedValue(value, MinimumAllowedValue));
             case > MaximumAllowedValue:
                 return Result.Failure<CatAge>(
-                    DomainErrors.CatEntity.CatAgeProperty
+                    DomainErrors.CatEntity.AgeValueObject
                         .AboveMaximumAllowedValue(value, MaximumAllowedValue));
             default:
             {

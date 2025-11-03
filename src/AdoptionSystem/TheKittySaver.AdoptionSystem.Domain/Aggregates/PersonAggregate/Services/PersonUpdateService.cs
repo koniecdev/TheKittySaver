@@ -31,12 +31,13 @@ internal sealed class PersonUpdateService : IPersonUpdateService
         Maybe<Person> maybePerson = await _personRepository.GetByIdAsync(personId, cancellationToken);
         if (maybePerson.HasNoValue)
         {
-            return Result.Failure(DomainErrors.PersonAggregatePersonEntity.NotFound(personId));
+            return Result.Failure(DomainErrors.PersonEntity.NotFound(personId));
         }
 
-        if (await _personUniquenessCheckerService.IsEmailTakenAsync(updatedEmail, personId, cancellationToken))
+        if (updatedEmail != maybePerson.Value.Email 
+            && await _personUniquenessCheckerService.IsEmailTakenAsync(updatedEmail, cancellationToken))
         {
-            return Result.Failure(DomainErrors.PersonAggregatePersonEntity.EmailProperty.AlreadyTaken(updatedEmail));
+            return Result.Failure(DomainErrors.PersonEntity.EmailValueObject.AlreadyTaken(updatedEmail));
         }
         
         Result updateEmailResult = maybePerson.Value.UpdateEmail(updatedEmail);
@@ -51,12 +52,13 @@ internal sealed class PersonUpdateService : IPersonUpdateService
         Maybe<Person> maybePerson = await _personRepository.GetByIdAsync(personId, cancellationToken);
         if (maybePerson.HasNoValue)
         {
-            return Result.Failure(DomainErrors.PersonAggregatePersonEntity.NotFound(personId));
+            return Result.Failure(DomainErrors.PersonEntity.NotFound(personId));
         }
 
-        if (await _personUniquenessCheckerService.IsPhoneNumberTakenAsync(updatedPhoneNumber, personId, cancellationToken))
+        if (updatedPhoneNumber != maybePerson.Value.PhoneNumber 
+            && await _personUniquenessCheckerService.IsPhoneNumberTakenAsync(updatedPhoneNumber, cancellationToken))
         {
-            return Result.Failure(DomainErrors.PersonAggregatePersonEntity.PhoneNumberProperty.AlreadyTaken(updatedPhoneNumber));
+            return Result.Failure(DomainErrors.PersonEntity.PhoneNumberValueObject.AlreadyTaken(updatedPhoneNumber));
         }
         
         Result updatePhoneNumberResult = maybePerson.Value.UpdatePhoneNumber(updatedPhoneNumber);

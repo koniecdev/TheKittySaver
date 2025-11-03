@@ -19,21 +19,21 @@ public sealed class SpecialNeedsStatus : ValueObject
         if (string.IsNullOrWhiteSpace(description))
         {
             return Result.Failure<SpecialNeedsStatus>(
-                DomainErrors.CatEntity.SpecialNeedsStatusProperty.DescriptionIsNullOrEmpty);
+                DomainErrors.CatEntity.SpecialNeedsValueObject.DescriptionIsNullOrEmpty);
         }
 
         if (severityType is SpecialNeedsSeverityType.Unset)
         {
             return Result.Failure<SpecialNeedsStatus>(
-                DomainErrors.CatEntity.SpecialNeedsStatusProperty.SpecialNeedsSeverityIsUnset);
+                DomainErrors.CatEntity.SpecialNeedsValueObject.SeverityIsUnset);
         }
-        
+
         description = description.Trim();
 
         if (description.Length > MaxDescriptionLength)
         {
             return Result.Failure<SpecialNeedsStatus>(
-                DomainErrors.CatEntity.SpecialNeedsStatusProperty.DescriptionIsLongerThanAllowed);
+                DomainErrors.CatEntity.SpecialNeedsValueObject.DescriptionIsLongerThanAllowed);
         }
 
         SpecialNeedsStatus instance = new(true, description, severityType);

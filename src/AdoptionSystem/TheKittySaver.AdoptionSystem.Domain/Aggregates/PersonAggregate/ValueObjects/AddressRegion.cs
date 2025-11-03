@@ -13,14 +13,14 @@ public sealed class AddressRegion : ValueObject
     {
         if (string.IsNullOrWhiteSpace(value))
         {
-            return Result.Failure<AddressRegion>(DomainErrors.AddressEntity.RegionProperty.NullOrEmpty);
+            return Result.Failure<AddressRegion>(DomainErrors.PersonAddressEntity.RegionValueObject.NullOrEmpty);
         }
 
         value = value.Trim();
-        
+
         if (value.Length > MaxLength)
         {
-            return Result.Failure<AddressRegion>(DomainErrors.AddressEntity.RegionProperty.LongerThanAllowed);
+            return Result.Failure<AddressRegion>(DomainErrors.PersonAddressEntity.RegionValueObject.LongerThanAllowed);
         }
 
         AddressRegion instance = new(value);

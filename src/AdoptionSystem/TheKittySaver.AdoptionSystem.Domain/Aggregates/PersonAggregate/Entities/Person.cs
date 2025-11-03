@@ -34,7 +34,7 @@ public sealed class Person : AggregateRoot<PersonId>
         
         if (_addresses.Any(x=>x.Name == name))
         {
-            return Result.Failure<AddressId>(DomainErrors.AddressEntity.NameProperty.AlreadyTaken(name));
+            return Result.Failure<AddressId>(DomainErrors.PersonAddressEntity.NameValueObject.AlreadyTaken(name));
         }
         
         Result<Address> createAddressResult = Address.Create(
@@ -62,12 +62,12 @@ public sealed class Person : AggregateRoot<PersonId>
         Maybe<Address> maybeAddress = _addresses.GetByIdOrDefault(addressId);
         if (maybeAddress.HasNoValue)
         {
-            return Result.Failure(DomainErrors.AddressEntity.NotFound(addressId));
+            return Result.Failure(DomainErrors.PersonAddressEntity.NotFound(addressId));
         }
 
         if (maybeAddress.Value.Name != updatedName && _addresses.Any(x=>x.Name == updatedName))
         {
-            return Result.Failure(DomainErrors.AddressEntity.NameProperty.AlreadyTaken(updatedName));
+            return Result.Failure(DomainErrors.PersonAddressEntity.NameValueObject.AlreadyTaken(updatedName));
         }
 
         Result updateNameResult = maybeAddress.Value.UpdateName(updatedName);
@@ -89,7 +89,7 @@ public sealed class Person : AggregateRoot<PersonId>
         Maybe<Address> maybeAddressThatWeWantToUpdate = _addresses.GetByIdOrDefault(id);
         if (maybeAddressThatWeWantToUpdate.HasNoValue)
         {
-            return Result.Failure(DomainErrors.AddressEntity.NotFound(id));
+            return Result.Failure(DomainErrors.PersonAddressEntity.NotFound(id));
         }
 
         Result updateRegionResult = maybeAddressThatWeWantToUpdate.Value.UpdateRegion(region);
@@ -117,7 +117,7 @@ public sealed class Person : AggregateRoot<PersonId>
         Maybe<Address> maybeAddress = _addresses.GetByIdOrDefault(id);
         if (maybeAddress.HasNoValue)
         {
-            return Result.Failure(DomainErrors.AddressEntity.NotFound(id));
+            return Result.Failure(DomainErrors.PersonAddressEntity.NotFound(id));
         }
 
         return _addresses.Remove(maybeAddress.Value)
@@ -130,7 +130,7 @@ public sealed class Person : AggregateRoot<PersonId>
         Ensure.NotEmpty(identityId);
         if (IdentityId != IdentityId.Empty)
         {
-            return Result.Failure(DomainErrors.PersonAggregatePersonEntity.IdentityIdProperty.AlreadyHasBeenSet);
+            return Result.Failure(DomainErrors.PersonEntity.IdentityId.AlreadyHasBeenSet);
         }
 
         IdentityId = identityId;

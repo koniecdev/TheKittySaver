@@ -22,18 +22,14 @@ internal sealed class PersonCreationService : IPersonCreationService
         PhoneNumber phoneNumber,
         CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(username);
-        ArgumentNullException.ThrowIfNull(email);
-        ArgumentNullException.ThrowIfNull(phoneNumber);
-        
         if (await _personUniquenessCheckerService.IsEmailTakenAsync(email, cancellationToken: cancellationToken))
         {
-            return Result.Failure<Person>(DomainErrors.PersonAggregatePersonEntity.EmailProperty.AlreadyTaken(email));
+            return Result.Failure<Person>(DomainErrors.PersonEntity.EmailValueObject.AlreadyTaken(email));
         }
 
         if (await _personUniquenessCheckerService.IsPhoneNumberTakenAsync(phoneNumber, cancellationToken: cancellationToken))
         {
-            return Result.Failure<Person>(DomainErrors.PersonAggregatePersonEntity.PhoneNumberProperty.AlreadyTaken(phoneNumber));
+            return Result.Failure<Person>(DomainErrors.PersonEntity.PhoneNumberValueObject.AlreadyTaken(phoneNumber));
         }
 
         Result<Person> createPersonResult = Person.Create(username, email, phoneNumber);

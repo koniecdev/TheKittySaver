@@ -22,20 +22,20 @@ public sealed class AdoptionHistory : ValueObject
         if (counterHowManyTimesWasTheCatReturned < 0)
         {
             return Result.Failure<AdoptionHistory>(
-                DomainErrors.CatEntity.AdoptionHistoryProperty.CountTooLow);
+                DomainErrors.CatEntity.AdoptionHistoryValueObject.CountTooLow);
         }
-        
+
         const double averageOfDaysInOneYear = 365.2425;
         if (lastReturn < currentDate.Subtract(TimeSpan.FromDays(averageOfDaysInOneYear * CatAge.MaximumAllowedValue)))
         {
             return Result.Failure<AdoptionHistory>(
-                DomainErrors.CatEntity.AdoptionHistoryProperty.LastReturnTooFarInPast);
+                DomainErrors.CatEntity.AdoptionHistoryValueObject.LastReturnTooFarInPast);
         }
-    
+
         if (string.IsNullOrWhiteSpace(reason))
         {
             return Result.Failure<AdoptionHistory>(
-                DomainErrors.CatEntity.AdoptionHistoryProperty.LastReturnReasonIsEmpty);
+                DomainErrors.CatEntity.AdoptionHistoryValueObject.LastReturnReasonIsEmpty);
         }
     
         reason = reason.Trim();

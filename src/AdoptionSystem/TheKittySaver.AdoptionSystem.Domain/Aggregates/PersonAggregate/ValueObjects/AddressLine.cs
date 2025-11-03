@@ -13,14 +13,14 @@ public sealed class AddressLine : ValueObject
     {
         if (string.IsNullOrWhiteSpace(value))
         {
-            return Result.Failure<AddressLine>(DomainErrors.AddressEntity.LineProperty.NullOrEmpty);
+            return Result.Failure<AddressLine>(DomainErrors.PersonAddressEntity.LineValueObject.NullOrEmpty);
         }
 
         value = value.Trim();
-        
+
         if (value.Length > MaxLength)
         {
-            return Result.Failure<AddressLine>(DomainErrors.AddressEntity.LineProperty.LongerThanAllowed);
+            return Result.Failure<AddressLine>(DomainErrors.PersonAddressEntity.LineValueObject.LongerThanAllowed);
         }
 
         AddressLine instance = new(value);

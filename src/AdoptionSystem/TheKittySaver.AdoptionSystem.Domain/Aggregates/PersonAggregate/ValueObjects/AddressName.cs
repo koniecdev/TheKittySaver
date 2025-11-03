@@ -13,14 +13,14 @@ public sealed class AddressName : ValueObject
     {
         if (string.IsNullOrWhiteSpace(value))
         {
-            return Result.Failure<AddressName>(DomainErrors.AddressEntity.NameProperty.NullOrEmpty);
+            return Result.Failure<AddressName>(DomainErrors.PersonAddressEntity.NameValueObject.NullOrEmpty);
         }
 
         value = value.Trim();
-        
+
         if (value.Length > MaxLength)
         {
-            return Result.Failure<AddressName>(DomainErrors.AddressEntity.NameProperty.LongerThanAllowed);
+            return Result.Failure<AddressName>(DomainErrors.PersonAddressEntity.NameValueObject.LongerThanAllowed);
         }
 
         AddressName instance = new(value);

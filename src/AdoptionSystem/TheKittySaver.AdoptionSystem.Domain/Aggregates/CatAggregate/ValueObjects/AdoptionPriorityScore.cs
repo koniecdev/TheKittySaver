@@ -16,11 +16,11 @@ public sealed class AdoptionPriorityScore : ValueObject
         {
             case < MinimumAllowedPoints:
                 return Result.Failure<AdoptionPriorityScore>(
-                    DomainErrors.AdoptionPriorityScoreValueObject
+                    DomainErrors.CatEntity.AdoptionPriorityScoreValueObject
                         .BelowMinimalAllowedValue(value, MinimumAllowedPoints));
             case > MaximumAllowedPoints:
                 return Result.Failure<AdoptionPriorityScore>(
-                    DomainErrors.AdoptionPriorityScoreValueObject
+                    DomainErrors.CatEntity.AdoptionPriorityScoreValueObject
                         .AboveMaximumAllowedValue(value, MaximumAllowedPoints));
             default:
             {

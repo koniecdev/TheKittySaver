@@ -8,11 +8,9 @@ public interface IPersonUniquenessCheckerService
 {
     Task<bool> IsEmailTakenAsync(
         Email email,
-        PersonId? idToExcludeFromSearch = null,
         CancellationToken cancellationToken = default);
     
     Task<bool> IsPhoneNumberTakenAsync(
         PhoneNumber phoneNumber,
-        PersonId? idToExcludeFromSearch = null,
         CancellationToken cancellationToken = default);
 }

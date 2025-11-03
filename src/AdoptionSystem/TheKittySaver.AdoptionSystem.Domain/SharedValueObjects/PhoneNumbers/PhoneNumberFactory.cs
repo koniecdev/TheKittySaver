@@ -3,7 +3,7 @@ using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
 
 namespace TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.PhoneNumbers;
 
-public sealed class PhoneNumberFactory : IPhoneNumberFactory
+internal sealed class PhoneNumberFactory : IPhoneNumberFactory
 {
     private readonly IValidPhoneNumberSpecification _specification;
     private readonly IPhoneNumberNormalizer _phoneNumberNormalizer;
@@ -21,21 +21,21 @@ public sealed class PhoneNumberFactory : IPhoneNumberFactory
         if (string.IsNullOrWhiteSpace(value))
         {
             return Result.Failure<PhoneNumber>(
-                DomainErrors.PersonAggregatePersonEntity.PhoneNumberProperty.NullOrEmpty);
+                DomainErrors.PersonEntity.PhoneNumberValueObject.NullOrEmpty);
         }
-        
+
         value = value.Trim();
-        
+
         if (value.Length > PhoneNumber.MaxLength)
         {
             return Result.Failure<PhoneNumber>(
-                DomainErrors.PersonAggregatePersonEntity.PhoneNumberProperty.LongerThanAllowed);
+                DomainErrors.PersonEntity.PhoneNumberValueObject.LongerThanAllowed);
         }
-        
+
         if (!_specification.IsSatisfiedBy(value))
         {
             return Result.Failure<PhoneNumber>(
-                DomainErrors.PersonAggregatePersonEntity.PhoneNumberProperty.InvalidFormat);
+                DomainErrors.PersonEntity.PhoneNumberValueObject.InvalidFormat);
         }
         
         value = _phoneNumberNormalizer.Normalize(value);
