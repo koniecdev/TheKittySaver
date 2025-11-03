@@ -20,7 +20,7 @@ public static partial class DomainErrors
         {
             public static Error AlreadyHasBeenSet 
                 => new(
-                    "Person.IdentityId.AlreadyHasBeenSet", 
+                    $"{nameof(Person)}.{nameof(Person.IdentityId)}.AlreadyHasBeenSet", 
                     "IdentityId has been set already.");
         }
         
@@ -74,7 +74,7 @@ public static partial class DomainErrors
                 => TooLong(
                     nameof(Person),
                     nameof(Person.PhoneNumber), 
-                    SharedValueObjects.PhoneNumbers.PhoneNumber.MaxLength);
+                    PhoneNumber.MaxLength);
         
             public static Error InvalidFormat 
                 => BadFormat(

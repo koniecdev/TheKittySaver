@@ -50,19 +50,19 @@ public static partial class DomainErrors
             public static Error CountTooLow
                 => CustomMessage(
                     nameof(CatEntity), 
-                    $"{nameof(Cat.AdoptionHistory)}.ReturnCount",
+                    $"{nameof(Cat.AdoptionHistory)}.{nameof(AdoptionHistory.ReturnCount)}",
                     "If cat has been returned, then it must has been returned at least one time.");
             
             public static Error LastReturnTooFarInPast
                 => CustomMessage(
                     nameof(CatEntity), 
-                    $"{nameof(Cat.AdoptionHistory)}.LastReturnDate",
+                    $"{nameof(Cat.AdoptionHistory)}.{nameof(AdoptionHistory.LastReturnDate)}",
                     "Invalid last return date has been provided.");
             
             public static Error LastReturnReasonIsEmpty
                 => Required(
                     nameof(CatEntity), 
-                    $"{nameof(Cat.AdoptionHistory)}.LastReturnReason");
+                    $"{nameof(Cat.AdoptionHistory)}.{nameof(AdoptionHistory.LastReturnReason)}");
         }
         
         public static class ListingSourceValueObject
@@ -70,18 +70,18 @@ public static partial class DomainErrors
             public static Error SourceNameIsNullOrEmpty 
                 => Required(
                     nameof(CatEntity),
-                    $"{nameof(Cat.ListingSource)}.SourceName");
+                    $"{nameof(Cat.ListingSource)}.{nameof(ListingSource.SourceName)}");
             
             public static Error SourceNameIsLongerThanAllowed 
                 => TooLong(
                     nameof(CatEntity),
-                    $"{nameof(Cat.ListingSource)}.SourceName",
+                    $"{nameof(Cat.ListingSource)}.{nameof(ListingSource.SourceName)}",
                     ListingSource.MaxSourceNameLength);
             
             public static Error TypeIsUnset 
                 => Required(
                     nameof(CatEntity),
-                    $"{nameof(Cat.ListingSource)}.Type");
+                    $"{nameof(Cat.ListingSource)}.{nameof(ListingSource.Type)}");
         }
         
         public static class SpecialNeedsValueObject
@@ -89,18 +89,18 @@ public static partial class DomainErrors
             public static Error DescriptionIsNullOrEmpty 
                 => Required(
                     nameof(CatEntity),
-                    $"{nameof(Cat.SpecialNeeds)}.Description");
+                    $"{nameof(Cat.SpecialNeeds)}.{nameof(SpecialNeedsStatus.Description)}");
             
             public static Error DescriptionIsLongerThanAllowed 
                 => TooLong(
                     nameof(CatEntity),
-                    $"{nameof(Cat.SpecialNeeds)}.Description",
+                    $"{nameof(Cat.SpecialNeeds)}.{nameof(SpecialNeedsStatus.Description)}",
                     SpecialNeedsStatus.MaxDescriptionLength);
             
             public static Error SeverityIsUnset 
                 => Required(
                     nameof(CatEntity),
-                    $"{nameof(Cat.SpecialNeeds)}.SeverityType");
+                    $"{nameof(Cat.SpecialNeeds)}.{nameof(SpecialNeedsStatus.SeverityType)}");
         }
         
         public static class AdoptionPriorityScoreValueObject
