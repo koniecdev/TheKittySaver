@@ -1,4 +1,5 @@
 ﻿using TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
+using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
 
 namespace TheKittySaver.AdoptionSystem.Domain.SharedValueObjects;
@@ -12,13 +13,12 @@ public sealed class Description : ValueObject
     {
         if (string.IsNullOrWhiteSpace(value))
         {
-            return Result.Failure<Description>();
+            return Result.Failure<Description>(DomainErrors.CatEntity.DescriptionValueObject.NullOrEmpty);
         }
 
         if (value.Length > MaxLength)
         {
-            return Result.Failure<Description>();
-            
+            return Result.Failure<Description>(DomainErrors.CatEntity.DescriptionValueObject.LongerThanAllowed);
         }
 
         value = value.Trim();
@@ -33,8 +33,6 @@ public sealed class Description : ValueObject
     }
 
     public override string ToString() => Value;
-    public static implicit operator string(Description value) => value.Value;
-
     protected override IEnumerable<object> GetAtomicValues()
     {
         yield return Value;

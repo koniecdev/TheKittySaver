@@ -1,6 +1,7 @@
 ﻿using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Entities;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.ValueObjects;
 using TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
+using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Core.Errors;
@@ -101,6 +102,20 @@ public static partial class DomainErrors
                 => Required(
                     nameof(CatEntity),
                     $"{nameof(Cat.SpecialNeeds)}.{nameof(SpecialNeedsStatus.SeverityType)}");
+        }
+        
+        public static class DescriptionValueObject
+        {
+            public static Error NullOrEmpty 
+                => Required(
+                    nameof(CatEntity),
+                    nameof(DescriptionValueObject));
+            
+            public static Error LongerThanAllowed 
+                => TooLong(
+                    nameof(CatEntity),
+                    nameof(DescriptionValueObject),
+                    Description.MaxLength);
         }
         
         public static class AdoptionPriorityScoreValueObject

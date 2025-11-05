@@ -9,16 +9,24 @@ namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAgg
 public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
 {
     public PersonId PersonId { get; }
-    public Description Description { get; private set; }
     
-    internal static AdoptionAnnouncement Create(PersonId personId)
+    internal static AdoptionAnnouncement Create(
+        PersonId personId,
+        Description description)
     {
         Ensure.NotEmpty(personId);
-        AdoptionAnnouncement instance = new(personId);
+        ArgumentNullException.ThrowIfNull(description);
+        
+        AdoptionAnnouncementId id = AdoptionAnnouncementId.New();
+        AdoptionAnnouncement instance = new(
+            id,
+            personId);
         return instance;
     }
     
-    private AdoptionAnnouncement(PersonId personId)
+    private AdoptionAnnouncement(
+        AdoptionAnnouncementId id,
+        PersonId personId) : base(id)
     {
         PersonId = personId;
     }
