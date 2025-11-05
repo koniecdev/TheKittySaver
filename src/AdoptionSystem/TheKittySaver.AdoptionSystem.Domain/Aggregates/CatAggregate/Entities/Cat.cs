@@ -4,12 +4,14 @@ using TheKittySaver.AdoptionSystem.Domain.Core.Guards;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.AdoptionAnnouncementAggregate;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate;
+using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Entities;
 
 public sealed class Cat : AggregateRoot<CatId>
 {
-    public AdoptionAnnouncementId? AdoptionAnnouncementId { get; set; }
+    public PersonId PersonId { get; }
+    public AdoptionAnnouncementId? AdoptionAnnouncementId { get; private set; }
     public CatName Name { get; private set; }
     public CatAge Age { get; private set; }
     public CatGender Gender { get; private set; }
@@ -97,6 +99,7 @@ public sealed class Cat : AggregateRoot<CatId>
     }
     
     public static Result<Cat> Create(
+        PersonId personId,
         CatName name,
         CatAge age,
         CatGender gender,
@@ -107,6 +110,7 @@ public sealed class Cat : AggregateRoot<CatId>
         ListingSource listingSource,
         CatColor color)
     {
+        Ensure.NotEmpty(personId);
         ArgumentNullException.ThrowIfNull(name);
         ArgumentNullException.ThrowIfNull(age);
         ArgumentNullException.ThrowIfNull(gender);
@@ -120,6 +124,7 @@ public sealed class Cat : AggregateRoot<CatId>
         CatId id = CatId.New();
         Cat instance = new(
             id, 
+            personId,
             name, 
             age, 
             gender,
@@ -135,6 +140,7 @@ public sealed class Cat : AggregateRoot<CatId>
     
     private Cat(
         CatId id,
+        PersonId personId,
         CatName name,
         CatAge age,
         CatGender gender,
@@ -145,6 +151,7 @@ public sealed class Cat : AggregateRoot<CatId>
         ListingSource listingSource,
         CatColor color) : base(id)
     {
+        PersonId = personId;
         Name = name;
         Age = age;
         Gender = gender;

@@ -1,0 +1,9 @@
+﻿using TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAggregate.Entities;
+using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Entities;
+using TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
+using TheKittySaver.AdoptionSystem.Primitives.Aggregates.AdoptionAnnouncementAggregate;
+using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate;
+
+namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAggregate.Repositories;
+
+public interface IAdoptionAnnouncementRepository : IRepository<AdoptionAnnouncement, AdoptionAnnouncementId>;

@@ -1,24 +1,29 @@
-﻿namespace TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
+﻿using TheKittySaver.AdoptionSystem.Domain.Core.Enums;
+
+namespace TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
 
 /// <summary>
 /// Represents a concrete domain error.
 /// </summary>
-public sealed class Error(string code, string message) : ValueObject
+public sealed class Error : ValueObject
 {
-    public string Code { get; } = code;
-    
-    public string Message { get; } = message;
+    public string Code { get; }
+    public string Message { get; }
+    public TypeOfError Type { get; }
 
-    public static implicit operator string(Error error) => error.Code;
+    public static Error None => new(string.Empty, string.Empty);
+
+    public Error(string code, string message, TypeOfError type = TypeOfError.Failure)
+    {
+        Code = code;
+        Message = message;
+        Type = type;
+    }
     
     protected override IEnumerable<object> GetAtomicValues()
     {
         yield return Code;
         yield return Message;
+        yield return Type;
     }
-
-    /// <summary>
-    /// Gets the empty error instance.
-    /// </summary>
-    internal static Error None => new(string.Empty, string.Empty);
 }
