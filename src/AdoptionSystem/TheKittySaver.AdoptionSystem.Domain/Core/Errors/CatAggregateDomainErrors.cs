@@ -117,22 +117,5 @@ public static partial class DomainErrors
                     nameof(DescriptionValueObject),
                     Description.MaxLength);
         }
-        
-        public static class AdoptionPriorityScoreValueObject
-        {
-            public static Error BelowMinimalAllowedValue(decimal actualValue, decimal minimumValue) 
-                => BelowValue(
-                    nameof(Cat),
-                    nameof(AdoptionPriorityScore),
-                    actualValue,
-                    minimumValue);
-        
-            public static Error AboveMaximumAllowedValue(decimal actualValue, decimal maximumValue)
-                => AboveValue(
-                    nameof(Cat),
-                    nameof(AdoptionPriorityScore),
-                    actualValue,
-                    maximumValue);
-        }
     }
 }

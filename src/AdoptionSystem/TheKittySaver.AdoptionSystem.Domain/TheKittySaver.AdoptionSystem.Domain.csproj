@@ -26,5 +26,6 @@
     
     <ItemGroup>
       <Folder Include="Aggregates\AdoptionAnnouncementAggregate\ValueObjects\" />
+      <Folder Include="Aggregates\CatAggregate\Services\" />
     </ItemGroup>
 </Project>
