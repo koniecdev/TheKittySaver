@@ -2,6 +2,7 @@
 using TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
 using TheKittySaver.AdoptionSystem.Domain.Core.Guards;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
+using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.AdoptionAnnouncementAggregate;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
@@ -13,14 +14,20 @@ public sealed class Cat : AggregateRoot<CatId>
     public PersonId PersonId { get; }
     public AdoptionAnnouncementId? AdoptionAnnouncementId { get; private set; }
     public CatName Name { get; private set; }
+    public Description Description { get; private set; }
     public CatAge Age { get; private set; }
     public CatGender Gender { get; private set; }
+    public CatColor Color { get; private set; }
+    public CatWeight Weight { get; private set; }
     public HealthStatus HealthStatus { get; private set; }
     public SpecialNeedsStatus SpecialNeeds { get; private set; }
     public Temperament Temperament { get; private set; }
     public AdoptionHistory AdoptionHistory { get; private set; }
     public ListingSource ListingSource { get; private set; }
-    public CatColor Color { get; private set; }
+    public NeuteringStatus NeuteringStatus { get; private set; }
+    public InfectiousDiseaseStatus InfectiousDiseaseStatus { get; private set; }
+    public VaccinationRecord VaccinationRecord { get; private set; }
+    public CatStatus Status { get; private set; }
 
     public Result ReassignToAdoptionAnnouncement(AdoptionAnnouncementId adoptionAnnouncementId)
     {
@@ -42,6 +49,13 @@ public sealed class Cat : AggregateRoot<CatId>
         return Result.Success();
     }
 
+    public Result UpdateDescription(Description updatedDescription)
+    {
+        ArgumentNullException.ThrowIfNull(updatedDescription);
+        Description = updatedDescription;
+        return Result.Success();
+    }
+
     public Result UpdateAge(CatAge updatedAge)
     {
         ArgumentNullException.ThrowIfNull(updatedAge);
@@ -53,6 +67,20 @@ public sealed class Cat : AggregateRoot<CatId>
     {
         ArgumentNullException.ThrowIfNull(updatedGender);
         Gender = updatedGender;
+        return Result.Success();
+    }
+
+    public Result UpdateColor(CatColor updatedColor)
+    {
+        ArgumentNullException.ThrowIfNull(updatedColor);
+        Color = updatedColor;
+        return Result.Success();
+    }
+
+    public Result UpdateWeight(CatWeight updatedWeight)
+    {
+        ArgumentNullException.ThrowIfNull(updatedWeight);
+        Weight = updatedWeight;
         return Result.Success();
     }
 
@@ -91,49 +119,88 @@ public sealed class Cat : AggregateRoot<CatId>
         return Result.Success();
     }
 
-    public Result UpdateColor(CatColor updatedColor)
+    public Result UpdateNeuteringStatus(NeuteringStatus updatedNeuteringStatus)
     {
-        ArgumentNullException.ThrowIfNull(updatedColor);
-        Color = updatedColor;
+        ArgumentNullException.ThrowIfNull(updatedNeuteringStatus);
+        NeuteringStatus = updatedNeuteringStatus;
+        return Result.Success();
+    }
+
+    public Result UpdateInfectiousDiseaseStatus(InfectiousDiseaseStatus updatedInfectiousDiseaseStatus)
+    {
+        ArgumentNullException.ThrowIfNull(updatedInfectiousDiseaseStatus);
+        InfectiousDiseaseStatus = updatedInfectiousDiseaseStatus;
+        return Result.Success();
+    }
+
+    public Result UpdateVaccinationRecord(VaccinationRecord updatedVaccinationRecord)
+    {
+        ArgumentNullException.ThrowIfNull(updatedVaccinationRecord);
+        VaccinationRecord = updatedVaccinationRecord;
+        return Result.Success();
+    }
+
+    public Result UpdateStatus(CatStatus updatedStatus)
+    {
+        ArgumentNullException.ThrowIfNull(updatedStatus);
+        Status = updatedStatus;
         return Result.Success();
     }
     
     public static Result<Cat> Create(
         PersonId personId,
         CatName name,
+        Description description,
         CatAge age,
         CatGender gender,
+        CatColor color,
+        CatWeight weight,
         HealthStatus healthStatus,
         SpecialNeedsStatus specialNeeds,
         Temperament temperament,
         AdoptionHistory adoptionHistory,
         ListingSource listingSource,
-        CatColor color)
+        NeuteringStatus neuteringStatus,
+        InfectiousDiseaseStatus infectiousDiseaseStatus,
+        VaccinationRecord vaccinationRecord,
+        DateTimeOffset createdAt)
     {
         Ensure.NotEmpty(personId);
         ArgumentNullException.ThrowIfNull(name);
+        ArgumentNullException.ThrowIfNull(description);
         ArgumentNullException.ThrowIfNull(age);
         ArgumentNullException.ThrowIfNull(gender);
+        ArgumentNullException.ThrowIfNull(color);
+        ArgumentNullException.ThrowIfNull(weight);
         ArgumentNullException.ThrowIfNull(healthStatus);
         ArgumentNullException.ThrowIfNull(specialNeeds);
         ArgumentNullException.ThrowIfNull(temperament);
         ArgumentNullException.ThrowIfNull(adoptionHistory);
         ArgumentNullException.ThrowIfNull(listingSource);
-        ArgumentNullException.ThrowIfNull(color);
+        ArgumentNullException.ThrowIfNull(neuteringStatus);
+        ArgumentNullException.ThrowIfNull(infectiousDiseaseStatus);
+        ArgumentNullException.ThrowIfNull(vaccinationRecord);
+        Ensure.NotEmpty(createdAt);
         
         CatId id = CatId.New();
         Cat instance = new(
             id, 
             personId,
-            name, 
+            name,
+            description,
             age, 
             gender,
+            color,
+            weight,
             healthStatus,
             specialNeeds,
             temperament,
             adoptionHistory,
             listingSource,
-            color);
+            neuteringStatus,
+            infectiousDiseaseStatus,
+            vaccinationRecord,
+            createdAt);
         
         return Result.Success(instance);
     }
@@ -142,24 +209,36 @@ public sealed class Cat : AggregateRoot<CatId>
         CatId id,
         PersonId personId,
         CatName name,
+        Description description,
         CatAge age,
         CatGender gender,
+        CatColor color,
+        CatWeight weight,
         HealthStatus healthStatus,
         SpecialNeedsStatus specialNeeds,
         Temperament temperament,
         AdoptionHistory adoptionHistory,
         ListingSource listingSource,
-        CatColor color) : base(id)
+        NeuteringStatus neuteringStatus,
+        InfectiousDiseaseStatus infectiousDiseaseStatus,
+        VaccinationRecord vaccinationRecord,
+        DateTimeOffset createdAt) : base(id)
     {
         PersonId = personId;
         Name = name;
+        Description = description;
         Age = age;
         Gender = gender;
+        Color = color;
+        Weight = weight;
         HealthStatus = healthStatus;
         SpecialNeeds = specialNeeds;
         Temperament = temperament;
         AdoptionHistory = adoptionHistory;
         ListingSource = listingSource;
-        Color = color;
+        NeuteringStatus = neuteringStatus;
+        InfectiousDiseaseStatus = infectiousDiseaseStatus;
+        VaccinationRecord = vaccinationRecord;
+        Status = CatStatus.Available(createdAt);
     }
 }

@@ -12,7 +12,10 @@ internal sealed class DefaultAdoptionPriorityScoreCalculator : IAdoptionPriority
         HealthStatusType healthStatus,
         ListingSourceType listingSource,
         SpecialNeedsSeverityType specialNeedsSeverity,
-        TemperamentType temperament)
+        TemperamentType temperament,
+        FIVStatus fivStatus,
+        FeLVStatus felvStatus,
+        bool isNeutered)
     {
         decimal adoptionHistoryPoints = CalculateAdoptionHistoryPoints(returnCount);
         decimal agePoints = CalculateAgePoints(age);
@@ -22,6 +25,8 @@ internal sealed class DefaultAdoptionPriorityScoreCalculator : IAdoptionPriority
         decimal listingSourcePoints = CalculateListingSourcePoints(listingSource);
         decimal specialNeedsPoints = CalculateSpecialNeedsPoints(specialNeedsSeverity);
         decimal temperamentPoints = CalculateTemperamentPoints(temperament);
+        decimal infectiousDiseasePoints = CalculateInfectiousDiseasePoints(fivStatus, felvStatus);
+        decimal neuteringPoints = CalculateNeuteringPoints(isNeutered);
 
         decimal totalPoints =
             adoptionHistoryPoints +
@@ -31,7 +36,9 @@ internal sealed class DefaultAdoptionPriorityScoreCalculator : IAdoptionPriority
             healthPoints +
             listingSourcePoints +
             specialNeedsPoints +
-            temperamentPoints;
+            temperamentPoints +
+            infectiousDiseasePoints +
+            neuteringPoints;
 
         return totalPoints;
     }
@@ -142,5 +149,27 @@ internal sealed class DefaultAdoptionPriorityScoreCalculator : IAdoptionPriority
         };
 
         return points;
+    }
+
+    private static decimal CalculateInfectiousDiseasePoints(FIVStatus fivStatus, FeLVStatus felvStatus)
+    {
+        decimal points = 0m;
+
+        if (fivStatus == FIVStatus.Positive)
+        {
+            points += 35;
+        }
+
+        if (felvStatus == FeLVStatus.Positive)
+        {
+            points += 35;
+        }
+
+        return points;
+    }
+
+    private static decimal CalculateNeuteringPoints(bool isNeutered)
+    {
+        return isNeutered ? 0m : 10m;
     }
 }

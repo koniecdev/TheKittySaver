@@ -12,5 +12,8 @@ public interface IAdoptionPriorityScoreCalculator
         HealthStatusType healthStatus,
         ListingSourceType listingSource,
         SpecialNeedsSeverityType specialNeedsSeverity,
-        TemperamentType temperament);
+        TemperamentType temperament,
+        FIVStatus fivStatus,
+        FeLVStatus felvStatus,
+        bool isNeutered);
 }

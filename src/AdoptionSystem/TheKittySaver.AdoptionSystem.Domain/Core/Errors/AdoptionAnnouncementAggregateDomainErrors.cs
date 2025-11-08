@@ -1,4 +1,7 @@
+using TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAggregate.Entities;
+using TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAggregate.ValueObjects;
 using TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
+using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.AdoptionAnnouncementAggregate;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Core.Errors;
@@ -11,5 +14,63 @@ public static partial class DomainErrors
             => HasNotBeenFound(
                 nameof(AdoptionAnnouncementEntity),
                 id.Value);
+
+        public static Error CanOnlyPublishDraft
+            => CustomMessage(
+                nameof(AdoptionAnnouncementEntity),
+                nameof(AdoptionAnnouncement.Status),
+                "Only draft announcements can be published.");
+
+        public static Error CanOnlyPauseActive
+            => CustomMessage(
+                nameof(AdoptionAnnouncementEntity),
+                nameof(AdoptionAnnouncement.Status),
+                "Only active announcements can be paused.");
+
+        public static Error CanOnlyResumeWhenPaused
+            => CustomMessage(
+                nameof(AdoptionAnnouncementEntity),
+                nameof(AdoptionAnnouncement.Status),
+                "Only paused announcements can be resumed.");
+
+        public static Error CanOnlyCompleteActiveOrPaused
+            => CustomMessage(
+                nameof(AdoptionAnnouncementEntity),
+                nameof(AdoptionAnnouncement.Status),
+                "Only active or paused announcements can be completed.");
+
+        public static Error CannotCancelFinishedAnnouncement
+            => CustomMessage(
+                nameof(AdoptionAnnouncementEntity),
+                nameof(AdoptionAnnouncement.Status),
+                "Cannot cancel an announcement that is already completed or cancelled.");
+
+        public static Error CannotMixInfectedWithHealthyCats
+            => CustomMessage(
+                nameof(AdoptionAnnouncementEntity),
+                "CatsCompatibility",
+                "Cannot mix cats with FIV/FeLV positive status with FIV/FeLV negative cats in the same announcement.");
+
+        public static class DescriptionValueObject
+        {
+            public static Error NullOrEmpty
+                => Required(nameof(AdoptionAnnouncementEntity), nameof(AdoptionAnnouncement.Description));
+
+            public static Error TooLong
+                => TooManyCharacters(nameof(AdoptionAnnouncementEntity), nameof(AdoptionAnnouncement.Description), Description.MaxLength);
+        }
+
+        public static class StatusValueObject
+        {
+            public static Error PauseReasonRequired
+                => Required(nameof(AdoptionAnnouncementEntity), $"{nameof(AdoptionAnnouncement.Status)}.PauseReason");
+
+            public static Error CancelReasonRequired
+                => Required(nameof(AdoptionAnnouncementEntity), $"{nameof(AdoptionAnnouncement.Status)}.CancelReason");
+
+            public static Error NoteTooLong
+                => TooManyCharacters(nameof(AdoptionAnnouncementEntity), $"{nameof(AdoptionAnnouncement.Status)}.Note",
+                    AnnouncementStatus.MaxStatusNoteLength);
+        }
     }
 }

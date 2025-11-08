@@ -32,7 +32,7 @@ public static partial class DomainErrors
                     nameof(Person.Username));
             
             public static Error LongerThanAllowed 
-                => TooLong(
+                => TooManyCharacters(
                     nameof(PersonEntity),
                     nameof(Person.Username),
                     Username.MaxLength);
@@ -46,7 +46,7 @@ public static partial class DomainErrors
                     nameof(Person.Email));
         
             public static Error LongerThanAllowed 
-                => TooLong(
+                => TooManyCharacters(
                     nameof(Person),
                     nameof(Person.Email),
                     SharedValueObjects.Email.MaxLength);
@@ -71,7 +71,7 @@ public static partial class DomainErrors
                     nameof(Person.PhoneNumber));
         
             public static Error LongerThanAllowed 
-                => TooLong(
+                => TooManyCharacters(
                     nameof(Person),
                     nameof(Person.PhoneNumber), 
                     PhoneNumber.MaxLength);
@@ -110,7 +110,7 @@ public static partial class DomainErrors
                     nameof(Address.Name));
             
             public static Error LongerThanAllowed 
-                => TooLong(
+                => TooManyCharacters(
                     nameof(PersonAddressEntity),
                     nameof(Address.Name),
                     AddressName.MaxLength);
@@ -124,7 +124,7 @@ public static partial class DomainErrors
                     nameof(Address.Region));
             
             public static Error LongerThanAllowed
-                => TooLong(
+                => TooManyCharacters(
                     nameof(PersonAddressEntity),
                     nameof(Address.Region),
                     AddressRegion.MaxLength);
@@ -138,7 +138,7 @@ public static partial class DomainErrors
                     nameof(Address.City));
             
             public static Error LongerThanAllowed
-                => TooLong(
+                => TooManyCharacters(
                     nameof(PersonAddressEntity),
                     nameof(Address.City),
                     AddressCity.MaxLength);
@@ -152,7 +152,7 @@ public static partial class DomainErrors
                     nameof(Address.Line));
             
             public static Error LongerThanAllowed
-                => TooLong(
+                => TooManyCharacters(
                     nameof(PersonAddressEntity),
                     nameof(Address.Line),
                     AddressLine.MaxLength);

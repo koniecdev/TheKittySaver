@@ -20,7 +20,7 @@ public static partial class DomainErrors
             $"The {property.ToLower()} value '{alreadyTakenValue}' is already taken.",
             TypeOfError.Conflict);
 
-    private static Error TooLong(string entity, string property, int maxLength) 
+    private static Error TooManyCharacters(string entity, string property, int maxLength) 
         => new($"{entity}.{property}.LongerThanAllowed", 
             $"The {property.ToLower()} exceeds maximum length of {maxLength}.",
             TypeOfError.Validation);
