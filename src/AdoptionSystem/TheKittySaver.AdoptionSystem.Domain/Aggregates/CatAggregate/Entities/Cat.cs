@@ -1,4 +1,5 @@
-﻿using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.ValueObjects;
+﻿using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Events;
+using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.ValueObjects;
 using TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
 using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 using TheKittySaver.AdoptionSystem.Domain.Core.Extensions;
@@ -141,10 +142,72 @@ public sealed class Cat : AggregateRoot<CatId>
         return Result.Success();
     }
 
-    public Result UpdateStatus(CatStatus updatedStatus)
+    public Result MarkStatusAsAvailable(DateTimeOffset changedAt)
     {
-        ArgumentNullException.ThrowIfNull(updatedStatus);
-        Status = updatedStatus;
+        if (Status.IsAvailable)
+        {
+            return Result.Failure(DomainErrors.CatEntity.CatAlreadyMarkedAsAvailable);
+        }
+
+        Result<CatStatus> updatedStatus = CatStatus.Available(changedAt);
+        if (updatedStatus.IsFailure)
+        {
+            return updatedStatus;
+        }
+        
+        Status = updatedStatus.Value;
+        RaiseDomainEvent(new CatMarkedAsAvailableDomainEvent(this));
+        return Result.Success();
+    }
+    
+    public Result MarkStatusAsReserved(DateTimeOffset changedAt, string? note = null)
+    {
+        if (Status.IsReserved)
+        {
+            return Result.Failure(DomainErrors.CatEntity.CatAlreadyMarkedAsReserved);
+        }
+        
+        Result<CatStatus> updatedStatus = CatStatus.Reserved(changedAt, note);
+        if (updatedStatus.IsFailure)
+        {
+            return updatedStatus;
+        }
+        
+        Status = updatedStatus.Value;
+        return Result.Success();
+    }
+
+    public Result MarkStatusAsAdopted(DateTimeOffset changedAt, string? note = null)
+    {
+        if (Status.IsAdopted)
+        {
+            return Result.Failure(DomainErrors.CatEntity.CatAlreadyMarkedAsAdopted);
+        }
+        
+        Result<CatStatus> updatedStatus = CatStatus.Adopted(changedAt, note);
+        if (updatedStatus.IsFailure)
+        {
+            return updatedStatus;
+        }
+        
+        Status = updatedStatus.Value;
+        return Result.Success();
+    }
+
+    public Result MarkStatusAsUnavailable(DateTimeOffset changedAt, string reason)
+    {
+        if (Status.IsUnavailable)
+        {
+            return Result.Failure(DomainErrors.CatEntity.CatAlreadyMarkedAsUnavailable);
+        }
+        
+        Result<CatStatus> updatedStatus = CatStatus.Unavailable(changedAt, reason);
+        if (updatedStatus.IsFailure)
+        {
+            return updatedStatus;
+        }
+        
+        Status = updatedStatus.Value;
         return Result.Success();
     }
 
@@ -286,6 +349,12 @@ public sealed class Cat : AggregateRoot<CatId>
         ArgumentNullException.ThrowIfNull(infectiousDiseaseStatus);
         ArgumentNullException.ThrowIfNull(createdAt);
 
+        Result<CatStatus> statusResult = CatStatus.Available(createdAt.Value);
+        if (!statusResult.IsSuccess)
+        {
+            return Result.Failure<Cat>(statusResult.Error);
+        }
+        
         CatId id = CatId.New();
         Cat instance = new(
             id,
@@ -304,6 +373,7 @@ public sealed class Cat : AggregateRoot<CatId>
             neuteringStatus,
             infectiousDiseaseStatus,
             createdAt,
+            statusResult.Value,
             vaccinations ?? []);
 
         return Result.Success(instance);
@@ -326,6 +396,7 @@ public sealed class Cat : AggregateRoot<CatId>
         NeuteringStatus neuteringStatus,
         InfectiousDiseaseStatus infectiousDiseaseStatus,
         CreatedAt createdAt,
+        CatStatus status,
         List<Vaccination> vaccinations) : base(id, createdAt)
     {
         PersonId = personId;
@@ -343,6 +414,6 @@ public sealed class Cat : AggregateRoot<CatId>
         NeuteringStatus = neuteringStatus;
         InfectiousDiseaseStatus = infectiousDiseaseStatus;
         _vaccinations = vaccinations;
-        Status = CatStatus.Available(createdAt.Value);
+        Status = status;
     }
 }

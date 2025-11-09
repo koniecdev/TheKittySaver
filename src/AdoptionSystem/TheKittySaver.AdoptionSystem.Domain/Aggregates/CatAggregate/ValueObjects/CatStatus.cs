@@ -13,8 +13,13 @@ public sealed class CatStatus : ValueObject
     public DateTimeOffset StatusChangedAt { get; }
     public string? StatusNote { get; }
     
-    public static CatStatus Available(DateTimeOffset changedAt) 
-        => new(CatStatusType.Available, changedAt, null);
+    public bool IsAvailable => Value is CatStatusType.Available;
+    public bool IsReserved => Value is CatStatusType.Reserved;
+    public bool IsAdopted => Value is CatStatusType.Adopted;
+    public bool IsUnavailable => Value is CatStatusType.Unavailable;
+    
+    public static Result<CatStatus> Available(DateTimeOffset changedAt) 
+        => CreateWithoutNote(CatStatusType.Available, changedAt);
     
     public static Result<CatStatus> Reserved(DateTimeOffset changedAt, string? note = null)
         => CreateWithNote(CatStatusType.Reserved, changedAt, note);
@@ -31,6 +36,15 @@ public sealed class CatStatus : ValueObject
         }
         
         return CreateWithNote(CatStatusType.Unavailable, changedAt, reason);
+    }
+    
+    
+    private static Result<CatStatus> CreateWithoutNote(
+        CatStatusType statusType, 
+        DateTimeOffset changedAt)
+    {
+        CatStatus instance = new(statusType, changedAt, null);
+        return Result.Success(instance);
     }
     
     private static Result<CatStatus> CreateWithNote(

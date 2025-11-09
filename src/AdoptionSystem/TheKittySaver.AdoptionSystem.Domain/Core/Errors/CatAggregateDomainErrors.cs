@@ -175,6 +175,30 @@ public static partial class DomainErrors
                     $"{nameof(Cat.InfectiousDiseaseStatus)}.{nameof(InfectiousDiseaseStatus.LastTestedAt)}",
                     $"Test date '{lastTestedAt:yyyy-MM-dd}' is too old to be valid (reference date: '{currentDate:yyyy-MM-dd}').");
         }
+        
+        public static Error CatAlreadyMarkedAsAvailable
+            => CustomMessage(
+                nameof(CatEntity),
+                nameof(Cat.Status),
+                "Cat status is already set to Available.");
+            
+        public static Error CatAlreadyMarkedAsReserved
+            => CustomMessage(
+                nameof(CatEntity),
+                nameof(Cat.Status),
+                "Cat status is already set to Reserved.");
+            
+        public static Error CatAlreadyMarkedAsAdopted
+            => CustomMessage(
+                nameof(CatEntity),
+                nameof(Cat.Status),
+                "Cat status is already set to Adopted.");
+            
+        public static Error CatAlreadyMarkedAsUnavailable
+            => CustomMessage(
+                nameof(CatEntity),
+                nameof(Cat.Status),
+                "Cat status is already set to Unavailable.");
     }
 
     public static class CatVaccinationEntity
