@@ -21,7 +21,7 @@ internal sealed class PhoneNumberFactory : IPhoneNumberFactory
         if (string.IsNullOrWhiteSpace(value))
         {
             return Result.Failure<PhoneNumber>(
-                DomainErrors.PersonEntity.PhoneNumberValueObject.NullOrEmpty);
+                DomainErrors.PhoneNumberValueObject.NullOrEmpty);
         }
 
         value = value.Trim();
@@ -29,13 +29,13 @@ internal sealed class PhoneNumberFactory : IPhoneNumberFactory
         if (value.Length > PhoneNumber.MaxLength)
         {
             return Result.Failure<PhoneNumber>(
-                DomainErrors.PersonEntity.PhoneNumberValueObject.LongerThanAllowed);
+                DomainErrors.PhoneNumberValueObject.LongerThanAllowed);
         }
 
         if (!_specification.IsSatisfiedBy(value))
         {
             return Result.Failure<PhoneNumber>(
-                DomainErrors.PersonEntity.PhoneNumberValueObject.InvalidFormat);
+                DomainErrors.PhoneNumberValueObject.InvalidFormat);
         }
         
         value = _phoneNumberNormalizer.Normalize(value);

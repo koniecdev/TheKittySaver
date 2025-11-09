@@ -34,7 +34,7 @@ public sealed class Person : AggregateRoot<PersonId>
         
         if (_addresses.Any(x=>x.Name == name))
         {
-            return Result.Failure<AddressId>(DomainErrors.PersonAddressEntity.NameValueObject.AlreadyTaken(name));
+            return Result.Failure<AddressId>(DomainErrors.PersonAddressEntity.AddressNameAlreadyTaken(name));
         }
         
         Result<Address> createAddressResult = Address.Create(
@@ -67,7 +67,7 @@ public sealed class Person : AggregateRoot<PersonId>
 
         if (maybeAddress.Value.Name != updatedName && _addresses.Any(x=>x.Name == updatedName))
         {
-            return Result.Failure(DomainErrors.PersonAddressEntity.NameValueObject.AlreadyTaken(updatedName));
+            return Result.Failure(DomainErrors.PersonAddressEntity.AddressNameAlreadyTaken(updatedName));
         }
 
         Result updateNameResult = maybeAddress.Value.UpdateName(updatedName);

@@ -38,55 +38,12 @@ public static partial class DomainErrors
                     Username.MaxLength);
         }
         
-        public static class EmailValueObject
-        {
-            public static Error NullOrEmpty
-                => Required(
-                    nameof(Person),
-                    nameof(Person.Email));
-        
-            public static Error LongerThanAllowed 
-                => TooManyCharacters(
-                    nameof(Person),
-                    nameof(Person.Email),
-                    SharedValueObjects.Email.MaxLength);
-        
-            public static Error InvalidFormat 
-                => BadFormat(
-                    nameof(Person), 
-                    nameof(Person.Email));
-        
-            public static Error AlreadyTaken(Email email)
-                => AlreadyHasBeenTaken(
-                    nameof(Person),
-                    nameof(Person.Email),
-                    email);
-        }
+        public static Error EmailAlreadyTaken(Email email)
+            => AlreadyHasBeenTaken(nameof(Person), nameof(Person.Email), email);
     
-        public static class PhoneNumberValueObject
-        {
-            public static Error NullOrEmpty 
-                => Required(
-                    nameof(Person),
-                    nameof(Person.PhoneNumber));
-        
-            public static Error LongerThanAllowed 
-                => TooManyCharacters(
-                    nameof(Person),
-                    nameof(Person.PhoneNumber), 
-                    PhoneNumber.MaxLength);
-        
-            public static Error InvalidFormat 
-                => BadFormat(
-                    nameof(Person),
-                    nameof(Person.PhoneNumber));
-        
-            public static Error AlreadyTaken(PhoneNumber phoneNumber)
-                => AlreadyHasBeenTaken(
-                    nameof(Person),
-                    nameof(Person.PhoneNumber),
-                    phoneNumber);
-        }
+        public static Error PhoneNumberAlreadyTaken(PhoneNumber phoneNumber)
+            => AlreadyHasBeenTaken(nameof(Person), nameof(Person.PhoneNumber), phoneNumber);
+
     }
     
     public static class PersonAddressEntity
@@ -98,12 +55,6 @@ public static partial class DomainErrors
         
         public static class NameValueObject
         {
-            public static Error AlreadyTaken(AddressName name)
-                => AlreadyHasBeenTaken(
-                    nameof(PersonAddressEntity),
-                    nameof(Address.Name),
-                    name);
-            
             public static Error NullOrEmpty
                 => Required(
                     nameof(PersonAddressEntity),
@@ -157,5 +108,8 @@ public static partial class DomainErrors
                     nameof(Address.Line),
                     AddressLine.MaxLength);
         }
+        
+        public static Error AddressNameAlreadyTaken(AddressName name)
+            => AlreadyHasBeenTaken(nameof(PersonAddressEntity), nameof(Address.Name), name);
     }
 }

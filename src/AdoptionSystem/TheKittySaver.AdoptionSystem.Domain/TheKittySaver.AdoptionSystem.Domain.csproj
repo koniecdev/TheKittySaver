@@ -23,4 +23,8 @@
         <Generator>MSBuild:GenerateCodeFromAttributes</Generator>
       </Compile>
     </ItemGroup>
+    
+    <ItemGroup>
+      <Folder Include="SharedValueObjects\AddressCompounds\" />
+    </ItemGroup>
 </Project>

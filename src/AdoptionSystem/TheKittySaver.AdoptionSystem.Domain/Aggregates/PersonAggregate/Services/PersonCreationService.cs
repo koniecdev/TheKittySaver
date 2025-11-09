@@ -24,12 +24,12 @@ internal sealed class PersonCreationService : IPersonCreationService
     {
         if (await _personUniquenessCheckerService.IsEmailTakenAsync(email, cancellationToken: cancellationToken))
         {
-            return Result.Failure<Person>(DomainErrors.PersonEntity.EmailValueObject.AlreadyTaken(email));
+            return Result.Failure<Person>(DomainErrors.PersonEntity.EmailAlreadyTaken(email));
         }
 
         if (await _personUniquenessCheckerService.IsPhoneNumberTakenAsync(phoneNumber, cancellationToken: cancellationToken))
         {
-            return Result.Failure<Person>(DomainErrors.PersonEntity.PhoneNumberValueObject.AlreadyTaken(phoneNumber));
+            return Result.Failure<Person>(DomainErrors.PersonEntity.PhoneNumberAlreadyTaken(phoneNumber));
         }
 
         Result<Person> createPersonResult = Person.Create(username, email, phoneNumber);

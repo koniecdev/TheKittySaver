@@ -37,7 +37,7 @@ internal sealed class PersonUpdateService : IPersonUpdateService
         if (updatedEmail != maybePerson.Value.Email 
             && await _personUniquenessCheckerService.IsEmailTakenAsync(updatedEmail, cancellationToken))
         {
-            return Result.Failure(DomainErrors.PersonEntity.EmailValueObject.AlreadyTaken(updatedEmail));
+            return Result.Failure(DomainErrors.PersonEntity.EmailAlreadyTaken(updatedEmail));
         }
         
         Result updateEmailResult = maybePerson.Value.UpdateEmail(updatedEmail);
@@ -58,7 +58,7 @@ internal sealed class PersonUpdateService : IPersonUpdateService
         if (updatedPhoneNumber != maybePerson.Value.PhoneNumber 
             && await _personUniquenessCheckerService.IsPhoneNumberTakenAsync(updatedPhoneNumber, cancellationToken))
         {
-            return Result.Failure(DomainErrors.PersonEntity.PhoneNumberValueObject.AlreadyTaken(updatedPhoneNumber));
+            return Result.Failure(DomainErrors.PersonEntity.PhoneNumberAlreadyTaken(updatedPhoneNumber));
         }
         
         Result updatePhoneNumberResult = maybePerson.Value.UpdatePhoneNumber(updatedPhoneNumber);
