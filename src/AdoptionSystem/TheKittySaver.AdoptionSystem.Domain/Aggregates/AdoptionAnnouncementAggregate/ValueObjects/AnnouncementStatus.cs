@@ -13,42 +13,14 @@ public sealed class AnnouncementStatus : ValueObject
     public DateTimeOffset StatusChangedAt { get; }
     public string? StatusNote { get; }
     
-    public bool IsDraft => Value is AnnouncementStatusType.Draft;
     public bool IsActive => Value is AnnouncementStatusType.Active;
-    public bool IsPaused => Value is AnnouncementStatusType.Paused;
-    public bool IsCompleted => Value is AnnouncementStatusType.Completed;
-    public bool IsCancelled => Value is AnnouncementStatusType.Cancelled;
-    
-    public static Result<AnnouncementStatus> Draft(DateTimeOffset changedAt) 
-        => CreateWithoutNote(AnnouncementStatusType.Draft, changedAt);
-    
-    public static Result<AnnouncementStatus> Active(DateTimeOffset changedAt) 
+    public bool IsArchived => Value is AnnouncementStatusType.Archived;
+
+    public static Result<AnnouncementStatus> Active(DateTimeOffset changedAt)
         => CreateWithoutNote(AnnouncementStatusType.Active, changedAt);
-    
-    public static Result<AnnouncementStatus> Paused(DateTimeOffset changedAt, string reason)
-    {
-        if (string.IsNullOrWhiteSpace(reason))
-        {
-            return Result.Failure<AnnouncementStatus>(
-                DomainErrors.AdoptionAnnouncementEntity.StatusValueObject.PauseReasonRequired);
-        }
-        
-        return CreateWithNote(AnnouncementStatusType.Paused, changedAt, reason);
-    }
-    
-    public static Result<AnnouncementStatus> Completed(DateTimeOffset changedAt, string? note = null)
-        => CreateWithNote(AnnouncementStatusType.Completed, changedAt, note);
-    
-    public static Result<AnnouncementStatus> Cancelled(DateTimeOffset changedAt, string reason)
-    {
-        if (string.IsNullOrWhiteSpace(reason))
-        {
-            return Result.Failure<AnnouncementStatus>(
-                DomainErrors.AdoptionAnnouncementEntity.StatusValueObject.CancelReasonRequired);
-        }
-        
-        return CreateWithNote(AnnouncementStatusType.Cancelled, changedAt, reason);
-    }
+
+    public static Result<AnnouncementStatus> Archived(DateTimeOffset changedAt, string? note = null)
+        => CreateWithNote(AnnouncementStatusType.Archived, changedAt, note);
     
     private static Result<AnnouncementStatus> CreateWithoutNote(
         AnnouncementStatusType statusType, 

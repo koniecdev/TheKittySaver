@@ -26,6 +26,7 @@ internal sealed class CatAdoptionAnnouncementService
     public async Task<Result> ReassignCatToAdoptionAnnouncementAsync(
         CatId catId,
         AdoptionAnnouncementId adoptionAnnouncementId,
+        DateTimeOffset currentDate,
         CancellationToken cancellationToken = default)
     {
         Maybe<Cat> maybeCat = await _catRepository.GetByIdAsync(catId, cancellationToken);
@@ -39,8 +40,8 @@ internal sealed class CatAdoptionAnnouncementService
         {
             return Result.Success();
         }
-        
-        Maybe<AdoptionAnnouncement> maybeAdoptionAnnouncement = 
+
+        Maybe<AdoptionAnnouncement> maybeAdoptionAnnouncement =
             await _adoptionAnnouncementRepository.GetByIdAsync(adoptionAnnouncementId, cancellationToken);
         if (maybeAdoptionAnnouncement.HasNoValue)
         {
@@ -56,7 +57,62 @@ internal sealed class CatAdoptionAnnouncementService
                 maybeAdoptionAnnouncement.Value.PersonId));
         }
 
+        // Archive old announcement if cat has one
+        if (maybeCat.Value.AdoptionAnnouncementId.HasValue)
+        {
+            Maybe<AdoptionAnnouncement> maybeOldAnnouncement =
+                await _adoptionAnnouncementRepository.GetByIdAsync(
+                    maybeCat.Value.AdoptionAnnouncementId.Value,
+                    cancellationToken);
+
+            if (maybeOldAnnouncement.HasValue)
+            {
+                Result archiveResult = maybeOldAnnouncement.Value.Archive(
+                    currentDate,
+                    "Cat moved to another announcement");
+
+                if (archiveResult.IsFailure)
+                {
+                    return archiveResult;
+                }
+            }
+        }
+
         var reassignResult = maybeCat.Value.ReassignToAdoptionAnnouncement(maybeAdoptionAnnouncement.Value.Id);
         return reassignResult;
+    }
+
+    public async Task<Result<AdoptionAnnouncement?>> UnassignCatFromAnnouncementAsync(
+        CatId catId,
+        DateTimeOffset currentDate,
+        CancellationToken cancellationToken = default)
+    {
+        Maybe<Cat> maybeCat = await _catRepository.GetByIdAsync(catId, cancellationToken);
+        if (maybeCat.HasNoValue)
+        {
+            return Result.Failure<AdoptionAnnouncement?>(DomainErrors.CatEntity.NotFound(catId));
+        }
+
+        if (!maybeCat.Value.AdoptionAnnouncementId.HasValue)
+        {
+            return Result.Success<AdoptionAnnouncement?>(null); // Already unassigned
+        }
+
+        var unassignResult = maybeCat.Value.UnassignFromAdoptionAnnouncement();
+        if (unassignResult.IsFailure)
+        {
+            return Result.Failure<AdoptionAnnouncement?>(unassignResult.Error);
+        }
+
+        // If cat is Published, create a new announcement for it automatically
+        // This happens when user removes cat from a family but wants it to remain published
+        if (maybeCat.Value.Status.IsPublished)
+        {
+            // TODO: This will need to be implemented by event handler
+            // For now, we return null and the event handler will create the announcement
+            return Result.Success<AdoptionAnnouncement?>(null);
+        }
+
+        return Result.Success<AdoptionAnnouncement?>(null);
     }
 }

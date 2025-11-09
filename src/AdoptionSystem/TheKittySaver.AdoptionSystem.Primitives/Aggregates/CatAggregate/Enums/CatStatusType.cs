@@ -2,8 +2,7 @@
 
 public enum CatStatusType
 {
-    Available,
-    Reserved,
-    Adopted,
-    Unavailable
+    Draft,
+    Published,
+    Adopted
 }

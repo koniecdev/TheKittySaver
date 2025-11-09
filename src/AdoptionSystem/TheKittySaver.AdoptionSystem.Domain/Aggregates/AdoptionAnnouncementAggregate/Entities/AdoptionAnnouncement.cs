@@ -35,10 +35,10 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
     {
         ArgumentNullException.ThrowIfNull(updatedAddress);
 
-        if (Status.Value is not (AnnouncementStatusType.Draft or AnnouncementStatusType.Active or AnnouncementStatusType.Paused))
+        if (!Status.IsActive)
         {
             return Result.Failure(
-                DomainErrors.AdoptionAnnouncementEntity.CanOnlyUpdateAddressWhenDraftActiveOrPaused);
+                DomainErrors.AdoptionAnnouncementEntity.CanOnlyUpdateWhenActive);
         }
 
         Address = updatedAddress;
@@ -49,10 +49,10 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
     {
         ArgumentNullException.ThrowIfNull(updatedEmail);
 
-        if (Status.Value is not (AnnouncementStatusType.Draft or AnnouncementStatusType.Active or AnnouncementStatusType.Paused))
+        if (!Status.IsActive)
         {
             return Result.Failure(
-                DomainErrors.AdoptionAnnouncementEntity.CanOnlyUpdateEmailWhenDraftActiveOrPaused);
+                DomainErrors.AdoptionAnnouncementEntity.CanOnlyUpdateWhenActive);
         }
 
         Email = updatedEmail;
@@ -63,108 +63,30 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
     {
         ArgumentNullException.ThrowIfNull(updatedPhoneNumber);
 
-        if (Status.Value is not (
-            AnnouncementStatusType.Draft 
-            or AnnouncementStatusType.Active
-            or AnnouncementStatusType.Paused))
+        if (!Status.IsActive)
         {
             return Result.Failure(
-                DomainErrors.AdoptionAnnouncementEntity.CanOnlyUpdatePhoneNumberWhenDraftActiveOrPaused);
+                DomainErrors.AdoptionAnnouncementEntity.CanOnlyUpdateWhenActive);
         }
 
         PhoneNumber = updatedPhoneNumber;
         return Result.Success();
     }
 
-    public Result Publish(DateTimeOffset publishedAt)
+    public Result Archive(DateTimeOffset archivedAt, string? note = null)
     {
-        if (!Status.IsDraft)
+        if (Status.IsArchived)
         {
-            return Result.Failure(DomainErrors.AdoptionAnnouncementEntity.CanOnlyPublishDraft);
+            return Result.Failure(DomainErrors.AdoptionAnnouncementEntity.AlreadyArchived);
         }
 
-        Result<AnnouncementStatus> statusResult = AnnouncementStatus.Active(publishedAt);
-        
-        if (statusResult.IsFailure)
+        Result<AnnouncementStatus> archiveResult = AnnouncementStatus.Archived(archivedAt, note);
+        if (archiveResult.IsFailure)
         {
-            return Result.Failure(statusResult.Error);
-        }
-        
-        Status = statusResult.Value;
-        
-        return Result.Success();
-    }
-    
-    public Result Pause(DateTimeOffset pausedAt, string reason)
-    {
-        if (!Status.IsActive)
-        {
-            return Result.Failure(
-                DomainErrors.AdoptionAnnouncementEntity.CanOnlyPauseActive);
+            return Result.Failure(archiveResult.Error);
         }
 
-        Result<AnnouncementStatus> pauseResult = AnnouncementStatus.Paused(pausedAt, reason);
-        if (pauseResult.IsFailure)
-        {
-            return Result.Failure(pauseResult.Error);
-        }
-
-        Status = pauseResult.Value;
-        
-        return Result.Success();
-    }
-    
-    public Result Resume(DateTimeOffset resumedAt)
-    {
-        if (Status.Value != AnnouncementStatusType.Paused)
-        {
-            return Result.Failure(
-                DomainErrors.AdoptionAnnouncementEntity.CanOnlyResumeWhenPaused);
-        }
-
-        Result<AnnouncementStatus> activeResult = AnnouncementStatus.Active(resumedAt);
-        if (activeResult.IsFailure)
-        {
-            return Result.Failure(activeResult.Error);
-        }
-
-        Status = activeResult.Value;
-        return Result.Success();
-    }
-    
-    public Result Complete(DateTimeOffset completedAt, string? note = null)
-    {
-        if (Status.Value is not (AnnouncementStatusType.Active or AnnouncementStatusType.Paused))
-        {
-            return Result.Failure(
-                DomainErrors.AdoptionAnnouncementEntity.CanOnlyCompleteActiveOrPaused);
-        }
-
-        Result<AnnouncementStatus> completeResult = AnnouncementStatus.Completed(completedAt, note);
-        if (completeResult.IsFailure)
-        {
-            return Result.Failure(completeResult.Error);
-        }
-
-        Status = completeResult.Value;
-        return Result.Success();
-    }
-    
-    public Result Cancel(DateTimeOffset cancelledAt, string reason)
-    {
-        if (Status.Value is AnnouncementStatusType.Completed or AnnouncementStatusType.Cancelled)
-        {
-            return Result.Failure(
-                DomainErrors.AdoptionAnnouncementEntity.CannotCancelFinishedAnnouncement);
-        }
-
-        Result<AnnouncementStatus> cancelResult = AnnouncementStatus.Cancelled(cancelledAt, reason);
-        if (cancelResult.IsFailure)
-        {
-            return Result.Failure(cancelResult.Error);
-        }
-
-        Status = cancelResult.Value;
+        Status = archiveResult.Value;
         return Result.Success();
     }
     
@@ -183,7 +105,7 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
         ArgumentNullException.ThrowIfNull(phoneNumber);
         ArgumentNullException.ThrowIfNull(createdAt);
 
-        var statusResult = AnnouncementStatus.Draft(createdAt.Value);
+        var statusResult = AnnouncementStatus.Active(createdAt.Value);
         if (statusResult.IsFailure)
         {
             return Result.Failure<AdoptionAnnouncement>(statusResult.Error);

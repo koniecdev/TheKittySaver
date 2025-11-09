@@ -48,6 +48,7 @@ public sealed class Cat : AggregateRoot<CatId>
     public Result UnassignFromAdoptionAnnouncement()
     {
         AdoptionAnnouncementId = null;
+        RaiseDomainEvent(new CatUnassignedFromAnnouncementDomainEvent(this));
         return Result.Success();
     }
     
@@ -142,72 +143,62 @@ public sealed class Cat : AggregateRoot<CatId>
         return Result.Success();
     }
 
-    public Result MarkStatusAsAvailable(DateTimeOffset changedAt)
+    public Result Publish(DateTimeOffset changedAt)
     {
-        if (Status.IsAvailable)
+        if (Status.IsPublished)
         {
-            return Result.Failure(DomainErrors.CatEntity.CatAlreadyMarkedAsAvailable);
+            return Result.Failure(DomainErrors.CatEntity.CatAlreadyPublished);
         }
 
-        Result<CatStatus> updatedStatus = CatStatus.Available(changedAt);
+        Result<CatStatus> updatedStatus = CatStatus.Published(changedAt);
         if (updatedStatus.IsFailure)
         {
             return updatedStatus;
         }
-        
+
         Status = updatedStatus.Value;
-        RaiseDomainEvent(new CatMarkedAsAvailableDomainEvent(this));
+        RaiseDomainEvent(new CatPublishedDomainEvent(this));
         return Result.Success();
     }
-    
-    public Result MarkStatusAsReserved(DateTimeOffset changedAt, string? note = null)
+
+    public Result Unpublish(DateTimeOffset changedAt)
     {
-        if (Status.IsReserved)
+        if (Status.IsDraft)
         {
-            return Result.Failure(DomainErrors.CatEntity.CatAlreadyMarkedAsReserved);
+            return Result.Failure(DomainErrors.CatEntity.CatAlreadyDraft);
         }
-        
-        Result<CatStatus> updatedStatus = CatStatus.Reserved(changedAt, note);
+
+        if (Status.IsAdopted)
+        {
+            return Result.Failure(DomainErrors.CatEntity.CannotUnpublishAdoptedCat);
+        }
+
+        Result<CatStatus> updatedStatus = CatStatus.Draft(changedAt);
         if (updatedStatus.IsFailure)
         {
             return updatedStatus;
         }
-        
+
         Status = updatedStatus.Value;
+        RaiseDomainEvent(new CatUnpublishedDomainEvent(this));
         return Result.Success();
     }
 
-    public Result MarkStatusAsAdopted(DateTimeOffset changedAt, string? note = null)
+    public Result Adopt(DateTimeOffset changedAt, string? note = null)
     {
         if (Status.IsAdopted)
         {
-            return Result.Failure(DomainErrors.CatEntity.CatAlreadyMarkedAsAdopted);
+            return Result.Failure(DomainErrors.CatEntity.CatAlreadyAdopted);
         }
-        
+
         Result<CatStatus> updatedStatus = CatStatus.Adopted(changedAt, note);
         if (updatedStatus.IsFailure)
         {
             return updatedStatus;
         }
-        
-        Status = updatedStatus.Value;
-        return Result.Success();
-    }
 
-    public Result MarkStatusAsUnavailable(DateTimeOffset changedAt, string reason)
-    {
-        if (Status.IsUnavailable)
-        {
-            return Result.Failure(DomainErrors.CatEntity.CatAlreadyMarkedAsUnavailable);
-        }
-        
-        Result<CatStatus> updatedStatus = CatStatus.Unavailable(changedAt, reason);
-        if (updatedStatus.IsFailure)
-        {
-            return updatedStatus;
-        }
-        
         Status = updatedStatus.Value;
+        RaiseDomainEvent(new CatAdoptedDomainEvent(this));
         return Result.Success();
     }
 
@@ -349,7 +340,7 @@ public sealed class Cat : AggregateRoot<CatId>
         ArgumentNullException.ThrowIfNull(infectiousDiseaseStatus);
         ArgumentNullException.ThrowIfNull(createdAt);
 
-        Result<CatStatus> statusResult = CatStatus.Available(createdAt.Value);
+        Result<CatStatus> statusResult = CatStatus.Draft(createdAt.Value);
         if (!statusResult.IsSuccess)
         {
             return Result.Failure<Cat>(statusResult.Error);

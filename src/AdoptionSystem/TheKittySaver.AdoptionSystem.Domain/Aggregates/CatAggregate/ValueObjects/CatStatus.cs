@@ -13,30 +13,18 @@ public sealed class CatStatus : ValueObject
     public DateTimeOffset StatusChangedAt { get; }
     public string? StatusNote { get; }
     
-    public bool IsAvailable => Value is CatStatusType.Available;
-    public bool IsReserved => Value is CatStatusType.Reserved;
+    public bool IsDraft => Value is CatStatusType.Draft;
+    public bool IsPublished => Value is CatStatusType.Published;
     public bool IsAdopted => Value is CatStatusType.Adopted;
-    public bool IsUnavailable => Value is CatStatusType.Unavailable;
-    
-    public static Result<CatStatus> Available(DateTimeOffset changedAt) 
-        => CreateWithoutNote(CatStatusType.Available, changedAt);
-    
-    public static Result<CatStatus> Reserved(DateTimeOffset changedAt, string? note = null)
-        => CreateWithNote(CatStatusType.Reserved, changedAt, note);
-    
+
+    public static Result<CatStatus> Draft(DateTimeOffset changedAt)
+        => CreateWithoutNote(CatStatusType.Draft, changedAt);
+
+    public static Result<CatStatus> Published(DateTimeOffset changedAt)
+        => CreateWithoutNote(CatStatusType.Published, changedAt);
+
     public static Result<CatStatus> Adopted(DateTimeOffset changedAt, string? note = null)
         => CreateWithNote(CatStatusType.Adopted, changedAt, note);
-    
-    public static Result<CatStatus> Unavailable(DateTimeOffset changedAt, string reason)
-    {
-        if (string.IsNullOrWhiteSpace(reason))
-        {
-            return Result.Failure<CatStatus>(
-                DomainErrors.CatEntity.StatusValueObject.UnavailableReasonRequired);
-        }
-        
-        return CreateWithNote(CatStatusType.Unavailable, changedAt, reason);
-    }
     
     private static Result<CatStatus> CreateWithoutNote(
         CatStatusType statusType, 

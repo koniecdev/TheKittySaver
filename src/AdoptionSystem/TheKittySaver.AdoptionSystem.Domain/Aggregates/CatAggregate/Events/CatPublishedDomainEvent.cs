@@ -3,4 +3,4 @@ using TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Events;
 
-public sealed record CatMarkedAsAvailableDomainEvent(Cat PublishedCat) : DomainEvent;
+public sealed record CatPublishedDomainEvent(Cat PublishedCat) : DomainEvent;

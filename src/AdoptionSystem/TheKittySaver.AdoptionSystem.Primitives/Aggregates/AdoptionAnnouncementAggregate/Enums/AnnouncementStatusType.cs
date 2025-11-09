@@ -2,9 +2,6 @@
 
 public enum AnnouncementStatusType
 {
-    Draft,
     Active,
-    Paused,
-    Completed,
-    Cancelled
+    Archived
 }

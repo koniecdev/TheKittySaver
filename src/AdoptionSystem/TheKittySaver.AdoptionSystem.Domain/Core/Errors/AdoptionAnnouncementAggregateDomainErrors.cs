@@ -16,59 +16,23 @@ public static partial class DomainErrors
                 nameof(AdoptionAnnouncementEntity),
                 id.Value);
 
-        public static Error CanOnlyPublishDraft
+        public static Error AlreadyArchived
             => CustomMessage(
                 nameof(AdoptionAnnouncementEntity),
                 nameof(AdoptionAnnouncement.Status),
-                "Only draft announcements can be published.");
+                "Announcement is already archived.");
 
-        public static Error CanOnlyPauseActive
+        public static Error CanOnlyUpdateWhenActive
             => CustomMessage(
                 nameof(AdoptionAnnouncementEntity),
                 nameof(AdoptionAnnouncement.Status),
-                "Only active announcements can be paused.");
-
-        public static Error CanOnlyResumeWhenPaused
-            => CustomMessage(
-                nameof(AdoptionAnnouncementEntity),
-                nameof(AdoptionAnnouncement.Status),
-                "Only paused announcements can be resumed.");
-
-        public static Error CanOnlyCompleteActiveOrPaused
-            => CustomMessage(
-                nameof(AdoptionAnnouncementEntity),
-                nameof(AdoptionAnnouncement.Status),
-                "Only active or paused announcements can be completed.");
-
-        public static Error CannotCancelFinishedAnnouncement
-            => CustomMessage(
-                nameof(AdoptionAnnouncementEntity),
-                nameof(AdoptionAnnouncement.Status),
-                "Cannot cancel an announcement that is already completed or cancelled.");
+                "Can only update announcement when it is active.");
 
         public static Error CannotMixInfectedWithHealthyCats
             => CustomMessage(
                 nameof(AdoptionAnnouncementEntity),
                 "CatsCompatibility",
                 "Cannot mix cats with FIV/FeLV positive status with FIV/FeLV negative cats in the same announcement.");
-
-        public static Error CanOnlyUpdateAddressWhenDraftActiveOrPaused
-            => CustomMessage(
-                nameof(AdoptionAnnouncementEntity),
-                nameof(AdoptionAnnouncement.Status),
-                "Can only update address when announcement is in draft, active, or paused status.");
-
-        public static Error CanOnlyUpdateEmailWhenDraftActiveOrPaused
-            => CustomMessage(
-                nameof(AdoptionAnnouncementEntity),
-                nameof(AdoptionAnnouncement.Status),
-                "Can only update email when announcement is in draft, active, or paused status.");
-
-        public static Error CanOnlyUpdatePhoneNumberWhenDraftActiveOrPaused
-            => CustomMessage(
-                nameof(AdoptionAnnouncementEntity),
-                nameof(AdoptionAnnouncement.Status),
-                "Can only update phone number when announcement is in draft, active, or paused status.");
 
         public static class DescriptionValueObject
         {
@@ -86,16 +50,6 @@ public static partial class DomainErrors
 
         public static class StatusValueObject
         {
-            public static Error PauseReasonRequired
-                => Required(
-                    nameof(AdoptionAnnouncementEntity),
-                    $"{nameof(AdoptionAnnouncement.Status)}.{nameof(AnnouncementStatus.StatusNote)}");
-
-            public static Error CancelReasonRequired
-                => Required(
-                    nameof(AdoptionAnnouncementEntity),
-                    $"{nameof(AdoptionAnnouncement.Status)}.{nameof(AnnouncementStatus.StatusNote)}");
-
             public static Error NoteTooLong
                 => TooManyCharacters(
                     nameof(AdoptionAnnouncementEntity),

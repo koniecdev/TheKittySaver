@@ -145,11 +145,6 @@ public static partial class DomainErrors
 
         public static class StatusValueObject
         {
-            public static Error UnavailableReasonRequired
-                => Required(
-                    nameof(CatEntity),
-                    $"{nameof(Cat.Status)}.{nameof(CatStatus.StatusNote)}");
-
             public static Error NoteTooManyCharacters
                 => TooManyCharacters(
                     nameof(CatEntity),
@@ -175,30 +170,30 @@ public static partial class DomainErrors
                     $"{nameof(Cat.InfectiousDiseaseStatus)}.{nameof(InfectiousDiseaseStatus.LastTestedAt)}",
                     $"Test date '{lastTestedAt:yyyy-MM-dd}' is too old to be valid (reference date: '{currentDate:yyyy-MM-dd}').");
         }
-        
-        public static Error CatAlreadyMarkedAsAvailable
+
+        public static Error CatAlreadyPublished
             => CustomMessage(
                 nameof(CatEntity),
                 nameof(Cat.Status),
-                "Cat status is already set to Available.");
-            
-        public static Error CatAlreadyMarkedAsReserved
+                "Cat is already published.");
+
+        public static Error CatAlreadyDraft
             => CustomMessage(
                 nameof(CatEntity),
                 nameof(Cat.Status),
-                "Cat status is already set to Reserved.");
-            
-        public static Error CatAlreadyMarkedAsAdopted
+                "Cat is already in draft status.");
+
+        public static Error CatAlreadyAdopted
             => CustomMessage(
                 nameof(CatEntity),
                 nameof(Cat.Status),
-                "Cat status is already set to Adopted.");
-            
-        public static Error CatAlreadyMarkedAsUnavailable
+                "Cat has already been adopted.");
+
+        public static Error CannotUnpublishAdoptedCat
             => CustomMessage(
                 nameof(CatEntity),
                 nameof(Cat.Status),
-                "Cat status is already set to Unavailable.");
+                "Cannot unpublish a cat that has been adopted.");
     }
 
     public static class CatVaccinationEntity
