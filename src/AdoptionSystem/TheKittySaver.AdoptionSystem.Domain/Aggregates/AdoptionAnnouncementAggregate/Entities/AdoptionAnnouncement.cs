@@ -63,7 +63,10 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
     {
         ArgumentNullException.ThrowIfNull(updatedPhoneNumber);
 
-        if (Status.Value is not (AnnouncementStatusType.Draft or AnnouncementStatusType.Active or AnnouncementStatusType.Paused))
+        if (Status.Value is not (
+            AnnouncementStatusType.Draft 
+            or AnnouncementStatusType.Active
+            or AnnouncementStatusType.Paused))
         {
             return Result.Failure(
                 DomainErrors.AdoptionAnnouncementEntity.CanOnlyUpdatePhoneNumberWhenDraftActiveOrPaused);
@@ -75,19 +78,26 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
 
     public Result Publish(DateTimeOffset publishedAt)
     {
-        if (Status.Value != AnnouncementStatusType.Draft)
+        if (!Status.IsDraft)
         {
-            return Result.Failure(
-                DomainErrors.AdoptionAnnouncementEntity.CanOnlyPublishDraft);
+            return Result.Failure(DomainErrors.AdoptionAnnouncementEntity.CanOnlyPublishDraft);
         }
 
-        Status = AnnouncementStatus.Active(publishedAt);
+        Result<AnnouncementStatus> statusResult = AnnouncementStatus.Active(publishedAt);
+        
+        if (statusResult.IsFailure)
+        {
+            return Result.Failure(statusResult.Error);
+        }
+        
+        Status = statusResult.Value;
+        
         return Result.Success();
     }
     
     public Result Pause(DateTimeOffset pausedAt, string reason)
     {
-        if (Status.Value != AnnouncementStatusType.Active)
+        if (!Status.IsActive)
         {
             return Result.Failure(
                 DomainErrors.AdoptionAnnouncementEntity.CanOnlyPauseActive);
@@ -100,6 +110,7 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
         }
 
         Status = pauseResult.Value;
+        
         return Result.Success();
     }
     
@@ -111,7 +122,13 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
                 DomainErrors.AdoptionAnnouncementEntity.CanOnlyResumeWhenPaused);
         }
 
-        Status = AnnouncementStatus.Active(resumedAt);
+        Result<AnnouncementStatus> activeResult = AnnouncementStatus.Active(resumedAt);
+        if (activeResult.IsFailure)
+        {
+            return Result.Failure(activeResult.Error);
+        }
+
+        Status = activeResult.Value;
         return Result.Success();
     }
     
@@ -166,6 +183,12 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
         ArgumentNullException.ThrowIfNull(phoneNumber);
         ArgumentNullException.ThrowIfNull(createdAt);
 
+        var statusResult = AnnouncementStatus.Draft(createdAt.Value);
+        if (statusResult.IsFailure)
+        {
+            return Result.Failure<AdoptionAnnouncement>(statusResult.Error);
+        }
+        
         AdoptionAnnouncementId id = AdoptionAnnouncementId.New();
         AdoptionAnnouncement instance = new(
             id,
@@ -174,6 +197,7 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
             address,
             email,
             phoneNumber,
+            statusResult.Value,
             createdAt);
 
         return Result.Success(instance);
@@ -186,6 +210,7 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
         AdoptionAnnouncementAddress address,
         Email email,
         PhoneNumber phoneNumber,
+        AnnouncementStatus status,
         CreatedAt createdAt) : base(id, createdAt)
     {
         PersonId = personId;
@@ -193,6 +218,6 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
         Address = address;
         Email = email;
         PhoneNumber = phoneNumber;
-        Status = AnnouncementStatus.Draft(createdAt.Value);
+        Status = status;
     }
 }

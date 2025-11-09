@@ -13,12 +13,17 @@ public sealed class AnnouncementStatus : ValueObject
     public DateTimeOffset StatusChangedAt { get; }
     public string? StatusNote { get; }
     
+    public bool IsDraft => Value is AnnouncementStatusType.Draft;
+    public bool IsActive => Value is AnnouncementStatusType.Active;
+    public bool IsPaused => Value is AnnouncementStatusType.Paused;
+    public bool IsCompleted => Value is AnnouncementStatusType.Completed;
+    public bool IsCancelled => Value is AnnouncementStatusType.Cancelled;
     
-    public static AnnouncementStatus Draft(DateTimeOffset changedAt) 
-        => new(AnnouncementStatusType.Draft, changedAt, null);
+    public static Result<AnnouncementStatus> Draft(DateTimeOffset changedAt) 
+        => CreateWithoutNote(AnnouncementStatusType.Draft, changedAt);
     
-    public static AnnouncementStatus Active(DateTimeOffset changedAt) 
-        => new(AnnouncementStatusType.Active, changedAt, null);
+    public static Result<AnnouncementStatus> Active(DateTimeOffset changedAt) 
+        => CreateWithoutNote(AnnouncementStatusType.Active, changedAt);
     
     public static Result<AnnouncementStatus> Paused(DateTimeOffset changedAt, string reason)
     {
@@ -43,6 +48,14 @@ public sealed class AnnouncementStatus : ValueObject
         }
         
         return CreateWithNote(AnnouncementStatusType.Cancelled, changedAt, reason);
+    }
+    
+    private static Result<AnnouncementStatus> CreateWithoutNote(
+        AnnouncementStatusType statusType, 
+        DateTimeOffset changedAt)
+    {
+        AnnouncementStatus instance = new(statusType, changedAt, null);
+        return Result.Success(instance);
     }
     
     private static Result<AnnouncementStatus> CreateWithNote(

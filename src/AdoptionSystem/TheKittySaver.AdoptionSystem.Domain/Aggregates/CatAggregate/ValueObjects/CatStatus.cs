@@ -38,7 +38,6 @@ public sealed class CatStatus : ValueObject
         return CreateWithNote(CatStatusType.Unavailable, changedAt, reason);
     }
     
-    
     private static Result<CatStatus> CreateWithoutNote(
         CatStatusType statusType, 
         DateTimeOffset changedAt)
