@@ -2,7 +2,7 @@
 using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
 
-namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.ValueObjects;
+namespace TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.AddressCompounds;
 
 public sealed class AddressCity : ValueObject
 {
@@ -14,14 +14,14 @@ public sealed class AddressCity : ValueObject
     {
         if (string.IsNullOrWhiteSpace(value))
         {
-            return Result.Failure<AddressCity>(DomainErrors.PersonAddressEntity.CityValueObject.NullOrEmpty);
+            return Result.Failure<AddressCity>(DomainErrors.AddressCityValueObject.NullOrEmpty);
         }
 
         value = value.Trim();
 
         if (value.Length > MaxLength)
         {
-            return Result.Failure<AddressCity>(DomainErrors.PersonAddressEntity.CityValueObject.LongerThanAllowed);
+            return Result.Failure<AddressCity>(DomainErrors.AddressCityValueObject.LongerThanAllowed);
         }
         
         AddressCity instance = new(value);

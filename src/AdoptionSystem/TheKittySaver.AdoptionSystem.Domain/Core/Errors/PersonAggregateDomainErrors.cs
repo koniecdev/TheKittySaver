@@ -2,6 +2,7 @@
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.ValueObjects;
 using TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects;
+using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.AddressCompounds;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.PhoneNumbers;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
 
@@ -65,48 +66,6 @@ public static partial class DomainErrors
                     nameof(PersonAddressEntity),
                     nameof(Address.Name),
                     AddressName.MaxLength);
-        }
-        
-        public static class RegionValueObject
-        {
-            public static Error NullOrEmpty
-                => Required(
-                    nameof(PersonAddressEntity),
-                    nameof(Address.Region));
-            
-            public static Error LongerThanAllowed
-                => TooManyCharacters(
-                    nameof(PersonAddressEntity),
-                    nameof(Address.Region),
-                    AddressRegion.MaxLength);
-        }
-
-        public static class CityValueObject
-        {
-            public static Error NullOrEmpty
-                => Required(
-                    nameof(PersonAddressEntity),
-                    nameof(Address.City));
-            
-            public static Error LongerThanAllowed
-                => TooManyCharacters(
-                    nameof(PersonAddressEntity),
-                    nameof(Address.City),
-                    AddressCity.MaxLength);
-        }
-        
-        public static class LineValueObject
-        {
-            public static Error NullOrEmpty
-                => Required(
-                    nameof(PersonAddressEntity),
-                    nameof(Address.Line));
-            
-            public static Error LongerThanAllowed
-                => TooManyCharacters(
-                    nameof(PersonAddressEntity),
-                    nameof(Address.Line),
-                    AddressLine.MaxLength);
         }
         
         public static Error AddressNameAlreadyTaken(AddressName name)
