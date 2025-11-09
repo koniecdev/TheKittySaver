@@ -36,14 +36,18 @@ public static partial class DomainErrors
         
         public static class AgeValueObject
         {
-            public static Error BelowMinimalAllowedValue(int actualValue, int minimumValue) 
+            public static Error BelowMinimalAllowedValue(
+                int actualValue,
+                int minimumValue) 
                 => BelowValue(
                     nameof(CatEntity),
                     nameof(Cat.Age),
                     actualValue,
                     minimumValue);
             
-            public static Error AboveMaximumAllowedValue(int actualValue, int maximumValue)
+            public static Error AboveMaximumAllowedValue(
+                int actualValue,
+                int maximumValue)
                 => AboveValue(
                     nameof(CatEntity),
                     nameof(Cat.Age),
@@ -126,41 +130,57 @@ public static partial class DomainErrors
         public static class WeightValueObject
         {
             public static Error BelowMinimum(decimal actual, decimal minimum)
-                => BelowValue(nameof(CatEntity), nameof(Cat.Weight), actual, minimum);
+                => BelowValue(
+                    nameof(CatEntity), 
+                    nameof(Cat.Weight), actual, minimum);
             
             public static Error AboveMaximum(decimal actual, decimal maximum)
-                => AboveValue(nameof(CatEntity), nameof(Cat.Weight), actual, maximum);
+                => AboveValue(
+                    nameof(CatEntity),
+                    nameof(Cat.Weight), actual, maximum);
         }
 
         public static class NeuteringStatusValueObject
         {
             public static Error DateInFuture
-                => CustomMessage(nameof(CatEntity), $"{nameof(Cat.NeuteringStatus)}.Date", 
+                => CustomMessage(
+                    nameof(CatEntity),
+                    $"{nameof(Cat.NeuteringStatus)}.{nameof(NeuteringStatus.IsNeutered)}",
                     "Neutering date cannot be in the future.");
-            
+
             public static Error DateTooOld
-                => CustomMessage(nameof(CatEntity), $"{nameof(Cat.NeuteringStatus)}.Date",
+                => CustomMessage(
+                    nameof(CatEntity),
+                    $"{nameof(Cat.NeuteringStatus)}.{nameof(NeuteringStatus.IsNeutered)}",
                     "Neutering date is too old to be valid.");
         }
 
         public static class StatusValueObject
         {
             public static Error UnavailableReasonRequired
-                => Required(nameof(CatEntity), $"{nameof(Cat.Status)}.Reason");
-            
+                => Required(
+                    nameof(CatEntity),
+                    $"{nameof(Cat.Status)}.{nameof(CatStatus.StatusNote)}");
+
             public static Error NoteTooManyCharacters
-                => TooManyCharacters(nameof(CatEntity), $"{nameof(Cat.Status)}.Note",
+                => TooManyCharacters(
+                    nameof(CatEntity),
+                    $"{nameof(Cat.Status)}.{nameof(CatStatus.StatusNote)}",
                     CatStatus.MaxStatusNoteLength);
         }
 
         public static class InfectiousDiseaseStatusValueObject
         {
             public static Error TestDateInFuture
-                => CustomMessage(nameof(CatEntity), $"{nameof(Cat.InfectiousDiseaseStatus)}.TestDate",
+                => CustomMessage(
+                    nameof(CatEntity),
+                    $"{nameof(Cat.InfectiousDiseaseStatus)}.{nameof(InfectiousDiseaseStatus.LastTestedAt)}",
                     "Test date cannot be in the future.");
 
             public static Error TestDateTooOld
-                => CustomMessage(nameof(CatEntity), $"{nameof(Cat.InfectiousDiseaseStatus)}.TestDate",
+                => CustomMessage(
+                    nameof(CatEntity),
+                    $"{nameof(Cat.InfectiousDiseaseStatus)}.{nameof(InfectiousDiseaseStatus.LastTestedAt)}",
                     "Test date is too old to be valid.");
         }
     }
@@ -171,19 +191,7 @@ public static partial class DomainErrors
             => HasNotBeenFound(
                 nameof(CatVaccinationEntity),
                 vaccinationId.Value);
-
-        public static Error DateInFuture
-            => CustomMessage(nameof(CatVaccinationEntity), nameof(Vaccination.VaccinationDate),
-                "Vaccination date cannot be in the future.");
-
-        public static Error DateTooOld
-            => CustomMessage(nameof(CatVaccinationEntity), nameof(Vaccination.VaccinationDate),
-                "Vaccination date is too old to be valid.");
-
-        public static Error NextDueDateInPast
-            => CustomMessage(nameof(CatVaccinationEntity), nameof(Vaccination.NextDueDate),
-                "Next due date cannot be in the past.");
-
+        
         public static class VeterinarianNoteValueObject
         {
             public static Error NullOrEmpty
@@ -196,6 +204,41 @@ public static partial class DomainErrors
                     nameof(CatVaccinationEntity),
                     nameof(Vaccination.VeterinarianNote),
                     VaccinationNote.MaxLength);
+        }
+
+        public static class VaccinationDatesValueObject
+        {
+            public static Error VaccinationDateInFuture(
+                DateTimeOffset vaccinationDate, 
+                DateTimeOffset referenceDate)
+                => CustomMessage(
+                    nameof(CatVaccinationEntity),
+                    $"{nameof(VaccinationDates)}.{nameof(VaccinationDates.VaccinationDate)}",
+                    $"Vaccination date '{vaccinationDate:yyyy-MM-dd}' cannot be in the future (reference date: '{referenceDate:yyyy-MM-dd}').");
+
+            public static Error VaccinationDateTooOld(
+                DateTimeOffset vaccinationDate,
+                DateTimeOffset referenceDate)
+                => CustomMessage(
+                    nameof(CatVaccinationEntity),
+                    $"{nameof(VaccinationDates)}.{nameof(VaccinationDates.VaccinationDate)}",
+                    $"Vaccination date '{vaccinationDate:yyyy-MM-dd}' is too old to be valid (reference date: '{referenceDate:yyyy-MM-dd}').");
+
+            public static Error NextDueDateInPast(
+                DateTimeOffset nextDueDate,
+                DateTimeOffset referenceDate)
+                => CustomMessage(
+                    nameof(CatVaccinationEntity),
+                    $"{nameof(VaccinationDates)}.{nameof(VaccinationDates.NextDueDate)}",
+                    $"Next due date '{nextDueDate:yyyy-MM-dd}' cannot be in the past (reference date: '{referenceDate:yyyy-MM-dd}').");
+
+            public static Error NextDueDateBeforeOrEqualVaccinationDate(
+                DateTimeOffset nextDueDate,
+                DateTimeOffset vaccinationDate)
+                => CustomMessage(
+                    nameof(CatVaccinationEntity),
+                    $"{nameof(VaccinationDates)}.{nameof(VaccinationDates.NextDueDate)}",
+                    $"Next due date '{nextDueDate:yyyy-MM-dd}' must be after the vaccination date '{vaccinationDate:yyyy-MM-dd}'.");
         }
     }
 }

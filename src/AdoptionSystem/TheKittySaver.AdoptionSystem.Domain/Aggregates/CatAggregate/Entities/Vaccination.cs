@@ -11,8 +11,7 @@ namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Entities;
 public sealed class Vaccination : Entity<VaccinationId>
 {
     public VaccinationType Type { get; private set; }
-    public DateTimeOffset VaccinationDate { get; private set; }
-    public DateTimeOffset? NextDueDate { get; private set; }
+    public VaccinationDates Dates { get; private set; }
     public VaccinationNote? VeterinarianNote { get; private set; }
     
     public Result UpdateType(VaccinationType updatedType)
@@ -23,28 +22,33 @@ public sealed class Vaccination : Entity<VaccinationId>
 
     public Result UpdateVaccinationDate(DateTimeOffset updatedVaccinationDate, DateTimeOffset currentDate)
     {
-        if (updatedVaccinationDate > currentDate)
+        Result<VaccinationDates> newDatesResult = VaccinationDates.Create(
+            updatedVaccinationDate,
+            currentDate,
+            Dates.NextDueDate);
+
+        if (!newDatesResult.IsSuccess)
         {
-            return Result.Failure(DomainErrors.CatVaccinationEntity.DateInFuture);
+            return Result.Failure(newDatesResult.Error);
         }
 
-        if (CatAge.IsDateTooOldForCat(updatedVaccinationDate, currentDate))
-        {
-            return Result.Failure(DomainErrors.CatVaccinationEntity.DateTooOld);
-        }
-
-        VaccinationDate = updatedVaccinationDate;
+        Dates = newDatesResult.Value;
         return Result.Success();
     }
 
     public Result UpdateNextDueDate(DateTimeOffset? updatedNextDueDate, DateTimeOffset currentDate)
     {
-        if (updatedNextDueDate.HasValue && updatedNextDueDate.Value < currentDate)
+        Result<VaccinationDates> newDatesResult = VaccinationDates.Create(
+            Dates.VaccinationDate,
+            currentDate,
+            updatedNextDueDate);
+
+        if (!newDatesResult.IsSuccess)
         {
-            return Result.Failure(DomainErrors.CatVaccinationEntity.NextDueDateInPast);
+            return Result.Failure(newDatesResult.Error);
         }
 
-        NextDueDate = updatedNextDueDate;
+        Dates = newDatesResult.Value;
         return Result.Success();
     }
 
@@ -63,40 +67,30 @@ public sealed class Vaccination : Entity<VaccinationId>
     {
         ArgumentNullException.ThrowIfNull(createdAt);
 
-        if (vaccinationDate > createdAt.Value)
-        {
-            return Result.Failure<Vaccination>(
-                DomainErrors.CatVaccinationEntity.DateInFuture);
-        }
+        Result<VaccinationDates> datesResult = VaccinationDates.Create(
+            vaccinationDate,
+            createdAt.Value,
+            nextDueDate);
 
-        if (CatAge.IsDateTooOldForCat(vaccinationDate, createdAt.Value))
+        if (!datesResult.IsSuccess)
         {
-            return Result.Failure<Vaccination>(
-                DomainErrors.CatVaccinationEntity.DateTooOld);
-        }
-
-        if (nextDueDate.HasValue && nextDueDate.Value < createdAt.Value)
-        {
-            return Result.Failure<Vaccination>(
-                DomainErrors.CatVaccinationEntity.NextDueDateInPast);
+            return Result.Failure<Vaccination>(datesResult.Error);
         }
 
         VaccinationId id = VaccinationId.New();
-        Vaccination instance = new(id, type, vaccinationDate, nextDueDate, veterinarianNote, createdAt);
+        Vaccination instance = new(id, type, datesResult.Value, veterinarianNote, createdAt);
         return Result.Success(instance);
     }
 
     private Vaccination(
         VaccinationId id,
         VaccinationType type,
-        DateTimeOffset vaccinationDate,
-        DateTimeOffset? nextDueDate,
+        VaccinationDates dates,
         VaccinationNote? veterinarianNote,
         CreatedAt createdAt) : base(id, createdAt)
     {
         Type = type;
-        VaccinationDate = vaccinationDate;
-        NextDueDate = nextDueDate;
+        Dates = dates;
         VeterinarianNote = veterinarianNote;
     }
 }

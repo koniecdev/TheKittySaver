@@ -86,13 +86,13 @@ public static partial class DomainErrors
         public static class StatusValueObject
         {
             public static Error PauseReasonRequired
-                => Required(nameof(AdoptionAnnouncementEntity), $"{nameof(AdoptionAnnouncement.Status)}.PauseReason");
+                => Required(nameof(AdoptionAnnouncementEntity), $"{nameof(AdoptionAnnouncement.Status)}.{nameof(AnnouncementStatus.StatusNote)}");
 
             public static Error CancelReasonRequired
-                => Required(nameof(AdoptionAnnouncementEntity), $"{nameof(AdoptionAnnouncement.Status)}.CancelReason");
+                => Required(nameof(AdoptionAnnouncementEntity), $"{nameof(AdoptionAnnouncement.Status)}.{nameof(AnnouncementStatus.StatusNote)}");
 
             public static Error NoteTooLong
-                => TooManyCharacters(nameof(AdoptionAnnouncementEntity), $"{nameof(AdoptionAnnouncement.Status)}.Note",
+                => TooManyCharacters(nameof(AdoptionAnnouncementEntity), $"{nameof(AdoptionAnnouncement.Status)}.{nameof(AnnouncementStatus.StatusNote)}",
                     AnnouncementStatus.MaxStatusNoteLength);
         }
     }
