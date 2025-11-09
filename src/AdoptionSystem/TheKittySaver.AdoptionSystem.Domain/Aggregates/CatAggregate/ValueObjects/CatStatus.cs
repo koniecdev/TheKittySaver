@@ -44,7 +44,7 @@ public sealed class CatStatus : ValueObject
             if (note.Length > MaxStatusNoteLength)
             {
                 return Result.Failure<CatStatus>(
-                    DomainErrors.CatEntity.StatusValueObject.NoteTooLong);
+                    DomainErrors.CatEntity.StatusValueObject.NoteTooManyCharacters);
             }
         }
         

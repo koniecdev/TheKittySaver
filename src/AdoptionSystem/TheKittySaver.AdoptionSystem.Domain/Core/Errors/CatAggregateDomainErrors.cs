@@ -10,10 +10,15 @@ public static partial class DomainErrors
 {
     public static class CatEntity
     {
-        public static Error NotFound(CatId id) 
+        public static Error NotFound(CatId id)
             => HasNotBeenFound(
                 nameof(CatEntity),
                 id.Value);
+
+        public static Error VaccinationNotFound(VaccinationId vaccinationId)
+            => HasNotBeenFound(
+                nameof(CatEntity),
+                vaccinationId.Value);
         
         public static class NameValueObject
         {
@@ -115,7 +120,7 @@ public static partial class DomainErrors
                 => TooManyCharacters(
                     nameof(CatEntity),
                     nameof(Cat.Description),
-                    Description.MaxLength);
+                    CatDescription.MaxLength);
         }
 
         public static class WeightValueObject
@@ -138,31 +143,12 @@ public static partial class DomainErrors
                     "Neutering date is too old to be valid.");
         }
 
-        public static class VaccinationValueObject
-        {
-            public static Error DateInFuture
-                => CustomMessage(nameof(CatEntity), "Vaccination.Date",
-                    "Vaccination date cannot be in the future.");
-            
-            public static Error DateTooOld
-                => CustomMessage(nameof(CatEntity), "Vaccination.Date",
-                    "Vaccination date is too old to be valid.");
-            
-            public static Error NextDueDateInPast
-                => CustomMessage(nameof(CatEntity), "Vaccination.NextDueDate",
-                    "Next due date cannot be in the past.");
-            
-            public static Error NoteTooLong
-                => TooManyCharacters(nameof(CatEntity), "Vaccination.Note",
-                    Vaccination.MaxVeterinarianNoteLength);
-        }
-
         public static class StatusValueObject
         {
             public static Error UnavailableReasonRequired
                 => Required(nameof(CatEntity), $"{nameof(Cat.Status)}.Reason");
             
-            public static Error NoteTooLong
+            public static Error NoteTooManyCharacters
                 => TooManyCharacters(nameof(CatEntity), $"{nameof(Cat.Status)}.Note",
                     CatStatus.MaxStatusNoteLength);
         }
@@ -172,10 +158,44 @@ public static partial class DomainErrors
             public static Error TestDateInFuture
                 => CustomMessage(nameof(CatEntity), $"{nameof(Cat.InfectiousDiseaseStatus)}.TestDate",
                     "Test date cannot be in the future.");
-            
+
             public static Error TestDateTooOld
                 => CustomMessage(nameof(CatEntity), $"{nameof(Cat.InfectiousDiseaseStatus)}.TestDate",
                     "Test date is too old to be valid.");
+        }
+    }
+
+    public static class CatVaccinationEntity
+    {
+        public static Error NotFound(VaccinationId vaccinationId)
+            => HasNotBeenFound(
+                nameof(CatVaccinationEntity),
+                vaccinationId.Value);
+
+        public static Error DateInFuture
+            => CustomMessage(nameof(CatVaccinationEntity), nameof(Vaccination.VaccinationDate),
+                "Vaccination date cannot be in the future.");
+
+        public static Error DateTooOld
+            => CustomMessage(nameof(CatVaccinationEntity), nameof(Vaccination.VaccinationDate),
+                "Vaccination date is too old to be valid.");
+
+        public static Error NextDueDateInPast
+            => CustomMessage(nameof(CatVaccinationEntity), nameof(Vaccination.NextDueDate),
+                "Next due date cannot be in the past.");
+
+        public static class VeterinarianNoteValueObject
+        {
+            public static Error NullOrEmpty
+                => Required(
+                    nameof(CatVaccinationEntity),
+                    nameof(Vaccination.VeterinarianNote));
+
+            public static Error LongerThanAllowed
+                => TooManyCharacters(
+                    nameof(CatVaccinationEntity),
+                    nameof(Vaccination.VeterinarianNote),
+                    VaccinationNote.MaxLength);
         }
     }
 }

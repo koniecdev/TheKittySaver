@@ -1,20 +1,26 @@
 ﻿using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.ValueObjects;
 using TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
+using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
+using TheKittySaver.AdoptionSystem.Domain.Core.Extensions;
 using TheKittySaver.AdoptionSystem.Domain.Core.Guards;
+using TheKittySaver.AdoptionSystem.Domain.Core.Monads.OptionMonad;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.AdoptionAnnouncementAggregate;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
+using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate.Enums;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Entities;
 
 public sealed class Cat : AggregateRoot<CatId>
 {
+    private readonly List<Vaccination> _vaccinations;
+    
     public PersonId PersonId { get; }
     public AdoptionAnnouncementId? AdoptionAnnouncementId { get; private set; }
     public CatName Name { get; private set; }
-    public Description Description { get; private set; }
+    public CatDescription Description { get; private set; }
     public CatAge Age { get; private set; }
     public CatGender Gender { get; private set; }
     public CatColor Color { get; private set; }
@@ -26,7 +32,9 @@ public sealed class Cat : AggregateRoot<CatId>
     public ListingSource ListingSource { get; private set; }
     public NeuteringStatus NeuteringStatus { get; private set; }
     public InfectiousDiseaseStatus InfectiousDiseaseStatus { get; private set; }
-    public VaccinationRecord VaccinationRecord { get; private set; }
+    
+    public IReadOnlyList<Vaccination> Vaccinations => _vaccinations.AsReadOnly();
+
     public CatStatus Status { get; private set; }
 
     public Result ReassignToAdoptionAnnouncement(AdoptionAnnouncementId adoptionAnnouncementId)
@@ -49,7 +57,7 @@ public sealed class Cat : AggregateRoot<CatId>
         return Result.Success();
     }
 
-    public Result UpdateDescription(Description updatedDescription)
+    public Result UpdateDescription(CatDescription updatedDescription)
     {
         ArgumentNullException.ThrowIfNull(updatedDescription);
         Description = updatedDescription;
@@ -133,24 +141,119 @@ public sealed class Cat : AggregateRoot<CatId>
         return Result.Success();
     }
 
-    public Result UpdateVaccinationRecord(VaccinationRecord updatedVaccinationRecord)
-    {
-        ArgumentNullException.ThrowIfNull(updatedVaccinationRecord);
-        VaccinationRecord = updatedVaccinationRecord;
-        return Result.Success();
-    }
-
     public Result UpdateStatus(CatStatus updatedStatus)
     {
         ArgumentNullException.ThrowIfNull(updatedStatus);
         Status = updatedStatus;
         return Result.Success();
     }
-    
+
+    public Result<Vaccination> AddVaccination(
+        VaccinationType type,
+        DateTimeOffset vaccinationDate,
+        DateTimeOffset currentDate,
+        DateTimeOffset? nextDueDate = null,
+        VaccinationNote? veterinarianNote = null)
+    {
+        Result<Vaccination> vaccinationResult = Vaccination.Create(
+            type,
+            vaccinationDate,
+            currentDate,
+            nextDueDate,
+            veterinarianNote);
+
+        if (!vaccinationResult.IsSuccess)
+        {
+            return vaccinationResult;
+        }
+
+        _vaccinations.Add(vaccinationResult.Value);
+        return Result.Success(vaccinationResult.Value);
+    }
+
+    public Result RemoveVaccination(VaccinationId vaccinationId)
+    {
+        Ensure.NotEmpty(vaccinationId);
+
+        Maybe<Vaccination> maybeVaccination = _vaccinations.GetByIdOrDefault(vaccinationId);
+        if (maybeVaccination.HasNoValue)
+        {
+            return Result.Failure(DomainErrors.CatEntity.VaccinationNotFound(vaccinationId));
+        }
+
+        return !_vaccinations.Remove(maybeVaccination.Value)
+            ? Result.Failure(DomainErrors.DeletionCorruption(nameof(Vaccination)))
+            : Result.Success();
+    }
+
+    public Result UpdateVaccinationType(VaccinationId vaccinationId, VaccinationType updatedType)
+    {
+        Ensure.NotEmpty(vaccinationId);
+
+        Maybe<Vaccination> maybeVaccination = _vaccinations.GetByIdOrDefault(vaccinationId);
+        if (maybeVaccination.HasNoValue)
+        {
+            return Result.Failure(DomainErrors.CatEntity.VaccinationNotFound(vaccinationId));
+        }
+
+        Result updateResult = maybeVaccination.Value.UpdateType(updatedType);
+        return updateResult;
+    }
+
+    public Result UpdateVaccinationDate(
+        VaccinationId vaccinationId,
+        DateTimeOffset updatedVaccinationDate,
+        DateTimeOffset currentDate)
+    {
+        Ensure.NotEmpty(vaccinationId);
+
+        Maybe<Vaccination> maybeVaccination = _vaccinations.GetByIdOrDefault(vaccinationId);
+        if (maybeVaccination.HasNoValue)
+        {
+            return Result.Failure(DomainErrors.CatEntity.VaccinationNotFound(vaccinationId));
+        }
+
+        Result updateResult = maybeVaccination.Value.UpdateVaccinationDate(updatedVaccinationDate, currentDate);
+        return updateResult;
+    }
+
+    public Result UpdateVaccinationNextDueDate(
+        VaccinationId vaccinationId,
+        DateTimeOffset? updatedNextDueDate,
+        DateTimeOffset currentDate)
+    {
+        Ensure.NotEmpty(vaccinationId);
+
+        Maybe<Vaccination> maybeVaccination = _vaccinations.GetByIdOrDefault(vaccinationId);
+        if (maybeVaccination.HasNoValue)
+        {
+            return Result.Failure(DomainErrors.CatEntity.VaccinationNotFound(vaccinationId));
+        }
+
+        Result updateResult = maybeVaccination.Value.UpdateNextDueDate(updatedNextDueDate, currentDate);
+        return updateResult;
+    }
+
+    public Result UpdateVaccinationVeterinarianNote(
+        VaccinationId vaccinationId,
+        VaccinationNote? updatedVeterinarianNote)
+    {
+        Ensure.NotEmpty(vaccinationId);
+
+        Maybe<Vaccination> maybeVaccination = _vaccinations.GetByIdOrDefault(vaccinationId);
+        if (maybeVaccination.HasNoValue)
+        {
+            return Result.Failure(DomainErrors.CatEntity.VaccinationNotFound(vaccinationId));
+        }
+
+        Result updateResult = maybeVaccination.Value.UpdateVeterinarianNote(updatedVeterinarianNote);
+        return updateResult;
+    }
+
     public static Result<Cat> Create(
         PersonId personId,
         CatName name,
-        Description description,
+        CatDescription description,
         CatAge age,
         CatGender gender,
         CatColor color,
@@ -162,8 +265,8 @@ public sealed class Cat : AggregateRoot<CatId>
         ListingSource listingSource,
         NeuteringStatus neuteringStatus,
         InfectiousDiseaseStatus infectiousDiseaseStatus,
-        VaccinationRecord vaccinationRecord,
-        DateTimeOffset createdAt)
+        DateTimeOffset createdAt,
+        List<Vaccination>? vaccinations = null)
     {
         Ensure.NotEmpty(personId);
         ArgumentNullException.ThrowIfNull(name);
@@ -179,16 +282,15 @@ public sealed class Cat : AggregateRoot<CatId>
         ArgumentNullException.ThrowIfNull(listingSource);
         ArgumentNullException.ThrowIfNull(neuteringStatus);
         ArgumentNullException.ThrowIfNull(infectiousDiseaseStatus);
-        ArgumentNullException.ThrowIfNull(vaccinationRecord);
         Ensure.NotEmpty(createdAt);
-        
+
         CatId id = CatId.New();
         Cat instance = new(
-            id, 
+            id,
             personId,
             name,
             description,
-            age, 
+            age,
             gender,
             color,
             weight,
@@ -199,9 +301,9 @@ public sealed class Cat : AggregateRoot<CatId>
             listingSource,
             neuteringStatus,
             infectiousDiseaseStatus,
-            vaccinationRecord,
-            createdAt);
-        
+            createdAt,
+            vaccinations ?? []);
+
         return Result.Success(instance);
     }
     
@@ -209,7 +311,7 @@ public sealed class Cat : AggregateRoot<CatId>
         CatId id,
         PersonId personId,
         CatName name,
-        Description description,
+        CatDescription description,
         CatAge age,
         CatGender gender,
         CatColor color,
@@ -221,8 +323,8 @@ public sealed class Cat : AggregateRoot<CatId>
         ListingSource listingSource,
         NeuteringStatus neuteringStatus,
         InfectiousDiseaseStatus infectiousDiseaseStatus,
-        VaccinationRecord vaccinationRecord,
-        DateTimeOffset createdAt) : base(id)
+        DateTimeOffset createdAt,
+        List<Vaccination> vaccinations) : base(id)
     {
         PersonId = personId;
         Name = name;
@@ -238,7 +340,7 @@ public sealed class Cat : AggregateRoot<CatId>
         ListingSource = listingSource;
         NeuteringStatus = neuteringStatus;
         InfectiousDiseaseStatus = infectiousDiseaseStatus;
-        VaccinationRecord = vaccinationRecord;
+        _vaccinations = vaccinations;
         Status = CatStatus.Available(createdAt);
     }
 }

@@ -2,32 +2,30 @@
 using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
 
-namespace TheKittySaver.AdoptionSystem.Domain.SharedValueObjects;
+namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.ValueObjects;
 
-public sealed class Description : ValueObject
+public sealed class VaccinationNote : ValueObject
 {
-    public const int MaxLength = 400;
+    public const int MaxLength = 250;
     public string Value { get; }
 
-    public static Result<Description> Create(string value)
+    public static Result<VaccinationNote> Create(string value)
     {
         if (string.IsNullOrWhiteSpace(value))
         {
-            return Result.Failure<Description>(DomainErrors.CatEntity.DescriptionValueObject.NullOrEmpty);
+            return Result.Failure<VaccinationNote>(DomainErrors.CatVaccinationEntity.VeterinarianNoteValueObject.NullOrEmpty);
         }
 
         if (value.Length > MaxLength)
         {
-            return Result.Failure<Description>(DomainErrors.CatEntity.DescriptionValueObject.LongerThanAllowed);
+            return Result.Failure<VaccinationNote>(DomainErrors.CatVaccinationEntity.VeterinarianNoteValueObject.LongerThanAllowed);
         }
 
-        value = value.Trim();
-
-        Description instance = new(value);
+        VaccinationNote instance = new(value);
         return Result.Success(instance);
     }
 
-    private Description(string value)
+    private VaccinationNote(string value)
     {
         Value = value;
     }

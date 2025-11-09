@@ -1,5 +1,6 @@
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAggregate.Entities;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAggregate.ValueObjects;
+using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.ValueObjects;
 using TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.AdoptionAnnouncementAggregate;
@@ -54,10 +55,14 @@ public static partial class DomainErrors
         public static class DescriptionValueObject
         {
             public static Error NullOrEmpty
-                => Required(nameof(AdoptionAnnouncementEntity), nameof(AdoptionAnnouncement.Description));
+                => Required(
+                    nameof(AdoptionAnnouncementEntity),
+                    nameof(AdoptionAnnouncement.Description));
 
-            public static Error TooLong
-                => TooManyCharacters(nameof(AdoptionAnnouncementEntity), nameof(AdoptionAnnouncement.Description), Description.MaxLength);
+            public static Error LongerThanAllowed
+                => TooManyCharacters(
+                    nameof(AdoptionAnnouncementEntity),
+                    nameof(AdoptionAnnouncement.Description), AdoptionAnnouncementDescription.MaxLength);
         }
 
         public static class StatusValueObject

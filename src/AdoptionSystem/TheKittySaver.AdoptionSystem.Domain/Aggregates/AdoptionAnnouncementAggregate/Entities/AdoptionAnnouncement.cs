@@ -1,4 +1,5 @@
 ﻿using TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAggregate.ValueObjects;
+using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.ValueObjects;
 using TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
 using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 using TheKittySaver.AdoptionSystem.Domain.Core.Guards;
@@ -13,11 +14,11 @@ namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAgg
 public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
 {
     public PersonId PersonId { get; }
-    public Description Description { get; private set; }
+    public AdoptionAnnouncementDescription Description { get; private set; }
     public AnnouncementStatus Status { get; private set; }
     public DateTimeOffset CreatedAt { get; }
     
-    public Result UpdateDescription(Description updatedDescription)
+    public Result UpdateDescription(AdoptionAnnouncementDescription updatedDescription)
     {
         ArgumentNullException.ThrowIfNull(updatedDescription);
         Description = updatedDescription;
@@ -104,7 +105,7 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
     
     internal static Result<AdoptionAnnouncement> Create(
         PersonId personId,
-        Description description,
+        AdoptionAnnouncementDescription description,
         DateTimeOffset createdAt)
     {
         Ensure.NotEmpty(personId);
@@ -124,7 +125,7 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
     private AdoptionAnnouncement(
         AdoptionAnnouncementId id,
         PersonId personId,
-        Description description,
+        AdoptionAnnouncementDescription description,
         DateTimeOffset createdAt) : base(id)
     {
         PersonId = personId;

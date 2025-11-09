@@ -23,8 +23,4 @@
         <Generator>MSBuild:GenerateCodeFromAttributes</Generator>
       </Compile>
     </ItemGroup>
-    
-    <ItemGroup>
-      <Folder Include="Aggregates\CatAggregate\Services\" />
-    </ItemGroup>
 </Project>
