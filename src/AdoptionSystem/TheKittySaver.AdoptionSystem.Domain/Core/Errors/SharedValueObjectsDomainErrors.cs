@@ -11,57 +11,89 @@ public static partial class DomainErrors
     public static class EmailValueObject
     {
         public static Error NullOrEmpty
-            => Required(nameof(Email), nameof(Email.Value));
+            => Required(
+                nameof(Email),
+                nameof(Email.Value));
 
         public static Error LongerThanAllowed
-            => TooManyCharacters(nameof(Email), nameof(Email.Value), Email.MaxLength);
+            => TooManyCharacters(
+                nameof(Email),
+                nameof(Email.Value),
+                Email.MaxLength);
 
         public static Error InvalidFormat
-            => BadFormat(nameof(Email), nameof(Email.Value));
+            => BadFormat(
+                nameof(Email),
+                nameof(Email.Value));
     }
 
     public static class PhoneNumberValueObject
     {
         public static Error NullOrEmpty
-            => Required(nameof(PhoneNumber), nameof(PhoneNumber.Value));
+            => Required(
+                nameof(PhoneNumber),
+                nameof(PhoneNumber.Value));
 
         public static Error LongerThanAllowed
-            => TooManyCharacters(nameof(PhoneNumber), nameof(PhoneNumber.Value), PhoneNumber.MaxLength);
+            => TooManyCharacters(
+                nameof(PhoneNumber),
+                nameof(PhoneNumber.Value),
+                PhoneNumber.MaxLength);
 
         public static Error InvalidFormat
-            => BadFormat(nameof(PhoneNumber), nameof(PhoneNumber.Value));
+            => BadFormat(
+                nameof(PhoneNumber),
+                nameof(PhoneNumber.Value));
     }
 
     public static class AddressCityValueObject
     {
         public static Error NullOrEmpty
-            => Required(nameof(AddressCity), nameof(AddressCity.Value));
+            => Required(
+                nameof(AddressCity),
+                nameof(AddressCity.Value));
 
         public static Error LongerThanAllowed
-            => TooManyCharacters(nameof(AddressCity), nameof(AddressCity.Value), AddressCity.MaxLength);
+            => TooManyCharacters(
+                nameof(AddressCity),
+                nameof(AddressCity.Value),
+                AddressCity.MaxLength);
     }
 
     public static class AddressRegionValueObject
     {
         public static Error NullOrEmpty
-            => Required(nameof(AddressRegion), nameof(AddressRegion.Value));
+            => Required(
+                nameof(AddressRegion),
+                nameof(AddressRegion.Value));
 
         public static Error LongerThanAllowed
-            => TooManyCharacters(nameof(AddressRegion), nameof(AddressRegion.Value), AddressRegion.MaxLength);
+            => TooManyCharacters(
+                nameof(AddressRegion),
+                nameof(AddressRegion.Value),
+                AddressRegion.MaxLength);
     }
 
     public static class AddressLineValueObject
     {
         public static Error NullOrEmpty
-            => Required(nameof(AddressLine), nameof(AddressLine.Value));
+            => Required(
+                nameof(AddressLine),
+                nameof(AddressLine.Value));
 
         public static Error LongerThanAllowed
-            => TooManyCharacters(nameof(AddressLine), nameof(AddressLine.Value), AddressLine.MaxLength);
+            => TooManyCharacters(
+                nameof(AddressLine),
+                nameof(AddressLine.Value),
+                AddressLine.MaxLength);
     }
 
     public static class CreatedAtValueObject
     {
         public static Error CannotBeInThePast
-            => CustomMessage(nameof(CreatedAt), nameof(CreatedAt.Value), "The creation date cannot be in the past.");
+            => CustomMessage(
+                nameof(CreatedAt),
+                nameof(CreatedAt.Value),
+                "The creation date cannot be in the past.");
     }
 }

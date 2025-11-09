@@ -80,19 +80,26 @@ public static partial class DomainErrors
             public static Error LongerThanAllowed
                 => TooManyCharacters(
                     nameof(AdoptionAnnouncementEntity),
-                    nameof(AdoptionAnnouncement.Description), AdoptionAnnouncementDescription.MaxLength);
+                    nameof(AdoptionAnnouncement.Description),
+                    AdoptionAnnouncementDescription.MaxLength);
         }
 
         public static class StatusValueObject
         {
             public static Error PauseReasonRequired
-                => Required(nameof(AdoptionAnnouncementEntity), $"{nameof(AdoptionAnnouncement.Status)}.{nameof(AnnouncementStatus.StatusNote)}");
+                => Required(
+                    nameof(AdoptionAnnouncementEntity),
+                    $"{nameof(AdoptionAnnouncement.Status)}.{nameof(AnnouncementStatus.StatusNote)}");
 
             public static Error CancelReasonRequired
-                => Required(nameof(AdoptionAnnouncementEntity), $"{nameof(AdoptionAnnouncement.Status)}.{nameof(AnnouncementStatus.StatusNote)}");
+                => Required(
+                    nameof(AdoptionAnnouncementEntity),
+                    $"{nameof(AdoptionAnnouncement.Status)}.{nameof(AnnouncementStatus.StatusNote)}");
 
             public static Error NoteTooLong
-                => TooManyCharacters(nameof(AdoptionAnnouncementEntity), $"{nameof(AdoptionAnnouncement.Status)}.{nameof(AnnouncementStatus.StatusNote)}",
+                => TooManyCharacters(
+                    nameof(AdoptionAnnouncementEntity),
+                    $"{nameof(AdoptionAnnouncement.Status)}.{nameof(AnnouncementStatus.StatusNote)}",
                     AnnouncementStatus.MaxStatusNoteLength);
         }
     }

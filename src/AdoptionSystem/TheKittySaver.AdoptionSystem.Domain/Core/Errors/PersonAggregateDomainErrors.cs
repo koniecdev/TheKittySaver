@@ -40,10 +40,16 @@ public static partial class DomainErrors
         }
         
         public static Error EmailAlreadyTaken(Email email)
-            => AlreadyHasBeenTaken(nameof(Person), nameof(Person.Email), email);
+            => AlreadyHasBeenTaken(
+                nameof(Person),
+                nameof(Person.Email),
+                email);
     
         public static Error PhoneNumberAlreadyTaken(PhoneNumber phoneNumber)
-            => AlreadyHasBeenTaken(nameof(Person), nameof(Person.PhoneNumber), phoneNumber);
+            => AlreadyHasBeenTaken(
+                nameof(Person),
+                nameof(Person.PhoneNumber),
+                phoneNumber);
 
     }
     
@@ -69,6 +75,8 @@ public static partial class DomainErrors
         }
         
         public static Error AddressNameAlreadyTaken(AddressName name)
-            => AlreadyHasBeenTaken(nameof(PersonAddressEntity), nameof(Address.Name), name);
+            => AlreadyHasBeenTaken(nameof(PersonAddressEntity),
+                nameof(Address.Name),
+                name);
     }
 }
