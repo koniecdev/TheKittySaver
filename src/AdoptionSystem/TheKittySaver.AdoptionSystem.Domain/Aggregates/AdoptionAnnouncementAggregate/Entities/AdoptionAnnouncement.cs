@@ -15,6 +15,7 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
 {
     public PersonId PersonId { get; }
     public AdoptionAnnouncementDescription Description { get; private set; }
+    public AdoptionAnnouncementAddress Address { get; private set; }
     public AnnouncementStatus Status { get; private set; }
     public DateTimeOffset CreatedAt { get; }
     
@@ -24,7 +25,21 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
         Description = updatedDescription;
         return Result.Success();
     }
-    
+
+    public Result UpdateAddress(AdoptionAnnouncementAddress updatedAddress)
+    {
+        ArgumentNullException.ThrowIfNull(updatedAddress);
+
+        if (Status.Value is not (AnnouncementStatusType.Draft or AnnouncementStatusType.Active or AnnouncementStatusType.Paused))
+        {
+            return Result.Failure(
+                DomainErrors.AdoptionAnnouncementEntity.CanOnlyUpdateAddressWhenDraftActiveOrPaused);
+        }
+
+        Address = updatedAddress;
+        return Result.Success();
+    }
+
     public Result Publish(DateTimeOffset publishedAt)
     {
         if (Status.Value != AnnouncementStatusType.Draft)
@@ -106,19 +121,22 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
     internal static Result<AdoptionAnnouncement> Create(
         PersonId personId,
         AdoptionAnnouncementDescription description,
+        AdoptionAnnouncementAddress address,
         DateTimeOffset createdAt)
     {
         Ensure.NotEmpty(personId);
         ArgumentNullException.ThrowIfNull(description);
+        ArgumentNullException.ThrowIfNull(address);
         Ensure.NotEmpty(createdAt);
-        
+
         AdoptionAnnouncementId id = AdoptionAnnouncementId.New();
         AdoptionAnnouncement instance = new(
             id,
             personId,
             description,
+            address,
             createdAt);
-        
+
         return Result.Success(instance);
     }
     
@@ -126,10 +144,12 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
         AdoptionAnnouncementId id,
         PersonId personId,
         AdoptionAnnouncementDescription description,
+        AdoptionAnnouncementAddress address,
         DateTimeOffset createdAt) : base(id)
     {
         PersonId = personId;
         Description = description;
+        Address = address;
         Status = AnnouncementStatus.Draft(createdAt);
         CreatedAt = createdAt;
     }

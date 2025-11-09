@@ -52,6 +52,12 @@ public static partial class DomainErrors
                 "CatsCompatibility",
                 "Cannot mix cats with FIV/FeLV positive status with FIV/FeLV negative cats in the same announcement.");
 
+        public static Error CanOnlyUpdateAddressWhenDraftActiveOrPaused
+            => CustomMessage(
+                nameof(AdoptionAnnouncementEntity),
+                nameof(AdoptionAnnouncement.Status),
+                "Can only update address when announcement is in draft, active, or paused status.");
+
         public static class DescriptionValueObject
         {
             public static Error NullOrEmpty
