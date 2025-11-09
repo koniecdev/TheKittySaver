@@ -6,6 +6,7 @@ using TheKittySaver.AdoptionSystem.Domain.Core.Guards;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.OptionMonad;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects;
+using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.PhoneNumbers;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.AdoptionAnnouncementAggregate;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.AdoptionAnnouncementAggregate.Enums;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
@@ -17,8 +18,9 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
     public PersonId PersonId { get; }
     public AdoptionAnnouncementDescription? Description { get; private set; }
     public AdoptionAnnouncementAddress Address { get; private set; }
+    public Email Email { get; private set; }
+    public PhoneNumber PhoneNumber { get; private set; }
     public AnnouncementStatus Status { get; private set; }
-    public DateTimeOffset CreatedAt { get; }
     
     public Result UpdateDescription(Maybe<AdoptionAnnouncementDescription> updatedDescription)
     {
@@ -40,6 +42,34 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
         }
 
         Address = updatedAddress;
+        return Result.Success();
+    }
+
+    public Result UpdateEmail(Email updatedEmail)
+    {
+        ArgumentNullException.ThrowIfNull(updatedEmail);
+
+        if (Status.Value is not (AnnouncementStatusType.Draft or AnnouncementStatusType.Active or AnnouncementStatusType.Paused))
+        {
+            return Result.Failure(
+                DomainErrors.AdoptionAnnouncementEntity.CanOnlyUpdateEmailWhenDraftActiveOrPaused);
+        }
+
+        Email = updatedEmail;
+        return Result.Success();
+    }
+
+    public Result UpdatePhoneNumber(PhoneNumber updatedPhoneNumber)
+    {
+        ArgumentNullException.ThrowIfNull(updatedPhoneNumber);
+
+        if (Status.Value is not (AnnouncementStatusType.Draft or AnnouncementStatusType.Active or AnnouncementStatusType.Paused))
+        {
+            return Result.Failure(
+                DomainErrors.AdoptionAnnouncementEntity.CanOnlyUpdatePhoneNumberWhenDraftActiveOrPaused);
+        }
+
+        PhoneNumber = updatedPhoneNumber;
         return Result.Success();
     }
 
@@ -125,12 +155,16 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
         PersonId personId,
         Maybe<AdoptionAnnouncementDescription> description,
         AdoptionAnnouncementAddress address,
-        DateTimeOffset createdAt)
+        Email email,
+        PhoneNumber phoneNumber,
+        CreatedAt createdAt)
     {
         Ensure.NotEmpty(personId);
         ArgumentNullException.ThrowIfNull(description);
         ArgumentNullException.ThrowIfNull(address);
-        Ensure.NotEmpty(createdAt);
+        ArgumentNullException.ThrowIfNull(email);
+        ArgumentNullException.ThrowIfNull(phoneNumber);
+        ArgumentNullException.ThrowIfNull(createdAt);
 
         AdoptionAnnouncementId id = AdoptionAnnouncementId.New();
         AdoptionAnnouncement instance = new(
@@ -138,22 +172,27 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
             personId,
             description,
             address,
+            email,
+            phoneNumber,
             createdAt);
 
         return Result.Success(instance);
     }
-    
+
     private AdoptionAnnouncement(
         AdoptionAnnouncementId id,
         PersonId personId,
         AdoptionAnnouncementDescription? description,
         AdoptionAnnouncementAddress address,
-        DateTimeOffset createdAt) : base(id)
+        Email email,
+        PhoneNumber phoneNumber,
+        CreatedAt createdAt) : base(id, createdAt)
     {
         PersonId = personId;
         Description = description;
         Address = address;
-        Status = AnnouncementStatus.Draft(createdAt);
-        CreatedAt = createdAt;
+        Email = email;
+        PhoneNumber = phoneNumber;
+        Status = AnnouncementStatus.Draft(createdAt.Value);
     }
 }

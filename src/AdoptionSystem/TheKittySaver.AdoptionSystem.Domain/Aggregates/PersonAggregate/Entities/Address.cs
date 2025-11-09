@@ -54,32 +54,38 @@ public sealed class Address : Entity<AddressId>
         AddressName name,
         AddressRegion region,
         AddressCity city,
-        Maybe<AddressLine> maybeLine)
+        Maybe<AddressLine> maybeLine,
+        CreatedAt createdAt)
     {
         Ensure.NotEmpty(personId);
         Ensure.IsInEnum(countryCode);
         ArgumentNullException.ThrowIfNull(name);
         ArgumentNullException.ThrowIfNull(region);
         ArgumentNullException.ThrowIfNull(city);
-        
-        Address instance = new(personId,
+        ArgumentNullException.ThrowIfNull(createdAt);
+
+        AddressId id = AddressId.New();
+        Address instance = new(
+            id,
+            personId,
             countryCode,
             name,
             region,
             city,
-            maybeLine.HasValue
-                ? maybeLine.Value
-                : null);
+            maybeLine.HasValue ? maybeLine.Value : null,
+            createdAt);
         return Result.Success(instance);
     }
 
     private Address(
+        AddressId id,
         PersonId personId,
         CountryCode countryCode,
         AddressName name,
         AddressRegion region,
         AddressCity city,
-        AddressLine? line)
+        AddressLine? line,
+        CreatedAt createdAt) : base(id, createdAt)
     {
         PersonId = personId;
         CountryCode = countryCode;

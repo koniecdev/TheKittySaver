@@ -29,28 +29,31 @@ public sealed class Person : AggregateRoot<PersonId>
         AddressName name,
         AddressRegion region,
         AddressCity addressCity,
-        Maybe<AddressLine> maybeLine)
+        Maybe<AddressLine> maybeLine,
+        CreatedAt createdAt)
     {
         ArgumentNullException.ThrowIfNull(name);
-        
+        ArgumentNullException.ThrowIfNull(createdAt);
+
         if (_addresses.Any(x=>x.Name == name))
         {
             return Result.Failure<AddressId>(DomainErrors.PersonAddressEntity.AddressNameAlreadyTaken(name));
         }
-        
+
         Result<Address> createAddressResult = Address.Create(
             personId: Id,
             countryCode: countryCode,
             name: name,
             region: region,
             city: addressCity,
-            maybeLine: maybeLine);
-        
+            maybeLine: maybeLine,
+            createdAt: createdAt);
+
         if (createAddressResult.IsFailure)
         {
             return Result.Failure<AddressId>(createAddressResult.Error);
         }
-        
+
         _addresses.Add(createAddressResult.Value);
         return Result.Success(createAddressResult.Value.Id);
     }
@@ -162,15 +165,17 @@ public sealed class Person : AggregateRoot<PersonId>
     internal static Result<Person> Create(
         Username username,
         Email email,
-        PhoneNumber phoneNumber)
+        PhoneNumber phoneNumber,
+        CreatedAt createdAt)
     {
         ArgumentNullException.ThrowIfNull(username);
         ArgumentNullException.ThrowIfNull(email);
         ArgumentNullException.ThrowIfNull(phoneNumber);
-        
+        ArgumentNullException.ThrowIfNull(createdAt);
+
         PersonId id = PersonId.New();
-        Person instance = new(id, username, email, phoneNumber);
-        
+        Person instance = new(id, username, email, phoneNumber, createdAt);
+
         return Result.Success(instance);
     }
 
@@ -178,7 +183,8 @@ public sealed class Person : AggregateRoot<PersonId>
         PersonId id,
         Username username,
         Email email,
-        PhoneNumber phoneNumber) : base(id)
+        PhoneNumber phoneNumber,
+        CreatedAt createdAt) : base(id, createdAt)
     {
         Username = username;
         Email = email;

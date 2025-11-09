@@ -151,14 +151,16 @@ public sealed class Cat : AggregateRoot<CatId>
     public Result<Vaccination> AddVaccination(
         VaccinationType type,
         DateTimeOffset vaccinationDate,
-        DateTimeOffset currentDate,
+        CreatedAt createdAt,
         DateTimeOffset? nextDueDate = null,
         VaccinationNote? veterinarianNote = null)
     {
+        ArgumentNullException.ThrowIfNull(createdAt);
+
         Result<Vaccination> vaccinationResult = Vaccination.Create(
             type,
             vaccinationDate,
-            currentDate,
+            createdAt,
             nextDueDate,
             veterinarianNote);
 
@@ -265,7 +267,7 @@ public sealed class Cat : AggregateRoot<CatId>
         ListingSource listingSource,
         NeuteringStatus neuteringStatus,
         InfectiousDiseaseStatus infectiousDiseaseStatus,
-        DateTimeOffset createdAt,
+        CreatedAt createdAt,
         List<Vaccination>? vaccinations = null)
     {
         Ensure.NotEmpty(personId);
@@ -282,7 +284,7 @@ public sealed class Cat : AggregateRoot<CatId>
         ArgumentNullException.ThrowIfNull(listingSource);
         ArgumentNullException.ThrowIfNull(neuteringStatus);
         ArgumentNullException.ThrowIfNull(infectiousDiseaseStatus);
-        Ensure.NotEmpty(createdAt);
+        ArgumentNullException.ThrowIfNull(createdAt);
 
         CatId id = CatId.New();
         Cat instance = new(
@@ -306,7 +308,7 @@ public sealed class Cat : AggregateRoot<CatId>
 
         return Result.Success(instance);
     }
-    
+
     private Cat(
         CatId id,
         PersonId personId,
@@ -323,8 +325,8 @@ public sealed class Cat : AggregateRoot<CatId>
         ListingSource listingSource,
         NeuteringStatus neuteringStatus,
         InfectiousDiseaseStatus infectiousDiseaseStatus,
-        DateTimeOffset createdAt,
-        List<Vaccination> vaccinations) : base(id)
+        CreatedAt createdAt,
+        List<Vaccination> vaccinations) : base(id, createdAt)
     {
         PersonId = personId;
         Name = name;
@@ -341,6 +343,6 @@ public sealed class Cat : AggregateRoot<CatId>
         NeuteringStatus = neuteringStatus;
         InfectiousDiseaseStatus = infectiousDiseaseStatus;
         _vaccinations = vaccinations;
-        Status = CatStatus.Available(createdAt);
+        Status = CatStatus.Available(createdAt.Value);
     }
 }

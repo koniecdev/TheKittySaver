@@ -58,6 +58,18 @@ public static partial class DomainErrors
                 nameof(AdoptionAnnouncement.Status),
                 "Can only update address when announcement is in draft, active, or paused status.");
 
+        public static Error CanOnlyUpdateEmailWhenDraftActiveOrPaused
+            => CustomMessage(
+                nameof(AdoptionAnnouncementEntity),
+                nameof(AdoptionAnnouncement.Status),
+                "Can only update email when announcement is in draft, active, or paused status.");
+
+        public static Error CanOnlyUpdatePhoneNumberWhenDraftActiveOrPaused
+            => CustomMessage(
+                nameof(AdoptionAnnouncementEntity),
+                nameof(AdoptionAnnouncement.Status),
+                "Can only update phone number when announcement is in draft, active, or paused status.");
+
         public static class DescriptionValueObject
         {
             public static Error NullOrEmpty

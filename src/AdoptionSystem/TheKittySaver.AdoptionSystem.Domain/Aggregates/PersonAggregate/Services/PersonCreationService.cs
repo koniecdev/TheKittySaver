@@ -20,6 +20,7 @@ internal sealed class PersonCreationService : IPersonCreationService
         Username username,
         Email email,
         PhoneNumber phoneNumber,
+        CreatedAt createdAt,
         CancellationToken cancellationToken = default)
     {
         if (await _personUniquenessCheckerService.IsEmailTakenAsync(email, cancellationToken: cancellationToken))
@@ -32,8 +33,8 @@ internal sealed class PersonCreationService : IPersonCreationService
             return Result.Failure<Person>(DomainErrors.PersonEntity.PhoneNumberAlreadyTaken(phoneNumber));
         }
 
-        Result<Person> createPersonResult = Person.Create(username, email, phoneNumber);
-        
+        Result<Person> createPersonResult = Person.Create(username, email, phoneNumber, createdAt);
+
         return createPersonResult;
     }
 }

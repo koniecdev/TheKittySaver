@@ -13,5 +13,6 @@ public interface IPersonCreationService
         Username username,
         Email email,
         PhoneNumber phoneNumber,
+        CreatedAt createdAt,
         CancellationToken cancellationToken = default);
 }

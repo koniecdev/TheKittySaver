@@ -57,30 +57,32 @@ public sealed class Vaccination : Entity<VaccinationId>
     public static Result<Vaccination> Create(
         VaccinationType type,
         DateTimeOffset vaccinationDate,
-        DateTimeOffset currentDate,
+        CreatedAt createdAt,
         DateTimeOffset? nextDueDate = null,
         VaccinationNote? veterinarianNote = null)
     {
-        if (vaccinationDate > currentDate)
+        ArgumentNullException.ThrowIfNull(createdAt);
+
+        if (vaccinationDate > createdAt.Value)
         {
             return Result.Failure<Vaccination>(
                 DomainErrors.CatVaccinationEntity.DateInFuture);
         }
 
-        if (CatAge.IsDateTooOldForCat(vaccinationDate, currentDate))
+        if (CatAge.IsDateTooOldForCat(vaccinationDate, createdAt.Value))
         {
             return Result.Failure<Vaccination>(
                 DomainErrors.CatVaccinationEntity.DateTooOld);
         }
 
-        if (nextDueDate.HasValue && nextDueDate.Value < currentDate)
+        if (nextDueDate.HasValue && nextDueDate.Value < createdAt.Value)
         {
             return Result.Failure<Vaccination>(
                 DomainErrors.CatVaccinationEntity.NextDueDateInPast);
         }
 
         VaccinationId id = VaccinationId.New();
-        Vaccination instance = new(id, type, vaccinationDate, nextDueDate, veterinarianNote);
+        Vaccination instance = new(id, type, vaccinationDate, nextDueDate, veterinarianNote, createdAt);
         return Result.Success(instance);
     }
 
@@ -89,7 +91,8 @@ public sealed class Vaccination : Entity<VaccinationId>
         VaccinationType type,
         DateTimeOffset vaccinationDate,
         DateTimeOffset? nextDueDate,
-        VaccinationNote? veterinarianNote) : base(id)
+        VaccinationNote? veterinarianNote,
+        CreatedAt createdAt) : base(id, createdAt)
     {
         Type = type;
         VaccinationDate = vaccinationDate;

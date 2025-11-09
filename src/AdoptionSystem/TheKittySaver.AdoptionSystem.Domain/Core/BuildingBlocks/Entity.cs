@@ -1,6 +1,8 @@
-﻿namespace TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
+﻿using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects;
 
-public abstract class Entity<TId>(TId id) : IEquatable<Entity<TId>> where TId : struct
+namespace TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
+
+public abstract class Entity<TId> : IEquatable<Entity<TId>> where TId : struct
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="Entity"/> class.
@@ -8,14 +10,24 @@ public abstract class Entity<TId>(TId id) : IEquatable<Entity<TId>> where TId : 
     /// <remarks>
     /// Required by EF Core.
     /// </remarks>
-    protected Entity() : this(default)
+    protected Entity()
     {
+        Id = default;
+        CreatedAt = null!;
+    }
+
+    protected Entity(TId id, CreatedAt createdAt)
+    {
+        Id = id;
+        CreatedAt = createdAt;
     }
 
     /// <summary>
     /// Gets or sets the entity identifier.
     /// </summary>
-    public TId Id { get; } = id;
+    public TId Id { get; }
+
+    public CreatedAt CreatedAt { get; }
 
     public static bool operator ==(Entity<TId>? a, Entity<TId>? b)
     {

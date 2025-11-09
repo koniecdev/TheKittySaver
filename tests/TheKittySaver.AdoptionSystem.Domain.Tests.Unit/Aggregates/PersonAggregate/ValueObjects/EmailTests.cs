@@ -59,7 +59,7 @@ public class EmailTests
         result.IsSuccess.ShouldBeFalse();
         result.IsFailure.ShouldBeTrue();
         result.Error.ShouldNotBeNull();
-        result.Error.Code.ShouldBe(DomainErrors.PersonEntity.EmailValueObject.LongerThanAllowed);
+        result.Error.ShouldBe(DomainErrors.EmailValueObject.LongerThanAllowed);
     }
     
     [Theory]
@@ -73,7 +73,7 @@ public class EmailTests
         result.IsSuccess.ShouldBeFalse();
         result.IsFailure.ShouldBeTrue();
         result.Error.ShouldNotBeNull();
-        result.Error.Code.ShouldBe(DomainErrors.PersonEntity.EmailValueObject.NullOrEmpty);
+        result.Error.ShouldBe(DomainErrors.EmailValueObject.NullOrEmpty);
     }
     
     [Theory]
@@ -87,6 +87,6 @@ public class EmailTests
         result.IsSuccess.ShouldBeFalse();
         result.IsFailure.ShouldBeTrue();
         result.Error.ShouldNotBeNull();
-        result.Error.Code.ShouldBe(DomainErrors.PersonEntity.EmailValueObject.InvalidFormat);
+        result.Error.ShouldBe(DomainErrors.EmailValueObject.InvalidFormat);
     }
 }

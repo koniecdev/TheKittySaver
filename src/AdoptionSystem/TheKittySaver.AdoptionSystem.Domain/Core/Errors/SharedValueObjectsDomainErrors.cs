@@ -58,4 +58,10 @@ public static partial class DomainErrors
         public static Error LongerThanAllowed
             => TooManyCharacters(nameof(AddressLine), nameof(AddressLine.Value), AddressLine.MaxLength);
     }
+
+    public static class CreatedAtValueObject
+    {
+        public static Error CannotBeInThePast
+            => CustomMessage(nameof(CreatedAt), nameof(CreatedAt.Value), "The creation date cannot be in the past.");
+    }
 }
