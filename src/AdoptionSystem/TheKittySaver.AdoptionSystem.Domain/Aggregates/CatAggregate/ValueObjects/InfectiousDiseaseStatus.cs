@@ -25,13 +25,13 @@ public sealed class InfectiousDiseaseStatus : ValueObject
         if (lastTestedAt > currentDate)
         {
             return Result.Failure<InfectiousDiseaseStatus>(
-                DomainErrors.CatEntity.InfectiousDiseaseStatusValueObject.TestDateInFuture);
+                DomainErrors.CatEntity.InfectiousDiseaseStatusValueObject.TestDateInFuture(lastTestedAt, currentDate));
         }
 
         if (CatAge.IsDateTooOldForCat(lastTestedAt, currentDate))
         {
             return Result.Failure<InfectiousDiseaseStatus>(
-                DomainErrors.CatEntity.InfectiousDiseaseStatusValueObject.TestDateTooOld);
+                DomainErrors.CatEntity.InfectiousDiseaseStatusValueObject.TestDateTooOld(lastTestedAt, currentDate));
         }
 
         InfectiousDiseaseStatus instance = new(fivStatus, felvStatus, lastTestedAt);

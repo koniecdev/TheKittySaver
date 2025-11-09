@@ -63,11 +63,13 @@ public static partial class DomainErrors
                     $"{nameof(Cat.AdoptionHistory)}.{nameof(AdoptionHistory.ReturnCount)}",
                     "If cat has been returned, then it must has been returned at least one time.");
             
-            public static Error LastReturnTooFarInPast
+            public static Error LastReturnTooFarInPast(
+                DateTimeOffset lastReturnDate,
+                DateTimeOffset currentDate)
                 => CustomMessage(
-                    nameof(CatEntity), 
+                    nameof(CatEntity),
                     $"{nameof(Cat.AdoptionHistory)}.{nameof(AdoptionHistory.LastReturnDate)}",
-                    "Invalid last return date has been provided.");
+                    $"Last return date '{lastReturnDate:yyyy-MM-dd}' is too old to be valid (reference date: '{currentDate:yyyy-MM-dd}').");
             
             public static Error LastReturnReasonIsEmpty
                 => Required(
@@ -140,20 +142,6 @@ public static partial class DomainErrors
                     nameof(Cat.Weight), actual, maximum);
         }
 
-        public static class NeuteringStatusValueObject
-        {
-            public static Error DateInFuture
-                => CustomMessage(
-                    nameof(CatEntity),
-                    $"{nameof(Cat.NeuteringStatus)}.{nameof(NeuteringStatus.IsNeutered)}",
-                    "Neutering date cannot be in the future.");
-
-            public static Error DateTooOld
-                => CustomMessage(
-                    nameof(CatEntity),
-                    $"{nameof(Cat.NeuteringStatus)}.{nameof(NeuteringStatus.IsNeutered)}",
-                    "Neutering date is too old to be valid.");
-        }
 
         public static class StatusValueObject
         {
@@ -171,17 +159,21 @@ public static partial class DomainErrors
 
         public static class InfectiousDiseaseStatusValueObject
         {
-            public static Error TestDateInFuture
+            public static Error TestDateInFuture(
+                DateOnly lastTestedAt,
+                DateOnly currentDate)
                 => CustomMessage(
                     nameof(CatEntity),
                     $"{nameof(Cat.InfectiousDiseaseStatus)}.{nameof(InfectiousDiseaseStatus.LastTestedAt)}",
-                    "Test date cannot be in the future.");
+                    $"Test date '{lastTestedAt:yyyy-MM-dd}' cannot be in the future (reference date: '{currentDate:yyyy-MM-dd}').");
 
-            public static Error TestDateTooOld
+            public static Error TestDateTooOld(
+                DateOnly lastTestedAt,
+                DateOnly currentDate)
                 => CustomMessage(
                     nameof(CatEntity),
                     $"{nameof(Cat.InfectiousDiseaseStatus)}.{nameof(InfectiousDiseaseStatus.LastTestedAt)}",
-                    "Test date is too old to be valid.");
+                    $"Test date '{lastTestedAt:yyyy-MM-dd}' is too old to be valid (reference date: '{currentDate:yyyy-MM-dd}').");
         }
     }
 

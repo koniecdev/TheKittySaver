@@ -28,7 +28,7 @@ public sealed class AdoptionHistory : ValueObject
         if (CatAge.IsDateTooOldForCat(lastReturn, currentDate))
         {
             return Result.Failure<AdoptionHistory>(
-                DomainErrors.CatEntity.AdoptionHistoryValueObject.LastReturnTooFarInPast);
+                DomainErrors.CatEntity.AdoptionHistoryValueObject.LastReturnTooFarInPast(lastReturn, currentDate));
         }
 
         if (string.IsNullOrWhiteSpace(reason))
