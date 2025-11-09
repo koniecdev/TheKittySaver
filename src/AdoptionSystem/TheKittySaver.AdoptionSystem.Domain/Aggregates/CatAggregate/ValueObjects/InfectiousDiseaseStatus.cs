@@ -7,13 +7,13 @@ namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.ValueObjec
 
 public sealed class InfectiousDiseaseStatus : ValueObject
 {
-    public FIVStatus FIVStatus { get; }
-    public FeLVStatus FeLVStatus { get; }
+    public FIVStatus FivStatus { get; }
+    public FeLVStatus FelvStatus { get; }
     public DateOnly LastTestedAt { get; }
     
-    public bool HasFIV => FIVStatus == FIVStatus.Positive;
-    public bool HasFeLV => FeLVStatus == FeLVStatus.Positive;
-    public bool HasAnyInfectiousDisease => HasFIV || HasFeLV;
+    public bool HasFiv => FivStatus == FIVStatus.Positive;
+    public bool HasFelv => FelvStatus == FeLVStatus.Positive;
+    public bool HasAnyInfectiousDisease => HasFiv || HasFelv;
     public bool IsSafeToMixWithOtherCats => !HasAnyInfectiousDisease;
     
     public static Result<InfectiousDiseaseStatus> Create(
@@ -27,10 +27,8 @@ public sealed class InfectiousDiseaseStatus : ValueObject
             return Result.Failure<InfectiousDiseaseStatus>(
                 DomainErrors.CatEntity.InfectiousDiseaseStatusValueObject.TestDateInFuture);
         }
-        
-        //todo: I believe this could be exctracted
-        const double averageOfDaysInOneYear = 365.2425;
-        if (lastTestedAt < currentDate.AddDays((int)(-averageOfDaysInOneYear * CatAge.MaximumAllowedValue)))
+
+        if (CatAge.IsDateTooOldForCat(lastTestedAt, currentDate))
         {
             return Result.Failure<InfectiousDiseaseStatus>(
                 DomainErrors.CatEntity.InfectiousDiseaseStatusValueObject.TestDateTooOld);
@@ -45,15 +43,15 @@ public sealed class InfectiousDiseaseStatus : ValueObject
         FeLVStatus felvStatus,
         DateOnly lastTestedAt)
     {
-        FIVStatus = fivStatus;
-        FeLVStatus = felvStatus;
+        FivStatus = fivStatus;
+        FelvStatus = felvStatus;
         LastTestedAt = lastTestedAt;
     }
 
     protected override IEnumerable<object> GetAtomicValues()
     {
-        yield return FIVStatus;
-        yield return FeLVStatus;
+        yield return FivStatus;
+        yield return FelvStatus;
         yield return LastTestedAt;
     }
 }

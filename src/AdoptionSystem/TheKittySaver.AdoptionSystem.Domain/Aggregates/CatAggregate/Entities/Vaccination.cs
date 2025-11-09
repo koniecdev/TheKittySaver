@@ -28,8 +28,7 @@ public sealed class Vaccination : Entity<VaccinationId>
             return Result.Failure(DomainErrors.CatVaccinationEntity.DateInFuture);
         }
 
-        const double averageOfDaysInOneYear = 365.2425;
-        if (updatedVaccinationDate < currentDate.Subtract(TimeSpan.FromDays(averageOfDaysInOneYear * CatAge.MaximumAllowedValue)))
+        if (CatAge.IsDateTooOldForCat(updatedVaccinationDate, currentDate))
         {
             return Result.Failure(DomainErrors.CatVaccinationEntity.DateTooOld);
         }
@@ -68,8 +67,7 @@ public sealed class Vaccination : Entity<VaccinationId>
                 DomainErrors.CatVaccinationEntity.DateInFuture);
         }
 
-        const double averageOfDaysInOneYear = 365.2425;
-        if (vaccinationDate < currentDate.Subtract(TimeSpan.FromDays(averageOfDaysInOneYear * CatAge.MaximumAllowedValue)))
+        if (CatAge.IsDateTooOldForCat(vaccinationDate, currentDate))
         {
             return Result.Failure<Vaccination>(
                 DomainErrors.CatVaccinationEntity.DateTooOld);

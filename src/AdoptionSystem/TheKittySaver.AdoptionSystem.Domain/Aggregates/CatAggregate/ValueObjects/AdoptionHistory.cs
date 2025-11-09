@@ -25,8 +25,7 @@ public sealed class AdoptionHistory : ValueObject
                 DomainErrors.CatEntity.AdoptionHistoryValueObject.CountTooLow);
         }
 
-        const double averageOfDaysInOneYear = 365.2425;
-        if (lastReturn < currentDate.Subtract(TimeSpan.FromDays(averageOfDaysInOneYear * CatAge.MaximumAllowedValue)))
+        if (CatAge.IsDateTooOldForCat(lastReturn, currentDate))
         {
             return Result.Failure<AdoptionHistory>(
                 DomainErrors.CatEntity.AdoptionHistoryValueObject.LastReturnTooFarInPast);
