@@ -57,7 +57,6 @@ internal sealed class CatAdoptionAnnouncementService
                 maybeAdoptionAnnouncement.Value.PersonId));
         }
 
-        // Archive old announcement if cat has one
         if (maybeCat.Value.AdoptionAnnouncementId.HasValue)
         {
             Maybe<AdoptionAnnouncement> maybeOldAnnouncement =
@@ -95,22 +94,13 @@ internal sealed class CatAdoptionAnnouncementService
 
         if (!maybeCat.Value.AdoptionAnnouncementId.HasValue)
         {
-            return Result.Success<AdoptionAnnouncement?>(null); // Already unassigned
+            return Result.Success<AdoptionAnnouncement?>(null);
         }
 
         var unassignResult = maybeCat.Value.UnassignFromAdoptionAnnouncement();
         if (unassignResult.IsFailure)
         {
             return Result.Failure<AdoptionAnnouncement?>(unassignResult.Error);
-        }
-
-        // If cat is Published, create a new announcement for it automatically
-        // This happens when user removes cat from a family but wants it to remain published
-        if (maybeCat.Value.Status.IsPublished)
-        {
-            // TODO: This will need to be implemented by event handler
-            // For now, we return null and the event handler will create the announcement
-            return Result.Success<AdoptionAnnouncement?>(null);
         }
 
         return Result.Success<AdoptionAnnouncement?>(null);

@@ -1,0 +1,298 @@
+To genialne wyzwanie. Stworzenie systemu, który naprawdę działa dla kotów, a nie tylko dla "klikalności", wymaga zmiany paradygmatu. Porzućmy myślenie o "ogłoszeniach" i skupmy się na "kotach" i "opiekunach".
+
+Oto moja propozycja UX dla systemu, który nazwijmy roboczo "Priorytet Mruczka".
+
+1. 🧠 Filozofia Sytemu: Koty > Ogłoszenia
+
+Największą zmianą i fundamentem całego UX jest architektura systemu. Użytkownik nie "dodaje ogłoszenia". Użytkownik:
+
+    Dodaje "Profil Kota" (lub kotów) do swojej prywatnej bazy.
+
+    Tworzy "Ogłoszenie Adopcyjne", przeciągając do niego jednego lub więcej kotów ze swojej bazy.
+
+To rozwiązuje Twoje kluczowe wymagania:
+
+    Przerzucanie kotów: Koty nie są "przypisane" do ogłoszenia. Ogłoszenie to tylko "kontener". W każdej chwili możesz wyjąć kota z Ogłoszenia A i wsadzić do Ogłoszenia B.
+
+    Adopcja atomowa: Jeśli do jednego ogłoszenia przeciągniesz 3 koty, system automatycznie oflaguje je jako "Razem do domu" (adopcja atomowa).
+
+    Prostota: Dla "szarego człowieka" flow "Dodaj kota" jest prostsze niż "Stwórz ogłoszenie".
+
+2. 👩‍💻 Flow 1: "Szary Człowiek" dodaje kota (Opiekun)
+
+Cel: Maksymalna prostota, zero biurokracji. Używamy inteligentnego kreatora (wizarda), który prowadzi użytkownika za rękę.
+
+Krok 1: "Zacznijmy od zdjęć"
+
+    Ekran startowy ma jeden, wielki przycisk: "DODAJ KOTA".
+
+    Pierwsze, o co prosimy, to zdjęcia lub krótki filmik. To jest najważniejsze.
+
+        "Pokaż nam swojego podopiecznego. Im lepsze zdjęcia, tym większa szansa na dom!"
+
+        Interfejs "przeciągnij i upuść" lub "zrób zdjęcie teraz" (na mobile).
+
+Krok 2: "Kilka słów o kocie" (Tym zbieramy dane do PriorityScore)
+
+Zamiast nudnego formularza, używamy interaktywnych przycisków i suwaków.
+
+    Jak ma na imię? (Jeśli nie ma, sugerujemy: "Bury Kocur", "Młoda Tygrysica")
+
+    Jaki jest jego wiek? (Wizualny suwak: [Kociak] --- [Podrostek] --- [Dorosły] --- [Senior 7+] --- [Nie wiem])
+
+    Jego historia (opcjonalnie, ale warto): "Opowiedz jego historię. Skąd jest? Co lubi?" (Duże pole tekstowe, ale z wyraźnym "Pomiń na razie").
+
+    Gdzie teraz przebywa? (Miasto - dla geolokalizacji).
+
+Krok 3: "Zdrowie i Sytuacja" (Tu jest serce PriorityScore)
+
+Pytamy w formie prostych "checkboksów". Użytkownik nie widzi punktów, tylko klika, co jest prawdą.
+
+    Wskaż, co najlepiej opisuje sytuację kota:
+
+        [ ] Jest zupełnie zdrowy i gotowy do adopcji
+
+        [ ] Jest w trakcie leczenia (np. po zabiegu, odrobaczaniu)
+
+        [ ] Jest przewlekle chory (np. FIV/FeLV, problemy z nerkami, tarczycą)
+
+        [ ] Ma niepełnosprawność (np. brak łapki, niewidomy, niedosłyszący)
+
+        [ ] Jest bardzo płochliwy i wymaga dużo pracy i cierpliwości
+
+        [ ] Przebywa w schronisku lub w klatce (pilne!)
+
+        [ ] Jest kotem wolno żyjącym, zagrożonym na dworze (np. idzie zima)
+
+        [ ] Długo czeka na dom (dłużej niż 6 miesięcy)
+
+Krok 4: Gotowe!
+
+    "Super! Profil kota [Imię] jest gotowy."
+
+    Kot ląduje w prywatnej strefie użytkownika: "Moje Koty".
+
+    System pyta: "Co chcesz teraz zrobić?"
+
+        [ Dodaj kolejnego kota ] (np. z tego samego miotu)
+
+        [ Stwórz ogłoszenie adopcyjne ]
+
+3. 📦 Flow 2: Zarządzanie Kotami ("Strefa Opiekuna")
+
+To jest "panel" opiekuna. Jest wizualny i oparty o drag-and-drop.
+
+Wygląda to tak:
+Lewa kolumna: MOJE KOTY (Twoja baza)	Prawa kolumna: TWOJE OGŁOSZENIA (Aktywne)
+[Karta: "Bury Kocur"]	[ + Stwórz nowe ogłoszenie ]
+[Karta: "Ruda Kicia"]	
+[Karta: "Czarny Wąsik"]	
+
+Jak stworzyć ogłoszenie atomowe (na 2 koty):
+
+    Opiekun klika [ + Stwórz nowe ogłoszenie ]. Pojawia się pusty kontener "Ogłoszenie #1".
+
+    Przeciąga "Burego Kocura" do "Ogłoszenia #1".
+
+    Przeciąga "Rudą Kicię" do "Ogłoszenia #1".
+
+    Magia UX: Kontener "Ogłoszenie #1" automatycznie zmienia etykietę:
+
+        Pokazuje zdjęcia obu kotów.
+
+        Dodaje tag: "Adopcja w Duopaku (Razem do domu)".
+
+        Oblicza PriorityScore:
+
+            PriorityScore(Bury) = 30 (chory)
+
+            PriorityScore(Ruda) = 10 (zdrowa)
+
+            PriorityScore(Ogłoszenie #1) = 30 (zgodnie z Twoją logiką - bierzemy wyższy).
+
+Jak przenieść kota:
+
+Opiekun chce rozdzielić koty. Po prostu przeciąga "Rudą Kicię" z "Ogłoszenia #1" z powrotem do kolumny "MOJE KOTY". Gotowe. Ogłoszenie #1 automatycznie aktualizuje się do pojedynczej adopcji "Burego Kocura".
+
+4. ❤️ Flow 3: PriorityScore (Widok Adoptującego)
+
+Kluczem jest to, aby PriorityScore nie był zimną liczbą ("Ten kot ma 85 pkt"). To musi być przełożone na język emocji i misji.
+
+Nazwiemy to "Barometrem Potrzeby".
+
+Zamiast liczby, na każdym ogłoszeniu wyświetlamy prosty wskaźnik:
+
+    Poziom 1 (niski): 🤍 "Czeka na dom" (Zdrowy, młody kot)
+
+    Poziom 2 (średni): 🧡 "Potrzebuje szansy" (Np. kot senior, długo czeka)
+
+    Poziom 3 (wysoki): ❤️ "Potrzebuje pomocy" (Np. chory, niepełnosprawny)
+
+    Poziom 4 (krytyczny): 🔥 "PILNA ADOPCJA!" (W schronisku, zagrożony na dworze)
+
+Jak to działa w praktyce (dla Adoptującego):
+
+    Strona główna to NIE JEST "karuzela słodkich kociąt".
+
+    Strona główna to lista ogłoszeń posortowana domyślnie według "Barometru Potrzeby".
+
+    Na górze strony widnieje hasło: "Pomóż tym, którzy potrzebują najbardziej".
+
+    Adoptujący zawsze jako pierwsze widzi koty z 🔥"PILNA ADOPCJA!" oraz ❤️"Potrzebuje pomocy".
+
+To jest serce "niekomercyjności". Nie promujemy tego, co "klikalne" (kocięta), ale to, co "pilne" (potrzebujące).
+
+5. 😸 Flow 4: Wyszukiwarka (Widok Adoptującego)
+
+Filtry muszą być, ale PriorityScore pozostaje w centrum.
+
+Standardowe filtry:
+
+    Lokalizacja (Miasto)
+
+    Wiek (Kociak, Dorosły, Senior)
+
+    Liczba kotów (Szukam: 1, 2, 3+)
+
+Filtry specjalne:
+
+    Toleruje inne koty? [Tak / Nie / Nie wiem]
+
+    Toleruje psy? [Tak / Nie / Nie wiem]
+
+    Nadaje się do dzieci? [Tak / Nie / Nie wiem]
+
+Kluczowy filtr sortowania:
+
+    Sortuj według:
+
+        [ Pilna Potrzeba (Domyślnie) ]
+
+        [ Najnowsze ]
+
+        [ Najbliżej mnie ]
+
+Podsumowanie kluczowych innowacji UX:
+
+    Architektura "Kot-Centric": Oddzielenie "Profilu Kota" od "Ogłoszenia" rozwiązuje wszystkie problemy logistyczne (przenoszenie, adopcje atomowe).
+
+    "Strefa Opiekuna" (Drag-and-Drop): Wizualne i intuicyjne zarządzanie podopiecznymi, które zrozumie nawet "szary człowiek".
+
+    Inteligentny Wizard: Zbieranie danych do PriorityScore przez proste, interaktywne pytania, a nie gigantyczny formularz.
+
+    "Barometr Potrzeby" zamiast PriorityScore: Przekładamy algorytm na język emocji i misji. To "serce" systemu.
+
+    Sortowanie Domyślne "Od Najpilniejszych": Platforma ma jasny "moralny kompas" i promuje koty, które mają najmniejsze szanse gdzie indziej.
+
+To system, który nie jest "tablicą ogłoszeń", ale aktywnym narzędziem do ratowania życia, stawiającym najbardziej potrzebujących na pierwszej linii frontu.
+
+
+"Szary człowiek" ma w głowie jeden cel: "chcę, żeby ten kot był widoczny". Rozdzielenie tego na dwa kroki to prośba o porażkę.
+
+Musimy połączyć te dwa światy: potężny backend (Koty vs Ogłoszenia) z ultra-prostym frontendem.
+
+Rozwiązaniem jest "Model Publikuj Domyślnie" (Publish by Default). Wizard "Dodaj Kota" jest wizardem "Stwórz Ogłoszenie". Użytkownik nie musi wiedzieć o istnieniu "bazy kotów", dopóki nie będzie jej potrzebował.
+
+Oto poprawiony, ciągły flow, który rozwiązuje Twój problem.
+
+Poprawiony Flow: "Jeden Przycisk do Sukcesu"
+
+Nazwa przycisku na stronie głównej to nie "Dodaj Kota", ale "ZGŁOŚ KOTA DO ADOPCJI". To od razu ustawia intencje.
+
+Krok 1-3: Wizard (Tak jak poprzednio) Użytkownik przechodzi przez prosty wizard:
+
+    Zdjęcia.
+
+    Podstawowe info (wiek, imię).
+
+    Dane do PriorityScore (checkboksy: chory, senior, płochliwy itp.).
+
+Krok 4: FINAŁ (Tu jest cała magia UX)
+
+Po wypełnieniu danych o kocie, użytkownik nie ląduje w "panelu". Ląduje na ekranie finałowym wizarda, który wygląda tak:
+
+    Gotowe! Profil "Burego Kocura" jest kompletny.
+
+    Pokazujemy tutaj najlepsze zdjęcie Burego.
+
+    Domyślnie, Twoje ogłoszenie będzie aktywne przez 30 dni.
+
+    [ (Jeden, wielki, główny przycisk) OPUBLIKUJ OGŁOSZENIE ]
+
+    Opcje dodatkowe:
+
+        [ (Przycisk) + Dodaj kolejnego kota (do adopcji RAZEM) ]
+
+        [ (Link) <u>Zapisz jako wersję roboczą</u> (jeszcze nie publikuj) ]
+
+Co się dzieje po kliknięciu?
+
+Scenariusz 1 (90% przypadków): Użytkownik klika "OPUBLIKUJ OGŁOSZENIE"
+
+    System w tle (czego user nie widzi) robi obie rzeczy na raz:
+
+        Tworzy "Profil Kota" (Bury Kocur).
+
+        Tworzy "Ogłoszenie #1".
+
+        Wkłada "Burego Kocura" do "Ogłoszenia #1".
+
+        Ustawia status "Ogłoszenia #1" na "Aktywne".
+
+    Użytkownik (co widzi):
+
+        Przenosi go na ekran sukcesu: "Gratulacje! "Bury Kocur" jest już widoczny dla szukających domu!"
+
+        Dostaje link do swojego ogłoszenia i link do "Panelu Opiekuna" (gdzie może nim zarządzać).
+
+Rezultat: Użytkownik przeszedł JEDEN, ciągły flow. Dostał to, czego chciał – kot jest widoczny. Zero tarcia.
+
+Scenariusz 2 (Adopcja atomowa): Użytkownik klika "+ Dodaj kolejnego kota (do adopcji RAZEM)"
+
+    Wizard nie kończy się. Wraca do Kroku 1 (Zdjęcia).
+
+    Użytkownik dodaje "Rudą Kicię".
+
+    Przechodzi Kroki 2 i 3 dla "Rudej Kici".
+
+    Ląduje znowu na Kroku 4 (FINAŁ), który teraz wygląda inaczej:
+
+        Gotowe! Dodano "Rudą Kicię".
+
+        Koty w tym ogłoszeniu:
+
+            [zdjęcie] Bury Kocur
+
+            [zdjęcie] Ruda Kicia
+
+        (Automatyczny tag) Ogłoszenie będzie oznaczone jako "Adopcja w Duopaku".
+
+        [ (Jeden, wielki, główny przycisk) OPUBLIKUJ OGŁOSZENIE (2 koty) ]
+
+        Opcje dodatkowe:
+
+            [ (Przycisk) + Dodaj kolejnego kota (do adopcji RAZEM) ]
+
+            [ (Link) <u>Zapisz jako wersję roboczą</u> (jeszcze nie publikuj) ]
+
+Rezultat: Użytkownik intuicyjnie stworzył ogłoszenie atomowe (wielokotowe), po prostu klikając "dodaj następnego".
+
+Scenariusz 3 (Power user): Użytkownik klika "Zapisz jako wersję roboczą"
+
+    System w tle tworzy tylko "Profil Kota". Nie tworzy "Ogłoszenia".
+
+    Użytkownik jest przenoszony do "Panelu Opiekuna" (tej wizualnej tablicy z drag-and-drop).
+
+    Widzi swojego kota w kolumnie "Moje Koty (robocze)".
+
+Rezultat: "Szary człowiek" nigdy nie kliknie tego linku. Ale schronisko, które chce przygotować 30 profili kotów "na zapas" (bo są np. w trakcie leczenia), ma taką możliwość.
+
+Podsumowanie rozwiązania
+
+Architektura "Kot vs Ogłoszenie" zostaje zachowana, bo jest niezbędna do przenoszenia kotów i adopcji atomowych.
+
+Jednak dla prostego użytkownika całkowicie ukrywamy tę złożoność.
+
+Domyślna ścieżka (The Golden Path) zawsze prowadzi do sukcesu: Zgłoś Kota -> Wizard -> Wielki Przycisk "Publikuj" -> Ekran Sukcesu.
+
+Użytkownik nie musi wiedzieć, jak to działa w środku. On po prostu klika "Publikuj", a system robi resztę. Problem rozwiązany.
