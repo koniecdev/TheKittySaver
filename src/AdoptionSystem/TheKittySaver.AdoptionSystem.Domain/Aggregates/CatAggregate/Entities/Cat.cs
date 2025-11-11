@@ -1,5 +1,6 @@
 ﻿using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Events;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.ValueObjects;
+using TheKittySaver.AdoptionSystem.Domain.Core.Abstractions;
 using TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
 using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 using TheKittySaver.AdoptionSystem.Domain.Core.Extensions;
@@ -7,6 +8,7 @@ using TheKittySaver.AdoptionSystem.Domain.Core.Guards;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.OptionMonad;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects;
+using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.Timestamps;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.AdoptionAnnouncementAggregate;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
@@ -14,12 +16,13 @@ using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate.Enums;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Entities;
 
-public sealed class Cat : AggregateRoot<CatId>
+public sealed class Cat : AggregateRoot<CatId>, IClaimable
 {
     private readonly List<Vaccination> _vaccinations;
     
     public PersonId PersonId { get; }
     public AdoptionAnnouncementId? AdoptionAnnouncementId { get; private set; }
+    public ClaimedAt? ClaimedAt { get; private set; }
     public CatName Name { get; private set; }
     public CatDescription Description { get; private set; }
     public CatAge Age { get; private set; }
@@ -160,7 +163,7 @@ public sealed class Cat : AggregateRoot<CatId>
         RaiseDomainEvent(new CatPublishedDomainEvent(this));
         return Result.Success();
     }
-
+    
     public Result Unpublish(DateTimeOffset changedAt)
     {
         if (Status.IsDraft)

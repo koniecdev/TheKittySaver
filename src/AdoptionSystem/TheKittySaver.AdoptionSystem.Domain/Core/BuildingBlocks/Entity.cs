@@ -1,4 +1,5 @@
 ﻿using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects;
+using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.Timestamps;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
 

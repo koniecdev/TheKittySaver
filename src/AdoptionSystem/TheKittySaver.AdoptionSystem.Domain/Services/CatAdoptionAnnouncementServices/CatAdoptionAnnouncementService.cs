@@ -5,6 +5,7 @@ using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Repositories;
 using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.OptionMonad;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
+using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.Timestamps;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.AdoptionAnnouncementAggregate;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate;
 
@@ -57,7 +58,6 @@ internal sealed class CatAdoptionAnnouncementService
                 maybeAdoptionAnnouncement.Value.PersonId));
         }
 
-        // Archive old announcement if cat has one
         if (maybeCat.Value.AdoptionAnnouncementId.HasValue)
         {
             Maybe<AdoptionAnnouncement> maybeOldAnnouncement =
@@ -67,10 +67,13 @@ internal sealed class CatAdoptionAnnouncementService
 
             if (maybeOldAnnouncement.HasValue)
             {
-                Result archiveResult = maybeOldAnnouncement.Value.Archive(
-                    currentDate,
-                    "Cat moved to another announcement");
-
+                Result<ArchivedAt> archivedAtResult = ArchivedAt.Create(currentDate);
+                if (archivedAtResult.IsFailure)
+                {
+                    return archivedAtResult;
+                }
+                
+                Result archiveResult = maybeOldAnnouncement.Value.Archive(archivedAtResult.Value);
                 if (archiveResult.IsFailure)
                 {
                     return archiveResult;

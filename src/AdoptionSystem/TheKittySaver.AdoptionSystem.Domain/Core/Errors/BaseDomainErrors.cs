@@ -50,6 +50,11 @@ public static partial class DomainErrors
             $"The {property.ToLower()} has been set with value '{actualValue}', and it is above the maximum required value '{maximumValue}'.",
             TypeOfError.Validation);
     
+    private static Error DateIsInThePast(string entity, string property)
+        => new($"{entity}.{property}.DateIsInThePast", 
+            $"The {property.ToLower()} can't be in the past.",
+            TypeOfError.Validation);
+    
     private static Error CustomMessage(string entity, string property, string message, TypeOfError type = TypeOfError.Validation) 
         => new($"{entity}.{property}.InvalidValue", message, type);
 

@@ -4,5 +4,5 @@ public enum CatStatusType
 {
     Draft,
     Published,
-    Adopted
+    Claimed
 }

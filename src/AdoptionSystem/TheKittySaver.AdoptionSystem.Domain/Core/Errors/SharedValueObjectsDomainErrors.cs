@@ -3,6 +3,7 @@ using TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.AddressCompounds;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.PhoneNumbers;
+using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.Timestamps;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 
@@ -91,9 +92,24 @@ public static partial class DomainErrors
     public static class CreatedAtValueObject
     {
         public static Error CannotBeInThePast
-            => CustomMessage(
+            => DateIsInThePast(
                 nameof(CreatedAt),
-                nameof(CreatedAt.Value),
-                "The creation date cannot be in the past.");
+                nameof(CreatedAt.Value));
+    }
+    
+    public static class ClaimedAtValueObject
+    {
+        public static Error CannotBeInThePast
+            => DateIsInThePast(
+                nameof(ClaimedAt),
+                nameof(ClaimedAt.Value));
+    }
+    
+    public static class ArchivedAtValueObject
+    {
+        public static Error CannotBeInThePast
+            => DateIsInThePast(
+                nameof(ArchivedAt),
+                nameof(ArchivedAt.Value));
     }
 }

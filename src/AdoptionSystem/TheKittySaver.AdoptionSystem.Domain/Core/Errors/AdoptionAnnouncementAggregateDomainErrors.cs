@@ -16,6 +16,12 @@ public static partial class DomainErrors
                 nameof(AdoptionAnnouncementEntity),
                 id.Value);
 
+        public static Error AlreadyClaimed
+            => CustomMessage(
+                nameof(AdoptionAnnouncementEntity),
+                nameof(AdoptionAnnouncement.Status),
+                "Announcement is already claimed.");
+        
         public static Error AlreadyArchived
             => CustomMessage(
                 nameof(AdoptionAnnouncementEntity),
@@ -46,15 +52,6 @@ public static partial class DomainErrors
                     nameof(AdoptionAnnouncementEntity),
                     nameof(AdoptionAnnouncement.Description),
                     AdoptionAnnouncementDescription.MaxLength);
-        }
-
-        public static class StatusValueObject
-        {
-            public static Error NoteTooLong
-                => TooManyCharacters(
-                    nameof(AdoptionAnnouncementEntity),
-                    $"{nameof(AdoptionAnnouncement.Status)}.{nameof(AnnouncementStatus.StatusNote)}",
-                    AnnouncementStatus.MaxStatusNoteLength);
         }
     }
 }
