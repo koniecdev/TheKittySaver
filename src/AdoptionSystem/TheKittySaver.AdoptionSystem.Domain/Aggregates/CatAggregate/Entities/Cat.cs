@@ -16,13 +16,14 @@ using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate.Enums;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Entities;
 
-public sealed class Cat : AggregateRoot<CatId>, IClaimable
+public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
 {
     private readonly List<Vaccination> _vaccinations;
-    
+
     public PersonId PersonId { get; }
     public AdoptionAnnouncementId? AdoptionAnnouncementId { get; private set; }
     public ClaimedAt? ClaimedAt { get; private set; }
+    public PublishedAt? PublishedAt { get; private set; }
     public CatName Name { get; private set; }
     public CatDescription Description { get; private set; }
     public CatAge Age { get; private set; }
@@ -36,10 +37,10 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable
     public ListingSource ListingSource { get; private set; }
     public NeuteringStatus NeuteringStatus { get; private set; }
     public InfectiousDiseaseStatus InfectiousDiseaseStatus { get; private set; }
-    
+
     public IReadOnlyList<Vaccination> Vaccinations => _vaccinations.AsReadOnly();
 
-    public CatStatus Status { get; private set; }
+    public CatStatusType Status { get; private set; }
 
     public Result ReassignToAdoptionAnnouncement(AdoptionAnnouncementId adoptionAnnouncementId)
     {
@@ -146,63 +147,55 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable
         return Result.Success();
     }
 
-    public Result Publish(DateTimeOffset changedAt)
+    public Result Publish(PublishedAt publishedAt)
     {
-        if (Status.IsPublished)
+        ArgumentNullException.ThrowIfNull(publishedAt);
+
+        if (Status is CatStatusType.Published)
         {
             return Result.Failure(DomainErrors.CatEntity.CatAlreadyPublished);
         }
 
-        Result<CatStatus> updatedStatus = CatStatus.Published(changedAt);
-        if (updatedStatus.IsFailure)
-        {
-            return updatedStatus;
-        }
-
-        Status = updatedStatus.Value;
+        Status = CatStatusType.Published;
+        PublishedAt = publishedAt;
         RaiseDomainEvent(new CatPublishedDomainEvent(this));
         return Result.Success();
     }
     
-    public Result Unpublish(DateTimeOffset changedAt)
+    public Result Unpublish()
     {
-        if (Status.IsDraft)
+        switch (Status)
         {
-            return Result.Failure(DomainErrors.CatEntity.CatAlreadyDraft);
+            case CatStatusType.Draft:
+                return Result.Failure(DomainErrors.CatEntity.CatAlreadyDraft);
+            case CatStatusType.Claimed:
+                return Result.Failure(DomainErrors.CatEntity.CannotUnpublishClaimedCat);
+            case CatStatusType.Published:
+            default:
+                Status = CatStatusType.Draft;
+                PublishedAt = null;
+                RaiseDomainEvent(new CatUnpublishedDomainEvent(this));
+                return Result.Success();
         }
-
-        if (Status.IsAdopted)
-        {
-            return Result.Failure(DomainErrors.CatEntity.CannotUnpublishAdoptedCat);
-        }
-
-        Result<CatStatus> updatedStatus = CatStatus.Draft(changedAt);
-        if (updatedStatus.IsFailure)
-        {
-            return updatedStatus;
-        }
-
-        Status = updatedStatus.Value;
-        RaiseDomainEvent(new CatUnpublishedDomainEvent(this));
-        return Result.Success();
     }
 
-    public Result Adopt(DateTimeOffset changedAt, string? note = null)
+    public Result Claim(ClaimedAt claimedAt)
     {
-        if (Status.IsAdopted)
-        {
-            return Result.Failure(DomainErrors.CatEntity.CatAlreadyAdopted);
-        }
+        ArgumentNullException.ThrowIfNull(claimedAt);
 
-        Result<CatStatus> updatedStatus = CatStatus.Adopted(changedAt, note);
-        if (updatedStatus.IsFailure)
+        switch (Status)
         {
-            return updatedStatus;
+            case CatStatusType.Draft:
+                return Result.Failure(DomainErrors.CatEntity.CannotClaimDraftCat);
+            case CatStatusType.Claimed:
+                return Result.Failure(DomainErrors.CatEntity.CatAlreadyClaimed);
+            case CatStatusType.Published:
+            default:
+                Status = CatStatusType.Claimed;
+                ClaimedAt = claimedAt;
+                RaiseDomainEvent(new CatClaimedDomainEvent(this));
+                return Result.Success();
         }
-
-        Status = updatedStatus.Value;
-        RaiseDomainEvent(new CatAdoptedDomainEvent(this));
-        return Result.Success();
     }
 
     public Result<Vaccination> AddVaccination(
@@ -343,12 +336,6 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable
         ArgumentNullException.ThrowIfNull(infectiousDiseaseStatus);
         ArgumentNullException.ThrowIfNull(createdAt);
 
-        Result<CatStatus> statusResult = CatStatus.Draft(createdAt.Value);
-        if (!statusResult.IsSuccess)
-        {
-            return Result.Failure<Cat>(statusResult.Error);
-        }
-        
         CatId id = CatId.New();
         Cat instance = new(
             id,
@@ -367,7 +354,7 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable
             neuteringStatus,
             infectiousDiseaseStatus,
             createdAt,
-            statusResult.Value,
+            CatStatusType.Draft,
             vaccinations ?? []);
 
         return Result.Success(instance);
@@ -390,7 +377,7 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable
         NeuteringStatus neuteringStatus,
         InfectiousDiseaseStatus infectiousDiseaseStatus,
         CreatedAt createdAt,
-        CatStatus status,
+        CatStatusType status,
         List<Vaccination> vaccinations) : base(id, createdAt)
     {
         PersonId = personId;

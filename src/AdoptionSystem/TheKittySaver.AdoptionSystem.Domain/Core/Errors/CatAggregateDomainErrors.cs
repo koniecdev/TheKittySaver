@@ -143,15 +143,6 @@ public static partial class DomainErrors
         }
 
 
-        public static class StatusValueObject
-        {
-            public static Error NoteTooManyCharacters
-                => TooManyCharacters(
-                    nameof(CatEntity),
-                    $"{nameof(Cat.Status)}.{nameof(CatStatus.StatusNote)}",
-                    CatStatus.MaxStatusNoteLength);
-        }
-
         public static class InfectiousDiseaseStatusValueObject
         {
             public static Error TestDateInFuture(
@@ -183,17 +174,23 @@ public static partial class DomainErrors
                 nameof(Cat.Status),
                 "Cat is already in draft status.");
 
-        public static Error CatAlreadyAdopted
+        public static Error CatAlreadyClaimed
             => CustomMessage(
                 nameof(CatEntity),
                 nameof(Cat.Status),
-                "Cat has already been adopted.");
+                "Cat has already been claimed.");
 
-        public static Error CannotUnpublishAdoptedCat
+        public static Error CannotClaimDraftCat
             => CustomMessage(
                 nameof(CatEntity),
                 nameof(Cat.Status),
-                "Cannot unpublish a cat that has been adopted.");
+                "Cannot claim a cat that is in draft status.");
+        
+        public static Error CannotUnpublishClaimedCat
+            => CustomMessage(
+                nameof(CatEntity),
+                nameof(Cat.Status),
+                "Cannot unpublish a cat that has been claimed.");
     }
 
     public static class CatVaccinationEntity

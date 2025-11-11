@@ -112,4 +112,12 @@ public static partial class DomainErrors
                 nameof(ArchivedAt),
                 nameof(ArchivedAt.Value));
     }
+
+    public static class PublishedAtValueObject
+    {
+        public static Error CannotBeInThePast
+            => DateIsInThePast(
+                nameof(PublishedAt),
+                nameof(PublishedAt.Value));
+    }
 }

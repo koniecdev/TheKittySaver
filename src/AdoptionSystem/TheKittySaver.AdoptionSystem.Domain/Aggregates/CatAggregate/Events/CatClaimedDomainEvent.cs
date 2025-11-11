@@ -3,4 +3,4 @@ using TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Events;
 
-public sealed record CatAdoptedDomainEvent(Cat AdoptedCat) : DomainEvent;
+public sealed record CatClaimedDomainEvent(Cat ClaimedCat) : DomainEvent;

@@ -8,6 +8,7 @@ using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.Timestamps;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.AdoptionAnnouncementAggregate;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate;
+using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate.Enums;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Services.CatAdoptionAnnouncementServices;
 
@@ -109,7 +110,7 @@ internal sealed class CatAdoptionAnnouncementService
 
         // If cat is Published, create a new announcement for it automatically
         // This happens when user removes cat from a family but wants it to remain published
-        if (maybeCat.Value.Status.IsPublished)
+        if (maybeCat.Value.Status is CatStatusType.Published)
         {
             // TODO: This will need to be implemented by event handler
             // For now, we return null and the event handler will create the announcement
