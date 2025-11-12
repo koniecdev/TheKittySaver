@@ -198,6 +198,20 @@ public static partial class DomainErrors
                 nameof(CatEntity),
                 nameof(Cat.Status),
                 "Cannot unpublish a cat that has been claimed.");
+
+        public static Error CatMustBePublishedForAssignmentToAa
+            => CustomMessage(
+                nameof(CatEntity),
+                nameof(Cat.Status),
+                "Cat must be in published status before it can be assigned to an adoption announcement.",
+                "CatMustBePublishedForAssignmentToAa");
+
+        public static Error AlreadyAssignedToAnnouncement
+            => CustomMessage(
+                nameof(CatEntity),
+                nameof(Cat.AdoptionAnnouncementId),
+                "Cat is already assigned to this adoption announcement.",
+                "AlreadyAssignedToAnnouncement");
     }
 
     public static class CatVaccinationEntity

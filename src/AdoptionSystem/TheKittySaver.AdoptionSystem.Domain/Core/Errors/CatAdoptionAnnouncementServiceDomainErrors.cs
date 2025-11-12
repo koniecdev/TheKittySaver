@@ -17,5 +17,12 @@ public static partial class DomainErrors
             => new(
                 $"{nameof(CatAdoptionAnnouncementService)}.PersonIdMismatch",
                 $"Cannot reassign cat with id '{catId.Value}' (PersonId: '{catPersonId.Value}') to adoption announcement with id '{adoptionAnnouncementId.Value}' (PersonId: '{adoptionAnnouncementPersonId.Value}'). The cat and adoption announcement must belong to the same person.");
+
+        public static Error InfectiousDiseaseConflict(
+            CatId catId,
+            AdoptionAnnouncementId adoptionAnnouncementId)
+            => new(
+                $"{nameof(CatAdoptionAnnouncementService)}.InfectiousDiseaseConflict",
+                $"Cannot assign cat with id '{catId.Value}' to adoption announcement with id '{adoptionAnnouncementId.Value}'. The cat's infectious disease status is not compatible with the cats already assigned to this announcement.");
     }
 }
