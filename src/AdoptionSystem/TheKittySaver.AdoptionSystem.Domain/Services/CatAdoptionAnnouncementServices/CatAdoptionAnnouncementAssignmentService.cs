@@ -99,7 +99,7 @@ internal sealed class CatAdoptionAnnouncementAssignmentService
 
         if (!maybeCat.Value.AdoptionAnnouncementId.HasValue)
         {
-            return Result.Success<AdoptionAnnouncement?>(null); // Already unassigned
+            return Result.Success<AdoptionAnnouncement?>(null);
         }
 
         var unassignResult = maybeCat.Value.UnassignFromAdoptionAnnouncement();
