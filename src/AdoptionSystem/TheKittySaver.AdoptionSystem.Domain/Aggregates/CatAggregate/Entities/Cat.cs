@@ -42,9 +42,15 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
 
     public CatStatusType Status { get; private set; }
 
-    public Result ReassignToAdoptionAnnouncement(AdoptionAnnouncementId adoptionAnnouncementId)
+    public Result AssignToAdoptionAnnouncement(AdoptionAnnouncementId adoptionAnnouncementId)
     {
         Ensure.NotEmpty(adoptionAnnouncementId);
+
+        if (Status is not CatStatusType.Published)
+        {
+            return Result.Failure(DomainErrors.CatEntity.CatMustBePublishedForAssignmentToAa);
+        }
+        
         AdoptionAnnouncementId = adoptionAnnouncementId;
         return Result.Success();
     }
@@ -151,14 +157,14 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
     {
         ArgumentNullException.ThrowIfNull(publishedAt);
 
-        if (Status is CatStatusType.Published)
+        if (Status is not CatStatusType.Draft)
         {
-            return Result.Failure(DomainErrors.CatEntity.CatAlreadyPublished);
+            return Result.Failure(DomainErrors.CatEntity.UnavailableForPublish);
         }
 
         Status = CatStatusType.Published;
         PublishedAt = publishedAt;
-        RaiseDomainEvent(new CatPublishedDomainEvent(this));
+        
         return Result.Success();
     }
     

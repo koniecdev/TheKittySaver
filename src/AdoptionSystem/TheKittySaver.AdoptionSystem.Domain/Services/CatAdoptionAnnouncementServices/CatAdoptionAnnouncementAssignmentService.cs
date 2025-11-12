@@ -2,121 +2,93 @@
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAggregate.Repositories;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Entities;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Repositories;
+using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.ValueObjects;
 using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.OptionMonad;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.Timestamps;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.AdoptionAnnouncementAggregate;
+using TheKittySaver.AdoptionSystem.Primitives.Aggregates.AdoptionAnnouncementAggregate.Enums;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate.Enums;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Services.CatAdoptionAnnouncementServices;
 
-internal sealed class CatAdoptionAnnouncementAssignmentService
+internal sealed class CatAdoptionAnnouncementAssignmentService : ICatAdoptionAnnouncementAssignmentService
 {
     private readonly ICatRepository _catRepository;
-    private readonly IAdoptionAnnouncementRepository _adoptionAnnouncementRepository;
 
     public CatAdoptionAnnouncementAssignmentService(
-        ICatRepository catRepository,
-        IAdoptionAnnouncementRepository adoptionAnnouncementRepository)
+        ICatRepository catRepository)
     {
         _catRepository = catRepository;
-        _adoptionAnnouncementRepository = adoptionAnnouncementRepository;
     }
     
-    public async Task<Result> ReassignCatToAdoptionAnnouncementAsync(
-        CatId catId,
-        AdoptionAnnouncementId adoptionAnnouncementId,
-        DateTimeOffset currentDate,
+    //Kot jest dopiero co stworzony, i jeszcze nie ma ogłoszenia
+    //Kot jest w draft -> atomowo przenosimy do published, oraz tworzymy active ogłoszenie
+    //Flow endpoints:
+    //POST Cat (wychodzi draft)
+    //POST AdoptionAnnouncement {DraftCatId} (wywołuje AACreationService który wywołuje poniższą metodę)
+    public async Task<Result> AssignCatToAdoptionAnnouncementAsync(
+        Cat cat,
+        AdoptionAnnouncement adoptionAnnouncement,
         CancellationToken cancellationToken = default)
     {
-        Maybe<Cat> maybeCat = await _catRepository.GetByIdAsync(catId, cancellationToken);
-        if (maybeCat.HasNoValue)
-        {
-            return Result.Failure(DomainErrors.CatEntity.NotFound(catId));
-        }
-
-        if (maybeCat.Value.AdoptionAnnouncementId.HasValue
-            && maybeCat.Value.AdoptionAnnouncementId == adoptionAnnouncementId)
-        {
-            return Result.Success();
-        }
-
-        Maybe<AdoptionAnnouncement> maybeAdoptionAnnouncement =
-            await _adoptionAnnouncementRepository.GetByIdAsync(adoptionAnnouncementId, cancellationToken);
-        if (maybeAdoptionAnnouncement.HasNoValue)
-        {
-            return Result.Failure(DomainErrors.AdoptionAnnouncementEntity.NotFound(adoptionAnnouncementId));
-        }
-
-        if (maybeCat.Value.PersonId != maybeAdoptionAnnouncement.Value.PersonId)
+        if (cat.PersonId != adoptionAnnouncement.PersonId)
         {
             return Result.Failure(DomainErrors.CatAdoptionAnnouncementService.PersonIdMismatch(
-                catId,
-                maybeCat.Value.PersonId,
-                adoptionAnnouncementId,
-                maybeAdoptionAnnouncement.Value.PersonId));
+                catId: cat.Id,
+                catPersonId: cat.PersonId,
+                adoptionAnnouncementId: adoptionAnnouncement.Id,
+                adoptionAnnouncementPersonId: adoptionAnnouncement.PersonId));
         }
-
-        if (maybeCat.Value.AdoptionAnnouncementId.HasValue)
+        
+        if (cat.Status is not CatStatusType.Draft)
         {
-            Maybe<AdoptionAnnouncement> maybeOldAnnouncement =
-                await _adoptionAnnouncementRepository.GetByIdAsync(
-                    maybeCat.Value.AdoptionAnnouncementId.Value,
-                    cancellationToken);
+            return Result.Failure(DomainErrors.CatEntity.UnavailableForPublish);
+        }
+        
+        if (adoptionAnnouncement.Status is not AnnouncementStatusType.Active)
+        {
+            return Result.Failure(DomainErrors.AdoptionAnnouncementEntity.UnavailableForAssigning);
+        }
+        
+        IReadOnlyCollection<Cat> catsAlreadyAssignedToAa = await _catRepository
+            .GetCatsByAdoptionAnnouncementIdAsync(adoptionAnnouncement.Id, cancellationToken);
 
-            if (maybeOldAnnouncement.HasValue)
-            {
-                Result<ArchivedAt> archivedAtResult = ArchivedAt.Create(currentDate);
-                if (archivedAtResult.IsFailure)
-                {
-                    return archivedAtResult;
-                }
-                
-                Result archiveResult = maybeOldAnnouncement.Value.Archive(archivedAtResult.Value);
-                if (archiveResult.IsFailure)
-                {
-                    return archiveResult;
-                }
-            }
+        if (catsAlreadyAssignedToAa.Any(c => c.Id == cat.Id))
+        {
+            return Result.Failure(DomainErrors.CatEntity.AlreadyAssignedToAnnouncement);
         }
 
-        var reassignResult = maybeCat.Value.ReassignToAdoptionAnnouncement(maybeAdoptionAnnouncement.Value.Id);
-        return reassignResult;
+        if (!catsAlreadyAssignedToAa.All(c => c.InfectiousDiseaseStatus.IsCompatibleWith(cat.InfectiousDiseaseStatus)))
+        {
+            return Result.Failure(DomainErrors.CatAdoptionAnnouncementService
+                .InfectiousDiseaseConflict(cat.Id, adoptionAnnouncement.Id));
+        }
+        
+        Result<PublishedAt> catPublishedAtResult = PublishedAt.Create(adoptionAnnouncement.CreatedAt.Value);
+        if (catPublishedAtResult.IsFailure)
+        {
+            return catPublishedAtResult;
+        }
+        
+        Result publishCatResult = cat.Publish(catPublishedAtResult.Value);
+        if (publishCatResult.IsFailure)
+        {
+            return publishCatResult;
+        }
+        
+        Result catAssignToAdoptionAnnouncementResult = cat.AssignToAdoptionAnnouncement(adoptionAnnouncement.Id);
+        
+        return catAssignToAdoptionAnnouncementResult;
     }
-
-    public async Task<Result<AdoptionAnnouncement?>> UnassignCatFromAnnouncementAsync(
-        CatId catId,
-        DateTimeOffset currentDate,
-        CancellationToken cancellationToken = default)
-    {
-        Maybe<Cat> maybeCat = await _catRepository.GetByIdAsync(catId, cancellationToken);
-        if (maybeCat.HasNoValue)
-        {
-            return Result.Failure<AdoptionAnnouncement?>(DomainErrors.CatEntity.NotFound(catId));
-        }
-
-        if (!maybeCat.Value.AdoptionAnnouncementId.HasValue)
-        {
-            return Result.Success<AdoptionAnnouncement?>(null);
-        }
-
-        var unassignResult = maybeCat.Value.UnassignFromAdoptionAnnouncement();
-        if (unassignResult.IsFailure)
-        {
-            return Result.Failure<AdoptionAnnouncement?>(unassignResult.Error);
-        }
-
-        // If cat is Published, create a new announcement for it automatically
-        // This happens when user removes cat from a family but wants it to remain published
-        if (maybeCat.Value.Status is CatStatusType.Published)
-        {
-            // TODO: This will need to be implemented by event handler
-            // For now, we return null and the event handler will create the announcement
-            return Result.Success<AdoptionAnnouncement?>(null);
-        }
-
-        return Result.Success<AdoptionAnnouncement?>(null);
-    }
+    
+    //Kot jest przesunięty do innego ogłoszenia
+    //Kot jest w published -> zostawiamy go w published, przenosimy do innego ogłoszenia
+    //Jeżeli ogłoszenie po przesunięciu nie ma kotów, >usuwamy je<.
+    
+    //Kot został wycofany z publicznego widoku
+    //cofamy kota do draft, zostawiamy aaid, aa archiwizujemy.
+    
 }

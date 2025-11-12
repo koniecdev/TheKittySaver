@@ -16,6 +16,19 @@ public sealed class InfectiousDiseaseStatus : ValueObject
     public bool HasAnyInfectiousDisease => HasFiv || HasFelv;
     public bool IsSafeToMixWithOtherCats => !HasAnyInfectiousDisease;
     
+    public bool IsCompatibleWith(InfectiousDiseaseStatus other)
+    {
+        bool fivCompatible = FivStatus == other.FivStatus 
+                             || FivStatus is FIVStatus.NotTested 
+                             || other.FivStatus is FIVStatus.NotTested;
+
+        bool felvCompatible = FelvStatus == other.FelvStatus
+                              || FelvStatus is FeLVStatus.NotTested
+                              || other.FelvStatus is FeLVStatus.NotTested;
+
+        return fivCompatible && felvCompatible;
+    }
+    
     public static Result<InfectiousDiseaseStatus> Create(
         FIVStatus fivStatus,
         FeLVStatus felvStatus,

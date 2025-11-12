@@ -180,6 +180,13 @@ public static partial class DomainErrors
                 nameof(Cat.Status),
                 "Cat has already been claimed.");
 
+        public static Error UnavailableForPublish
+            => CustomMessage(
+                nameof(CatEntity),
+                nameof(Cat.Status),
+                "Cannot claim a cat that is in draft status.",
+                "NotInDraftForAaAssignment");
+        
         public static Error CannotClaimDraftCat
             => CustomMessage(
                 nameof(CatEntity),

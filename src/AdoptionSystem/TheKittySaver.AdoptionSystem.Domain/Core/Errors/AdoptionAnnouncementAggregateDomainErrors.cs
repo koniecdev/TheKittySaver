@@ -16,6 +16,13 @@ public static partial class DomainErrors
                 nameof(AdoptionAnnouncementEntity),
                 id.Value);
 
+        public static Error UnavailableForAssigning
+            => CustomMessage(
+                nameof(AdoptionAnnouncementEntity),
+                nameof(AdoptionAnnouncement.Status),
+                "Cat can be assigned to Announcement only when it is in Draft status.",
+                "UnavailableForAssigning");
+        
         public static Error IsNotClaimed
             => CustomMessage(
                 nameof(AdoptionAnnouncementEntity),
