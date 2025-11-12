@@ -12,12 +12,12 @@ using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate.Enums;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Services.CatAdoptionAnnouncementServices;
 
-internal sealed class CatAdoptionAnnouncementService
+internal sealed class CatAdoptionAnnouncementAssignmentService
 {
     private readonly ICatRepository _catRepository;
     private readonly IAdoptionAnnouncementRepository _adoptionAnnouncementRepository;
 
-    public CatAdoptionAnnouncementService(
+    public CatAdoptionAnnouncementAssignmentService(
         ICatRepository catRepository,
         IAdoptionAnnouncementRepository adoptionAnnouncementRepository)
     {

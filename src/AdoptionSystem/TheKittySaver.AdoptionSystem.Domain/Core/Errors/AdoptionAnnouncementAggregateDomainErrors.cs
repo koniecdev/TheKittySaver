@@ -16,6 +16,13 @@ public static partial class DomainErrors
                 nameof(AdoptionAnnouncementEntity),
                 id.Value);
 
+        public static Error IsNotClaimed
+            => CustomMessage(
+                nameof(AdoptionAnnouncementEntity),
+                nameof(AdoptionAnnouncement.Status),
+                "Announcement is not claimed.",
+                "IsNotClaimed");
+        
         public static Error AlreadyClaimed
             => CustomMessage(
                 nameof(AdoptionAnnouncementEntity),

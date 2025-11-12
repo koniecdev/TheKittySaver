@@ -55,8 +55,13 @@ public static partial class DomainErrors
             $"The {property.ToLower()} can't be in the past.",
             TypeOfError.Validation);
     
-    private static Error CustomMessage(string entity, string property, string message, TypeOfError type = TypeOfError.Validation) 
-        => new($"{entity}.{property}.InvalidValue", message, type);
+    private static Error CustomMessage(
+        string entity,
+        string property,
+        string message,
+        string code = "InvalidValue",
+        TypeOfError type = TypeOfError.Validation) 
+        => new($"{entity}.{property}.{code}", message, type);
 
     public static Error DeletionCorruption(string entity)
         => new($"{entity}.DeletionCorruption", 

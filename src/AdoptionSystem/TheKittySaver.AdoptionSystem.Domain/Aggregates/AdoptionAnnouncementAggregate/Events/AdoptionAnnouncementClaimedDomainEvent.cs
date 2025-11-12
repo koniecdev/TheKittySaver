@@ -1,0 +1,6 @@
+﻿using TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAggregate.Entities;
+using TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
+
+namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAggregate.Events;
+
+public sealed record AdoptionAnnouncementClaimedDomainEvent(AdoptionAnnouncement AdoptionAnnouncement) : DomainEvent;

@@ -1,4 +1,5 @@
-﻿using TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAggregate.ValueObjects;
+﻿using TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAggregate.Events;
+using TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAggregate.ValueObjects;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.ValueObjects;
 using TheKittySaver.AdoptionSystem.Domain.Core.Abstractions;
 using TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
@@ -82,7 +83,9 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
             return Result.Failure(DomainErrors.AdoptionAnnouncementEntity.AlreadyClaimed);
         }
         
-        Status = AnnouncementStatusType.Archived;
+        Status = AnnouncementStatusType.Claimed;
+        
+        RaiseDomainEvent(new AdoptionAnnouncementClaimedDomainEvent(this));
         return Result.Success();
     }
     
@@ -96,6 +99,7 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
         }
         
         Status = AnnouncementStatusType.Archived;
+        
         ArchivedAt = archivedAt;
         return Result.Success();
     }
