@@ -7,31 +7,31 @@ namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.ValueObjec
 
 public sealed class InfectiousDiseaseStatus : ValueObject
 {
-    public FIVStatus FivStatus { get; }
-    public FeLVStatus FelvStatus { get; }
+    public FivStatus FivStatus { get; }
+    public FelvStatus FelvStatus { get; }
     public DateOnly LastTestedAt { get; }
     
-    public bool HasFiv => FivStatus == FIVStatus.Positive;
-    public bool HasFelv => FelvStatus == FeLVStatus.Positive;
+    public bool HasFiv => FivStatus == FivStatus.Positive;
+    public bool HasFelv => FelvStatus == FelvStatus.Positive;
     public bool HasAnyInfectiousDisease => HasFiv || HasFelv;
     public bool IsSafeToMixWithOtherCats => !HasAnyInfectiousDisease;
     
     public bool IsCompatibleWith(InfectiousDiseaseStatus other)
     {
         bool fivCompatible = FivStatus == other.FivStatus 
-                             || FivStatus is FIVStatus.NotTested 
-                             || other.FivStatus is FIVStatus.NotTested;
+                             || FivStatus is FivStatus.NotTested 
+                             || other.FivStatus is FivStatus.NotTested;
 
         bool felvCompatible = FelvStatus == other.FelvStatus
-                              || FelvStatus is FeLVStatus.NotTested
-                              || other.FelvStatus is FeLVStatus.NotTested;
+                              || FelvStatus is FelvStatus.NotTested
+                              || other.FelvStatus is FelvStatus.NotTested;
 
         return fivCompatible && felvCompatible;
     }
     
     public static Result<InfectiousDiseaseStatus> Create(
-        FIVStatus fivStatus,
-        FeLVStatus felvStatus,
+        FivStatus fivStatus,
+        FelvStatus felvStatus,
         DateOnly lastTestedAt,
         DateOnly currentDate)
     {
@@ -52,8 +52,8 @@ public sealed class InfectiousDiseaseStatus : ValueObject
     }
 
     private InfectiousDiseaseStatus(
-        FIVStatus fivStatus,
-        FeLVStatus felvStatus,
+        FivStatus fivStatus,
+        FelvStatus felvStatus,
         DateOnly lastTestedAt)
     {
         FivStatus = fivStatus;

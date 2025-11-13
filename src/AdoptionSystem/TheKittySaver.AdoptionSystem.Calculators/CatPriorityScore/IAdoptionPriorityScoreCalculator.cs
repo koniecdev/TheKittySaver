@@ -13,7 +13,7 @@ public interface IAdoptionPriorityScoreCalculator
         ListingSourceType listingSource,
         SpecialNeedsSeverityType specialNeedsSeverity,
         TemperamentType temperament,
-        FIVStatus fivStatus,
-        FeLVStatus felvStatus,
+        FivStatus fivStatus,
+        FelvStatus felvStatus,
         bool isNeutered);
 }

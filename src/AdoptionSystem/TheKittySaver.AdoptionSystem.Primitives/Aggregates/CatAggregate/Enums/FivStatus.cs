@@ -1,6 +1,6 @@
 ﻿namespace TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate.Enums;
 
-public enum FIVStatus
+public enum FivStatus
 {
     NotTested,
     Negative,

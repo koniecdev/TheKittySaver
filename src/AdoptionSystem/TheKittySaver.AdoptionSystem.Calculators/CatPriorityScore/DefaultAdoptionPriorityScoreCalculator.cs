@@ -13,8 +13,8 @@ internal sealed class DefaultAdoptionPriorityScoreCalculator : IAdoptionPriority
         ListingSourceType listingSource,
         SpecialNeedsSeverityType specialNeedsSeverity,
         TemperamentType temperament,
-        FIVStatus fivStatus,
-        FeLVStatus felvStatus,
+        FivStatus fivStatus,
+        FelvStatus felvStatus,
         bool isNeutered)
     {
         decimal adoptionHistoryPoints = CalculateAdoptionHistoryPoints(returnCount);
@@ -151,16 +151,16 @@ internal sealed class DefaultAdoptionPriorityScoreCalculator : IAdoptionPriority
         return points;
     }
 
-    private static decimal CalculateInfectiousDiseasePoints(FIVStatus fivStatus, FeLVStatus felvStatus)
+    private static decimal CalculateInfectiousDiseasePoints(FivStatus fivStatus, FelvStatus felvStatus)
     {
         decimal points = 0m;
 
-        if (fivStatus == FIVStatus.Positive)
+        if (fivStatus == FivStatus.Positive)
         {
             points += 35;
         }
 
-        if (felvStatus == FeLVStatus.Positive)
+        if (felvStatus == FelvStatus.Positive)
         {
             points += 35;
         }

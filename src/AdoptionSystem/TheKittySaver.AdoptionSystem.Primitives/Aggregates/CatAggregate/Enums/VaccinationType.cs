@@ -2,13 +2,13 @@
 
 public enum VaccinationType
 {
-    FVRCP_Panleukopenia,
-    FVRCP_Rhinotracheitis,
-    FVRCP_Calicivirus,
+    FvrcpPanleukopenia,
+    FvrcpRhinotracheitis,
+    FvrcpCalicivirus,
     Rabies,
-    FeLV,
-    FIV,
+    Felv,
+    Fiv,
     Chlamydia,
     Bordetella,
-    FIP
+    Fip
 }
