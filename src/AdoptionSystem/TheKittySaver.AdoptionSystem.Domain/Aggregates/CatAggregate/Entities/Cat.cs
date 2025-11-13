@@ -42,23 +42,44 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
 
     public CatStatusType Status { get; private set; }
 
-    public Result AssignToAdoptionAnnouncement(AdoptionAnnouncementId adoptionAnnouncementId)
+    public Result AssignToAdoptionAnnouncement(
+        AdoptionAnnouncementId adoptionAnnouncementId,
+        DateTimeOffset dateTimeOfOperation)
     {
         Ensure.NotEmpty(adoptionAnnouncementId);
 
-        if (Status is not CatStatusType.Published)
+        if (Status is not CatStatusType.Draft)
         {
-            return Result.Failure(DomainErrors.CatEntity.CatMustBePublishedForAssignmentToAa);
+            return Result.Failure(DomainErrors.CatEntity.UnavailableForPublish);
+        }
+
+        Result<PublishedAt> publishedAtResult = PublishedAt.Create(dateTimeOfOperation);
+        if (publishedAtResult.IsFailure)
+        {
+            return publishedAtResult;
         }
         
+        Status = CatStatusType.Published;
+        PublishedAt = publishedAtResult.Value;
+        
         AdoptionAnnouncementId = adoptionAnnouncementId;
+        
         return Result.Success();
     }
     
     public Result UnassignFromAdoptionAnnouncement()
     {
+        if (AdoptionAnnouncementId is null)
+        {
+            return Result.Failure(DomainErrors.CatEntity.CatNotAssignedToAdoptionAnnouncement(Id));
+        }
+        
+        AdoptionAnnouncementId unassignedAaId = AdoptionAnnouncementId.Value;
+        
         AdoptionAnnouncementId = null;
-        RaiseDomainEvent(new CatUnassignedFromAnnouncementDomainEvent(this));
+        Status = CatStatusType.Draft;
+        
+        RaiseDomainEvent(new CatUnassignedFromAnnouncementDomainEvent(Id, unassignedAaId));
         return Result.Success();
     }
     
@@ -151,38 +172,6 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
         ArgumentNullException.ThrowIfNull(updatedInfectiousDiseaseStatus);
         InfectiousDiseaseStatus = updatedInfectiousDiseaseStatus;
         return Result.Success();
-    }
-
-    public Result Publish(PublishedAt publishedAt)
-    {
-        ArgumentNullException.ThrowIfNull(publishedAt);
-
-        if (Status is not CatStatusType.Draft)
-        {
-            return Result.Failure(DomainErrors.CatEntity.UnavailableForPublish);
-        }
-
-        Status = CatStatusType.Published;
-        PublishedAt = publishedAt;
-        
-        return Result.Success();
-    }
-    
-    public Result Unpublish()
-    {
-        switch (Status)
-        {
-            case CatStatusType.Draft:
-                return Result.Failure(DomainErrors.CatEntity.CatAlreadyDraft);
-            case CatStatusType.Claimed:
-                return Result.Failure(DomainErrors.CatEntity.CannotUnpublishClaimedCat);
-            case CatStatusType.Published:
-            default:
-                Status = CatStatusType.Draft;
-                PublishedAt = null;
-                RaiseDomainEvent(new CatUnpublishedDomainEvent(this));
-                return Result.Success();
-        }
     }
 
     public Result Claim(ClaimedAt claimedAt)
