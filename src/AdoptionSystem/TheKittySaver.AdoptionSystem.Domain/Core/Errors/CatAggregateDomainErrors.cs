@@ -212,6 +212,12 @@ public static partial class DomainErrors
                 nameof(Cat.AdoptionAnnouncementId),
                 "Cat is already assigned to this adoption announcement.",
                 "AlreadyAssignedToAnnouncement");
+
+        public static Error CatNotAssignedToAdoptionAnnouncement(CatId catId)
+            => CustomMessage(
+                nameof(CatEntity),
+                nameof(Cat.AdoptionAnnouncementId),
+                $"Cat with ID '{catId.Value}' is not assigned to any adoption announcement.");
     }
 
     public static class CatVaccinationEntity
