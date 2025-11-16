@@ -67,28 +67,10 @@ internal sealed class CatAdoptionAnnouncementAssignmentService : ICatAdoptionAnn
                 .InfectiousDiseaseConflict(cat.Id, adoptionAnnouncement.Id));
         }
         
-        Result<PublishedAt> catPublishedAtResult = PublishedAt.Create(adoptionAnnouncement.CreatedAt.Value);
-        if (catPublishedAtResult.IsFailure)
-        {
-            return catPublishedAtResult;
-        }
-        
-        Result publishCatResult = cat.Publish(catPublishedAtResult.Value);
-        if (publishCatResult.IsFailure)
-        {
-            return publishCatResult;
-        }
-        
-        Result catAssignToAdoptionAnnouncementResult = cat.AssignToAdoptionAnnouncement(adoptionAnnouncement.Id);
+        Result catAssignToAdoptionAnnouncementResult = cat.AssignToAdoptionAnnouncement(
+            adoptionAnnouncement.Id,
+            adoptionAnnouncement.CreatedAt.Value);
         
         return catAssignToAdoptionAnnouncementResult;
     }
-    
-    //Kot jest przesunięty do innego ogłoszenia
-    //Kot jest w published -> zostawiamy go w published, przenosimy do innego ogłoszenia
-    //Jeżeli ogłoszenie po przesunięciu nie ma kotów, >usuwamy je<.
-    
-    //Kot został wycofany z publicznego widoku
-    //cofamy kota do draft, zostawiamy aaid, aa archiwizujemy.
-    
 }
