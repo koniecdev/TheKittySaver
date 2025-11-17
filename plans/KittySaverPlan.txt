@@ -1,4 +1,4 @@
-To genialne wyzwanie. Stworzenie systemu, który naprawdę działa dla kotów, a nie tylko dla "klikalności", wymaga zmiany paradygmatu. Porzućmy myślenie o "ogłoszeniach" i skupmy się na "kotach" i "opiekunach".
+Porzućmy myślenie o "ogłoszeniach" i skupmy się na "kotach" i "opiekunach".
 
 Oto moja propozycja UX dla systemu, który nazwijmy roboczo "Priorytet Mruczka".
 
