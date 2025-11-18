@@ -2,6 +2,7 @@ using TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAggrega
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAggregate.ValueObjects;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.ValueObjects;
 using TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
+using TheKittySaver.AdoptionSystem.Domain.Core.Enums;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.AdoptionAnnouncementAggregate;
 
@@ -53,6 +54,14 @@ public static partial class DomainErrors
                 nameof(AdoptionAnnouncementEntity),
                 "CatsCompatibility",
                 "Cannot mix cats with FIV/FeLV positive status with FIV/FeLV negative cats in the same announcement.");
+
+        public static Error MergeLogAlreadyExists
+            => CustomMessage(
+                nameof(AdoptionAnnouncementEntity),
+                nameof(AdoptionAnnouncement.MergeLogs),
+                "Merge log for this adoption announcement already exists.",
+                "AlreadyExists",
+                TypeOfError.Conflict);
 
         public static class DescriptionValueObject
         {

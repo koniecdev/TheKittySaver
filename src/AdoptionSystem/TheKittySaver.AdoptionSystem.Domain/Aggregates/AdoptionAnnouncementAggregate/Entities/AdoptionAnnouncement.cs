@@ -1,6 +1,5 @@
 ﻿using TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAggregate.Events;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAggregate.ValueObjects;
-using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.ValueObjects;
 using TheKittySaver.AdoptionSystem.Domain.Core.Abstractions;
 using TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
 using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
@@ -32,10 +31,10 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
 
     public Result PersistMergedAdoptionAnnouncement(AdoptionAnnouncementId mergedAdoptionAnnouncementId)
     {
-        var log = AdoptionAnnouncementMergeLog.Create(mergedAdoptionAnnouncementId);
+        AdoptionAnnouncementMergeLog log = AdoptionAnnouncementMergeLog.Create(mergedAdoptionAnnouncementId);
         if (_mergeLogs.Contains(log))
         {
-            return Result.Failure();
+            return Result.Failure(DomainErrors.AdoptionAnnouncementEntity.MergeLogAlreadyExists);
         }
         _mergeLogs.Add(log);
         return Result.Success();
