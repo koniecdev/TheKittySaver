@@ -18,6 +18,7 @@ namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAgg
 
 public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>, IClaimable, IArchivable
 {
+    private readonly List<AdoptionAnnouncementMergeLog> _mergeLogs = [];
     public PersonId PersonId { get; }
     public ClaimedAt? ClaimedAt { get; private set; }
     public ArchivedAt? ArchivedAt { get; private set; }
@@ -26,6 +27,19 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
     public Email Email { get; private set; }
     public PhoneNumber PhoneNumber { get; private set; }
     public AnnouncementStatusType Status { get; private set; }
+
+    public IReadOnlyList<AdoptionAnnouncementMergeLog> MergeLogs => _mergeLogs.AsReadOnly();
+
+    public Result PersistMergedAdoptionAnnouncement(AdoptionAnnouncementId mergedAdoptionAnnouncementId)
+    {
+        var log = AdoptionAnnouncementMergeLog.Create(mergedAdoptionAnnouncementId);
+        if (_mergeLogs.Contains(log))
+        {
+            return Result.Failure();
+        }
+        _mergeLogs.Add(log);
+        return Result.Success();
+    }
     
     public Result UpdateDescription(Maybe<AdoptionAnnouncementDescription> updatedDescription)
     {
