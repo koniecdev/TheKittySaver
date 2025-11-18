@@ -188,7 +188,6 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
             default:
                 Status = CatStatusType.Claimed;
                 ClaimedAt = claimedAt;
-                RaiseDomainEvent(new CatClaimedDomainEvent(this));
                 return Result.Success();
         }
     }

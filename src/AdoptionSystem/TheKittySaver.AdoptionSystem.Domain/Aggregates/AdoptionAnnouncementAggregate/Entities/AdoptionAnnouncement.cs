@@ -86,7 +86,7 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
         Status = AnnouncementStatusType.Claimed;
         ClaimedAt = claimedAt;
         
-        RaiseDomainEvent(new AdoptionAnnouncementClaimedDomainEvent(this));
+        RaiseDomainEvent(new AdoptionAnnouncementClaimedDomainEvent(Id, Status, ClaimedAt));
         return Result.Success();
     }
     
