@@ -27,9 +27,9 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
 
     public IReadOnlyList<AdoptionAnnouncementMergeLog> MergeLogs => _mergeLogs.AsReadOnly();
 
-    public Result PersistMergedAdoptionAnnouncement(AdoptionAnnouncementId mergedAdoptionAnnouncementId)
+    public Result PersistAdoptionAnnouncementAfterLastCatReassignment(AdoptionAnnouncementId deletedAdoptionAnnouncementId)
     {
-        AdoptionAnnouncementMergeLog log = AdoptionAnnouncementMergeLog.Create(mergedAdoptionAnnouncementId);
+        AdoptionAnnouncementMergeLog log = AdoptionAnnouncementMergeLog.Create(deletedAdoptionAnnouncementId);
         if (_mergeLogs.Contains(log))
         {
             return Result.Failure(DomainErrors.AdoptionAnnouncementEntity.MergeLogAlreadyExists);
