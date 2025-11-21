@@ -3,6 +3,5 @@
 public enum AnnouncementStatusType
 {
     Active,
-    Claimed,
-    Archived
+    Claimed
 }

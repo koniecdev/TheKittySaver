@@ -218,6 +218,30 @@ public static partial class DomainErrors
                 nameof(CatEntity),
                 nameof(Cat.AdoptionAnnouncementId),
                 $"Cat with ID '{catId.Value}' is not assigned to any adoption announcement.");
+
+        public static Error CatNotPublished(CatId catId)
+            => CustomMessage(
+                nameof(CatEntity),
+                nameof(Cat.Status),
+                $"Cat with ID '{catId.Value}' is not published.");
+
+        public static Error CannotReassignCatToSameAdoptionAnnouncement
+            => CustomMessage(
+                nameof(CatEntity),
+                nameof(Cat.AdoptionAnnouncementId),
+                "Cannot reassign cat to the same adoption announcement it is already assigned to.");
+
+        public static Error CannotReassignCatToIncompatibleAdoptionAnnouncement
+            => CustomMessage(
+                nameof(CatEntity),
+                nameof(Cat.InfectiousDiseaseStatus),
+                "Cannot reassign cat to an adoption announcement with incompatible infectious disease status.");
+
+        public static Error UnavailableForReassignment
+            => CustomMessage(
+                nameof(CatEntity),
+                nameof(Cat.Status),
+                "Cat must be in published status to be reassigned to another adoption announcement.");
     }
 
     public static class CatVaccinationEntity

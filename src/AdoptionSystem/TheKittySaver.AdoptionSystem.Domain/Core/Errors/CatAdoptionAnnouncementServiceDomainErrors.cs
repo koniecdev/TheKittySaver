@@ -24,5 +24,12 @@ public static partial class DomainErrors
             => new(
                 $"{nameof(CatAdoptionAnnouncementService)}.InfectiousDiseaseConflict",
                 $"Cannot assign cat with id '{catId.Value}' to adoption announcement with id '{adoptionAnnouncementId.Value}'. The cat's infectious disease status is not compatible with the cats already assigned to this announcement.");
+
+        public static Error CatNotAssignedToAdoptionAnnouncement(
+            CatId catId,
+            AdoptionAnnouncementId adoptionAnnouncementId)
+            => new(
+                $"{nameof(CatAdoptionAnnouncementService)}.CatNotAssignedToAdoptionAnnouncement",
+                $"Cat with id '{catId.Value}' is not assigned to adoption announcement with id '{adoptionAnnouncementId.Value}'.");
     }
 }

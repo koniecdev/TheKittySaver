@@ -67,19 +67,47 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
         return Result.Success();
     }
     
+    public Result ReassignToAnotherAdoptionAnnouncement(
+        AdoptionAnnouncementId destinationAdoptionAnnouncementId,
+        DateTimeOffset dateTimeOfOperation)
+    {
+        Ensure.NotEmpty(destinationAdoptionAnnouncementId);
+
+        if (Status is not CatStatusType.Published)
+        {
+            return Result.Failure(DomainErrors.CatEntity.UnavailableForReassignment);
+        }
+
+        Result<PublishedAt> publishedAtResult = PublishedAt.Create(dateTimeOfOperation);
+        if (publishedAtResult.IsFailure)
+        {
+            return publishedAtResult;
+        }
+        
+        PublishedAt = publishedAtResult.Value;
+        
+        AdoptionAnnouncementId = destinationAdoptionAnnouncementId;
+        
+        return Result.Success();
+    }
+
+    
     public Result UnassignFromAdoptionAnnouncement()
     {
+        if (Status is not CatStatusType.Published)
+        {
+            return Result.Failure(DomainErrors.CatEntity.CatNotPublished(Id));
+        }
+        
         if (AdoptionAnnouncementId is null)
         {
             return Result.Failure(DomainErrors.CatEntity.CatNotAssignedToAdoptionAnnouncement(Id));
         }
         
-        AdoptionAnnouncementId unassignedAaId = AdoptionAnnouncementId.Value;
-        
         AdoptionAnnouncementId = null;
         Status = CatStatusType.Draft;
+        PublishedAt = null;
         
-        RaiseDomainEvent(new CatUnassignedFromAnnouncementDomainEvent(Id, unassignedAaId));
         return Result.Success();
     }
     

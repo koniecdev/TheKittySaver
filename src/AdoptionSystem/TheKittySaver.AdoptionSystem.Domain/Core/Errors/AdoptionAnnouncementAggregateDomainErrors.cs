@@ -36,6 +36,12 @@ public static partial class DomainErrors
                 nameof(AdoptionAnnouncementEntity),
                 nameof(AdoptionAnnouncement.Status),
                 "Announcement is already claimed.");
+
+        public static Error AdoptionAnnouncementAlreadyClaimed(AdoptionAnnouncementId id)
+            => CustomMessage(
+                nameof(AdoptionAnnouncementEntity),
+                nameof(AdoptionAnnouncement.Status),
+                $"Adoption announcement with id '{id.Value}' is already claimed.");
         
         public static Error AlreadyArchived
             => CustomMessage(
@@ -62,6 +68,12 @@ public static partial class DomainErrors
                 "Merge log for this adoption announcement already exists.",
                 "AlreadyExists",
                 TypeOfError.Conflict);
+
+        public static Error CannotReassignCatToInactiveAdoptionAnnouncement
+            => CustomMessage(
+                nameof(AdoptionAnnouncementEntity),
+                nameof(AdoptionAnnouncement.Status),
+                "Cannot reassign cat to an adoption announcement that is not active.");
 
         public static class DescriptionValueObject
         {

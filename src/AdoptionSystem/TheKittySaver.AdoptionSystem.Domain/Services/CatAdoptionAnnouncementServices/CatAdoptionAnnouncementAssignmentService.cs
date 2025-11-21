@@ -29,6 +29,19 @@ internal sealed class CatAdoptionAnnouncementAssignmentService : ICatAdoptionAnn
     //Flow endpoints:
     //POST Cat (wychodzi draft)
     //POST AdoptionAnnouncement {DraftCatId} (wywołuje AACreationService który wywołuje poniższą metodę)
+
+    //Inny scenariusz, kot jest dodany od razu do rodziennego ogłoszenia
+    //wtedy też ta metoda jest wystarczająca
+    
+    //jeszcze innym casem jest przeciągnięcie kota z tego ogłoszenia do prywatnej strefy.
+    //tym powinien się zająć unassignment service
+    
+    //Innym casem jest przeciągnięcie kota z tego ogłoszenia do innego ogłoszenia
+    //tym powiniein się zając reassignment service
+    
+    //teoretycznie jeszcze innym case'm jest oznaczenie kota jako claimed, poza claimem ogłoszenia
+    //to teoretycznie ukryje kota w ogłoszneiu, i tam pozostanie.
+    //tym powininen zająć się catclaimservice. ReadModele powinny ignorować claim koty w ogłoszeniach do kalkulacji prio
     public async Task<Result> AssignCatToAdoptionAnnouncementAsync(
         Cat cat,
         AdoptionAnnouncement adoptionAnnouncement,
@@ -67,10 +80,10 @@ internal sealed class CatAdoptionAnnouncementAssignmentService : ICatAdoptionAnn
                 .InfectiousDiseaseConflict(cat.Id, adoptionAnnouncement.Id));
         }
         
-        Result catAssignToAdoptionAnnouncementResult = cat.AssignToAdoptionAnnouncement(
+        Result catAssignmentToAdoptionAnnouncementResult = cat.AssignToAdoptionAnnouncement(
             adoptionAnnouncement.Id,
             adoptionAnnouncement.CreatedAt.Value);
         
-        return catAssignToAdoptionAnnouncementResult;
+        return catAssignmentToAdoptionAnnouncementResult;
     }
 }

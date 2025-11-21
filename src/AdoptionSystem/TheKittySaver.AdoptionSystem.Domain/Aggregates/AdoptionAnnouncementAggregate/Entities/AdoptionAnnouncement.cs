@@ -15,12 +15,11 @@ using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAggregate.Entities;
 
-public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>, IClaimable, IArchivable
+public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>, IClaimable
 {
     private readonly List<AdoptionAnnouncementMergeLog> _mergeLogs = [];
     public PersonId PersonId { get; }
     public ClaimedAt? ClaimedAt { get; private set; }
-    public ArchivedAt? ArchivedAt { get; private set; }
     public AdoptionAnnouncementDescription? Description { get; private set; }
     public AdoptionAnnouncementAddress Address { get; private set; }
     public Email Email { get; private set; }
@@ -100,21 +99,6 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
         ClaimedAt = claimedAt;
         
         RaiseDomainEvent(new AdoptionAnnouncementClaimedDomainEvent(Id, Status, ClaimedAt));
-        return Result.Success();
-    }
-    
-    public Result Archive(ArchivedAt archivedAt)
-    {
-        ArgumentNullException.ThrowIfNull(archivedAt);
-        
-        if (Status is AnnouncementStatusType.Archived)
-        {
-            return Result.Failure(DomainErrors.AdoptionAnnouncementEntity.AlreadyArchived);
-        }
-        
-        Status = AnnouncementStatusType.Archived;
-        
-        ArchivedAt = archivedAt;
         return Result.Success();
     }
     
