@@ -1,5 +1,4 @@
-﻿using TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAggregate.Events;
-using TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAggregate.ValueObjects;
+﻿using TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAggregate.ValueObjects;
 using TheKittySaver.AdoptionSystem.Domain.Core.Abstractions;
 using TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
 using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
@@ -98,7 +97,6 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
         Status = AnnouncementStatusType.Claimed;
         ClaimedAt = claimedAt;
         
-        RaiseDomainEvent(new AdoptionAnnouncementClaimedDomainEvent(Id, Status, ClaimedAt));
         return Result.Success();
     }
     

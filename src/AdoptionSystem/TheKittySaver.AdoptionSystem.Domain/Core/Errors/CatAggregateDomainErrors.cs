@@ -242,6 +242,12 @@ public static partial class DomainErrors
                 nameof(CatEntity),
                 nameof(Cat.Status),
                 "Cat must be in published status to be reassigned to another adoption announcement.");
+
+        public static Error UnavailableForAssignmentToAa
+            => CustomMessage(
+                nameof(CatEntity),
+                nameof(Cat.Status),
+                "Cat must be in draft status to be assigned to an adoption announcement.");
     }
 
     public static class CatVaccinationEntity
