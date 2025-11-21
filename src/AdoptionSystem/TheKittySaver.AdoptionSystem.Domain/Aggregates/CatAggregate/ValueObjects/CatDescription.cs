@@ -1,7 +1,6 @@
 ﻿using TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
 using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
-using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.ValueObjects;
 
@@ -14,12 +13,12 @@ public sealed class CatDescription : ValueObject
     {
         if (string.IsNullOrWhiteSpace(value))
         {
-            return Result.Failure<CatDescription>(DomainErrors.CatEntity.DescriptionValueObject.NullOrEmpty);
+            return Result.Failure<CatDescription>(DomainErrors.Cat.Description.NullOrEmpty);
         }
 
         if (value.Length > MaxLength)
         {
-            return Result.Failure<CatDescription>(DomainErrors.CatEntity.DescriptionValueObject.LongerThanAllowed);
+            return Result.Failure<CatDescription>(DomainErrors.Cat.Description.LongerThanAllowed);
         }
         
         CatDescription instance = new(value);

@@ -50,7 +50,7 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
 
         if (Status is not CatStatusType.Draft)
         {
-            return Result.Failure(DomainErrors.CatEntity.UnavailableForPublish);
+            return Result.Failure(DomainErrors.Cat.Status.MustBeDraftForAssignment);
         }
 
         Result<PublishedAt> publishedAtResult = PublishedAt.Create(dateTimeOfOperation);
@@ -75,7 +75,7 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
 
         if (Status is not CatStatusType.Published || AdoptionAnnouncementId is null)
         {
-            return Result.Failure(DomainErrors.CatEntity.UnavailableForReassignment);
+            return Result.Failure(DomainErrors.Cat.Status.MustBePublishedForReassignment);
         }
         
         AdoptionAnnouncementId sourceAdoptionAnnouncementId = AdoptionAnnouncementId.Value;
@@ -102,12 +102,12 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
     {
         if (Status is not CatStatusType.Published)
         {
-            return Result.Failure(DomainErrors.CatEntity.CatNotPublished(Id));
+            return Result.Failure(DomainErrors.Cat.Status.NotPublished(Id));
         }
-        
+
         if (AdoptionAnnouncementId is null)
         {
-            return Result.Failure(DomainErrors.CatEntity.CatNotAssignedToAdoptionAnnouncement(Id));
+            return Result.Failure(DomainErrors.Cat.Assignment.NotAssignedToAdoptionAnnouncement(Id));
         }
         
         AdoptionAnnouncementId sourceAdoptionAnnouncementId = AdoptionAnnouncementId.Value;
@@ -221,14 +221,14 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
         switch (Status)
         {
             case CatStatusType.Draft:
-                return Result.Failure(DomainErrors.CatEntity.CannotClaimDraftCat);
+                return Result.Failure(DomainErrors.Cat.Status.CannotClaimDraftCat);
             case CatStatusType.Claimed:
-                return Result.Failure(DomainErrors.CatEntity.CatAlreadyClaimed);
+                return Result.Failure(DomainErrors.Cat.Status.AlreadyClaimed);
             case CatStatusType.Published:
             default:
                 if (AdoptionAnnouncementId is null)
                 {
-                    return Result.Failure(DomainErrors.CatEntity.CatNotAssignedToAdoptionAnnouncement(Id));
+                    return Result.Failure(DomainErrors.Cat.Assignment.NotAssignedToAdoptionAnnouncement(Id));
                 }
                 
                 Status = CatStatusType.Claimed;
@@ -270,7 +270,7 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
         Maybe<Vaccination> maybeVaccination = _vaccinations.GetByIdOrDefault(vaccinationId);
         if (maybeVaccination.HasNoValue)
         {
-            return Result.Failure(DomainErrors.CatEntity.VaccinationNotFound(vaccinationId));
+            return Result.Failure(DomainErrors.Vaccination.NotFound(vaccinationId));
         }
 
         return !_vaccinations.Remove(maybeVaccination.Value)
@@ -285,7 +285,7 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
         Maybe<Vaccination> maybeVaccination = _vaccinations.GetByIdOrDefault(vaccinationId);
         if (maybeVaccination.HasNoValue)
         {
-            return Result.Failure(DomainErrors.CatEntity.VaccinationNotFound(vaccinationId));
+            return Result.Failure(DomainErrors.Vaccination.NotFound(vaccinationId));
         }
 
         Result updateResult = maybeVaccination.Value.UpdateType(updatedType);
@@ -302,7 +302,7 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
         Maybe<Vaccination> maybeVaccination = _vaccinations.GetByIdOrDefault(vaccinationId);
         if (maybeVaccination.HasNoValue)
         {
-            return Result.Failure(DomainErrors.CatEntity.VaccinationNotFound(vaccinationId));
+            return Result.Failure(DomainErrors.Vaccination.NotFound(vaccinationId));
         }
 
         Result updateResult = maybeVaccination.Value.UpdateVaccinationDate(updatedVaccinationDate, currentDate);
@@ -319,7 +319,7 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
         Maybe<Vaccination> maybeVaccination = _vaccinations.GetByIdOrDefault(vaccinationId);
         if (maybeVaccination.HasNoValue)
         {
-            return Result.Failure(DomainErrors.CatEntity.VaccinationNotFound(vaccinationId));
+            return Result.Failure(DomainErrors.Vaccination.NotFound(vaccinationId));
         }
 
         Result updateResult = maybeVaccination.Value.UpdateNextDueDate(updatedNextDueDate, currentDate);
@@ -335,7 +335,7 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
         Maybe<Vaccination> maybeVaccination = _vaccinations.GetByIdOrDefault(vaccinationId);
         if (maybeVaccination.HasNoValue)
         {
-            return Result.Failure(DomainErrors.CatEntity.VaccinationNotFound(vaccinationId));
+            return Result.Failure(DomainErrors.Vaccination.NotFound(vaccinationId));
         }
 
         Result updateResult = maybeVaccination.Value.UpdateVeterinarianNote(updatedVeterinarianNote);

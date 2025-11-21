@@ -18,24 +18,24 @@ internal sealed class CatAdoptionAnnouncementReassignmentService : ICatAdoptionA
         IReadOnlyCollection<Cat> catsInitiallyAssignedToDestinationAdoptionAnnouncement,
         DateTimeOffset dateTimeOfOperation)
     {
-        if (sourceAdoptionAnnouncement.Status is not AnnouncementStatusType.Active 
+        if (sourceAdoptionAnnouncement.Status is not AnnouncementStatusType.Active
             || destinationAdoptionAnnouncement.Status is not AnnouncementStatusType.Active)
         {
-            return Result.Failure(DomainErrors.AdoptionAnnouncementEntity.CannotReassignCatToInactiveAdoptionAnnouncement);
+            return Result.Failure(DomainErrors.AdoptionAnnouncement.Status.CannotReassignCatToInactiveAnnouncement);
         }
 
         if (catsInitiallyAssignedToDestinationAdoptionAnnouncement.Contains(cat))
         {
-            return Result.Failure(DomainErrors.CatEntity.CannotReassignCatToSameAdoptionAnnouncement);
+            return Result.Failure(DomainErrors.Cat.Assignment.CannotReassignToSameAnnouncement);
         }
-        
+
         bool isCatCompatibileWithOthers =
             catsInitiallyAssignedToDestinationAdoptionAnnouncement.All(alreadyAssignedCat =>
                 alreadyAssignedCat.InfectiousDiseaseStatus.IsCompatibleWith(cat.InfectiousDiseaseStatus));
 
         if (!isCatCompatibileWithOthers)
         {
-            return Result.Failure(DomainErrors.CatEntity.CannotReassignCatToIncompatibleAdoptionAnnouncement);
+            return Result.Failure(DomainErrors.Cat.Assignment.IncompatibleInfectiousDiseaseStatus);
         }
 
         Result reassignmentResult = cat.ReassignToAnotherAdoptionAnnouncement(

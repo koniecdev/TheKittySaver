@@ -1,5 +1,4 @@
-﻿using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Entities;
-using TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
+﻿using TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
 using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
 
@@ -14,14 +13,14 @@ public sealed class CatName : ValueObject
     {
         if (string.IsNullOrWhiteSpace(value))
         {
-            return Result.Failure<CatName>(DomainErrors.CatEntity.NameValueObject.NullOrEmpty);
+            return Result.Failure<CatName>(DomainErrors.Cat.Name.NullOrEmpty);
         }
 
         value = value.Trim();
 
         if (value.Length > MaxLength)
         {
-            return Result.Failure<CatName>(DomainErrors.CatEntity.NameValueObject.LongerThanAllowed);
+            return Result.Failure<CatName>(DomainErrors.Cat.Name.LongerThanAllowed);
         }
 
         CatName instance = new(value);

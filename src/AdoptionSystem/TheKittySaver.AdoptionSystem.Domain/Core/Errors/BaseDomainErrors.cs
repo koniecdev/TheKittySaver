@@ -51,16 +51,22 @@ public static partial class DomainErrors
             TypeOfError.Validation);
     
     private static Error DateIsInThePast(string entity, string property)
-        => new($"{entity}.{property}.DateIsInThePast", 
+        => new($"{entity}.{property}.DateIsInThePast",
             $"The {property.ToLower()} can't be in the past.",
             TypeOfError.Validation);
-    
+
+    private static Error StateConflict(string entity, string property, string message, string code)
+        => new($"{entity}.{property}.{code}", message, TypeOfError.Conflict);
+
+    private static Error InvalidOperation(string entity, string property, string message, string code)
+        => new($"{entity}.{property}.{code}", message, TypeOfError.Conflict);
+
     private static Error CustomMessage(
         string entity,
         string property,
         string message,
-        string code = "InvalidValue",
-        TypeOfError type = TypeOfError.Validation) 
+        string code,
+        TypeOfError type)
         => new($"{entity}.{property}.{code}", message, type);
 
     public static Error DeletionCorruption(string entity)

@@ -59,17 +59,17 @@ internal sealed class CatAdoptionAnnouncementAssignmentService : ICatAdoptionAnn
         
         if (cat.Status is not CatStatusType.Draft)
         {
-            return Result.Failure(DomainErrors.CatEntity.UnavailableForAssignmentToAa);
+            return Result.Failure(DomainErrors.Cat.Status.MustBeDraftForAssignment);
         }
-        
+
         if (adoptionAnnouncement.Status is not AnnouncementStatusType.Active)
         {
-            return Result.Failure(DomainErrors.AdoptionAnnouncementEntity.UnavailableForAssigning);
+            return Result.Failure(DomainErrors.AdoptionAnnouncement.Status.UnavailableForAssigning);
         }
 
         if (catsAlreadyAssignedToAa.Any(c => c.Id == cat.Id))
         {
-            return Result.Failure(DomainErrors.CatEntity.AlreadyAssignedToAnnouncement);
+            return Result.Failure(DomainErrors.Cat.Assignment.AlreadyAssignedToAnnouncement);
         }
 
         if (!catsAlreadyAssignedToAa.All(c => c.InfectiousDiseaseStatus.IsCompatibleWith(cat.InfectiousDiseaseStatus)))

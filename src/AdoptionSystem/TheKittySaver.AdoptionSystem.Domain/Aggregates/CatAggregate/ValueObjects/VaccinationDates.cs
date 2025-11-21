@@ -17,25 +17,25 @@ public sealed class VaccinationDates : ValueObject
         if (vaccinationDate > referenceDate)
         {
             return Result.Failure<VaccinationDates>(
-                DomainErrors.CatVaccinationEntity.VaccinationDatesValueObject.VaccinationDateInFuture(vaccinationDate, referenceDate));
+                DomainErrors.Vaccination.Dates.VaccinationDateInFuture(vaccinationDate, referenceDate));
         }
 
         if (CatAge.IsDateTooOldForCat(vaccinationDate, referenceDate))
         {
             return Result.Failure<VaccinationDates>(
-                DomainErrors.CatVaccinationEntity.VaccinationDatesValueObject.VaccinationDateTooOld(vaccinationDate, referenceDate));
+                DomainErrors.Vaccination.Dates.VaccinationDateTooOld(vaccinationDate, referenceDate));
         }
 
         if (nextDueDate.HasValue && nextDueDate.Value < referenceDate)
         {
             return Result.Failure<VaccinationDates>(
-                DomainErrors.CatVaccinationEntity.VaccinationDatesValueObject.NextDueDateInPast(nextDueDate.Value, referenceDate));
+                DomainErrors.Vaccination.Dates.NextDueDateInPast(nextDueDate.Value, referenceDate));
         }
 
         if (nextDueDate.HasValue && nextDueDate.Value <= vaccinationDate)
         {
             return Result.Failure<VaccinationDates>(
-                DomainErrors.CatVaccinationEntity.VaccinationDatesValueObject.NextDueDateBeforeOrEqualVaccinationDate(nextDueDate.Value, vaccinationDate));
+                DomainErrors.Vaccination.Dates.NextDueDateBeforeOrEqualVaccinationDate(nextDueDate.Value, vaccinationDate));
         }
 
         VaccinationDates instance = new(vaccinationDate, nextDueDate);

@@ -13,12 +13,12 @@ public sealed class VaccinationNote : ValueObject
     {
         if (string.IsNullOrWhiteSpace(value))
         {
-            return Result.Failure<VaccinationNote>(DomainErrors.CatVaccinationEntity.VeterinarianNoteValueObject.NullOrEmpty);
+            return Result.Failure<VaccinationNote>(DomainErrors.Vaccination.VeterinarianNote.NullOrEmpty);
         }
 
         if (value.Length > MaxLength)
         {
-            return Result.Failure<VaccinationNote>(DomainErrors.CatVaccinationEntity.VeterinarianNoteValueObject.LongerThanAllowed);
+            return Result.Failure<VaccinationNote>(DomainErrors.Vaccination.VeterinarianNote.LongerThanAllowed);
         }
 
         VaccinationNote instance = new(value);

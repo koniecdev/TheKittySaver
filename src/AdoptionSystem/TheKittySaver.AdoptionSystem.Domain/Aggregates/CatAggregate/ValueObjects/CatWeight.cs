@@ -17,10 +17,10 @@ public sealed class CatWeight : ValueObject
         {
             case < MinWeightKg:
                 return Result.Failure<CatWeight>(
-                    DomainErrors.CatEntity.WeightValueObject.BelowMinimum(valueInKilograms, MinWeightKg));
+                    DomainErrors.Cat.Weight.BelowMinimum(valueInKilograms, MinWeightKg));
             case > MaxWeightKg:
                 return Result.Failure<CatWeight>(
-                    DomainErrors.CatEntity.WeightValueObject.AboveMaximum(valueInKilograms, MaxWeightKg));
+                    DomainErrors.Cat.Weight.AboveMaximum(valueInKilograms, MaxWeightKg));
             default:
             {
                 CatWeight instance = new(valueInKilograms);

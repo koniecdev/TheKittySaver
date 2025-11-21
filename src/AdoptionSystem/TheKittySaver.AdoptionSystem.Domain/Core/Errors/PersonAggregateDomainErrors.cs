@@ -1,6 +1,9 @@
-﻿using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.Entities;
+using PersonEntity = TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.Entities.Person;
+using AddressEntity = TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.Entities.Address;
+using UsernameValueObject = TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.ValueObjects.Username;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.ValueObjects;
 using TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
+using TheKittySaver.AdoptionSystem.Domain.Core.Enums;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.AddressCompounds;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.PhoneNumbers;
@@ -10,73 +13,55 @@ namespace TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 
 public static partial class DomainErrors
 {
-    public static class PersonEntity
+    public static class Person
     {
-        public static Error NotFound(PersonId id) 
-            => HasNotBeenFound(
-                nameof(PersonEntity),
-                id.Value);
-        
+        public static Error NotFound(PersonId id)
+            => HasNotBeenFound(nameof(Person), id.Value);
+
         public static class IdentityId
         {
-            public static Error AlreadyHasBeenSet 
-                => new(
-                    $"{nameof(Person)}.{nameof(Person.IdentityId)}.AlreadyHasBeenSet", 
-                    "IdentityId has been set already.");
+            public static Error AlreadyHasBeenSet
+                => StateConflict(
+                    nameof(Person),
+                    nameof(PersonEntity.IdentityId),
+                    "IdentityId has been set already.",
+                    "AlreadyHasBeenSet");
         }
-        
-        public static class UsernameValueObject
-        {
-            public static Error NullOrEmpty 
-                => Required(
-                    nameof(PersonEntity),
-                    nameof(Person.Username));
-            
-            public static Error LongerThanAllowed 
-                => TooManyCharacters(
-                    nameof(PersonEntity),
-                    nameof(Person.Username),
-                    Username.MaxLength);
-        }
-        
-        public static Error EmailAlreadyTaken(Email email)
-            => AlreadyHasBeenTaken(
-                nameof(Person),
-                nameof(Person.Email),
-                email);
-    
-        public static Error PhoneNumberAlreadyTaken(PhoneNumber phoneNumber)
-            => AlreadyHasBeenTaken(
-                nameof(Person),
-                nameof(Person.PhoneNumber),
-                phoneNumber);
 
-    }
-    
-    public static class PersonAddressEntity
-    {
-        public static Error NotFound(AddressId addressId) 
-            => HasNotBeenFound(
-                nameof(PersonAddressEntity),
-                addressId.Value);
-        
-        public static class NameValueObject
+        public static class Username
         {
             public static Error NullOrEmpty
-                => Required(
-                    nameof(PersonAddressEntity),
-                    nameof(Address.Name));
-            
-            public static Error LongerThanAllowed 
+                => Required(nameof(Person), nameof(PersonEntity.Username));
+
+            public static Error LongerThanAllowed
                 => TooManyCharacters(
-                    nameof(PersonAddressEntity),
-                    nameof(Address.Name),
-                    AddressName.MaxLength);
+                    nameof(Person),
+                    nameof(PersonEntity.Username),
+                    UsernameValueObject.MaxLength);
         }
-        
-        public static Error AddressNameAlreadyTaken(AddressName name)
-            => AlreadyHasBeenTaken(nameof(PersonAddressEntity),
-                nameof(Address.Name),
-                name);
+
+        public static Error EmailAlreadyTaken(Email email)
+            => AlreadyHasBeenTaken(nameof(Person), nameof(PersonEntity.Email), email);
+
+        public static Error PhoneNumberAlreadyTaken(PhoneNumber phoneNumber)
+            => AlreadyHasBeenTaken(nameof(Person), nameof(PersonEntity.PhoneNumber), phoneNumber);
+    }
+
+    public static class Address
+    {
+        public static Error NotFound(AddressId addressId)
+            => HasNotBeenFound(nameof(Address), addressId.Value);
+
+        public static class Name
+        {
+            public static Error NullOrEmpty
+                => Required(nameof(Address), nameof(AddressEntity.Name));
+
+            public static Error LongerThanAllowed
+                => TooManyCharacters(nameof(Address), nameof(AddressEntity.Name), AddressName.MaxLength);
+        }
+
+        public static Error NameAlreadyTaken(AddressName name)
+            => AlreadyHasBeenTaken(nameof(Address), nameof(AddressEntity.Name), name);
     }
 }

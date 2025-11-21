@@ -13,14 +13,14 @@ public sealed class Username : ValueObject
     {
         if (string.IsNullOrWhiteSpace(value))
         {
-            return Result.Failure<Username>(DomainErrors.PersonEntity.UsernameValueObject.NullOrEmpty);
+            return Result.Failure<Username>(DomainErrors.Person.Username.NullOrEmpty);
         }
 
         value = value.Trim();
 
         if (value.Length > MaxLength)
         {
-            return Result.Failure<Username>(DomainErrors.PersonEntity.UsernameValueObject.LongerThanAllowed);
+            return Result.Failure<Username>(DomainErrors.Person.Username.LongerThanAllowed);
         }
 
         Username instance = new(value);

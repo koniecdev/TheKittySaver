@@ -1,91 +1,92 @@
-using TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAggregate.Entities;
+using AdoptionAnnouncementEntity = TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAggregate.Entities.AdoptionAnnouncement;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAggregate.ValueObjects;
-using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.ValueObjects;
 using TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
 using TheKittySaver.AdoptionSystem.Domain.Core.Enums;
-using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.AdoptionAnnouncementAggregate;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 
 public static partial class DomainErrors
 {
-    public static class AdoptionAnnouncementEntity
+    public static class AdoptionAnnouncement
     {
         public static Error NotFound(AdoptionAnnouncementId id)
-            => HasNotBeenFound(
-                nameof(AdoptionAnnouncementEntity),
-                id.Value);
+            => HasNotBeenFound(nameof(AdoptionAnnouncement), id.Value);
 
-        public static Error UnavailableForAssigning
-            => CustomMessage(
-                nameof(AdoptionAnnouncementEntity),
-                nameof(AdoptionAnnouncement.Status),
-                "Cat can be assigned to Announcement only when it is in Draft status.",
-                "UnavailableForAssigning");
-        
-        public static Error IsNotClaimed
-            => CustomMessage(
-                nameof(AdoptionAnnouncementEntity),
-                nameof(AdoptionAnnouncement.Status),
-                "Announcement is not claimed.",
-                "IsNotClaimed");
-        
-        public static Error AlreadyClaimed
-            => CustomMessage(
-                nameof(AdoptionAnnouncementEntity),
-                nameof(AdoptionAnnouncement.Status),
-                "Announcement is already claimed.");
+        public static class Status
+        {
+            public static Error UnavailableForAssigning
+                => InvalidOperation(
+                    nameof(AdoptionAnnouncement),
+                    nameof(AdoptionAnnouncementEntity.Status),
+                    "Cat can be assigned to Announcement only when it is in Draft status.",
+                    "UnavailableForAssigning");
 
-        public static Error AdoptionAnnouncementAlreadyClaimed(AdoptionAnnouncementId id)
-            => CustomMessage(
-                nameof(AdoptionAnnouncementEntity),
-                nameof(AdoptionAnnouncement.Status),
-                $"Adoption announcement with id '{id.Value}' is already claimed.");
-        
-        public static Error AlreadyArchived
-            => CustomMessage(
-                nameof(AdoptionAnnouncementEntity),
-                nameof(AdoptionAnnouncement.Status),
-                "Announcement is already archived.");
+            public static Error IsNotClaimed
+                => InvalidOperation(
+                    nameof(AdoptionAnnouncement),
+                    nameof(AdoptionAnnouncementEntity.Status),
+                    "Announcement is not claimed.",
+                    "IsNotClaimed");
 
-        public static Error CanOnlyUpdateWhenActive
-            => CustomMessage(
-                nameof(AdoptionAnnouncementEntity),
-                nameof(AdoptionAnnouncement.Status),
-                "Can only update announcement when it is active.");
+            public static Error AlreadyClaimed(AdoptionAnnouncementId id)
+                => StateConflict(
+                    nameof(AdoptionAnnouncement),
+                    nameof(AdoptionAnnouncementEntity.Status),
+                    $"Adoption announcement with id '{id.Value}' is already claimed.",
+                    "AlreadyClaimed");
 
-        public static Error CannotMixInfectedWithHealthyCats
-            => CustomMessage(
-                nameof(AdoptionAnnouncementEntity),
-                "CatsCompatibility",
-                "Cannot mix cats with FIV/FeLV positive status with FIV/FeLV negative cats in the same announcement.");
+            public static Error AlreadyArchived
+                => StateConflict(
+                    nameof(AdoptionAnnouncement),
+                    nameof(AdoptionAnnouncementEntity.Status),
+                    "Announcement is already archived.",
+                    "AlreadyArchived");
 
-        public static Error MergeLogAlreadyExists
-            => CustomMessage(
-                nameof(AdoptionAnnouncementEntity),
-                nameof(AdoptionAnnouncement.MergeLogs),
-                "Merge log for this adoption announcement already exists.",
-                "AlreadyExists",
-                TypeOfError.Conflict);
+            public static Error CanOnlyUpdateWhenActive
+                => InvalidOperation(
+                    nameof(AdoptionAnnouncement),
+                    nameof(AdoptionAnnouncementEntity.Status),
+                    "Can only update announcement when it is active.",
+                    "CanOnlyUpdateWhenActive");
 
-        public static Error CannotReassignCatToInactiveAdoptionAnnouncement
-            => CustomMessage(
-                nameof(AdoptionAnnouncementEntity),
-                nameof(AdoptionAnnouncement.Status),
-                "Cannot reassign cat to an adoption announcement that is not active.");
+            public static Error CannotReassignCatToInactiveAnnouncement
+                => InvalidOperation(
+                    nameof(AdoptionAnnouncement),
+                    nameof(AdoptionAnnouncementEntity.Status),
+                    "Cannot reassign cat to an adoption announcement that is not active.",
+                    "CannotReassignCatToInactiveAnnouncement");
+        }
 
-        public static class DescriptionValueObject
+        public static class CatsCompatibility
+        {
+            public static Error CannotMixInfectedWithHealthyCats
+                => InvalidOperation(
+                    nameof(AdoptionAnnouncement),
+                    "CatsCompatibility",
+                    "Cannot mix cats with FIV/FeLV positive status with FIV/FeLV negative cats in the same announcement.",
+                    "CannotMixInfectedWithHealthyCats");
+        }
+
+        public static class MergeLogs
+        {
+            public static Error AlreadyExists
+                => StateConflict(
+                    nameof(AdoptionAnnouncement),
+                    nameof(AdoptionAnnouncementEntity.MergeLogs),
+                    "Merge log for this adoption announcement already exists.",
+                    "AlreadyExists");
+        }
+
+        public static class Description
         {
             public static Error NullOrEmpty
-                => Required(
-                    nameof(AdoptionAnnouncementEntity),
-                    nameof(AdoptionAnnouncement.Description));
+                => Required(nameof(AdoptionAnnouncement), nameof(AdoptionAnnouncementEntity.Description));
 
             public static Error LongerThanAllowed
                 => TooManyCharacters(
-                    nameof(AdoptionAnnouncementEntity),
-                    nameof(AdoptionAnnouncement.Description),
+                    nameof(AdoptionAnnouncement),
+                    nameof(AdoptionAnnouncementEntity.Description),
                     AdoptionAnnouncementDescription.MaxLength);
         }
     }
