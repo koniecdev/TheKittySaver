@@ -4,12 +4,12 @@ using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Services.CatAdoptionAnnouncementReassignmentServices;
 
-internal interface ICatAdoptionAnnouncementReassignmentService
+public interface ICatAdoptionAnnouncementReassignmentService
 {
-    Task<Result> ReassignCatToAnotherAdoptionAnnouncementAsync(
+    Result ReassignCatToAnotherAdoptionAnnouncement(
         Cat cat,
         AdoptionAnnouncement sourceAdoptionAnnouncement,
         AdoptionAnnouncement destinationAdoptionAnnouncement,
-        DateTimeOffset dateTimeOfOperation,
-        CancellationToken cancellationToken = default);
+        IReadOnlyCollection<Cat> catsInitiallyAssignedToDestinationAdoptionAnnouncement,
+        DateTimeOffset dateTimeOfOperation);
 }

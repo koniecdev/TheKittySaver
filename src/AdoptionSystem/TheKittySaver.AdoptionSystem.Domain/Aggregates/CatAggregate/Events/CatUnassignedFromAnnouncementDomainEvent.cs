@@ -7,4 +7,4 @@ namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Events;
 
 public sealed record CatUnassignedFromAnnouncementDomainEvent(
     CatId CatId,
-    AdoptionAnnouncementId UnassignedAdoptionAnnouncementId) : DomainEvent;
+    AdoptionAnnouncementId AdoptionAnnouncementId) : DomainEvent;

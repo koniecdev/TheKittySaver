@@ -6,8 +6,9 @@ namespace TheKittySaver.AdoptionSystem.Domain.Services.CatAdoptionAnnouncementSe
 
 public interface ICatAdoptionAnnouncementAssignmentService
 {
-    Task<Result> AssignCatToAdoptionAnnouncementAsync(
+    Result AssignCatToAdoptionAnnouncement(
         Cat cat,
         AdoptionAnnouncement adoptionAnnouncement,
-        CancellationToken cancellationToken = default);
+        IReadOnlyCollection<Cat> catsAlreadyAssignedToAa,
+        DateTimeOffset dateTimeOfOperation);
 }

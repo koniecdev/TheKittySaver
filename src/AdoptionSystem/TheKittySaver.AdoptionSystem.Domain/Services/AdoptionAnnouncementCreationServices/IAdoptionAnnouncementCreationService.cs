@@ -11,12 +11,12 @@ namespace TheKittySaver.AdoptionSystem.Domain.Services.AdoptionAnnouncementCreat
 
 public interface IAdoptionAnnouncementCreationService
 {
-    Task<Result<AdoptionAnnouncement>> CreateAsync(
+    Result<AdoptionAnnouncement> Create(
         Cat catToAssign,
         AdoptionAnnouncementAddress address,
         Email email,
         PhoneNumber phoneNumber,
         Maybe<AdoptionAnnouncementDescription> description,
-        CreatedAt createdAt,
-        CancellationToken cancellationToken);
+        DateTimeOffset dateTimeOfOperation,
+        CreatedAt createdAt);
 }

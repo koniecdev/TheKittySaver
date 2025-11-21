@@ -73,11 +73,13 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
     {
         Ensure.NotEmpty(destinationAdoptionAnnouncementId);
 
-        if (Status is not CatStatusType.Published)
+        if (Status is not CatStatusType.Published || AdoptionAnnouncementId is null)
         {
             return Result.Failure(DomainErrors.CatEntity.UnavailableForReassignment);
         }
-
+        
+        AdoptionAnnouncementId sourceAdoptionAnnouncementId = AdoptionAnnouncementId.Value;
+        
         Result<PublishedAt> publishedAtResult = PublishedAt.Create(dateTimeOfOperation);
         if (publishedAtResult.IsFailure)
         {
@@ -87,6 +89,11 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
         PublishedAt = publishedAtResult.Value;
         
         AdoptionAnnouncementId = destinationAdoptionAnnouncementId;
+        
+        RaiseDomainEvent(new CatReassignedToAnotherAnnouncementDomainEvent(
+            Id,
+            sourceAdoptionAnnouncementId,
+            destinationAdoptionAnnouncementId));
         
         return Result.Success();
     }

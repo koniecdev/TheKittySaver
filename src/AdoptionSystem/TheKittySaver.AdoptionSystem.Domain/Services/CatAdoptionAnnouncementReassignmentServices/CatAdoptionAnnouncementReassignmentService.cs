@@ -11,45 +11,25 @@ namespace TheKittySaver.AdoptionSystem.Domain.Services.CatAdoptionAnnouncementRe
 
 internal sealed class CatAdoptionAnnouncementReassignmentService : ICatAdoptionAnnouncementReassignmentService
 {
-    private readonly ICatRepository _catRepository;
-    private readonly IAdoptionAnnouncementRepository _adoptionAnnouncementRepository;
-
-    public CatAdoptionAnnouncementReassignmentService(
-        ICatRepository catRepository,
-        IAdoptionAnnouncementRepository adoptionAnnouncementRepository)
-    {
-        _catRepository = catRepository;
-        _adoptionAnnouncementRepository = adoptionAnnouncementRepository;
-    }
-
-    public async Task<Result> ReassignCatToAnotherAdoptionAnnouncementAsync(
+    public Result ReassignCatToAnotherAdoptionAnnouncement(
         Cat cat,
         AdoptionAnnouncement sourceAdoptionAnnouncement,
         AdoptionAnnouncement destinationAdoptionAnnouncement,
-        DateTimeOffset dateTimeOfOperation,
-        CancellationToken cancellationToken = default)
+        IReadOnlyCollection<Cat> catsInitiallyAssignedToDestinationAdoptionAnnouncement,
+        DateTimeOffset dateTimeOfOperation)
     {
-        if (sourceAdoptionAnnouncement.Status is not AnnouncementStatusType.Active)
+        if (sourceAdoptionAnnouncement.Status is not AnnouncementStatusType.Active 
+            || destinationAdoptionAnnouncement.Status is not AnnouncementStatusType.Active)
         {
             return Result.Failure(DomainErrors.AdoptionAnnouncementEntity.CannotReassignCatToInactiveAdoptionAnnouncement);
         }
-
-        if (destinationAdoptionAnnouncement.Status is not AnnouncementStatusType.Active)
-        {
-            return Result.Failure(DomainErrors.AdoptionAnnouncementEntity.CannotReassignCatToInactiveAdoptionAnnouncement);
-        }
-        
-        IReadOnlyCollection<Cat> catsInitiallyAssignedToSourceAdoptionAnnouncement = await _catRepository
-            .GetCatsByAdoptionAnnouncementIdAsync(sourceAdoptionAnnouncement.Id, cancellationToken);
-        IReadOnlyCollection<Cat> catsInitiallyAssignedToDestinationAdoptionAnnouncement = await _catRepository
-            .GetCatsByAdoptionAnnouncementIdAsync(destinationAdoptionAnnouncement.Id, cancellationToken);
 
         if (catsInitiallyAssignedToDestinationAdoptionAnnouncement.Contains(cat))
         {
             return Result.Failure(DomainErrors.CatEntity.CannotReassignCatToSameAdoptionAnnouncement);
         }
         
-        var isCatCompatibileWithOthers =
+        bool isCatCompatibileWithOthers =
             catsInitiallyAssignedToDestinationAdoptionAnnouncement.All(alreadyAssignedCat =>
                 alreadyAssignedCat.InfectiousDiseaseStatus.IsCompatibleWith(cat.InfectiousDiseaseStatus));
 
@@ -58,21 +38,10 @@ internal sealed class CatAdoptionAnnouncementReassignmentService : ICatAdoptionA
             return Result.Failure(DomainErrors.CatEntity.CannotReassignCatToIncompatibleAdoptionAnnouncement);
         }
 
-        var reassignmentResult = cat.ReassignToAnotherAdoptionAnnouncement(
+        Result reassignmentResult = cat.ReassignToAnotherAdoptionAnnouncement(
             destinationAdoptionAnnouncement.Id,
             dateTimeOfOperation);
-        if (reassignmentResult.IsFailure)
-        {
-            return reassignmentResult;
-        }
         
-        bool sourceAaStillContainsAtLeastOneCat =
-            catsInitiallyAssignedToSourceAdoptionAnnouncement.Any(assignedCat => assignedCat != cat);
-        if (!sourceAaStillContainsAtLeastOneCat)
-        {
-            _adoptionAnnouncementRepository.Remove(sourceAdoptionAnnouncement);
-        }
-        
-        return Result.Success();
+        return reassignmentResult;
     }
 }

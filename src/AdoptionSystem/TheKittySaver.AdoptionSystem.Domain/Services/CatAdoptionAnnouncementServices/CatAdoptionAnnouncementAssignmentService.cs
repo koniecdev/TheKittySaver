@@ -16,13 +16,6 @@ namespace TheKittySaver.AdoptionSystem.Domain.Services.CatAdoptionAnnouncementSe
 
 internal sealed class CatAdoptionAnnouncementAssignmentService : ICatAdoptionAnnouncementAssignmentService
 {
-    private readonly ICatRepository _catRepository;
-
-    public CatAdoptionAnnouncementAssignmentService(
-        ICatRepository catRepository)
-    {
-        _catRepository = catRepository;
-    }
     
     //Kot jest dopiero co stworzony, i jeszcze nie ma ogłoszenia
     //Kot jest w draft -> atomowo przenosimy do published, oraz tworzymy active ogłoszenie
@@ -42,10 +35,18 @@ internal sealed class CatAdoptionAnnouncementAssignmentService : ICatAdoptionAnn
     //teoretycznie jeszcze innym case'm jest oznaczenie kota jako claimed, poza claimem ogłoszenia
     //to teoretycznie ukryje kota w ogłoszneiu, i tam pozostanie.
     //tym powininen zająć się catclaimservice. ReadModele powinny ignorować claim koty w ogłoszeniach do kalkulacji prio
-    public async Task<Result> AssignCatToAdoptionAnnouncementAsync(
+    
+    
+    //To jest serwis który odpowiada za przypisanie draftowego kota do ogłoszenia już istniejącego, z jakimiś kotami.
+    //Scenariusz przypisania kota do nowego ogłoszenia, bo to invariant ogłoszenia że dodaje sie atomowo z pierwszym publishem kota
+    //to odpowiedzialność AdoptionAnnouncementCreationService.
+    //Ale nalezy pamiętać że user po utworzeniu kota ma go w drafcie. Moze wyjść w etapie tworzenia ogloszenia, albo zdecydować
+    //się w ogóle ogłoszenia na razie nie dodawać. Wtedy pierwszą operacją będzie właśnie nowe ogłoszenie kota, albo dopisanie do istniejącego.
+    public Result AssignCatToAdoptionAnnouncement(
         Cat cat,
         AdoptionAnnouncement adoptionAnnouncement,
-        CancellationToken cancellationToken = default)
+        IReadOnlyCollection<Cat> catsAlreadyAssignedToAa,
+        DateTimeOffset dateTimeOfOperation)
     {
         if (cat.PersonId != adoptionAnnouncement.PersonId)
         {
@@ -58,16 +59,13 @@ internal sealed class CatAdoptionAnnouncementAssignmentService : ICatAdoptionAnn
         
         if (cat.Status is not CatStatusType.Draft)
         {
-            return Result.Failure(DomainErrors.CatEntity.UnavailableForPublish);
+            return Result.Failure(DomainErrors.CatEntity.UnavailableForAssignmentToAa);
         }
         
         if (adoptionAnnouncement.Status is not AnnouncementStatusType.Active)
         {
             return Result.Failure(DomainErrors.AdoptionAnnouncementEntity.UnavailableForAssigning);
         }
-        
-        IReadOnlyCollection<Cat> catsAlreadyAssignedToAa = await _catRepository
-            .GetCatsByAdoptionAnnouncementIdAsync(adoptionAnnouncement.Id, cancellationToken);
 
         if (catsAlreadyAssignedToAa.Any(c => c.Id == cat.Id))
         {
@@ -82,7 +80,7 @@ internal sealed class CatAdoptionAnnouncementAssignmentService : ICatAdoptionAnn
         
         Result catAssignmentToAdoptionAnnouncementResult = cat.AssignToAdoptionAnnouncement(
             adoptionAnnouncement.Id,
-            adoptionAnnouncement.CreatedAt.Value);
+            dateTimeOfOperation);
         
         return catAssignmentToAdoptionAnnouncementResult;
     }
