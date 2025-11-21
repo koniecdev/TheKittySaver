@@ -50,7 +50,7 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
 
         if (Status is not CatStatusType.Draft)
         {
-            return Result.Failure(DomainErrors.Cat.Status.MustBeDraftForAssignment);
+            return Result.Failure(DomainErrors.Cat.Status.MustBeDraftForAssignment(Id));
         }
 
         Result<PublishedAt> publishedAtResult = PublishedAt.Create(dateTimeOfOperation);
@@ -75,7 +75,7 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
 
         if (Status is not CatStatusType.Published || AdoptionAnnouncementId is null)
         {
-            return Result.Failure(DomainErrors.Cat.Status.MustBePublishedForReassignment);
+            return Result.Failure(DomainErrors.Cat.Status.MustBePublishedForReassignment(Id));
         }
         
         AdoptionAnnouncementId sourceAdoptionAnnouncementId = AdoptionAnnouncementId.Value;
@@ -221,9 +221,9 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
         switch (Status)
         {
             case CatStatusType.Draft:
-                return Result.Failure(DomainErrors.Cat.Status.CannotClaimDraftCat);
+                return Result.Failure(DomainErrors.Cat.Status.CannotClaimDraftCat(Id));
             case CatStatusType.Claimed:
-                return Result.Failure(DomainErrors.Cat.Status.AlreadyClaimed);
+                return Result.Failure(DomainErrors.Cat.Status.AlreadyClaimed(Id));
             case CatStatusType.Published:
             default:
                 if (AdoptionAnnouncementId is null)

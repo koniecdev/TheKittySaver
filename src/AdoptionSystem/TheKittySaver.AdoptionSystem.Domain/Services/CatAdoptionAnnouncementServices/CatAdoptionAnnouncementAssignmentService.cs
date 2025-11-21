@@ -59,7 +59,7 @@ internal sealed class CatAdoptionAnnouncementAssignmentService : ICatAdoptionAnn
         
         if (cat.Status is not CatStatusType.Draft)
         {
-            return Result.Failure(DomainErrors.Cat.Status.MustBeDraftForAssignment);
+            return Result.Failure(DomainErrors.Cat.Status.MustBeDraftForAssignment(cat.Id));
         }
 
         if (adoptionAnnouncement.Status is not AnnouncementStatusType.Active)
@@ -69,7 +69,7 @@ internal sealed class CatAdoptionAnnouncementAssignmentService : ICatAdoptionAnn
 
         if (catsAlreadyAssignedToAa.Any(c => c.Id == cat.Id))
         {
-            return Result.Failure(DomainErrors.Cat.Assignment.AlreadyAssignedToAnnouncement);
+            return Result.Failure(DomainErrors.Cat.Assignment.AlreadyAssignedToAnnouncement(cat.Id));
         }
 
         if (!catsAlreadyAssignedToAa.All(c => c.InfectiousDiseaseStatus.IsCompatibleWith(cat.InfectiousDiseaseStatus)))

@@ -126,48 +126,32 @@ public static partial class DomainErrors
 
         public static class Status
         {
-            public static Error AlreadyPublished
-                => StateConflict(nameof(Cat), nameof(CatEntity.Status), "Cat is already published.", "AlreadyPublished");
+            public static Error AlreadyClaimed(CatId catId)
+                => StateConflict(
+                    nameof(Cat),
+                    nameof(CatEntity.Status),
+                    $"Cat with ID '{catId.Value}' has already been claimed.",
+                    "AlreadyClaimed");
 
-            public static Error AlreadyDraft
-                => StateConflict(nameof(Cat), nameof(CatEntity.Status), "Cat is already in draft status.", "AlreadyDraft");
-
-            public static Error AlreadyClaimed
-                => StateConflict(nameof(Cat), nameof(CatEntity.Status), "Cat has already been claimed.", "AlreadyClaimed");
-
-            public static Error MustBeDraftForAssignment
+            public static Error MustBeDraftForAssignment(CatId catId)
                 => InvalidOperation(
                     nameof(Cat),
                     nameof(CatEntity.Status),
-                    "Cat must be in draft status to be assigned to an adoption announcement.",
+                    $"Cat with ID '{catId.Value}' must be in draft status to be assigned to an adoption announcement.",
                     "MustBeDraftForAssignment");
 
-            public static Error CannotClaimDraftCat
+            public static Error CannotClaimDraftCat(CatId catId)
                 => InvalidOperation(
                     nameof(Cat),
                     nameof(CatEntity.Status),
-                    "Cannot claim a cat that is in draft status.",
+                    $"Cannot claim cat with ID '{catId.Value}' because it is in draft status.",
                     "CannotClaimDraftCat");
 
-            public static Error CannotUnpublishClaimedCat
+            public static Error MustBePublishedForReassignment(CatId catId)
                 => InvalidOperation(
                     nameof(Cat),
                     nameof(CatEntity.Status),
-                    "Cannot unpublish a cat that has been claimed.",
-                    "CannotUnpublishClaimedCat");
-
-            public static Error MustBePublishedForAssignment
-                => InvalidOperation(
-                    nameof(Cat),
-                    nameof(CatEntity.Status),
-                    "Cat must be in published status before it can be assigned to an adoption announcement.",
-                    "MustBePublishedForAssignment");
-
-            public static Error MustBePublishedForReassignment
-                => InvalidOperation(
-                    nameof(Cat),
-                    nameof(CatEntity.Status),
-                    "Cat must be in published status to be reassigned to another adoption announcement.",
+                    $"Cat with ID '{catId.Value}' must be in published status to be reassigned to another adoption announcement.",
                     "MustBePublishedForReassignment");
 
             public static Error NotPublished(CatId catId)
@@ -180,11 +164,11 @@ public static partial class DomainErrors
 
         public static class Assignment
         {
-            public static Error AlreadyAssignedToAnnouncement
+            public static Error AlreadyAssignedToAnnouncement(CatId catId)
                 => StateConflict(
                     nameof(Cat),
                     nameof(CatEntity.AdoptionAnnouncementId),
-                    "Cat is already assigned to this adoption announcement.",
+                    $"Cat with ID '{catId.Value}' is already assigned to this adoption announcement.",
                     "AlreadyAssignedToAnnouncement");
 
             public static Error NotAssignedToAdoptionAnnouncement(CatId catId)
@@ -194,18 +178,18 @@ public static partial class DomainErrors
                     $"Cat with ID '{catId.Value}' is not assigned to any adoption announcement.",
                     "NotAssignedToAdoptionAnnouncement");
 
-            public static Error CannotReassignToSameAnnouncement
+            public static Error CannotReassignToSameAnnouncement(CatId catId)
                 => InvalidOperation(
                     nameof(Cat),
                     nameof(CatEntity.AdoptionAnnouncementId),
-                    "Cannot reassign cat to the same adoption announcement it is already assigned to.",
+                    $"Cat with ID '{catId.Value}' cannot be reassigned to the same adoption announcement it is already assigned to.",
                     "CannotReassignToSameAnnouncement");
 
-            public static Error IncompatibleInfectiousDiseaseStatus
+            public static Error IncompatibleInfectiousDiseaseStatus(CatId catId)
                 => InvalidOperation(
                     nameof(Cat),
                     nameof(CatEntity.InfectiousDiseaseStatus),
-                    "Cannot reassign cat to an adoption announcement with incompatible infectious disease status.",
+                    $"Cat with ID '{catId.Value}' cannot be reassigned to an adoption announcement with incompatible infectious disease status.",
                     "IncompatibleInfectiousDiseaseStatus");
         }
     }
