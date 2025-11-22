@@ -1,7 +1,6 @@
 using AdoptionAnnouncementEntity = TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAggregate.Entities.AdoptionAnnouncement;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAggregate.ValueObjects;
 using TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
-using TheKittySaver.AdoptionSystem.Domain.Core.Enums;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.AdoptionAnnouncementAggregate;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Core.Errors;
@@ -19,15 +18,8 @@ public static partial class DomainErrors
                 => InvalidOperation(
                     nameof(AdoptionAnnouncement),
                     nameof(AdoptionAnnouncementEntity.Status),
-                    "Cat can be assigned to Announcement only when it is in Draft status.",
+                    "Cat can be assigned to Announcement only when it is in Active status.",
                     "UnavailableForAssigning");
-
-            public static Error IsNotClaimed
-                => InvalidOperation(
-                    nameof(AdoptionAnnouncement),
-                    nameof(AdoptionAnnouncementEntity.Status),
-                    "Announcement is not claimed.",
-                    "IsNotClaimed");
 
             public static Error AlreadyClaimed(AdoptionAnnouncementId id)
                 => StateConflict(
@@ -35,13 +27,6 @@ public static partial class DomainErrors
                     nameof(AdoptionAnnouncementEntity.Status),
                     $"Adoption announcement with id '{id.Value}' is already claimed.",
                     "AlreadyClaimed");
-
-            public static Error AlreadyArchived
-                => StateConflict(
-                    nameof(AdoptionAnnouncement),
-                    nameof(AdoptionAnnouncementEntity.Status),
-                    "Announcement is already archived.",
-                    "AlreadyArchived");
 
             public static Error CanOnlyUpdateWhenActive
                 => InvalidOperation(
@@ -56,16 +41,6 @@ public static partial class DomainErrors
                     nameof(AdoptionAnnouncementEntity.Status),
                     "Cannot reassign cat to an adoption announcement that is not active.",
                     "CannotReassignCatToInactiveAnnouncement");
-        }
-
-        public static class CatsCompatibility
-        {
-            public static Error CannotMixInfectedWithHealthyCats
-                => InvalidOperation(
-                    nameof(AdoptionAnnouncement),
-                    "CatsCompatibility",
-                    "Cannot mix cats with FIV/FeLV positive status with FIV/FeLV negative cats in the same announcement.",
-                    "CannotMixInfectedWithHealthyCats");
         }
 
         public static class MergeLogs

@@ -25,21 +25,11 @@ public static partial class DomainErrors
             $"The {property.ToLower()} exceeds maximum length of {maxLength}.",
             TypeOfError.Validation);
 
-    private static Error BadFormat(string entity, string property) 
-        => new($"{entity}.{property}.InvalidFormat", 
+    private static Error BadFormat(string entity, string property)
+        => new($"{entity}.{property}.InvalidFormat",
             $"The {property.ToLower()} format is invalid.",
             TypeOfError.Validation);
-    
-    private static Error ValueInvalid(string entity, string property) 
-        => new($"{entity}.{property}.InvalidValue",
-            $"The {property.ToLower()} value is invalid.",
-            TypeOfError.Validation);
-    
-    private static Error MustBeEmpty(string entity, string property, string propertyThatIsEmpty) 
-        => new($"{entity}.{property}.MustBeEmpty",
-            $"The {property.ToLower()} must be empty, when {propertyThatIsEmpty.ToLower()} is empty",
-            TypeOfError.Validation);
-    
+
     private static Error BelowValue<T>(string entity, string property, T actualValue, T minimalValue) where T : struct
         => new($"{entity}.{property}.BelowValue", 
             $"The {property.ToLower()} has been set with value '{actualValue}', and it is below the minimum required value '{minimalValue}'.",
@@ -55,9 +45,17 @@ public static partial class DomainErrors
             $"The {property.ToLower()} can't be in the past.",
             TypeOfError.Validation);
 
+    /// <summary>
+    /// Creates a conflict error when an entity is already in a particular state.
+    /// Use for "Already X" scenarios (e.g., AlreadyClaimed, AlreadyPublished).
+    /// </summary>
     private static Error StateConflict(string entity, string property, string message, string code)
         => new($"{entity}.{property}.{code}", message, TypeOfError.Conflict);
 
+    /// <summary>
+    /// Creates a conflict error when an operation cannot be performed due to current state.
+    /// Use for "Cannot X" or "Must be X" scenarios (e.g., CannotClaimDraftCat, MustBeDraftForAssignment).
+    /// </summary>
     private static Error InvalidOperation(string entity, string property, string message, string code)
         => new($"{entity}.{property}.{code}", message, TypeOfError.Conflict);
 

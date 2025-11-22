@@ -26,7 +26,7 @@ internal sealed class CatAdoptionAnnouncementReassignmentService : ICatAdoptionA
 
         if (catsInitiallyAssignedToDestinationAdoptionAnnouncement.Contains(cat))
         {
-            return Result.Failure(DomainErrors.Cat.Assignment.CannotReassignToSameAnnouncement);
+            return Result.Failure(DomainErrors.Cat.Assignment.CannotReassignToSameAnnouncement(cat.Id));
         }
 
         bool isCatCompatibileWithOthers =
@@ -35,7 +35,7 @@ internal sealed class CatAdoptionAnnouncementReassignmentService : ICatAdoptionA
 
         if (!isCatCompatibileWithOthers)
         {
-            return Result.Failure(DomainErrors.Cat.Assignment.IncompatibleInfectiousDiseaseStatus);
+            return Result.Failure(DomainErrors.Cat.Assignment.IncompatibleInfectiousDiseaseStatus(cat.Id));
         }
 
         Result reassignmentResult = cat.ReassignToAnotherAdoptionAnnouncement(
