@@ -194,6 +194,26 @@ public static partial class DomainErrors
         }
     }
 
+    public static class CatGalleryItem
+    {
+        public static Error NotFound(CatGalleryItemId id)
+            => HasNotBeenFound(nameof(CatGalleryItem), id.Value);
+
+        public static class DisplayOrder
+        {
+            public static Error BelowMinimum(int actualValue, int minimumValue)
+                => BelowValue(nameof(CatGalleryItem), nameof(CatGalleryItemDisplayOrder), actualValue, minimumValue);
+
+            public static Error AboveOrEqualMaximum(int actualValue, int maximumValue)
+                => CustomMessage(
+                    nameof(CatGalleryItem),
+                    nameof(CatGalleryItemDisplayOrder),
+                    $"The displayorder has been set with value '{actualValue}', and it must be less than '{maximumValue}'.",
+                    "AboveOrEqualMaximum",
+                    TypeOfError.Validation);
+        }
+    }
+
     public static class Vaccination
     {
         public static Error NotFound(VaccinationId vaccinationId)

@@ -18,7 +18,10 @@ namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Entities;
 
 public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
 {
+    public const int MaximumGalleryItemsCount = 20;
+    
     private readonly List<Vaccination> _vaccinations;
+    private readonly List<CatGalleryItem> _galleryItems;
 
     public PersonId PersonId { get; }
     public AdoptionAnnouncementId? AdoptionAnnouncementId { get; private set; }
@@ -37,6 +40,8 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
     public ListingSource ListingSource { get; private set; }
     public NeuteringStatus NeuteringStatus { get; private set; }
     public InfectiousDiseaseStatus InfectiousDiseaseStatus { get; private set; }
+    public CatThumbnail? Thumbnail { get; private set; }
+    public IReadOnlyList<CatGalleryItem> GetGalleryItems() => _galleryItems.AsReadOnly();
 
     public IReadOnlyList<Vaccination> Vaccinations => _vaccinations.AsReadOnly();
 
@@ -341,6 +346,59 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
         Result updateResult = maybeVaccination.Value.UpdateVeterinarianNote(updatedVeterinarianNote);
         return updateResult;
     }
+    
+    public Result<CatGalleryItemId> AddGalleryItem(CatGalleryItemDisplayOrder displayOrder)
+    {
+        ArgumentNullException.ThrowIfNull(displayOrder);
+
+        if (_galleryItems.Any(item => item.DisplayOrder == displayOrder))
+        {
+            return Result.Failure();
+        }
+        
+        Result<CatGalleryItem> galleryItemCreationResult = CatGalleryItem.Create(displayOrder, CreatedAt);
+        if (galleryItemCreationResult.IsFailure)
+        {
+            return Result.Failure<CatGalleryItemId>(galleryItemCreationResult.Error);
+        }
+        
+        _galleryItems.Add(galleryItemCreationResult.Value);
+        return Result.Success(galleryItemCreationResult.Value.Id);
+    }
+    
+    public Result UpdateGalleryItem(CatGalleryItemId galleryItemId, CatGalleryItemDisplayOrder updatedDisplayOrder)
+    {
+        Ensure.NotEmpty(galleryItemId);
+        ArgumentNullException.ThrowIfNull(updatedDisplayOrder);
+
+        Maybe<CatGalleryItem> maybeGalleryItem = _galleryItems.GetByIdOrDefault(galleryItemId);
+        if (maybeGalleryItem.HasNoValue)
+        {
+            return Result.Failure(DomainErrors.CatGalleryItem.NotFound(galleryItemId));
+        }
+        
+        if (_galleryItems.Any(item => item != maybeGalleryItem.Value && item.DisplayOrder == updatedDisplayOrder))
+        {
+            return Result.Failure();
+        }
+        
+        maybeGalleryItem.Value.UpdateDisplayOrder(updatedDisplayOrder);
+        return Result.Success();
+    }
+    
+    public Result RemoveGalleryItem(CatGalleryItemId galleryItemId)
+    {
+        Ensure.NotEmpty(galleryItemId);
+        
+        Maybe<CatGalleryItem> maybeGalleryItem = _galleryItems.GetByIdOrDefault(galleryItemId);
+        if (maybeGalleryItem.HasNoValue)
+        {
+            return Result.Failure(DomainErrors.CatGalleryItem.NotFound(galleryItemId));
+        }
+        
+        _galleryItems.Remove(maybeGalleryItem.Value);
+        return Result.Success();
+    }
 
     public static Result<Cat> Create(
         PersonId personId,
@@ -358,7 +416,8 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
         NeuteringStatus neuteringStatus,
         InfectiousDiseaseStatus infectiousDiseaseStatus,
         CreatedAt createdAt,
-        List<Vaccination>? vaccinations = null)
+        List<Vaccination>? vaccinations = null,
+        List<CatGalleryItem>? galleryItems = null)
     {
         Ensure.NotEmpty(personId);
         ArgumentNullException.ThrowIfNull(name);
@@ -395,7 +454,8 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
             infectiousDiseaseStatus,
             createdAt,
             CatStatusType.Draft,
-            vaccinations ?? []);
+            vaccinations ?? [],
+            galleryItems ?? []);
 
         return Result.Success(instance);
     }
@@ -418,7 +478,8 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
         InfectiousDiseaseStatus infectiousDiseaseStatus,
         CreatedAt createdAt,
         CatStatusType status,
-        List<Vaccination> vaccinations) : base(id, createdAt)
+        List<Vaccination> vaccinations,
+        List<CatGalleryItem> galleryItems) : base(id, createdAt)
     {
         PersonId = personId;
         Name = name;
@@ -434,7 +495,8 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
         ListingSource = listingSource;
         NeuteringStatus = neuteringStatus;
         InfectiousDiseaseStatus = infectiousDiseaseStatus;
-        _vaccinations = vaccinations;
         Status = status;
+        _vaccinations = vaccinations;
+        _galleryItems = galleryItems;
     }
 }
