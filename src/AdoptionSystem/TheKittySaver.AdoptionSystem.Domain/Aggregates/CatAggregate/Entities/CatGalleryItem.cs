@@ -10,10 +10,11 @@ public sealed class CatGalleryItem : Entity<CatGalleryItemId>
 {
     public CatGalleryItemDisplayOrder DisplayOrder { get; private set; }
 
-    internal void UpdateDisplayOrder(CatGalleryItemDisplayOrder order)
+    internal Result UpdateDisplayOrder(CatGalleryItemDisplayOrder order)
     {
         ArgumentNullException.ThrowIfNull(order);
         DisplayOrder = order;
+        return Result.Success();
     }
     
     internal static Result<CatGalleryItem> Create(
