@@ -4,7 +4,7 @@ using TheKittySaver.AdoptionSystem.Domain.Tests.Unit.Shared.Factories;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
 using Person = TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.Entities.Person;
 
-namespace TheKittySaver.AdoptionSystem.Domain.Tests.Unit.Aggregates.PersonAggregate;
+namespace TheKittySaver.AdoptionSystem.Domain.Tests.Unit.Tests.Aggregates.PersonAggregate;
 
 public sealed class CreatePersonTests
 {
