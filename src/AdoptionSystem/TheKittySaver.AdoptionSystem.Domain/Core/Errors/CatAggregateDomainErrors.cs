@@ -194,8 +194,25 @@ public static partial class DomainErrors
                     "NotPublished");
         }
 
+        public static class Thumbnail
+        {
+            public static Error RequiredForPublishing(CatId catId)
+                => InvalidOperation(
+                    nameof(Cat),
+                    nameof(CatEntity.ThumbnailId),
+                    $"Cat with ID '{catId.Value}' must have a thumbnail before being published.",
+                    "RequiredForPublishing");
+        }
+
         public static class Assignment
         {
+            public static Error AlreadyAssignedToAnotherAnnouncement(CatId catId)
+                => StateConflict(
+                    nameof(Cat),
+                    nameof(CatEntity.AdoptionAnnouncementId),
+                    $"Cat with ID '{catId.Value}' is already assigned to an adoption announcement.",
+                    "AlreadyAssignedToAnotherAnnouncement");
+
             public static Error AlreadyAssignedToAnnouncement(CatId catId)
                 => StateConflict(
                     nameof(Cat),

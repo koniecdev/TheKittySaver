@@ -62,6 +62,16 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
             return Result.Failure(DomainErrors.Cat.Status.MustBeDraftForAssignment(Id));
         }
 
+        if (AdoptionAnnouncementId is not null)
+        {
+            return Result.Failure(DomainErrors.Cat.Assignment.AlreadyAssignedToAnotherAnnouncement(Id));
+        }
+
+        if (ThumbnailId is null)
+        {
+            return Result.Failure(DomainErrors.Cat.Thumbnail.RequiredForPublishing(Id));
+        }
+
         Result<PublishedAt> publishedAtResult = PublishedAt.Create(dateTimeOfOperation);
         if (publishedAtResult.IsFailure)
         {
