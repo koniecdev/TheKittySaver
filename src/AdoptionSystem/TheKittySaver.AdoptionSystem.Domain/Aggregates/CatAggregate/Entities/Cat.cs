@@ -25,10 +25,13 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
 
     public PersonId PersonId { get; }
     public AdoptionAnnouncementId? AdoptionAnnouncementId { get; private set; }
+    
     public ClaimedAt? ClaimedAt { get; private set; }
     public PublishedAt? PublishedAt { get; private set; }
+    
     public CatName Name { get; private set; }
     public CatDescription Description { get; private set; }
+    
     public CatAge Age { get; private set; }
     public CatGender Gender { get; private set; }
     public CatColor Color { get; private set; }
@@ -40,9 +43,10 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
     public ListingSource ListingSource { get; private set; }
     public NeuteringStatus NeuteringStatus { get; private set; }
     public InfectiousDiseaseStatus InfectiousDiseaseStatus { get; private set; }
-    public CatThumbnail? Thumbnail { get; private set; }
+    
+    public CatThumbnailId? ThumbnailId { get; private set; }
+    
     public IReadOnlyList<CatGalleryItem> GetGalleryItems() => _galleryItems.AsReadOnly();
-
     public IReadOnlyList<Vaccination> Vaccinations => _vaccinations.AsReadOnly();
 
     public CatStatusType Status { get; private set; }
@@ -347,10 +351,10 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
         return updateResult;
     }
     
-    public Result UpdateThumbnail(CatThumbnail thumbnail)
+    public Result UpdateThumbnail(CatThumbnailId thumbnailId)
     {
-        ArgumentNullException.ThrowIfNull(thumbnail);
-        Thumbnail = thumbnail;
+        Ensure.NotEmpty(thumbnailId);
+        ThumbnailId = thumbnailId;
         return Result.Success();
     }
 
@@ -464,7 +468,7 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
         InfectiousDiseaseStatus infectiousDiseaseStatus,
         CreatedAt createdAt,
         List<Vaccination>? vaccinations,
-        CatThumbnail? thumbnail,
+        CatThumbnailId? thumbnailId,
         List<CatGalleryItem>? galleryItems)
     {
         Ensure.NotEmpty(personId);
@@ -503,7 +507,7 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
             createdAt,
             CatStatusType.Draft,
             vaccinations ?? [],
-            thumbnail,
+            thumbnailId,
             galleryItems ?? []);
 
         return Result.Success(instance);
@@ -528,7 +532,7 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
         CreatedAt createdAt,
         CatStatusType status,
         List<Vaccination> vaccinations,
-        CatThumbnail? thumbnail,
+        CatThumbnailId? thumbnailId,
         List<CatGalleryItem> galleryItems) : base(id, createdAt)
     {
         PersonId = personId;
@@ -547,7 +551,7 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
         InfectiousDiseaseStatus = infectiousDiseaseStatus;
         Status = status;
         _vaccinations = vaccinations;
-        Thumbnail = thumbnail;
+        ThumbnailId = thumbnailId;
         _galleryItems = galleryItems;
     }
 }
