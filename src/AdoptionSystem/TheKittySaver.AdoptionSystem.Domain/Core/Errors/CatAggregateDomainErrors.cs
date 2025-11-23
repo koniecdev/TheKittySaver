@@ -17,6 +17,38 @@ public static partial class DomainErrors
         public static Error NotFound(CatId id)
             => HasNotBeenFound(nameof(Cat), id.Value);
 
+        public static Error GalleryIsFull
+            => CustomMessage(
+                nameof(Cat),
+                "Gallery",
+                $"Cannot add more items to the gallery. Maximum of {CatEntity.MaximumGalleryItemsCount} items allowed.",
+                "GalleryIsFull",
+                TypeOfError.Validation);
+
+        public static Error InvalidReorderOperation
+            => CustomMessage(
+                nameof(Cat),
+                "Gallery",
+                "The reorder operation is invalid. The number of items in the new order must match the current gallery items count.",
+                "InvalidReorderOperation",
+                TypeOfError.Validation);
+
+        public static Error DuplicateDisplayOrders
+            => CustomMessage(
+                nameof(Cat),
+                "Gallery",
+                "The reorder operation contains duplicate display order values.",
+                "DuplicateDisplayOrders",
+                TypeOfError.Validation);
+
+        public static Error DisplayOrderMustBeContiguous
+            => CustomMessage(
+                nameof(Cat),
+                "Gallery",
+                "Display orders must be contiguous starting from 0.",
+                "DisplayOrderMustBeContiguous",
+                TypeOfError.Validation);
+
         public static class Name
         {
             public static Error NullOrEmpty

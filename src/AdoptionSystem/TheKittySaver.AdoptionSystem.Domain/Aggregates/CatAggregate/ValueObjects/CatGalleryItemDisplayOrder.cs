@@ -1,4 +1,5 @@
-﻿using TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
+﻿using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Entities;
+using TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
 using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
 
@@ -20,7 +21,8 @@ public sealed class CatGalleryItemDisplayOrder : ValueObject
         if (imageOrder >= maxAllowedOrder)
         {
             return Result.Failure<CatGalleryItemDisplayOrder>(
-                DomainErrors.CatGalleryItem.DisplayOrder.AboveOrEqualMaximum(imageOrder, maxAllowedOrder));
+                DomainErrors.CatGalleryItem.DisplayOrder.AboveOrEqualMaximum(
+                    imageOrder, maxAllowedOrder));
         }
 
         CatGalleryItemDisplayOrder instance = new(imageOrder);

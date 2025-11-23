@@ -19,7 +19,7 @@ namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Entities;
 public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
 {
     public const int MaximumGalleryItemsCount = 20;
-    
+
     private readonly List<Vaccination> _vaccinations;
     private readonly List<CatGalleryItem> _galleryItems;
 
@@ -63,15 +63,15 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
         {
             return publishedAtResult;
         }
-        
+
         Status = CatStatusType.Published;
         PublishedAt = publishedAtResult.Value;
-        
+
         AdoptionAnnouncementId = adoptionAnnouncementId;
-        
+
         return Result.Success();
     }
-    
+
     public Result ReassignToAnotherAdoptionAnnouncement(
         AdoptionAnnouncementId destinationAdoptionAnnouncementId,
         DateTimeOffset dateTimeOfOperation)
@@ -82,27 +82,27 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
         {
             return Result.Failure(DomainErrors.Cat.Status.MustBePublishedForReassignment(Id));
         }
-        
+
         AdoptionAnnouncementId sourceAdoptionAnnouncementId = AdoptionAnnouncementId.Value;
-        
+
         Result<PublishedAt> publishedAtResult = PublishedAt.Create(dateTimeOfOperation);
         if (publishedAtResult.IsFailure)
         {
             return publishedAtResult;
         }
-        
+
         PublishedAt = publishedAtResult.Value;
-        
+
         AdoptionAnnouncementId = destinationAdoptionAnnouncementId;
-        
+
         RaiseDomainEvent(new CatReassignedToAnotherAnnouncementDomainEvent(
             Id,
             sourceAdoptionAnnouncementId,
             destinationAdoptionAnnouncementId));
-        
+
         return Result.Success();
     }
-    
+
     public Result UnassignFromAdoptionAnnouncement()
     {
         if (Status is not CatStatusType.Published)
@@ -114,20 +114,20 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
         {
             return Result.Failure(DomainErrors.Cat.Assignment.NotAssignedToAdoptionAnnouncement(Id));
         }
-        
+
         AdoptionAnnouncementId sourceAdoptionAnnouncementId = AdoptionAnnouncementId.Value;
-        
+
         AdoptionAnnouncementId = null;
         Status = CatStatusType.Draft;
         PublishedAt = null;
-        
+
         RaiseDomainEvent(new CatUnassignedFromAnnouncementDomainEvent(
-            Id, 
+            Id,
             sourceAdoptionAnnouncementId));
-        
+
         return Result.Success();
     }
-    
+
     public Result UpdateName(CatName updatedName)
     {
         ArgumentNullException.ThrowIfNull(updatedName);
@@ -235,7 +235,7 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
                 {
                     return Result.Failure(DomainErrors.Cat.Assignment.NotAssignedToAdoptionAnnouncement(Id));
                 }
-                
+
                 Status = CatStatusType.Claimed;
                 ClaimedAt = claimedAt;
                 RaiseDomainEvent(new CatClaimedDomainEvent(Id, AdoptionAnnouncementId.Value));
@@ -347,56 +347,103 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
         return updateResult;
     }
     
-    public Result<CatGalleryItemId> AddGalleryItem(CatGalleryItemDisplayOrder displayOrder)
+    public Result UpdateThumbnail(CatThumbnail thumbnail)
     {
-        ArgumentNullException.ThrowIfNull(displayOrder);
+        ArgumentNullException.ThrowIfNull(thumbnail);
+        Thumbnail = thumbnail;
+        return Result.Success();
+    }
 
-        if (_galleryItems.Any(item => item.DisplayOrder == displayOrder))
+    public Result<CatGalleryItemId> AddGalleryItem()
+    {
+        if (_galleryItems.Count >= MaximumGalleryItemsCount)
         {
-            return Result.Failure();
+            return Result.Failure<CatGalleryItemId>(DomainErrors.Cat.GalleryIsFull);
         }
-        
-        Result<CatGalleryItem> galleryItemCreationResult = CatGalleryItem.Create(displayOrder, CreatedAt);
+
+        int nextDisplayOrder = _galleryItems.Count;
+        Result<CatGalleryItemDisplayOrder> displayOrderResult =
+            CatGalleryItemDisplayOrder.Create(nextDisplayOrder, MaximumGalleryItemsCount);
+
+        if (displayOrderResult.IsFailure)
+        {
+            return Result.Failure<CatGalleryItemId>(displayOrderResult.Error);
+        }
+
+        Result<CatGalleryItem> galleryItemCreationResult =
+            CatGalleryItem.Create(displayOrderResult.Value, CreatedAt);
+
         if (galleryItemCreationResult.IsFailure)
         {
             return Result.Failure<CatGalleryItemId>(galleryItemCreationResult.Error);
         }
-        
+
         _galleryItems.Add(galleryItemCreationResult.Value);
         return Result.Success(galleryItemCreationResult.Value.Id);
     }
-    
-    public Result UpdateGalleryItem(CatGalleryItemId galleryItemId, CatGalleryItemDisplayOrder updatedDisplayOrder)
+
+    public Result ReorderGalleryItems(Dictionary<CatGalleryItemId, CatGalleryItemDisplayOrder> newOrders)
+    {
+        ArgumentNullException.ThrowIfNull(newOrders);
+
+        if (newOrders.Count != _galleryItems.Count)
+        {
+            return Result.Failure(DomainErrors.Cat.InvalidReorderOperation);
+        }
+
+        HashSet<int> displayOrderValues = newOrders.Values.Select(o => o.Value).ToHashSet();
+        if (displayOrderValues.Count != newOrders.Count)
+        {
+            return Result.Failure(DomainErrors.Cat.DuplicateDisplayOrders);
+        }
+
+        int minOrder = displayOrderValues.Min();
+        int maxOrder = displayOrderValues.Max();
+        if (minOrder != 0 || maxOrder != _galleryItems.Count - 1)
+        {
+            return Result.Failure(DomainErrors.Cat.DisplayOrderMustBeContiguous);
+        }
+
+        foreach (KeyValuePair<CatGalleryItemId, CatGalleryItemDisplayOrder> kvp in newOrders)
+        {
+            Maybe<CatGalleryItem> maybeItem = _galleryItems.GetByIdOrDefault(kvp.Key);
+            if (maybeItem.HasNoValue)
+            {
+                return Result.Failure(DomainErrors.CatGalleryItem.NotFound(kvp.Key));
+            }
+
+            maybeItem.Value.UpdateDisplayOrder(kvp.Value);
+        }
+
+        return Result.Success();
+    }
+
+    public Result RemoveGalleryItem(CatGalleryItemId galleryItemId)
     {
         Ensure.NotEmpty(galleryItemId);
-        ArgumentNullException.ThrowIfNull(updatedDisplayOrder);
 
         Maybe<CatGalleryItem> maybeGalleryItem = _galleryItems.GetByIdOrDefault(galleryItemId);
         if (maybeGalleryItem.HasNoValue)
         {
             return Result.Failure(DomainErrors.CatGalleryItem.NotFound(galleryItemId));
         }
-        
-        if (_galleryItems.Any(item => item != maybeGalleryItem.Value && item.DisplayOrder == updatedDisplayOrder))
-        {
-            return Result.Failure();
-        }
-        
-        maybeGalleryItem.Value.UpdateDisplayOrder(updatedDisplayOrder);
-        return Result.Success();
-    }
-    
-    public Result RemoveGalleryItem(CatGalleryItemId galleryItemId)
-    {
-        Ensure.NotEmpty(galleryItemId);
-        
-        Maybe<CatGalleryItem> maybeGalleryItem = _galleryItems.GetByIdOrDefault(galleryItemId);
-        if (maybeGalleryItem.HasNoValue)
-        {
-            return Result.Failure(DomainErrors.CatGalleryItem.NotFound(galleryItemId));
-        }
-        
+
+        int removedDisplayOrder = maybeGalleryItem.Value.DisplayOrder.Value;
         _galleryItems.Remove(maybeGalleryItem.Value);
+
+        foreach (CatGalleryItem item in _galleryItems.Where(i => i.DisplayOrder.Value > removedDisplayOrder))
+        {
+            Result<CatGalleryItemDisplayOrder> newOrderResult =
+                CatGalleryItemDisplayOrder.Create(item.DisplayOrder.Value - 1, MaximumGalleryItemsCount);
+
+            if (newOrderResult.IsFailure)
+            {
+                return Result.Failure(newOrderResult.Error);
+            }
+
+            item.UpdateDisplayOrder(newOrderResult.Value);
+        }
+
         return Result.Success();
     }
 
@@ -416,8 +463,9 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
         NeuteringStatus neuteringStatus,
         InfectiousDiseaseStatus infectiousDiseaseStatus,
         CreatedAt createdAt,
-        List<Vaccination>? vaccinations = null,
-        List<CatGalleryItem>? galleryItems = null)
+        List<Vaccination>? vaccinations,
+        CatThumbnail? thumbnail,
+        List<CatGalleryItem>? galleryItems)
     {
         Ensure.NotEmpty(personId);
         ArgumentNullException.ThrowIfNull(name);
@@ -455,6 +503,7 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
             createdAt,
             CatStatusType.Draft,
             vaccinations ?? [],
+            thumbnail,
             galleryItems ?? []);
 
         return Result.Success(instance);
@@ -479,6 +528,7 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
         CreatedAt createdAt,
         CatStatusType status,
         List<Vaccination> vaccinations,
+        CatThumbnail? thumbnail,
         List<CatGalleryItem> galleryItems) : base(id, createdAt)
     {
         PersonId = personId;
@@ -497,6 +547,7 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
         InfectiousDiseaseStatus = infectiousDiseaseStatus;
         Status = status;
         _vaccinations = vaccinations;
+        Thumbnail = thumbnail;
         _galleryItems = galleryItems;
     }
 }
