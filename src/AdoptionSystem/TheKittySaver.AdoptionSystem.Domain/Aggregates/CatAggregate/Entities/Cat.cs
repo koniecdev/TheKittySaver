@@ -426,7 +426,11 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
                 return Result.Failure(DomainErrors.CatGalleryItem.NotFound(kvp.Key));
             }
 
-            maybeItem.Value.UpdateDisplayOrder(kvp.Value);
+            Result updateDisplayOrderResult = maybeItem.Value.UpdateDisplayOrder(kvp.Value);
+            if (updateDisplayOrderResult.IsFailure)
+            {
+                return updateDisplayOrderResult;
+            }
         }
 
         return Result.Success();
@@ -455,7 +459,11 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
                 return Result.Failure(newOrderResult.Error);
             }
 
-            item.UpdateDisplayOrder(newOrderResult.Value);
+            Result updateDisplayOrderResult = item.UpdateDisplayOrder(newOrderResult.Value);
+            if (updateDisplayOrderResult.IsFailure)
+            {
+                return updateDisplayOrderResult;
+            }
         }
 
         return Result.Success();
