@@ -32,7 +32,7 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
         AdoptionAnnouncementMergeLog log = AdoptionAnnouncementMergeLog.Create(deletedAdoptionAnnouncementId);
         if (_mergeLogs.Contains(log))
         {
-            return Result.Failure(DomainErrors.AdoptionAnnouncement.MergeLogs.AlreadyExists);
+            return Result.Failure(DomainErrors.AdoptionAnnouncementErrors.MergeLogsProperty.AlreadyExists);
         }
         _mergeLogs.Add(log);
         return Result.Success();
@@ -53,7 +53,7 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
 
         if (Status is not AnnouncementStatusType.Active)
         {
-            return Result.Failure(DomainErrors.AdoptionAnnouncement.Status.CanOnlyUpdateWhenActive);
+            return Result.Failure(DomainErrors.AdoptionAnnouncementErrors.StatusProperty.CanOnlyUpdateWhenActive);
         }
 
         Address = updatedAddress;
@@ -66,7 +66,7 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
 
         if (Status is not AnnouncementStatusType.Active)
         {
-            return Result.Failure(DomainErrors.AdoptionAnnouncement.Status.CanOnlyUpdateWhenActive);
+            return Result.Failure(DomainErrors.AdoptionAnnouncementErrors.StatusProperty.CanOnlyUpdateWhenActive);
         }
 
         Email = updatedEmail;
@@ -80,7 +80,7 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
         if (Status is not AnnouncementStatusType.Active)
         {
             return Result.Failure(
-                DomainErrors.AdoptionAnnouncement.Status.CanOnlyUpdateWhenActive);
+                DomainErrors.AdoptionAnnouncementErrors.StatusProperty.CanOnlyUpdateWhenActive);
         }
 
         PhoneNumber = updatedPhoneNumber;
@@ -91,7 +91,7 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
     {
         if (Status is AnnouncementStatusType.Claimed)
         {
-            return Result.Failure(DomainErrors.AdoptionAnnouncement.Status.AlreadyClaimed(Id));
+            return Result.Failure(DomainErrors.AdoptionAnnouncementErrors.StatusProperty.AlreadyClaimed(Id));
         }
 
         Status = AnnouncementStatusType.Claimed;

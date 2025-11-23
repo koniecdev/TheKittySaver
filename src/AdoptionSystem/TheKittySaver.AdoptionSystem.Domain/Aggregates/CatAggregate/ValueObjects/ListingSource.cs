@@ -27,19 +27,19 @@ public sealed class ListingSource : ValueObject
     {
         if (type is ListingSourceType.Unset)
         {
-            return Result.Failure<ListingSource>(DomainErrors.Cat.ListingSource.TypeIsUnset);
+            return Result.Failure<ListingSource>(DomainErrors.CatEntity.ListingSourceProperty.TypeIsUnset);
         }
 
         if (string.IsNullOrWhiteSpace(sourceName))
         {
-            return Result.Failure<ListingSource>(DomainErrors.Cat.ListingSource.SourceNameNullOrEmpty);
+            return Result.Failure<ListingSource>(DomainErrors.CatEntity.ListingSourceProperty.SourceNameNullOrEmpty);
         }
 
         sourceName = sourceName.Trim();
         if (sourceName.Length > MaxSourceNameLength)
         {
             return Result.Failure<ListingSource>(
-                DomainErrors.Cat.ListingSource.SourceNameLongerThanAllowed);
+                DomainErrors.CatEntity.ListingSourceProperty.SourceNameLongerThanAllowed);
         }
 
         ListingSource instance = new(type, sourceName);

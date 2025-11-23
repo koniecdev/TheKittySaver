@@ -21,12 +21,12 @@ internal sealed class CatAdoptionAnnouncementReassignmentService : ICatAdoptionA
         if (sourceAdoptionAnnouncement.Status is not AnnouncementStatusType.Active
             || destinationAdoptionAnnouncement.Status is not AnnouncementStatusType.Active)
         {
-            return Result.Failure(DomainErrors.AdoptionAnnouncement.Status.CannotReassignCatToInactiveAnnouncement);
+            return Result.Failure(DomainErrors.AdoptionAnnouncementErrors.StatusProperty.CannotReassignCatToInactiveAnnouncement);
         }
 
         if (catsInitiallyAssignedToDestinationAdoptionAnnouncement.Contains(cat))
         {
-            return Result.Failure(DomainErrors.Cat.Assignment.CannotReassignToSameAnnouncement(cat.Id));
+            return Result.Failure(DomainErrors.CatEntity.Assignment.CannotReassignToSameAnnouncement(cat.Id));
         }
 
         bool isCatCompatibileWithOthers =
@@ -35,7 +35,7 @@ internal sealed class CatAdoptionAnnouncementReassignmentService : ICatAdoptionA
 
         if (!isCatCompatibileWithOthers)
         {
-            return Result.Failure(DomainErrors.Cat.Assignment.IncompatibleInfectiousDiseaseStatus(cat.Id));
+            return Result.Failure(DomainErrors.CatEntity.Assignment.IncompatibleInfectiousDiseaseStatus(cat.Id));
         }
 
         Result reassignmentResult = cat.ReassignToAnotherAdoptionAnnouncement(

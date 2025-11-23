@@ -22,19 +22,19 @@ public sealed class AdoptionHistory : ValueObject
         if (counterHowManyTimesWasTheCatReturned < 0)
         {
             return Result.Failure<AdoptionHistory>(
-                DomainErrors.Cat.AdoptionHistory.CountTooLow);
+                DomainErrors.CatEntity.AdoptionHistoryProperty.CountTooLow);
         }
 
         if (CatAge.IsDateTooOldForCat(lastReturn, currentDate))
         {
             return Result.Failure<AdoptionHistory>(
-                DomainErrors.Cat.AdoptionHistory.LastReturnTooFarInPast(lastReturn, currentDate));
+                DomainErrors.CatEntity.AdoptionHistoryProperty.LastReturnTooFarInPast(lastReturn, currentDate));
         }
 
         if (string.IsNullOrWhiteSpace(reason))
         {
             return Result.Failure<AdoptionHistory>(
-                DomainErrors.Cat.AdoptionHistory.LastReturnReasonIsEmpty);
+                DomainErrors.CatEntity.AdoptionHistoryProperty.LastReturnReasonIsEmpty);
         }
     
         reason = reason.Trim();

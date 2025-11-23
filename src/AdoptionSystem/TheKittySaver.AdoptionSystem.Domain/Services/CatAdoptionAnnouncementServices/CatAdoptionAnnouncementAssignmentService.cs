@@ -50,7 +50,7 @@ internal sealed class CatAdoptionAnnouncementAssignmentService : ICatAdoptionAnn
     {
         if (cat.PersonId != adoptionAnnouncement.PersonId)
         {
-            return Result.Failure(DomainErrors.CatAdoptionAnnouncementService.PersonIdMismatch(
+            return Result.Failure(DomainErrors.CatAdoptionAnnouncementServiceErrors.PersonIdMismatch(
                 catId: cat.Id,
                 catPersonId: cat.PersonId,
                 adoptionAnnouncementId: adoptionAnnouncement.Id,
@@ -59,22 +59,22 @@ internal sealed class CatAdoptionAnnouncementAssignmentService : ICatAdoptionAnn
         
         if (cat.Status is not CatStatusType.Draft)
         {
-            return Result.Failure(DomainErrors.Cat.Status.MustBeDraftForAssignment(cat.Id));
+            return Result.Failure(DomainErrors.CatEntity.StatusProperty.MustBeDraftForAssignment(cat.Id));
         }
 
         if (adoptionAnnouncement.Status is not AnnouncementStatusType.Active)
         {
-            return Result.Failure(DomainErrors.AdoptionAnnouncement.Status.UnavailableForAssigning);
+            return Result.Failure(DomainErrors.AdoptionAnnouncementErrors.StatusProperty.UnavailableForAssigning);
         }
 
         if (catsAlreadyAssignedToAa.Any(c => c.Id == cat.Id))
         {
-            return Result.Failure(DomainErrors.Cat.Assignment.AlreadyAssignedToAnnouncement(cat.Id));
+            return Result.Failure(DomainErrors.CatEntity.Assignment.AlreadyAssignedToAnnouncement(cat.Id));
         }
 
         if (!catsAlreadyAssignedToAa.All(c => c.InfectiousDiseaseStatus.IsCompatibleWith(cat.InfectiousDiseaseStatus)))
         {
-            return Result.Failure(DomainErrors.CatAdoptionAnnouncementService
+            return Result.Failure(DomainErrors.CatAdoptionAnnouncementServiceErrors
                 .InfectiousDiseaseConflict(cat.Id, adoptionAnnouncement.Id));
         }
         

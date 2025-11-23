@@ -19,13 +19,13 @@ public sealed class SpecialNeedsStatus : ValueObject
         if (string.IsNullOrWhiteSpace(description))
         {
             return Result.Failure<SpecialNeedsStatus>(
-                DomainErrors.Cat.SpecialNeeds.DescriptionNullOrEmpty);
+                DomainErrors.CatEntity.SpecialNeedsProperty.DescriptionNullOrEmpty);
         }
 
         if (severityType is SpecialNeedsSeverityType.Unset)
         {
             return Result.Failure<SpecialNeedsStatus>(
-                DomainErrors.Cat.SpecialNeeds.SeverityIsUnset);
+                DomainErrors.CatEntity.SpecialNeedsProperty.SeverityIsUnset);
         }
 
         description = description.Trim();
@@ -33,7 +33,7 @@ public sealed class SpecialNeedsStatus : ValueObject
         if (description.Length > MaxDescriptionLength)
         {
             return Result.Failure<SpecialNeedsStatus>(
-                DomainErrors.Cat.SpecialNeeds.DescriptionLongerThanAllowed);
+                DomainErrors.CatEntity.SpecialNeedsProperty.DescriptionLongerThanAllowed);
         }
 
         SpecialNeedsStatus instance = new(true, description, severityType);

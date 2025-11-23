@@ -20,7 +20,7 @@ public sealed class Person : AggregateRoot<PersonId>
     private readonly List<Address> _addresses = [];
     public IReadOnlyList<Address> Addresses => _addresses.AsReadOnly();
     
-    public IdentityId IdentityId { get; private set; } = IdentityId.Empty;
+    public IdentityId IdentityId { get; }
     public Username Username { get; private set; }
     public Email Email { get; private set; }
     public PhoneNumber PhoneNumber { get; private set; }
@@ -38,7 +38,7 @@ public sealed class Person : AggregateRoot<PersonId>
 
         if (_addresses.Any(x=>x.Name == name))
         {
-            return Result.Failure<AddressId>(DomainErrors.Address.NameAlreadyTaken(name));
+            return Result.Failure<AddressId>(DomainErrors.AddressEntity.NameAlreadyTaken(name));
         }
 
         Result<Address> createAddressResult = Address.Create(
@@ -67,12 +67,12 @@ public sealed class Person : AggregateRoot<PersonId>
         Maybe<Address> maybeAddress = _addresses.GetByIdOrDefault(addressId);
         if (maybeAddress.HasNoValue)
         {
-            return Result.Failure(DomainErrors.Address.NotFound(addressId));
+            return Result.Failure(DomainErrors.AddressEntity.NotFound(addressId));
         }
 
         if (maybeAddress.Value.Name != updatedName && _addresses.Any(x=>x.Name == updatedName))
         {
-            return Result.Failure(DomainErrors.Address.NameAlreadyTaken(updatedName));
+            return Result.Failure(DomainErrors.AddressEntity.NameAlreadyTaken(updatedName));
         }
 
         Result updateNameResult = maybeAddress.Value.UpdateName(updatedName);
@@ -94,7 +94,7 @@ public sealed class Person : AggregateRoot<PersonId>
         Maybe<Address> maybeAddressThatWeWantToUpdate = _addresses.GetByIdOrDefault(id);
         if (maybeAddressThatWeWantToUpdate.HasNoValue)
         {
-            return Result.Failure(DomainErrors.Address.NotFound(id));
+            return Result.Failure(DomainErrors.AddressEntity.NotFound(id));
         }
 
         Result updateRegionResult = maybeAddressThatWeWantToUpdate.Value.UpdateRegion(region);
@@ -122,24 +122,12 @@ public sealed class Person : AggregateRoot<PersonId>
         Maybe<Address> maybeAddress = _addresses.GetByIdOrDefault(id);
         if (maybeAddress.HasNoValue)
         {
-            return Result.Failure(DomainErrors.Address.NotFound(id));
+            return Result.Failure(DomainErrors.AddressEntity.NotFound(id));
         }
 
         return _addresses.Remove(maybeAddress.Value)
             ? Result.Success()
             : Result.Failure(DomainErrors.DeletionCorruption(nameof(Address)));
-    }
-    
-    public Result SetIdentityId(IdentityId identityId)
-    {
-        Ensure.NotEmpty(identityId);
-        if (IdentityId != IdentityId.Empty)
-        {
-            return Result.Failure(DomainErrors.Person.IdentityId.AlreadyHasBeenSet);
-        }
-
-        IdentityId = identityId;
-        return Result.Success();
     }
     
     internal Result UpdateUsername(Username username)
@@ -167,15 +155,17 @@ public sealed class Person : AggregateRoot<PersonId>
         Username username,
         Email email,
         PhoneNumber phoneNumber,
-        CreatedAt createdAt)
+        CreatedAt createdAt,
+        IdentityId identityId)
     {
+        Ensure.NotEmpty(identityId);
         ArgumentNullException.ThrowIfNull(username);
         ArgumentNullException.ThrowIfNull(email);
         ArgumentNullException.ThrowIfNull(phoneNumber);
         ArgumentNullException.ThrowIfNull(createdAt);
 
         PersonId id = PersonId.New();
-        Person instance = new(id, username, email, phoneNumber, createdAt);
+        Person instance = new(id, username, email, phoneNumber, createdAt, identityId);
 
         return Result.Success(instance);
     }
@@ -185,10 +175,12 @@ public sealed class Person : AggregateRoot<PersonId>
         Username username,
         Email email,
         PhoneNumber phoneNumber,
-        CreatedAt createdAt) : base(id, createdAt)
+        CreatedAt createdAt,
+        IdentityId identityId) : base(id, createdAt)
     {
         Username = username;
         Email = email;
         PhoneNumber = phoneNumber;
+        IdentityId = identityId;
     }
 }

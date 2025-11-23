@@ -13,12 +13,12 @@ public sealed class CatDescription : ValueObject
     {
         if (string.IsNullOrWhiteSpace(value))
         {
-            return Result.Failure<CatDescription>(DomainErrors.Cat.Description.NullOrEmpty);
+            return Result.Failure<CatDescription>(DomainErrors.CatEntity.DescriptionProperty.NullOrEmpty);
         }
 
         if (value.Length > MaxLength)
         {
-            return Result.Failure<CatDescription>(DomainErrors.Cat.Description.LongerThanAllowed);
+            return Result.Failure<CatDescription>(DomainErrors.CatEntity.DescriptionProperty.LongerThanAllowed);
         }
         
         CatDescription instance = new(value);

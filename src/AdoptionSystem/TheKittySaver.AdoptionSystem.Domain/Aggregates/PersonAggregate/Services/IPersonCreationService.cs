@@ -4,6 +4,7 @@ using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.PhoneNumbers;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.Timestamps;
+using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
 using Email = TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.Email;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.Services;
@@ -15,5 +16,6 @@ public interface IPersonCreationService
         Email email,
         PhoneNumber phoneNumber,
         CreatedAt createdAt,
+        IdentityId identityId,
         CancellationToken cancellationToken = default);
 }

@@ -1,3 +1,4 @@
+using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Entities;
 using CatEntity = TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Entities.Cat;
 using VaccinationEntity = TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Entities.Vaccination;
 using AdoptionHistoryValueObject = TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.ValueObjects.AdoptionHistory;
@@ -12,22 +13,22 @@ namespace TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 
 public static partial class DomainErrors
 {
-    public static class Cat
+    public static class CatEntity
     {
         public static Error NotFound(CatId id)
-            => HasNotBeenFound(nameof(Cat), id.Value);
+            => HasNotBeenFound(nameof(CatEntity), id.Value);
 
         public static Error GalleryIsFull
             => CustomMessage(
-                nameof(Cat),
+                nameof(CatEntity),
                 "Gallery",
-                $"Cannot add more items to the gallery. Maximum of {CatEntity.MaximumGalleryItemsCount} items allowed.",
+                $"Cannot add more items to the gallery. Maximum of {Cat.MaximumGalleryItemsCount} items allowed.",
                 "GalleryIsFull",
                 TypeOfError.Validation);
 
         public static Error InvalidReorderOperation
             => CustomMessage(
-                nameof(Cat),
+                nameof(CatEntity),
                 "Gallery",
                 "The reorder operation is invalid. The number of items in the new order must match the current gallery items count.",
                 "InvalidReorderOperation",
@@ -35,7 +36,7 @@ public static partial class DomainErrors
 
         public static Error DuplicateDisplayOrders
             => CustomMessage(
-                nameof(Cat),
+                nameof(CatEntity),
                 "Gallery",
                 "The reorder operation contains duplicate display order values.",
                 "DuplicateDisplayOrders",
@@ -43,163 +44,163 @@ public static partial class DomainErrors
 
         public static Error DisplayOrderMustBeContiguous
             => CustomMessage(
-                nameof(Cat),
+                nameof(CatEntity),
                 "Gallery",
                 "Display orders must be contiguous starting from 0.",
                 "DisplayOrderMustBeContiguous",
                 TypeOfError.Validation);
 
-        public static class Name
+        public static class NameProperty
         {
             public static Error NullOrEmpty
-                => Required(nameof(Cat), nameof(CatEntity.Name));
+                => Required(nameof(CatEntity), nameof(Cat.Name));
 
             public static Error LongerThanAllowed
-                => TooManyCharacters(nameof(Cat), nameof(CatEntity.Name), CatName.MaxLength);
+                => TooManyCharacters(nameof(CatEntity), nameof(Cat.Name), CatName.MaxLength);
         }
 
-        public static class Age
+        public static class AgeProperty
         {
             public static Error BelowMinimalAllowedValue(int actualValue, int minimumValue)
-                => BelowValue(nameof(Cat), nameof(CatEntity.Age), actualValue, minimumValue);
+                => BelowValue(nameof(CatEntity), nameof(Cat.Age), actualValue, minimumValue);
 
             public static Error AboveMaximumAllowedValue(int actualValue, int maximumValue)
-                => AboveValue(nameof(Cat), nameof(CatEntity.Age), actualValue, maximumValue);
+                => AboveValue(nameof(CatEntity), nameof(Cat.Age), actualValue, maximumValue);
         }
 
-        public static class AdoptionHistory
+        public static class AdoptionHistoryProperty
         {
             public static Error CountTooLow
                 => CustomMessage(
-                    nameof(Cat),
-                    $"{nameof(CatEntity.AdoptionHistory)}.{nameof(AdoptionHistoryValueObject.ReturnCount)}",
+                    nameof(CatEntity),
+                    $"{nameof(Cat.AdoptionHistory)}.{nameof(AdoptionHistoryValueObject.ReturnCount)}",
                     "If cat has been returned, then it must have been returned at least one time.",
                     "CountTooLow",
                     TypeOfError.Validation);
 
             public static Error LastReturnTooFarInPast(DateTimeOffset lastReturnDate, DateTimeOffset currentDate)
                 => CustomMessage(
-                    nameof(Cat),
-                    $"{nameof(CatEntity.AdoptionHistory)}.{nameof(AdoptionHistoryValueObject.LastReturnDate)}",
+                    nameof(CatEntity),
+                    $"{nameof(Cat.AdoptionHistory)}.{nameof(AdoptionHistoryValueObject.LastReturnDate)}",
                     $"Last return date '{lastReturnDate:yyyy-MM-dd}' is too old to be valid (reference date: '{currentDate:yyyy-MM-dd}').",
                     "LastReturnTooFarInPast",
                     TypeOfError.Validation);
 
             public static Error LastReturnReasonIsEmpty
-                => Required(nameof(Cat), $"{nameof(CatEntity.AdoptionHistory)}.{nameof(AdoptionHistoryValueObject.LastReturnReason)}");
+                => Required(nameof(CatEntity), $"{nameof(Cat.AdoptionHistory)}.{nameof(AdoptionHistoryValueObject.LastReturnReason)}");
         }
 
-        public static class ListingSource
+        public static class ListingSourceProperty
         {
             public static Error SourceNameNullOrEmpty
-                => Required(nameof(Cat), $"{nameof(CatEntity.ListingSource)}.{nameof(ListingSourceValueObject.SourceName)}");
+                => Required(nameof(CatEntity), $"{nameof(Cat.ListingSource)}.{nameof(ListingSourceValueObject.SourceName)}");
 
             public static Error SourceNameLongerThanAllowed
                 => TooManyCharacters(
-                    nameof(Cat),
-                    $"{nameof(CatEntity.ListingSource)}.{nameof(ListingSourceValueObject.SourceName)}",
+                    nameof(CatEntity),
+                    $"{nameof(Cat.ListingSource)}.{nameof(ListingSourceValueObject.SourceName)}",
                     ListingSourceValueObject.MaxSourceNameLength);
 
             public static Error TypeIsUnset
-                => Required(nameof(Cat), $"{nameof(CatEntity.ListingSource)}.{nameof(ListingSourceValueObject.Type)}");
+                => Required(nameof(CatEntity), $"{nameof(Cat.ListingSource)}.{nameof(ListingSourceValueObject.Type)}");
         }
 
-        public static class SpecialNeeds
+        public static class SpecialNeedsProperty
         {
             public static Error DescriptionNullOrEmpty
-                => Required(nameof(Cat), $"{nameof(CatEntity.SpecialNeeds)}.{nameof(SpecialNeedsStatus.Description)}");
+                => Required(nameof(CatEntity), $"{nameof(Cat.SpecialNeeds)}.{nameof(SpecialNeedsStatus.Description)}");
 
             public static Error DescriptionLongerThanAllowed
                 => TooManyCharacters(
-                    nameof(Cat),
-                    $"{nameof(CatEntity.SpecialNeeds)}.{nameof(SpecialNeedsStatus.Description)}",
+                    nameof(CatEntity),
+                    $"{nameof(Cat.SpecialNeeds)}.{nameof(SpecialNeedsStatus.Description)}",
                     SpecialNeedsStatus.MaxDescriptionLength);
 
             public static Error SeverityIsUnset
-                => Required(nameof(Cat), $"{nameof(CatEntity.SpecialNeeds)}.{nameof(SpecialNeedsStatus.SeverityType)}");
+                => Required(nameof(CatEntity), $"{nameof(Cat.SpecialNeeds)}.{nameof(SpecialNeedsStatus.SeverityType)}");
         }
 
-        public static class Description
+        public static class DescriptionProperty
         {
             public static Error NullOrEmpty
-                => Required(nameof(Cat), nameof(CatEntity.Description));
+                => Required(nameof(CatEntity), nameof(Cat.Description));
 
             public static Error LongerThanAllowed
-                => TooManyCharacters(nameof(Cat), nameof(CatEntity.Description), CatDescription.MaxLength);
+                => TooManyCharacters(nameof(CatEntity), nameof(Cat.Description), CatDescription.MaxLength);
         }
 
-        public static class Weight
+        public static class WeightProperty
         {
             public static Error BelowMinimum(decimal actual, decimal minimum)
-                => BelowValue(nameof(Cat), nameof(CatEntity.Weight), actual, minimum);
+                => BelowValue(nameof(CatEntity), nameof(Cat.Weight), actual, minimum);
 
             public static Error AboveMaximum(decimal actual, decimal maximum)
-                => AboveValue(nameof(Cat), nameof(CatEntity.Weight), actual, maximum);
+                => AboveValue(nameof(CatEntity), nameof(Cat.Weight), actual, maximum);
         }
 
-        public static class InfectiousDiseaseStatus
+        public static class InfectiousDiseaseStatusProperty
         {
             public static Error TestDateInFuture(DateOnly lastTestedAt, DateOnly currentDate)
                 => CustomMessage(
-                    nameof(Cat),
-                    $"{nameof(CatEntity.InfectiousDiseaseStatus)}.{nameof(InfectiousDiseaseStatusValueObject.LastTestedAt)}",
+                    nameof(CatEntity),
+                    $"{nameof(Cat.InfectiousDiseaseStatus)}.{nameof(InfectiousDiseaseStatusValueObject.LastTestedAt)}",
                     $"Test date '{lastTestedAt:yyyy-MM-dd}' cannot be in the future (reference date: '{currentDate:yyyy-MM-dd}').",
                     "TestDateInFuture",
                     TypeOfError.Validation);
 
             public static Error TestDateTooOld(DateOnly lastTestedAt, DateOnly currentDate)
                 => CustomMessage(
-                    nameof(Cat),
-                    $"{nameof(CatEntity.InfectiousDiseaseStatus)}.{nameof(InfectiousDiseaseStatusValueObject.LastTestedAt)}",
+                    nameof(CatEntity),
+                    $"{nameof(Cat.InfectiousDiseaseStatus)}.{nameof(InfectiousDiseaseStatusValueObject.LastTestedAt)}",
                     $"Test date '{lastTestedAt:yyyy-MM-dd}' is too old to be valid (reference date: '{currentDate:yyyy-MM-dd}').",
                     "TestDateTooOld",
                     TypeOfError.Validation);
         }
 
-        public static class Status
+        public static class StatusProperty
         {
             public static Error AlreadyClaimed(CatId catId)
                 => StateConflict(
-                    nameof(Cat),
-                    nameof(CatEntity.Status),
+                    nameof(CatEntity),
+                    nameof(Cat.Status),
                     $"Cat with ID '{catId.Value}' has already been claimed.",
                     "AlreadyClaimed");
 
             public static Error MustBeDraftForAssignment(CatId catId)
                 => InvalidOperation(
-                    nameof(Cat),
-                    nameof(CatEntity.Status),
+                    nameof(CatEntity),
+                    nameof(Cat.Status),
                     $"Cat with ID '{catId.Value}' must be in draft status to be assigned to an adoption announcement.",
                     "MustBeDraftForAssignment");
 
             public static Error CannotClaimDraftCat(CatId catId)
                 => InvalidOperation(
-                    nameof(Cat),
-                    nameof(CatEntity.Status),
+                    nameof(CatEntity),
+                    nameof(Cat.Status),
                     $"Cannot claim cat with ID '{catId.Value}' because it is in draft status.",
                     "CannotClaimDraftCat");
 
             public static Error MustBePublishedForReassignment(CatId catId)
                 => InvalidOperation(
-                    nameof(Cat),
-                    nameof(CatEntity.Status),
+                    nameof(CatEntity),
+                    nameof(Cat.Status),
                     $"Cat with ID '{catId.Value}' must be in published status to be reassigned to another adoption announcement.",
                     "MustBePublishedForReassignment");
 
             public static Error NotPublished(CatId catId)
                 => InvalidOperation(
-                    nameof(Cat),
-                    nameof(CatEntity.Status),
+                    nameof(CatEntity),
+                    nameof(Cat.Status),
                     $"Cat with ID '{catId.Value}' is not published.",
                     "NotPublished");
         }
 
-        public static class Thumbnail
+        public static class ThumbnailProperty
         {
             public static Error RequiredForPublishing(CatId catId)
                 => InvalidOperation(
-                    nameof(Cat),
-                    nameof(CatEntity.ThumbnailId),
+                    nameof(CatEntity),
+                    nameof(Cat.ThumbnailId),
                     $"Cat with ID '{catId.Value}' must have a thumbnail before being published.",
                     "RequiredForPublishing");
         }
@@ -208,54 +209,54 @@ public static partial class DomainErrors
         {
             public static Error AlreadyAssignedToAnotherAnnouncement(CatId catId)
                 => StateConflict(
-                    nameof(Cat),
-                    nameof(CatEntity.AdoptionAnnouncementId),
+                    nameof(CatEntity),
+                    nameof(Cat.AdoptionAnnouncementId),
                     $"Cat with ID '{catId.Value}' is already assigned to an adoption announcement.",
                     "AlreadyAssignedToAnotherAnnouncement");
 
             public static Error AlreadyAssignedToAnnouncement(CatId catId)
                 => StateConflict(
-                    nameof(Cat),
-                    nameof(CatEntity.AdoptionAnnouncementId),
+                    nameof(CatEntity),
+                    nameof(Cat.AdoptionAnnouncementId),
                     $"Cat with ID '{catId.Value}' is already assigned to this adoption announcement.",
                     "AlreadyAssignedToAnnouncement");
 
             public static Error NotAssignedToAdoptionAnnouncement(CatId catId)
                 => InvalidOperation(
-                    nameof(Cat),
-                    nameof(CatEntity.AdoptionAnnouncementId),
+                    nameof(CatEntity),
+                    nameof(Cat.AdoptionAnnouncementId),
                     $"Cat with ID '{catId.Value}' is not assigned to any adoption announcement.",
                     "NotAssignedToAdoptionAnnouncement");
 
             public static Error CannotReassignToSameAnnouncement(CatId catId)
                 => InvalidOperation(
-                    nameof(Cat),
-                    nameof(CatEntity.AdoptionAnnouncementId),
+                    nameof(CatEntity),
+                    nameof(Cat.AdoptionAnnouncementId),
                     $"Cat with ID '{catId.Value}' cannot be reassigned to the same adoption announcement it is already assigned to.",
                     "CannotReassignToSameAnnouncement");
 
             public static Error IncompatibleInfectiousDiseaseStatus(CatId catId)
                 => InvalidOperation(
-                    nameof(Cat),
-                    nameof(CatEntity.InfectiousDiseaseStatus),
+                    nameof(CatEntity),
+                    nameof(Cat.InfectiousDiseaseStatus),
                     $"Cat with ID '{catId.Value}' cannot be reassigned to an adoption announcement with incompatible infectious disease status.",
                     "IncompatibleInfectiousDiseaseStatus");
         }
     }
 
-    public static class CatGalleryItem
+    public static class CatGalleryItemEntity
     {
         public static Error NotFound(CatGalleryItemId id)
-            => HasNotBeenFound(nameof(CatGalleryItem), id.Value);
+            => HasNotBeenFound(nameof(CatGalleryItemEntity), id.Value);
 
-        public static class DisplayOrder
+        public static class DisplayOrderProperty
         {
             public static Error BelowMinimum(int actualValue, int minimumValue)
-                => BelowValue(nameof(CatGalleryItem), nameof(CatGalleryItemDisplayOrder), actualValue, minimumValue);
+                => BelowValue(nameof(CatGalleryItemEntity), nameof(CatGalleryItemDisplayOrder), actualValue, minimumValue);
 
             public static Error AboveOrEqualMaximum(int actualValue, int maximumValue)
                 => CustomMessage(
-                    nameof(CatGalleryItem),
+                    nameof(CatGalleryItemEntity),
                     nameof(CatGalleryItemDisplayOrder),
                     $"The displayorder has been set with value '{actualValue}', and it must be less than '{maximumValue}'.",
                     "AboveOrEqualMaximum",
@@ -263,25 +264,25 @@ public static partial class DomainErrors
         }
     }
 
-    public static class Vaccination
+    public static class VaccinationEntity
     {
         public static Error NotFound(VaccinationId vaccinationId)
-            => HasNotBeenFound(nameof(Vaccination), vaccinationId.Value);
+            => HasNotBeenFound(nameof(VaccinationEntity), vaccinationId.Value);
 
-        public static class VeterinarianNote
+        public static class VeterinarianNoteProperty
         {
             public static Error NullOrEmpty
-                => Required(nameof(Vaccination), nameof(VaccinationEntity.VeterinarianNote));
+                => Required(nameof(VaccinationEntity), nameof(Vaccination.VeterinarianNote));
 
             public static Error LongerThanAllowed
-                => TooManyCharacters(nameof(Vaccination), nameof(VaccinationEntity.VeterinarianNote), VaccinationNote.MaxLength);
+                => TooManyCharacters(nameof(VaccinationEntity), nameof(Vaccination.VeterinarianNote), VaccinationNote.MaxLength);
         }
 
-        public static class Dates
+        public static class DatesProperty
         {
             public static Error VaccinationDateInFuture(DateTimeOffset vaccinationDate, DateTimeOffset referenceDate)
                 => CustomMessage(
-                    nameof(Vaccination),
+                    nameof(VaccinationEntity),
                     $"{nameof(VaccinationDates)}.{nameof(VaccinationDates.VaccinationDate)}",
                     $"Vaccination date '{vaccinationDate:yyyy-MM-dd}' cannot be in the future (reference date: '{referenceDate:yyyy-MM-dd}').",
                     "VaccinationDateInFuture",
@@ -289,7 +290,7 @@ public static partial class DomainErrors
 
             public static Error VaccinationDateTooOld(DateTimeOffset vaccinationDate, DateTimeOffset referenceDate)
                 => CustomMessage(
-                    nameof(Vaccination),
+                    nameof(VaccinationEntity),
                     $"{nameof(VaccinationDates)}.{nameof(VaccinationDates.VaccinationDate)}",
                     $"Vaccination date '{vaccinationDate:yyyy-MM-dd}' is too old to be valid (reference date: '{referenceDate:yyyy-MM-dd}').",
                     "VaccinationDateTooOld",
@@ -297,7 +298,7 @@ public static partial class DomainErrors
 
             public static Error NextDueDateInPast(DateTimeOffset nextDueDate, DateTimeOffset referenceDate)
                 => CustomMessage(
-                    nameof(Vaccination),
+                    nameof(VaccinationEntity),
                     $"{nameof(VaccinationDates)}.{nameof(VaccinationDates.NextDueDate)}",
                     $"Next due date '{nextDueDate:yyyy-MM-dd}' cannot be in the past (reference date: '{referenceDate:yyyy-MM-dd}').",
                     "NextDueDateInPast",
@@ -305,7 +306,7 @@ public static partial class DomainErrors
 
             public static Error NextDueDateBeforeOrEqualVaccinationDate(DateTimeOffset nextDueDate, DateTimeOffset vaccinationDate)
                 => CustomMessage(
-                    nameof(Vaccination),
+                    nameof(VaccinationEntity),
                     $"{nameof(VaccinationDates)}.{nameof(VaccinationDates.NextDueDate)}",
                     $"Next due date '{nextDueDate:yyyy-MM-dd}' must be after the vaccination date '{vaccinationDate:yyyy-MM-dd}'.",
                     "NextDueDateBeforeOrEqualVaccinationDate",

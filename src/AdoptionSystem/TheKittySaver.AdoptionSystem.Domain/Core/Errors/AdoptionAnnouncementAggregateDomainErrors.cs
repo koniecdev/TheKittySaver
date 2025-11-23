@@ -7,60 +7,60 @@ namespace TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 
 public static partial class DomainErrors
 {
-    public static class AdoptionAnnouncement
+    public static class AdoptionAnnouncementErrors
     {
         public static Error NotFound(AdoptionAnnouncementId id)
-            => HasNotBeenFound(nameof(AdoptionAnnouncement), id.Value);
+            => HasNotBeenFound(nameof(AdoptionAnnouncementErrors), id.Value);
 
-        public static class Status
+        public static class StatusProperty
         {
             public static Error UnavailableForAssigning
                 => InvalidOperation(
-                    nameof(AdoptionAnnouncement),
+                    nameof(AdoptionAnnouncementErrors),
                     nameof(AdoptionAnnouncementEntity.Status),
                     "Cat can be assigned to Announcement only when it is in Active status.",
                     "UnavailableForAssigning");
 
             public static Error AlreadyClaimed(AdoptionAnnouncementId id)
                 => StateConflict(
-                    nameof(AdoptionAnnouncement),
+                    nameof(AdoptionAnnouncementErrors),
                     nameof(AdoptionAnnouncementEntity.Status),
                     $"Adoption announcement with id '{id.Value}' is already claimed.",
                     "AlreadyClaimed");
 
             public static Error CanOnlyUpdateWhenActive
                 => InvalidOperation(
-                    nameof(AdoptionAnnouncement),
+                    nameof(AdoptionAnnouncementErrors),
                     nameof(AdoptionAnnouncementEntity.Status),
                     "Can only update announcement when it is active.",
                     "CanOnlyUpdateWhenActive");
 
             public static Error CannotReassignCatToInactiveAnnouncement
                 => InvalidOperation(
-                    nameof(AdoptionAnnouncement),
+                    nameof(AdoptionAnnouncementErrors),
                     nameof(AdoptionAnnouncementEntity.Status),
                     "Cannot reassign cat to an adoption announcement that is not active.",
                     "CannotReassignCatToInactiveAnnouncement");
         }
 
-        public static class MergeLogs
+        public static class MergeLogsProperty
         {
             public static Error AlreadyExists
                 => StateConflict(
-                    nameof(AdoptionAnnouncement),
+                    nameof(AdoptionAnnouncementErrors),
                     nameof(AdoptionAnnouncementEntity.MergeLogs),
                     "Merge log for this adoption announcement already exists.",
                     "AlreadyExists");
         }
 
-        public static class Description
+        public static class DescriptionProperty
         {
             public static Error NullOrEmpty
-                => Required(nameof(AdoptionAnnouncement), nameof(AdoptionAnnouncementEntity.Description));
+                => Required(nameof(AdoptionAnnouncementErrors), nameof(AdoptionAnnouncementEntity.Description));
 
             public static Error LongerThanAllowed
                 => TooManyCharacters(
-                    nameof(AdoptionAnnouncement),
+                    nameof(AdoptionAnnouncementErrors),
                     nameof(AdoptionAnnouncementEntity.Description),
                     AdoptionAnnouncementDescription.MaxLength);
         }

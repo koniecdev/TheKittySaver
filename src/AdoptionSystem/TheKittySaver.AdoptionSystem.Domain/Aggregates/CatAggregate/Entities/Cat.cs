@@ -59,17 +59,17 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
 
         if (Status is not CatStatusType.Draft)
         {
-            return Result.Failure(DomainErrors.Cat.Status.MustBeDraftForAssignment(Id));
+            return Result.Failure(DomainErrors.CatEntity.StatusProperty.MustBeDraftForAssignment(Id));
         }
 
         if (AdoptionAnnouncementId is not null)
         {
-            return Result.Failure(DomainErrors.Cat.Assignment.AlreadyAssignedToAnotherAnnouncement(Id));
+            return Result.Failure(DomainErrors.CatEntity.Assignment.AlreadyAssignedToAnotherAnnouncement(Id));
         }
 
         if (ThumbnailId is null)
         {
-            return Result.Failure(DomainErrors.Cat.Thumbnail.RequiredForPublishing(Id));
+            return Result.Failure(DomainErrors.CatEntity.ThumbnailProperty.RequiredForPublishing(Id));
         }
 
         Result<PublishedAt> publishedAtResult = PublishedAt.Create(dateTimeOfOperation);
@@ -94,7 +94,7 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
 
         if (Status is not CatStatusType.Published || AdoptionAnnouncementId is null)
         {
-            return Result.Failure(DomainErrors.Cat.Status.MustBePublishedForReassignment(Id));
+            return Result.Failure(DomainErrors.CatEntity.StatusProperty.MustBePublishedForReassignment(Id));
         }
 
         AdoptionAnnouncementId sourceAdoptionAnnouncementId = AdoptionAnnouncementId.Value;
@@ -121,12 +121,12 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
     {
         if (Status is not CatStatusType.Published)
         {
-            return Result.Failure(DomainErrors.Cat.Status.NotPublished(Id));
+            return Result.Failure(DomainErrors.CatEntity.StatusProperty.NotPublished(Id));
         }
 
         if (AdoptionAnnouncementId is null)
         {
-            return Result.Failure(DomainErrors.Cat.Assignment.NotAssignedToAdoptionAnnouncement(Id));
+            return Result.Failure(DomainErrors.CatEntity.Assignment.NotAssignedToAdoptionAnnouncement(Id));
         }
 
         AdoptionAnnouncementId sourceAdoptionAnnouncementId = AdoptionAnnouncementId.Value;
@@ -240,14 +240,14 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
         switch (Status)
         {
             case CatStatusType.Draft:
-                return Result.Failure(DomainErrors.Cat.Status.CannotClaimDraftCat(Id));
+                return Result.Failure(DomainErrors.CatEntity.StatusProperty.CannotClaimDraftCat(Id));
             case CatStatusType.Claimed:
-                return Result.Failure(DomainErrors.Cat.Status.AlreadyClaimed(Id));
+                return Result.Failure(DomainErrors.CatEntity.StatusProperty.AlreadyClaimed(Id));
             case CatStatusType.Published:
             default:
                 if (AdoptionAnnouncementId is null)
                 {
-                    return Result.Failure(DomainErrors.Cat.Assignment.NotAssignedToAdoptionAnnouncement(Id));
+                    return Result.Failure(DomainErrors.CatEntity.Assignment.NotAssignedToAdoptionAnnouncement(Id));
                 }
 
                 Status = CatStatusType.Claimed;
@@ -289,7 +289,7 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
         Maybe<Vaccination> maybeVaccination = _vaccinations.GetByIdOrDefault(vaccinationId);
         if (maybeVaccination.HasNoValue)
         {
-            return Result.Failure(DomainErrors.Vaccination.NotFound(vaccinationId));
+            return Result.Failure(DomainErrors.VaccinationEntity.NotFound(vaccinationId));
         }
 
         return !_vaccinations.Remove(maybeVaccination.Value)
@@ -304,7 +304,7 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
         Maybe<Vaccination> maybeVaccination = _vaccinations.GetByIdOrDefault(vaccinationId);
         if (maybeVaccination.HasNoValue)
         {
-            return Result.Failure(DomainErrors.Vaccination.NotFound(vaccinationId));
+            return Result.Failure(DomainErrors.VaccinationEntity.NotFound(vaccinationId));
         }
 
         Result updateResult = maybeVaccination.Value.UpdateType(updatedType);
@@ -321,7 +321,7 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
         Maybe<Vaccination> maybeVaccination = _vaccinations.GetByIdOrDefault(vaccinationId);
         if (maybeVaccination.HasNoValue)
         {
-            return Result.Failure(DomainErrors.Vaccination.NotFound(vaccinationId));
+            return Result.Failure(DomainErrors.VaccinationEntity.NotFound(vaccinationId));
         }
 
         Result updateResult = maybeVaccination.Value.UpdateVaccinationDate(updatedVaccinationDate, currentDate);
@@ -338,7 +338,7 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
         Maybe<Vaccination> maybeVaccination = _vaccinations.GetByIdOrDefault(vaccinationId);
         if (maybeVaccination.HasNoValue)
         {
-            return Result.Failure(DomainErrors.Vaccination.NotFound(vaccinationId));
+            return Result.Failure(DomainErrors.VaccinationEntity.NotFound(vaccinationId));
         }
 
         Result updateResult = maybeVaccination.Value.UpdateNextDueDate(updatedNextDueDate, currentDate);
@@ -354,7 +354,7 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
         Maybe<Vaccination> maybeVaccination = _vaccinations.GetByIdOrDefault(vaccinationId);
         if (maybeVaccination.HasNoValue)
         {
-            return Result.Failure(DomainErrors.Vaccination.NotFound(vaccinationId));
+            return Result.Failure(DomainErrors.VaccinationEntity.NotFound(vaccinationId));
         }
 
         Result updateResult = maybeVaccination.Value.UpdateVeterinarianNote(updatedVeterinarianNote);
@@ -372,7 +372,7 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
     {
         if (_galleryItems.Count >= MaximumGalleryItemsCount)
         {
-            return Result.Failure<CatGalleryItemId>(DomainErrors.Cat.GalleryIsFull);
+            return Result.Failure<CatGalleryItemId>(DomainErrors.CatEntity.GalleryIsFull);
         }
 
         int nextDisplayOrder = _galleryItems.Count;
@@ -402,20 +402,20 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
 
         if (newOrders.Count != _galleryItems.Count)
         {
-            return Result.Failure(DomainErrors.Cat.InvalidReorderOperation);
+            return Result.Failure(DomainErrors.CatEntity.InvalidReorderOperation);
         }
 
         HashSet<int> displayOrderValues = newOrders.Values.Select(o => o.Value).ToHashSet();
         if (displayOrderValues.Count != newOrders.Count)
         {
-            return Result.Failure(DomainErrors.Cat.DuplicateDisplayOrders);
+            return Result.Failure(DomainErrors.CatEntity.DuplicateDisplayOrders);
         }
 
         int minOrder = displayOrderValues.Min();
         int maxOrder = displayOrderValues.Max();
         if (minOrder != 0 || maxOrder != _galleryItems.Count - 1)
         {
-            return Result.Failure(DomainErrors.Cat.DisplayOrderMustBeContiguous);
+            return Result.Failure(DomainErrors.CatEntity.DisplayOrderMustBeContiguous);
         }
 
         foreach (KeyValuePair<CatGalleryItemId, CatGalleryItemDisplayOrder> kvp in newOrders)
@@ -423,7 +423,7 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
             Maybe<CatGalleryItem> maybeItem = _galleryItems.GetByIdOrDefault(kvp.Key);
             if (maybeItem.HasNoValue)
             {
-                return Result.Failure(DomainErrors.CatGalleryItem.NotFound(kvp.Key));
+                return Result.Failure(DomainErrors.CatGalleryItemEntity.NotFound(kvp.Key));
             }
 
             Result updateDisplayOrderResult = maybeItem.Value.UpdateDisplayOrder(kvp.Value);
@@ -443,7 +443,7 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
         Maybe<CatGalleryItem> maybeGalleryItem = _galleryItems.GetByIdOrDefault(galleryItemId);
         if (maybeGalleryItem.HasNoValue)
         {
-            return Result.Failure(DomainErrors.CatGalleryItem.NotFound(galleryItemId));
+            return Result.Failure(DomainErrors.CatGalleryItemEntity.NotFound(galleryItemId));
         }
 
         int removedDisplayOrder = maybeGalleryItem.Value.DisplayOrder.Value;

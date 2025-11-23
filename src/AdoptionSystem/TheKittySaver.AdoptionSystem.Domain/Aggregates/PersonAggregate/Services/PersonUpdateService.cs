@@ -31,13 +31,13 @@ internal sealed class PersonUpdateService : IPersonUpdateService
         Maybe<Person> maybePerson = await _personRepository.GetByIdAsync(personId, cancellationToken);
         if (maybePerson.HasNoValue)
         {
-            return Result.Failure(DomainErrors.Person.NotFound(personId));
+            return Result.Failure(DomainErrors.PersonEntity.NotFound(personId));
         }
 
         if (updatedEmail != maybePerson.Value.Email
             && await _personUniquenessCheckerService.IsEmailTakenAsync(updatedEmail, cancellationToken))
         {
-            return Result.Failure(DomainErrors.Person.EmailAlreadyTaken(updatedEmail));
+            return Result.Failure(DomainErrors.PersonEntity.EmailAlreadyTaken(updatedEmail));
         }
         
         Result updateEmailResult = maybePerson.Value.UpdateEmail(updatedEmail);
@@ -52,13 +52,13 @@ internal sealed class PersonUpdateService : IPersonUpdateService
         Maybe<Person> maybePerson = await _personRepository.GetByIdAsync(personId, cancellationToken);
         if (maybePerson.HasNoValue)
         {
-            return Result.Failure(DomainErrors.Person.NotFound(personId));
+            return Result.Failure(DomainErrors.PersonEntity.NotFound(personId));
         }
 
         if (updatedPhoneNumber != maybePerson.Value.PhoneNumber
             && await _personUniquenessCheckerService.IsPhoneNumberTakenAsync(updatedPhoneNumber, cancellationToken))
         {
-            return Result.Failure(DomainErrors.Person.PhoneNumberAlreadyTaken(updatedPhoneNumber));
+            return Result.Failure(DomainErrors.PersonEntity.PhoneNumberAlreadyTaken(updatedPhoneNumber));
         }
         
         Result updatePhoneNumberResult = maybePerson.Value.UpdatePhoneNumber(updatedPhoneNumber);

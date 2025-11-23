@@ -5,6 +5,7 @@ using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.PhoneNumbers;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.Timestamps;
+using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.Services;
 
@@ -22,19 +23,25 @@ internal sealed class PersonCreationService : IPersonCreationService
         Email email,
         PhoneNumber phoneNumber,
         CreatedAt createdAt,
+        IdentityId identityId,
         CancellationToken cancellationToken = default)
     {
         if (await _personUniquenessCheckerService.IsEmailTakenAsync(email, cancellationToken: cancellationToken))
         {
-            return Result.Failure<Person>(DomainErrors.Person.EmailAlreadyTaken(email));
+            return Result.Failure<Person>(DomainErrors.PersonEntity.EmailAlreadyTaken(email));
         }
 
         if (await _personUniquenessCheckerService.IsPhoneNumberTakenAsync(phoneNumber, cancellationToken: cancellationToken))
         {
-            return Result.Failure<Person>(DomainErrors.Person.PhoneNumberAlreadyTaken(phoneNumber));
+            return Result.Failure<Person>(DomainErrors.PersonEntity.PhoneNumberAlreadyTaken(phoneNumber));
         }
 
-        Result<Person> createPersonResult = Person.Create(username, email, phoneNumber, createdAt);
+        Result<Person> createPersonResult = Person.Create(
+            username: username,
+            email: email,
+            phoneNumber: phoneNumber,
+            createdAt: createdAt,
+            identityId: identityId);
 
         return createPersonResult;
     }

@@ -15,13 +15,13 @@ public sealed class CatGalleryItemDisplayOrder : ValueObject
         if (imageOrder < MinValue)
         {
             return Result.Failure<CatGalleryItemDisplayOrder>(
-                DomainErrors.CatGalleryItem.DisplayOrder.BelowMinimum(imageOrder, MinValue));
+                DomainErrors.CatGalleryItemEntity.DisplayOrderProperty.BelowMinimum(imageOrder, MinValue));
         }
 
         if (imageOrder >= maxAllowedOrder)
         {
             return Result.Failure<CatGalleryItemDisplayOrder>(
-                DomainErrors.CatGalleryItem.DisplayOrder.AboveOrEqualMaximum(
+                DomainErrors.CatGalleryItemEntity.DisplayOrderProperty.AboveOrEqualMaximum(
                     imageOrder, maxAllowedOrder));
         }
 

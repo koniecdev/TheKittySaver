@@ -13,12 +13,12 @@ public sealed class AdoptionAnnouncementDescription : ValueObject
     {
         if (string.IsNullOrWhiteSpace(value))
         {
-            return Result.Failure<AdoptionAnnouncementDescription>(DomainErrors.AdoptionAnnouncement.Description.NullOrEmpty);
+            return Result.Failure<AdoptionAnnouncementDescription>(DomainErrors.AdoptionAnnouncementErrors.DescriptionProperty.NullOrEmpty);
         }
 
         if (value.Length > MaxLength)
         {
-            return Result.Failure<AdoptionAnnouncementDescription>(DomainErrors.AdoptionAnnouncement.Description.LongerThanAllowed);
+            return Result.Failure<AdoptionAnnouncementDescription>(DomainErrors.AdoptionAnnouncementErrors.DescriptionProperty.LongerThanAllowed);
         }
         
         AdoptionAnnouncementDescription instance = new(value);
