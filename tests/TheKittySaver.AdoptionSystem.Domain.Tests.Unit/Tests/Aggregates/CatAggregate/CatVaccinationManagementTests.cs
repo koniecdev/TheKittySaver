@@ -1,9 +1,11 @@
 using Bogus;
 using Shouldly;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Entities;
+using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.ValueObjects;
 using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.Timestamps;
+using TheKittySaver.AdoptionSystem.Domain.Tests.Unit.Shared.Extensions;
 using TheKittySaver.AdoptionSystem.Domain.Tests.Unit.Shared.Factories;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate.Enums;
@@ -146,7 +148,7 @@ public sealed class CatVaccinationManagementTests
 
         //Assert
         result.IsSuccess.ShouldBeTrue();
-        cat.Vaccinations[0].VaccinationDate.ShouldBe(TestNewVaccinationDate);
+        cat.Vaccinations[0].Dates.VaccinationDate.ShouldBe(TestNewVaccinationDate);
     }
 
     [Fact]
@@ -178,7 +180,7 @@ public sealed class CatVaccinationManagementTests
 
         //Assert
         result.IsSuccess.ShouldBeTrue();
-        cat.Vaccinations[0].NextDueDate.ShouldBe(TestNextDueDate);
+        cat.Vaccinations[0].Dates.NextDueDate.ShouldBe(TestNextDueDate);
     }
 
     [Fact]
@@ -207,11 +209,13 @@ public sealed class CatVaccinationManagementTests
         string newNote = Faker.Lorem.Sentence();
 
         //Act
-        Result result = cat.UpdateVaccinationVeterinarianNote(vaccinationId, newNote);
+        var newNoteResult = VaccinationNote.Create(newNote);
+        newNoteResult.EnsureSuccess();
+        Result result = cat.UpdateVaccinationVeterinarianNote(vaccinationId, newNoteResult.Value);
 
         //Assert
         result.IsSuccess.ShouldBeTrue();
-        cat.Vaccinations[0].VeterinarianNote.ShouldBe(newNote);
+        cat.Vaccinations[0].VeterinarianNote.ShouldBe(newNoteResult.Value);
     }
 
     [Fact]

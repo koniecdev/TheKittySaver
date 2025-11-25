@@ -89,6 +89,7 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
     
     public Result Claim(ClaimedAt claimedAt)
     {
+        ArgumentNullException.ThrowIfNull(claimedAt);
         if (Status is AnnouncementStatusType.Claimed)
         {
             return Result.Failure(DomainErrors.AdoptionAnnouncementErrors.StatusProperty.AlreadyClaimed(Id));
