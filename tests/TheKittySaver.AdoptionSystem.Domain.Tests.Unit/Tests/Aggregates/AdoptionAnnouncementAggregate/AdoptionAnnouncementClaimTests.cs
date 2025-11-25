@@ -47,4 +47,18 @@ public sealed class AdoptionAnnouncementClaimTests
         result.Error.ShouldBe(DomainErrors.AdoptionAnnouncementErrors.StatusProperty.AlreadyClaimed(announcement.Id));
     }
 
+    [Fact]
+    public void Claim_ShouldThrow_WhenNullClaimedAtIsProvided()
+    {
+        //Arrange
+        AdoptionAnnouncement announcement = AdoptionAnnouncementFactory.CreateRandom(Faker);
+
+        //Act
+        Action claim = () => announcement.Claim(null!);
+
+        //Assert
+        claim.ShouldThrow<ArgumentNullException>()
+            .ParamName?.ToLower().ShouldContain("claimedat");
+    }
+
 }

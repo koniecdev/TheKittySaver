@@ -17,6 +17,7 @@ namespace TheKittySaver.AdoptionSystem.Domain.Tests.Unit.Tests.Aggregates.Person
 public sealed class PersonAddressManagementTests
 {
     private static readonly Faker Faker = new();
+    private static readonly DateTimeOffset TestCreatedAtDate = new(2025, 1, 1, 0, 0, 0, TimeSpan.Zero);
 
     [Fact]
     public void AddAddress_ShouldAddAddress_WhenValidDataAreProvided()
@@ -27,8 +28,7 @@ public sealed class PersonAddressManagementTests
         AddressRegion region = AddressFactory.CreateRandomRegion(Faker);
         AddressCity city = AddressFactory.CreateRandomCity(Faker);
         AddressLine line = AddressFactory.CreateRandomLine(Faker);
-        Result<CreatedAt> createdAtResult = CreatedAt
-            .Create(new DateTimeOffset(2025, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        Result<CreatedAt> createdAtResult = CreatedAt.Create(TestCreatedAtDate);
         createdAtResult.EnsureSuccess();
 
         //Act
@@ -55,7 +55,7 @@ public sealed class PersonAddressManagementTests
         AddressName name = AddressFactory.CreateRandomName(Faker);
         AddressRegion region = AddressFactory.CreateRandomRegion(Faker);
         AddressCity city = AddressFactory.CreateRandomCity(Faker);
-        Result<CreatedAt> createdAtResult = CreatedAt.Create(new DateTimeOffset(2025, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        Result<CreatedAt> createdAtResult = CreatedAt.Create(TestCreatedAtDate);
         createdAtResult.EnsureSuccess();
 
         person.AddAddress(CountryCode.PL, name, region, city, Maybe<AddressLine>.None, createdAtResult.Value);
@@ -81,7 +81,7 @@ public sealed class PersonAddressManagementTests
         Person person = PersonFactory.CreateRandom(Faker);
         AddressRegion region = AddressFactory.CreateRandomRegion(Faker);
         AddressCity city = AddressFactory.CreateRandomCity(Faker);
-        Result<CreatedAt> createdAtResult = CreatedAt.Create(new DateTimeOffset(2025, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        Result<CreatedAt> createdAtResult = CreatedAt.Create(TestCreatedAtDate);
         createdAtResult.EnsureSuccess();
 
         //Act
@@ -106,8 +106,7 @@ public sealed class PersonAddressManagementTests
         AddressName originalName = AddressFactory.CreateRandomName(Faker);
         AddressRegion region = AddressFactory.CreateRandomRegion(Faker);
         AddressCity city = AddressFactory.CreateRandomCity(Faker);
-        Result<CreatedAt> createdAtResult = 
-            CreatedAt.Create(new DateTimeOffset(2025, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        Result<CreatedAt> createdAtResult = CreatedAt.Create(TestCreatedAtDate);
         createdAtResult.EnsureSuccess();
 
         Result<AddressId> addResult = person.AddAddress(
@@ -152,8 +151,7 @@ public sealed class PersonAddressManagementTests
         AddressName secondName = AddressFactory.CreateRandomName(Faker);
         AddressRegion region = AddressFactory.CreateRandomRegion(Faker);
         AddressCity city = AddressFactory.CreateRandomCity(Faker);
-        Result<CreatedAt> createdAtResult = 
-            CreatedAt.Create(new DateTimeOffset(2025, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        Result<CreatedAt> createdAtResult = CreatedAt.Create(TestCreatedAtDate);
         createdAtResult.EnsureSuccess();
 
         person.AddAddress(
@@ -181,6 +179,33 @@ public sealed class PersonAddressManagementTests
     }
 
     [Fact]
+    public void UpdateAddressName_ShouldUpdateName_WhenUpdatingToSameName()
+    {
+        //Arrange
+        Person person = PersonFactory.CreateRandom(Faker);
+        AddressName originalName = AddressFactory.CreateRandomName(Faker);
+        AddressRegion region = AddressFactory.CreateRandomRegion(Faker);
+        AddressCity city = AddressFactory.CreateRandomCity(Faker);
+        Result<CreatedAt> createdAtResult = CreatedAt.Create(TestCreatedAtDate);
+        createdAtResult.EnsureSuccess();
+
+        Result<AddressId> addResult = person.AddAddress(
+            CountryCode.PL,
+            originalName,
+            region,
+            city,
+            Maybe<AddressLine>.None,
+            createdAtResult.Value);
+
+        //Act
+        Result result = person.UpdateAddressName(addResult.Value, originalName);
+
+        //Assert
+        result.IsSuccess.ShouldBeTrue();
+        person.Addresses[0].Name.ShouldBe(originalName);
+    }
+
+    [Fact]
     public void UpdateAddressDetails_ShouldUpdateDetails_WhenValidDataAreProvided()
     {
         //Arrange
@@ -188,8 +213,7 @@ public sealed class PersonAddressManagementTests
         AddressName name = AddressFactory.CreateRandomName(Faker);
         AddressRegion originalRegion = AddressFactory.CreateRandomRegion(Faker);
         AddressCity originalCity = AddressFactory.CreateRandomCity(Faker);
-        Result<CreatedAt> createdAtResult = 
-            CreatedAt.Create(new DateTimeOffset(2025, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        Result<CreatedAt> createdAtResult = CreatedAt.Create(TestCreatedAtDate);
         createdAtResult.EnsureSuccess();
 
         Result<AddressId> addResult = person.AddAddress(
@@ -247,8 +271,7 @@ public sealed class PersonAddressManagementTests
         AddressName name = AddressFactory.CreateRandomName(Faker);
         AddressRegion region = AddressFactory.CreateRandomRegion(Faker);
         AddressCity city = AddressFactory.CreateRandomCity(Faker);
-        Result<CreatedAt> createdAtResult = 
-            CreatedAt.Create(new DateTimeOffset(2025, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        Result<CreatedAt> createdAtResult = CreatedAt.Create(TestCreatedAtDate);
         createdAtResult.EnsureSuccess();
 
         Result<AddressId> addResult = person.AddAddress(

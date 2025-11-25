@@ -48,6 +48,24 @@ public sealed class CatGalleryManagementTests
     }
 
     [Fact]
+    public void AddGalleryItem_ShouldAddItem_WhenGalleryHasExactlyMaximumCount()
+    {
+        //Arrange
+        Cat cat = CatFactory.CreateRandom(Faker);
+        for (int i = 0; i < Cat.MaximumGalleryItemsCount - 1; i++)
+        {
+            cat.AddGalleryItem();
+        }
+
+        //Act
+        Result<CatGalleryItemId> result = cat.AddGalleryItem();
+
+        //Assert
+        result.IsSuccess.ShouldBeTrue();
+        cat.GetGalleryItems().Count.ShouldBe(Cat.MaximumGalleryItemsCount);
+    }
+
+    [Fact]
     public void AddGalleryItem_ShouldReturnFailure_WhenGalleryIsFull()
     {
         //Arrange
@@ -93,6 +111,46 @@ public sealed class CatGalleryManagementTests
 
         //Act
         Result result = cat.RemoveGalleryItem(secondItemId);
+
+        //Assert
+        result.IsSuccess.ShouldBeTrue();
+        cat.GetGalleryItems().Count.ShouldBe(2);
+        cat.GetGalleryItems()[0].DisplayOrder.Value.ShouldBe(0);
+        cat.GetGalleryItems()[1].DisplayOrder.Value.ShouldBe(1);
+    }
+
+    [Fact]
+    public void RemoveGalleryItem_ShouldReorderRemainingItems_WhenFirstItemIsRemoved()
+    {
+        //Arrange
+        Cat cat = CatFactory.CreateRandom(Faker);
+        Result<CatGalleryItemId> firstItemResult = cat.AddGalleryItem();
+        cat.AddGalleryItem();
+        cat.AddGalleryItem();
+        CatGalleryItemId firstItemId = firstItemResult.Value;
+
+        //Act
+        Result result = cat.RemoveGalleryItem(firstItemId);
+
+        //Assert
+        result.IsSuccess.ShouldBeTrue();
+        cat.GetGalleryItems().Count.ShouldBe(2);
+        cat.GetGalleryItems()[0].DisplayOrder.Value.ShouldBe(0);
+        cat.GetGalleryItems()[1].DisplayOrder.Value.ShouldBe(1);
+    }
+
+    [Fact]
+    public void RemoveGalleryItem_ShouldReorderRemainingItems_WhenLastItemIsRemoved()
+    {
+        //Arrange
+        Cat cat = CatFactory.CreateRandom(Faker);
+        cat.AddGalleryItem();
+        cat.AddGalleryItem();
+        Result<CatGalleryItemId> lastItemResult = cat.AddGalleryItem();
+        CatGalleryItemId lastItemId = lastItemResult.Value;
+
+        //Act
+        Result result = cat.RemoveGalleryItem(lastItemId);
 
         //Assert
         result.IsSuccess.ShouldBeTrue();

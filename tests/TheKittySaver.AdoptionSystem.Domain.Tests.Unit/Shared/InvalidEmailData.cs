@@ -19,5 +19,16 @@ public class InvalidEmailData : TheoryData<string>
         Add("user name@domain.com");
         Add("username@ domain.com");
         Add("username@domain .com");
+        Add("username@@domain.com");
+        Add("username@domain@example.com");
+        Add(".username@domain.com");
+        Add("username.@domain.com");
+        Add("username..name@domain.com");
+        Add("username@domain..com");
+        Add("username@domain.com.");
+        Add("username@.domain.com");
+        Add("username<script>@domain.com");
+        Add("username@domain.com\n");
+        Add("username@domain.com\t");
     }
 }

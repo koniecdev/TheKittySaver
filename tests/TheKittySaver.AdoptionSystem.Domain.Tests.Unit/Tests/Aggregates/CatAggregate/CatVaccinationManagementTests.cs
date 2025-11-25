@@ -14,6 +14,9 @@ public sealed class CatVaccinationManagementTests
 {
     private static readonly Faker Faker = new();
     private static readonly DateTimeOffset VaccinationDate = new(2024, 12, 1, 0, 0, 0, TimeSpan.Zero);
+    private static readonly DateTimeOffset TestCurrentDate = new(2025, 6, 1, 0, 0, 0, TimeSpan.Zero);
+    private static readonly DateTimeOffset TestNewVaccinationDate = new(2025, 1, 1, 0, 0, 0, TimeSpan.Zero);
+    private static readonly DateTimeOffset TestNextDueDate = new(2026, 5, 1, 0, 0, 0, TimeSpan.Zero);
 
     [Fact]
     public void AddVaccination_ShouldAddVaccination_WhenValidDataAreProvided()
@@ -130,19 +133,52 @@ public sealed class CatVaccinationManagementTests
     }
 
     [Fact]
+    public void UpdateVaccinationDate_ShouldUpdateDate_WhenVaccinationExists()
+    {
+        //Arrange
+        Cat cat = CatFactory.CreateRandom(Faker);
+        CreatedAt createdAt = CatFactory.CreateDefaultCreatedAt();
+        Result<Vaccination> addResult = cat.AddVaccination(VaccinationType.Rabies, VaccinationDate, createdAt);
+        VaccinationId vaccinationId = addResult.Value.Id;
+
+        //Act
+        Result result = cat.UpdateVaccinationDate(vaccinationId, TestNewVaccinationDate, TestCurrentDate);
+
+        //Assert
+        result.IsSuccess.ShouldBeTrue();
+        cat.Vaccinations[0].VaccinationDate.ShouldBe(TestNewVaccinationDate);
+    }
+
+    [Fact]
     public void UpdateVaccinationDate_ShouldReturnFailure_WhenVaccinationNotFound()
     {
         //Arrange
         Cat cat = CatFactory.CreateRandom(Faker);
         VaccinationId nonExistentVaccinationId = VaccinationId.New();
-        DateTimeOffset currentDate = new(2025, 6, 1, 0, 0, 0, TimeSpan.Zero);
 
         //Act
-        Result result = cat.UpdateVaccinationDate(nonExistentVaccinationId, VaccinationDate, currentDate);
+        Result result = cat.UpdateVaccinationDate(nonExistentVaccinationId, VaccinationDate, TestCurrentDate);
 
         //Assert
         result.IsFailure.ShouldBeTrue();
         result.Error.ShouldBe(DomainErrors.VaccinationEntity.NotFound(nonExistentVaccinationId));
+    }
+
+    [Fact]
+    public void UpdateVaccinationNextDueDate_ShouldUpdateNextDueDate_WhenVaccinationExists()
+    {
+        //Arrange
+        Cat cat = CatFactory.CreateRandom(Faker);
+        CreatedAt createdAt = CatFactory.CreateDefaultCreatedAt();
+        Result<Vaccination> addResult = cat.AddVaccination(VaccinationType.Rabies, VaccinationDate, createdAt);
+        VaccinationId vaccinationId = addResult.Value.Id;
+
+        //Act
+        Result result = cat.UpdateVaccinationNextDueDate(vaccinationId, TestNextDueDate, TestCurrentDate);
+
+        //Assert
+        result.IsSuccess.ShouldBeTrue();
+        cat.Vaccinations[0].NextDueDate.ShouldBe(TestNextDueDate);
     }
 
     [Fact]
@@ -151,15 +187,31 @@ public sealed class CatVaccinationManagementTests
         //Arrange
         Cat cat = CatFactory.CreateRandom(Faker);
         VaccinationId nonExistentVaccinationId = VaccinationId.New();
-        DateTimeOffset currentDate = new(2025, 6, 1, 0, 0, 0, TimeSpan.Zero);
-        DateTimeOffset nextDueDate = new(2026, 5, 1, 0, 0, 0, TimeSpan.Zero);
 
         //Act
-        Result result = cat.UpdateVaccinationNextDueDate(nonExistentVaccinationId, nextDueDate, currentDate);
+        Result result = cat.UpdateVaccinationNextDueDate(nonExistentVaccinationId, TestNextDueDate, TestCurrentDate);
 
         //Assert
         result.IsFailure.ShouldBeTrue();
         result.Error.ShouldBe(DomainErrors.VaccinationEntity.NotFound(nonExistentVaccinationId));
+    }
+
+    [Fact]
+    public void UpdateVaccinationVeterinarianNote_ShouldUpdateNote_WhenVaccinationExists()
+    {
+        //Arrange
+        Cat cat = CatFactory.CreateRandom(Faker);
+        CreatedAt createdAt = CatFactory.CreateDefaultCreatedAt();
+        Result<Vaccination> addResult = cat.AddVaccination(VaccinationType.Rabies, VaccinationDate, createdAt);
+        VaccinationId vaccinationId = addResult.Value.Id;
+        string newNote = Faker.Lorem.Sentence();
+
+        //Act
+        Result result = cat.UpdateVaccinationVeterinarianNote(vaccinationId, newNote);
+
+        //Assert
+        result.IsSuccess.ShouldBeTrue();
+        cat.Vaccinations[0].VeterinarianNote.ShouldBe(newNote);
     }
 
     [Fact]
