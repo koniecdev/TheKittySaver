@@ -1,6 +1,8 @@
 using Bogus;
 using Shouldly;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Entities;
+using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Events;
+using TheKittySaver.AdoptionSystem.Domain.Core.Abstractions;
 using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
 using TheKittySaver.AdoptionSystem.Domain.Tests.Unit.Shared.Factories;
@@ -161,4 +163,87 @@ public sealed class CatAssignmentTests
         result.IsFailure.ShouldBeTrue();
         result.Error.ShouldBe(DomainErrors.CatEntity.StatusProperty.NotPublished(cat.Id));
     }
+
+    #region Domain Events Tests
+
+    [Fact]
+    public void ReassignToAnotherAdoptionAnnouncement_ShouldRaiseCatReassignedDomainEvent_WhenSuccessful()
+    {
+        //Arrange
+        Cat cat = CatFactory.CreateWithThumbnail(Faker);
+        AdoptionAnnouncementId firstAnnouncementId = AdoptionAnnouncementId.New();
+        cat.AssignToAdoptionAnnouncement(firstAnnouncementId, ValidOperationDate);
+
+        AdoptionAnnouncementId secondAnnouncementId = AdoptionAnnouncementId.New();
+        DateTimeOffset reassignDate = ValidOperationDate.AddDays(1);
+
+        //Act
+        Result result = cat.ReassignToAnotherAdoptionAnnouncement(secondAnnouncementId, reassignDate);
+
+        //Assert
+        result.IsSuccess.ShouldBeTrue();
+        IReadOnlyCollection<IDomainEvent> events = cat.GetDomainEvents();
+        events.ShouldContain(e => e is CatReassignedToAnotherAnnouncementDomainEvent);
+
+        CatReassignedToAnotherAnnouncementDomainEvent reassignEvent =
+            events.OfType<CatReassignedToAnotherAnnouncementDomainEvent>().First();
+        reassignEvent.CatId.ShouldBe(cat.Id);
+        reassignEvent.SourceAdoptionAnnouncementId.ShouldBe(firstAnnouncementId);
+        reassignEvent.DestinationAdoptionAnnouncementId.ShouldBe(secondAnnouncementId);
+    }
+
+    [Fact]
+    public void ReassignToAnotherAdoptionAnnouncement_ShouldNotRaiseDomainEvent_WhenReassignmentFails()
+    {
+        //Arrange - Draft cat cannot be reassigned
+        Cat cat = CatFactory.CreateWithThumbnail(Faker);
+        AdoptionAnnouncementId announcementId = AdoptionAnnouncementId.New();
+
+        //Act
+        Result result = cat.ReassignToAnotherAdoptionAnnouncement(announcementId, ValidOperationDate);
+
+        //Assert
+        result.IsFailure.ShouldBeTrue();
+        IReadOnlyCollection<IDomainEvent> events = cat.GetDomainEvents();
+        events.ShouldNotContain(e => e is CatReassignedToAnotherAnnouncementDomainEvent);
+    }
+
+    [Fact]
+    public void UnassignFromAdoptionAnnouncement_ShouldRaiseCatUnassignedDomainEvent_WhenSuccessful()
+    {
+        //Arrange
+        Cat cat = CatFactory.CreateWithThumbnail(Faker);
+        AdoptionAnnouncementId announcementId = AdoptionAnnouncementId.New();
+        cat.AssignToAdoptionAnnouncement(announcementId, ValidOperationDate);
+
+        //Act
+        Result result = cat.UnassignFromAdoptionAnnouncement();
+
+        //Assert
+        result.IsSuccess.ShouldBeTrue();
+        IReadOnlyCollection<IDomainEvent> events = cat.GetDomainEvents();
+        events.ShouldContain(e => e is CatUnassignedFromAnnouncementDomainEvent);
+
+        CatUnassignedFromAnnouncementDomainEvent unassignEvent =
+            events.OfType<CatUnassignedFromAnnouncementDomainEvent>().First();
+        unassignEvent.CatId.ShouldBe(cat.Id);
+        unassignEvent.SourceAdoptionAnnouncementId.ShouldBe(announcementId);
+    }
+
+    [Fact]
+    public void UnassignFromAdoptionAnnouncement_ShouldNotRaiseDomainEvent_WhenUnassignmentFails()
+    {
+        //Arrange - Draft cat cannot be unassigned
+        Cat cat = CatFactory.CreateRandom(Faker);
+
+        //Act
+        Result result = cat.UnassignFromAdoptionAnnouncement();
+
+        //Assert
+        result.IsFailure.ShouldBeTrue();
+        IReadOnlyCollection<IDomainEvent> events = cat.GetDomainEvents();
+        events.ShouldNotContain(e => e is CatUnassignedFromAnnouncementDomainEvent);
+    }
+
+    #endregion
 }

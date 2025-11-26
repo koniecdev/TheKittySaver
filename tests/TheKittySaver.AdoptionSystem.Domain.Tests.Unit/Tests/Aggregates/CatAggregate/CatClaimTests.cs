@@ -1,6 +1,8 @@
 using Bogus;
 using Shouldly;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Entities;
+using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Events;
+using TheKittySaver.AdoptionSystem.Domain.Core.Abstractions;
 using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.Timestamps;
@@ -83,4 +85,47 @@ public sealed class CatClaimTests
         claim.ShouldThrow<ArgumentNullException>()
             .ParamName?.ToLower().ShouldContain("claimedat");
     }
+
+    #region Domain Events Tests
+
+    [Fact]
+    public void Claim_ShouldRaiseCatClaimedDomainEvent_WhenSuccessful()
+    {
+        //Arrange
+        Cat cat = CatFactory.CreateWithThumbnail(Faker);
+        AdoptionAnnouncementId announcementId = AdoptionAnnouncementId.New();
+        cat.AssignToAdoptionAnnouncement(announcementId, ValidOperationDate);
+        ClaimedAt claimedAt = CatFactory.CreateDefaultClaimedAt();
+
+        //Act
+        Result result = cat.Claim(claimedAt);
+
+        //Assert
+        result.IsSuccess.ShouldBeTrue();
+        IReadOnlyCollection<IDomainEvent> events = cat.GetDomainEvents();
+        events.ShouldNotBeEmpty();
+        events.ShouldContain(e => e is CatClaimedDomainEvent);
+
+        CatClaimedDomainEvent claimedEvent = events.OfType<CatClaimedDomainEvent>().First();
+        claimedEvent.CatId.ShouldBe(cat.Id);
+        claimedEvent.AdoptionAnnouncementId.ShouldBe(announcementId);
+    }
+
+    [Fact]
+    public void Claim_ShouldNotRaiseDomainEvent_WhenClaimFails()
+    {
+        //Arrange - Draft cat cannot be claimed
+        Cat cat = CatFactory.CreateRandom(Faker);
+        ClaimedAt claimedAt = CatFactory.CreateDefaultClaimedAt();
+
+        //Act
+        Result result = cat.Claim(claimedAt);
+
+        //Assert
+        result.IsFailure.ShouldBeTrue();
+        IReadOnlyCollection<IDomainEvent> events = cat.GetDomainEvents();
+        events.ShouldNotContain(e => e is CatClaimedDomainEvent);
+    }
+
+    #endregion
 }
