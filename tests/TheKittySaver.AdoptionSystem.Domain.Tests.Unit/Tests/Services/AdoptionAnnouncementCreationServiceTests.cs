@@ -31,8 +31,6 @@ public sealed class AdoptionAnnouncementCreationServiceTests
         _service = new AdoptionAnnouncementCreationService(assignmentService);
     }
 
-    #region Happy Path Tests
-
     [Fact]
     public void Create_ShouldCreateAnnouncementAndAssignCat_WhenAllConditionsAreMet()
     {
@@ -89,8 +87,8 @@ public sealed class AdoptionAnnouncementCreationServiceTests
 
         //Assert
         result.IsSuccess.ShouldBeTrue();
-        result.Value.Description.HasValue.ShouldBeTrue();
-        result.Value.Description.Value.ShouldBe(desc);
+        result.Value.Description.ShouldNotBeNull();
+        result.Value.Description.ShouldBe(desc);
     }
 
     [Fact]
@@ -120,11 +118,7 @@ public sealed class AdoptionAnnouncementCreationServiceTests
         result.Value.Email.ShouldBe(email);
         result.Value.PhoneNumber.ShouldBe(phoneNumber);
     }
-
-    #endregion
-
-    #region Failure Handling Tests
-
+    
     [Fact]
     public void Create_ShouldFail_WhenCatHasNoThumbnail()
     {
@@ -157,10 +151,11 @@ public sealed class AdoptionAnnouncementCreationServiceTests
         //Arrange - Cat already published
         PersonId personId = PersonId.New();
         Cat cat = CatFactory.CreateWithThumbnail(Faker, personId: personId);
-        cat.AssignToAdoptionAnnouncement(
+        Result assignToAdoptionAnnouncementResult = cat.AssignToAdoptionAnnouncement(
             AdoptionAnnouncementFactory.CreateRandom(Faker, personId: personId).Id,
-            OperationDate.AddDays(-1)).EnsureSuccess();
-
+            OperationDate.AddDays(-1));
+        assignToAdoptionAnnouncementResult.EnsureSuccess();
+        
         AdoptionAnnouncementAddress address = AdoptionAnnouncementFactory.CreateRandomAddress(Faker);
         Email email = AdoptionAnnouncementFactory.CreateRandomEmail(Faker);
         PhoneNumber phoneNumber = AdoptionAnnouncementFactory.CreateRandomPhoneNumber(Faker);
@@ -180,11 +175,7 @@ public sealed class AdoptionAnnouncementCreationServiceTests
         //Assert
         result.IsFailure.ShouldBeTrue();
     }
-
-    #endregion
-
-    #region Atomicity Tests
-
+    
     [Fact]
     public void Create_ShouldNotPublishCat_WhenAssignmentFails()
     {
@@ -242,10 +233,6 @@ public sealed class AdoptionAnnouncementCreationServiceTests
         cat.AdoptionAnnouncementId.ShouldBe(result.Value.Id);
     }
 
-    #endregion
-
-    #region Orchestration Tests
-
     [Fact]
     public void Create_ShouldDelegateToAssignmentService_WhenAssigningCat()
     {
@@ -270,7 +257,7 @@ public sealed class AdoptionAnnouncementCreationServiceTests
         //Assert - Verify assignment service logic was applied (cat published with published date)
         result.IsSuccess.ShouldBeTrue();
         cat.PublishedAt.ShouldNotBeNull();
-        cat.PublishedAt.Value.Value.ShouldBe(OperationDate);
+        cat.PublishedAt.Value.ShouldBe(OperationDate);
     }
 
     [Fact]
@@ -297,6 +284,4 @@ public sealed class AdoptionAnnouncementCreationServiceTests
         //Assert - Should succeed as there are no existing cats to check compatibility with
         result.IsSuccess.ShouldBeTrue();
     }
-
-    #endregion
 }

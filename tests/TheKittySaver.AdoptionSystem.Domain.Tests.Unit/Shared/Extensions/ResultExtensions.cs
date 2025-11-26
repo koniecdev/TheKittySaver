@@ -6,14 +6,21 @@ public static class ResultExtensions
 {
     extension<T>(Result<T> result)
     {
-        public void EnsureSuccess()
+        public void EnsureSuccess() => EnsureTheSuccess(result);
+    }
+    
+    extension(Result result)
+    {
+        public void EnsureSuccess() => EnsureTheSuccess(result);
+    }
+
+    private static void EnsureTheSuccess(Result result)
+    {
+        if (result.IsSuccess)
         {
-            if (result.IsSuccess)
-            {
-                return;
-            }
-            
-            throw new Exception(result.Error.ToString());
+            return;
         }
+            
+        throw new Exception(result.Error.ToString());
     }
 }

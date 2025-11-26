@@ -3,6 +3,7 @@ using Shouldly;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Entities;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Events;
 using TheKittySaver.AdoptionSystem.Domain.Core.Abstractions;
+using TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
 using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.Timestamps;
@@ -83,11 +84,9 @@ public sealed class CatClaimTests
 
         //Assert
         claim.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldContain("claimedat");
+            .ParamName?.ToLower().ShouldContain(nameof(Cat.ClaimedAt));
     }
-
-    #region Domain Events Tests
-
+    
     [Fact]
     public void Claim_ShouldRaiseCatClaimedDomainEvent_WhenSuccessful()
     {
@@ -126,6 +125,4 @@ public sealed class CatClaimTests
         IReadOnlyCollection<IDomainEvent> events = cat.GetDomainEvents();
         events.ShouldNotContain(e => e is CatClaimedDomainEvent);
     }
-
-    #endregion
 }

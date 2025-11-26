@@ -3,6 +3,7 @@ using Shouldly;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Entities;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Events;
 using TheKittySaver.AdoptionSystem.Domain.Core.Abstractions;
+using TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
 using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
 using TheKittySaver.AdoptionSystem.Domain.Tests.Unit.Shared.Factories;
@@ -164,8 +165,6 @@ public sealed class CatAssignmentTests
         result.Error.ShouldBe(DomainErrors.CatEntity.StatusProperty.NotPublished(cat.Id));
     }
 
-    #region Domain Events Tests
-
     [Fact]
     public void ReassignToAnotherAdoptionAnnouncement_ShouldRaiseCatReassignedDomainEvent_WhenSuccessful()
     {
@@ -195,7 +194,7 @@ public sealed class CatAssignmentTests
     [Fact]
     public void ReassignToAnotherAdoptionAnnouncement_ShouldNotRaiseDomainEvent_WhenReassignmentFails()
     {
-        //Arrange - Draft cat cannot be reassigned
+        //Arrange
         Cat cat = CatFactory.CreateWithThumbnail(Faker);
         AdoptionAnnouncementId announcementId = AdoptionAnnouncementId.New();
 
@@ -227,13 +226,13 @@ public sealed class CatAssignmentTests
         CatUnassignedFromAnnouncementDomainEvent unassignEvent =
             events.OfType<CatUnassignedFromAnnouncementDomainEvent>().First();
         unassignEvent.CatId.ShouldBe(cat.Id);
-        unassignEvent.SourceAdoptionAnnouncementId.ShouldBe(announcementId);
+        unassignEvent.AdoptionAnnouncementId.ShouldBe(announcementId);
     }
 
     [Fact]
     public void UnassignFromAdoptionAnnouncement_ShouldNotRaiseDomainEvent_WhenUnassignmentFails()
     {
-        //Arrange - Draft cat cannot be unassigned
+        //Arrange
         Cat cat = CatFactory.CreateRandom(Faker);
 
         //Act
@@ -244,6 +243,4 @@ public sealed class CatAssignmentTests
         IReadOnlyCollection<IDomainEvent> events = cat.GetDomainEvents();
         events.ShouldNotContain(e => e is CatUnassignedFromAnnouncementDomainEvent);
     }
-
-    #endregion
 }
