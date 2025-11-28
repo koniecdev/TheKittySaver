@@ -10,11 +10,7 @@ public sealed class NeuteringStatus : ValueObject
     
     public static NeuteringStatus NotNeutered() => new(false);
     
-    public static Result<NeuteringStatus> Neutered()
-    {
-        NeuteringStatus instance = new(true);
-        return Result.Success(instance);
-    }
+    public static NeuteringStatus Neutered() => new(true);
 
     private NeuteringStatus(bool isNeutered)
     {

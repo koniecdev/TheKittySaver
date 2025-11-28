@@ -38,12 +38,22 @@ public static class CatFactory
         CatDescription description = CreateRandomDescription(faker);
         CatAge age = CreateRandomAge(faker);
         CatGender gender = faker.PickRandomParam(CatGender.Male(), CatGender.Female());
-        CatColor color = faker.PickRandomParam(CatColor.Orange(), CatColor.Black(), CatColor.White(), CatColor.Gray());
+        CatColor color = faker.PickRandomParam(
+            CatColor.Black(),
+            CatColor.BlackAndWhite(),
+            CatColor.Calico(),
+            CatColor.Gray(),
+            CatColor.Orange(),
+            CatColor.Other(),
+            CatColor.Tabby(),
+            CatColor.Tortoiseshell(),
+            CatColor.White());
         CatWeight weight = CreateRandomWeight(faker);
         HealthStatus healthStatus = faker.PickRandomParam(
             HealthStatus.Healthy(),
             HealthStatus.MinorIssues(),
             HealthStatus.ChronicIllness(),
+            HealthStatus.Recovering(),
             HealthStatus.Critical());
         SpecialNeedsStatus specialNeeds = faker.PickRandomParam(
             SpecialNeedsStatus.None(),
@@ -63,8 +73,10 @@ public static class CatFactory
                 lastReturn: new DateTimeOffset(2025, 5, 1, 0, 0, 0, TimeSpan.Zero),
                 reason: faker.Lorem.Sentence()).Value);
         ListingSource listingSource = CreateRandomListingSource(faker);
-        NeuteringStatus neuteringStatus = NeuteringStatus.NotNeutered();
-        InfectiousDiseaseStatus infectiousDiseaseStatus = CreateFixedNormalInfectiousDiseaseStatus();
+        NeuteringStatus neuteringStatus = faker.PickRandomParam(
+            NeuteringStatus.NotNeutered(),
+            NeuteringStatus.Neutered());
+        InfectiousDiseaseStatus infectiousDiseaseStatus = CreateFixedNormalInfectiousDiseaseStatus(); //todo provide filv felv bools in parameters
         CreatedAt createdAt = CreateDefaultCreatedAt();
 
         Result<Cat> catResult = Cat.Create(
@@ -128,8 +140,8 @@ public static class CatFactory
     {
         Result<ListingSource> result = faker.PickRandomParam(
             ListingSource.Shelter(faker.Company.CompanyName()),
-            ListingSource.Foundation(faker.Name.FullName()),
-            ListingSource.Foundation(faker.Name.FullName()));
+            ListingSource.PrivatePerson(faker.Name.FullName()),
+            ListingSource.Foundation(faker.Company.CompanyName()));
         result.EnsureSuccess();
         return result.Value;
     }
@@ -162,14 +174,16 @@ public static class CatFactory
 
     public static CreatedAt CreateDefaultCreatedAt()
     {
-        Result<CreatedAt> result = CreatedAt.Create(new DateTimeOffset(2025, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        Result<CreatedAt> result = CreatedAt.Create(
+            new DateTimeOffset(2025, 1, 1, 0, 0, 0, TimeSpan.Zero));
         result.EnsureSuccess();
         return result.Value;
     }
 
     public static ClaimedAt CreateDefaultClaimedAt()
     {
-        Result<ClaimedAt> result = ClaimedAt.Create(new DateTimeOffset(2025, 6, 1, 0, 0, 0, TimeSpan.Zero));
+        Result<ClaimedAt> result = ClaimedAt.Create(
+            new DateTimeOffset(2025, 6, 1, 0, 0, 0, TimeSpan.Zero));
         result.EnsureSuccess();
         return result.Value;
     }

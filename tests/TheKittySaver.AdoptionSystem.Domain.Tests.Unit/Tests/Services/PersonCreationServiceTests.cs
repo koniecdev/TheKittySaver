@@ -1,7 +1,6 @@
 using Bogus;
 using NSubstitute;
 using Shouldly;
-using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.Entities;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.Services;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.ValueObjects;
 using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
@@ -11,6 +10,7 @@ using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.PhoneNumbers;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.Timestamps;
 using TheKittySaver.AdoptionSystem.Domain.Tests.Unit.Shared.Extensions;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
+using Person = TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.Entities.Person;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Tests.Unit.Tests.Services;
 
@@ -26,7 +26,6 @@ public sealed class PersonCreationServiceTests
         _service = new PersonCreationService(_uniquenessChecker);
     }
 
-    #region Happy Path Tests
 
     [Fact]
     public async Task CreateAsync_ShouldSucceed_WhenAllDataIsValidAndUnique()
@@ -82,11 +81,7 @@ public sealed class PersonCreationServiceTests
         await _uniquenessChecker.Received(1).IsEmailTakenAsync(email, Arg.Any<CancellationToken>());
         await _uniquenessChecker.Received(1).IsPhoneNumberTakenAsync(phoneNumber, Arg.Any<CancellationToken>());
     }
-
-    #endregion
-
-    #region Email Uniqueness Tests
-
+    
     [Fact]
     public async Task CreateAsync_ShouldFail_WhenEmailIsAlreadyTaken()
     {
@@ -133,10 +128,6 @@ public sealed class PersonCreationServiceTests
         await _uniquenessChecker.Received(1).IsEmailTakenAsync(email, Arg.Any<CancellationToken>());
         await _uniquenessChecker.DidNotReceive().IsPhoneNumberTakenAsync(Arg.Any<PhoneNumber>(), Arg.Any<CancellationToken>());
     }
-
-    #endregion
-
-    #region Phone Number Uniqueness Tests
 
     [Fact]
     public async Task CreateAsync_ShouldFail_WhenPhoneNumberIsAlreadyTaken()
@@ -189,10 +180,6 @@ public sealed class PersonCreationServiceTests
         await _uniquenessChecker.Received(1).IsPhoneNumberTakenAsync(phoneNumber, Arg.Any<CancellationToken>());
     }
 
-    #endregion
-
-    #region Both Email and Phone Taken Tests
-
     [Fact]
     public async Task CreateAsync_ShouldFailWithEmailError_WhenBothEmailAndPhoneTaken()
     {
@@ -221,10 +208,6 @@ public sealed class PersonCreationServiceTests
         result.Error.ShouldBe(DomainErrors.PersonEntity.EmailAlreadyTaken(email));
     }
 
-    #endregion
-
-    #region Cancellation Token Tests
-
     [Fact]
     public async Task CreateAsync_ShouldPassCancellationToken_ToUniquenessChecker()
     {
@@ -248,10 +231,6 @@ public sealed class PersonCreationServiceTests
         await _uniquenessChecker.Received(1).IsEmailTakenAsync(email, cancellationToken);
         await _uniquenessChecker.Received(1).IsPhoneNumberTakenAsync(phoneNumber, cancellationToken);
     }
-
-    #endregion
-
-    #region Person Creation Validation Tests
 
     [Fact]
     public async Task CreateAsync_ShouldDelegateToPersonCreate_WhenUniquenessChecksPass()
@@ -282,10 +261,6 @@ public sealed class PersonCreationServiceTests
         result.Value.CreatedAt.ShouldBe(createdAt);
     }
 
-    #endregion
-
-    #region Helper Methods
-
     private static Username CreateRandomUsername()
     {
         Result<Username> result = Username.Create(Faker.Person.UserName);
@@ -312,6 +287,4 @@ public sealed class PersonCreationServiceTests
         result.EnsureSuccess();
         return result.Value;
     }
-
-    #endregion
 }
