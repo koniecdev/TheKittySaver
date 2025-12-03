@@ -202,8 +202,7 @@ public sealed class PersonUpdateServiceTests
     
     private static Email CreateRandomEmail()
     {
-        var faker = new Faker();
-        Result<Email> result = Email.Create(faker.Person.Email);
+        Result<Email> result = Email.Create(Faker.Internet.Email());
         result.EnsureSuccess();
         return result.Value;
     }
@@ -211,7 +210,7 @@ public sealed class PersonUpdateServiceTests
     private static PhoneNumber CreateRandomPhoneNumber()
     {
         var faker = new Faker();
-        Result<PhoneNumber> result = PhoneNumber.CreateUnsafe(faker.Person.Phone);
+        Result<PhoneNumber> result = PhoneNumber.CreateUnsafe(Faker.Phone.PhoneNumber());
         return result.Value;
     }
 
