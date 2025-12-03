@@ -45,7 +45,7 @@ public sealed class Maybe<T> : IEquatable<Maybe<T>> where T : class
 
     public static implicit operator Maybe<T>(T value) => From(value);
 
-    public static implicit operator T(Maybe<T> maybe) => maybe.Value;
+    public static implicit operator T?(Maybe<T> maybe) => maybe.HasValue ? maybe.Value : null;
 
     /// <inheritdoc />
     public bool Equals(Maybe<T>? other)

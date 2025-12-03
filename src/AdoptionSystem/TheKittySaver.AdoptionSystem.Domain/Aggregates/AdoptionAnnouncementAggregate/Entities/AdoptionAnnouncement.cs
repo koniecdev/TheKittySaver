@@ -120,7 +120,7 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
         AdoptionAnnouncement instance = new(
             id,
             personId,
-            description,
+            description.HasValue ? description.Value : null,
             address,
             email,
             phoneNumber,

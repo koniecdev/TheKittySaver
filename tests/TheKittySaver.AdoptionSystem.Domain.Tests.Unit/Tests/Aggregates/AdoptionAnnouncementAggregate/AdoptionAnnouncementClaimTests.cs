@@ -58,7 +58,7 @@ public sealed class AdoptionAnnouncementClaimTests
 
         //Assert
         claim.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldContain("claimedat");
+            .ParamName?.ToLower().ShouldContain("claimedat".ToLower());
     }
 
 }

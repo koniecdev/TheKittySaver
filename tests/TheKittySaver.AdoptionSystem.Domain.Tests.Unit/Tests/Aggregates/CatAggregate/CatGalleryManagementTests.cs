@@ -185,7 +185,7 @@ public sealed class CatGalleryManagementTests
 
         //Assert
         removeItem.ShouldThrow<ArgumentException>()
-            .ParamName?.ToLower().ShouldContain("galleryitemid");
+            .ParamName?.ToLower().ShouldContain("galleryitemid".ToLower());
     }
 
     [Fact]
@@ -301,6 +301,6 @@ public sealed class CatGalleryManagementTests
 
         //Assert
         reorder.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldContain("neworders");
+            .ParamName?.ToLower().ShouldContain("neworders".ToLower());
     }
 }

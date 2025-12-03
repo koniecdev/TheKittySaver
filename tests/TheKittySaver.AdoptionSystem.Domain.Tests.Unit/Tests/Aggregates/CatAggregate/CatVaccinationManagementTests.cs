@@ -15,10 +15,14 @@ namespace TheKittySaver.AdoptionSystem.Domain.Tests.Unit.Tests.Aggregates.CatAgg
 public sealed class CatVaccinationManagementTests
 {
     private static readonly Faker Faker = new();
-    private static readonly DateTimeOffset VaccinationDate = new(2024, 12, 1, 0, 0, 0, TimeSpan.Zero);
-    private static readonly DateTimeOffset TestCurrentDate = new(2025, 6, 1, 0, 0, 0, TimeSpan.Zero);
-    private static readonly DateTimeOffset TestNewVaccinationDate = new(2025, 1, 1, 0, 0, 0, TimeSpan.Zero);
-    private static readonly DateTimeOffset TestNextDueDate = new(2026, 5, 1, 0, 0, 0, TimeSpan.Zero);
+    private static readonly DateTimeOffset VaccinationDate = 
+        new(2024, 12, 1, 0, 0, 0, TimeSpan.Zero);
+    private static readonly DateTimeOffset TestCurrentDate =
+        new(2025, 6, 1, 0, 0, 0, TimeSpan.Zero);
+    private static readonly DateTimeOffset TestNewVaccinationDate = 
+        new(2025, 1, 1, 0, 0, 0, TimeSpan.Zero);
+    private static readonly DateTimeOffset TestNextDueDate = 
+        new(2026, 5, 1, 0, 0, 0, TimeSpan.Zero);
 
     [Fact]
     public void AddVaccination_ShouldAddVaccination_WhenValidDataAreProvided()
@@ -53,7 +57,7 @@ public sealed class CatVaccinationManagementTests
 
         //Assert
         addVaccination.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldContain("createdat");
+            .ParamName?.ToLower().ShouldContain("createdat".ToLower());
     }
 
     [Fact]
@@ -99,7 +103,7 @@ public sealed class CatVaccinationManagementTests
 
         //Assert
         removeVaccination.ShouldThrow<ArgumentException>()
-            .ParamName?.ToLower().ShouldContain("vaccinationid");
+            .ParamName?.ToLower().ShouldContain("vaccinationid".ToLower());
     }
 
     [Fact]

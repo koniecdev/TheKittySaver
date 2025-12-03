@@ -58,7 +58,7 @@ public sealed class UpdateAdoptionAnnouncementTests
 
         //Assert
         updateDescription.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldContain("description");
+            .ParamName?.ToLower().ShouldContain("description".ToLower());
     }
 
     [Fact]
@@ -87,7 +87,7 @@ public sealed class UpdateAdoptionAnnouncementTests
 
         //Assert
         updateAddress.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldContain("address");
+            .ParamName?.ToLower().ShouldContain("address".ToLower());
     }
 
     [Fact]
@@ -133,7 +133,7 @@ public sealed class UpdateAdoptionAnnouncementTests
 
         //Assert
         updateEmail.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldContain("email");
+            .ParamName?.ToLower().ShouldContain("email".ToLower());
     }
 
     [Fact]
@@ -179,7 +179,7 @@ public sealed class UpdateAdoptionAnnouncementTests
 
         //Assert
         updatePhoneNumber.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldContain("phonenumber");
+            .ParamName?.ToLower().ShouldContain(nameof(PhoneNumber).ToLower());
     }
 
     [Fact]

@@ -154,7 +154,7 @@ public sealed class PersonAddressManagementTests
         Result<CreatedAt> createdAtResult = CreatedAt.Create(TestCreatedAtDate);
         createdAtResult.EnsureSuccess();
 
-        person.AddAddress(
+        _ = person.AddAddress(
             CountryCode.PL,
             firstName,
             region,

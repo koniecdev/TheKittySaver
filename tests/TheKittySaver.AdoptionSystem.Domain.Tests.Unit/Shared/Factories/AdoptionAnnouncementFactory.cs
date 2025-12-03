@@ -27,7 +27,8 @@ public static class AdoptionAnnouncementFactory
         PersonId thePersonId = personId ?? PersonId.New();
 
         AdoptionAnnouncementDescription description = CreateRandomDescription(faker);
-        Maybe<AdoptionAnnouncementDescription> maybeDescription = Maybe<AdoptionAnnouncementDescription>.From(description);
+        Maybe<AdoptionAnnouncementDescription> maybeDescription 
+            = Maybe<AdoptionAnnouncementDescription>.From(description);
 
         AdoptionAnnouncementAddress address = CreateRandomAddress(faker);
         Email email = CreateRandomEmail(faker);

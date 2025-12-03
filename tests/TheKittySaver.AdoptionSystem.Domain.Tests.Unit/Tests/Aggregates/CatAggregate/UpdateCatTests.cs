@@ -38,7 +38,7 @@ public sealed class UpdateCatTests
 
         //Assert
         updateName.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldContain("name");
+            .ParamName?.ToLower().ShouldContain("name".ToLower());
     }
 
     [Fact]
@@ -67,7 +67,7 @@ public sealed class UpdateCatTests
 
         //Assert
         updateDescription.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldContain("description");
+            .ParamName?.ToLower().ShouldContain("description".ToLower());
     }
 
     [Fact]
@@ -96,7 +96,7 @@ public sealed class UpdateCatTests
 
         //Assert
         updateAge.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldContain("age");
+            .ParamName?.ToLower().ShouldContain("age".ToLower());
     }
 
     [Fact]
@@ -125,7 +125,7 @@ public sealed class UpdateCatTests
 
         //Assert
         updateGender.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldContain("gender");
+            .ParamName?.ToLower().ShouldContain("gender".ToLower());
     }
 
     [Fact]
@@ -154,7 +154,7 @@ public sealed class UpdateCatTests
 
         //Assert
         updateColor.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldContain("color");
+            .ParamName?.ToLower().ShouldContain("color".ToLower());
     }
 
     [Fact]
@@ -183,7 +183,7 @@ public sealed class UpdateCatTests
 
         //Assert
         updateWeight.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldContain("weight");
+            .ParamName?.ToLower().ShouldContain("weight".ToLower());
     }
 
     [Fact]
@@ -212,7 +212,7 @@ public sealed class UpdateCatTests
 
         //Assert
         updateHealthStatus.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldContain("healthstatus");
+            .ParamName?.ToLower().ShouldContain("healthstatus".ToLower());
     }
 
     [Fact]
@@ -241,7 +241,7 @@ public sealed class UpdateCatTests
 
         //Assert
         updateSpecialNeeds.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldContain("specialneeds");
+            .ParamName?.ToLower().ShouldContain("specialneeds".ToLower());
     }
 
     [Fact]
@@ -270,7 +270,7 @@ public sealed class UpdateCatTests
 
         //Assert
         updateTemperament.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldContain("temperament");
+            .ParamName?.ToLower().ShouldContain("temperament".ToLower());
     }
 
     [Fact]
@@ -299,7 +299,7 @@ public sealed class UpdateCatTests
 
         //Assert
         updateAdoptionHistory.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldContain("adoptionhistory");
+            .ParamName?.ToLower().ShouldContain("adoptionhistory".ToLower());
     }
 
     [Fact]
@@ -328,7 +328,7 @@ public sealed class UpdateCatTests
 
         //Assert
         updateListingSource.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldContain("listingsource");
+            .ParamName?.ToLower().ShouldContain("listingsource".ToLower());
     }
 
     [Fact]
@@ -358,7 +358,7 @@ public sealed class UpdateCatTests
 
         //Assert
         updateNeuteringStatus.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldContain("neuteringstatus");
+            .ParamName?.ToLower().ShouldContain("neuteringstatus".ToLower());
     }
 
     [Fact]
@@ -387,7 +387,7 @@ public sealed class UpdateCatTests
 
         //Assert
         updateStatus.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldContain("infectiousdiseasestatus");
+            .ParamName?.ToLower().ShouldContain("infectiousdiseasestatus".ToLower());
     }
 
     [Fact]
@@ -416,6 +416,6 @@ public sealed class UpdateCatTests
 
         //Assert
         updateThumbnail.ShouldThrow<ArgumentException>()
-            .ParamName?.ToLower().ShouldContain("thumbnailid");
+            .ParamName?.ToLower().ShouldContain("thumbnailid".ToLower());
     }
 }

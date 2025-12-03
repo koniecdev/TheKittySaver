@@ -21,8 +21,6 @@ public sealed class CatAdoptionAnnouncementReassignmentServiceTests
     private static readonly DateTimeOffset OperationDate = new(2025, 6, 1, 12, 0, 0, TimeSpan.Zero);
     private readonly CatAdoptionAnnouncementReassignmentService _service = new();
 
-    #region Happy Path Tests
-
     [Fact]
     public void ReassignCatToAnotherAdoptionAnnouncement_ShouldSucceed_WhenAllConditionsAreMet()
     {
@@ -95,10 +93,6 @@ public sealed class CatAdoptionAnnouncementReassignmentServiceTests
         //Assert
         result.IsSuccess.ShouldBeTrue();
     }
-
-    #endregion
-
-    #region Announcement Status Validation Tests
 
     [Fact]
     public void ReassignCatToAnotherAdoptionAnnouncement_ShouldFail_WhenSourceAnnouncementIsClaimed()
@@ -175,10 +169,6 @@ public sealed class CatAdoptionAnnouncementReassignmentServiceTests
         result.IsFailure.ShouldBeTrue();
     }
 
-    #endregion
-
-    #region Cat Already in Destination Tests
-
     [Fact]
     public void ReassignCatToAnotherAdoptionAnnouncement_ShouldFail_WhenCatAlreadyInDestination()
     {
@@ -204,11 +194,7 @@ public sealed class CatAdoptionAnnouncementReassignmentServiceTests
         result.IsFailure.ShouldBeTrue();
         result.Error.ShouldBe(DomainErrors.CatEntity.Assignment.CannotReassignToSameAnnouncement(cat.Id));
     }
-
-    #endregion
-
-    #region Infectious Disease Compatibility Tests
-
+    
     [Fact]
     public void ReassignCatToAnotherAdoptionAnnouncement_ShouldFail_WhenFivPositiveMixesWithFivNegative()
     {
@@ -347,10 +333,6 @@ public sealed class CatAdoptionAnnouncementReassignmentServiceTests
         catToReassign.AdoptionAnnouncementId.ShouldBe(destinationAnnouncement.Id);
     }
 
-    #endregion
-
-    #region Helper Methods
-
     private static Cat CreatePublishedCat(
         PersonId personId,
         AdoptionAnnouncementId announcementId,
@@ -391,5 +373,5 @@ public sealed class CatAdoptionAnnouncementReassignmentServiceTests
         return result.Value;
     }
 
-    #endregion
+    
 }

@@ -9,12 +9,9 @@ namespace TheKittySaver.AdoptionSystem.Domain.Tests.Unit.Tests.Aggregates.CatAgg
 
 public sealed class InfectiousDiseaseStatusTests
 {
-    private static readonly Faker Faker = new();
     private static readonly DateOnly CurrentDate = new(2025, 6, 1);
     private static readonly DateOnly ValidTestDate = new(2024, 1, 15);
-
-    #region IsCompatibleWith Tests - FIV Status
-
+    
     [Theory]
     [InlineData(FivStatus.Positive, FivStatus.Positive, true)]
     [InlineData(FivStatus.Positive, FivStatus.Negative, false)]
@@ -41,10 +38,7 @@ public sealed class InfectiousDiseaseStatusTests
         isCompatible.ShouldBe(expectedCompatibility);
     }
 
-    #endregion
-
-    #region IsCompatibleWith Tests - FeLV Status
-
+    
     [Theory]
     [InlineData(FelvStatus.Positive, FelvStatus.Positive, true)]
     [InlineData(FelvStatus.Positive, FelvStatus.Negative, false)]
@@ -70,11 +64,7 @@ public sealed class InfectiousDiseaseStatusTests
         //Assert
         isCompatible.ShouldBe(expectedCompatibility);
     }
-
-    #endregion
-
-    #region IsCompatibleWith Tests - Complex Scenarios (Both FIV and FeLV)
-
+    
     [Fact]
     public void IsCompatibleWith_ShouldReturnTrue_WhenBothCatsHaveSameDiseaseStatuses()
     {
@@ -190,10 +180,6 @@ public sealed class InfectiousDiseaseStatusTests
         compatibility1To2.ShouldBe(compatibility2To1);
     }
 
-    #endregion
-
-    #region Computed Properties Tests
-
     [Theory]
     [InlineData(FivStatus.Positive, true)]
     [InlineData(FivStatus.Negative, false)]
@@ -255,10 +241,6 @@ public sealed class InfectiousDiseaseStatusTests
         //Act & Assert
         diseaseStatus.IsSafeToMixWithOtherCats.ShouldBe(expectedSafeToMix);
     }
-
-    #endregion
-
-    #region Create Validation Tests
 
     [Fact]
     public void Create_ShouldReturnSuccess_WhenValidDataIsProvided()
@@ -363,10 +345,6 @@ public sealed class InfectiousDiseaseStatusTests
         result.Value.LastTestedAt.ShouldBe(recentTestDate);
     }
 
-    #endregion
-
-    #region Equality and Value Object Behavior Tests
-
     [Fact]
     public void Equals_ShouldReturnTrue_WhenAllPropertiesAreEqual()
     {
@@ -432,11 +410,7 @@ public sealed class InfectiousDiseaseStatusTests
         //Act & Assert
         diseaseStatus1.GetHashCode().ShouldBe(diseaseStatus2.GetHashCode());
     }
-
-    #endregion
-
-    #region Helper Methods
-
+    
     private static InfectiousDiseaseStatus CreateDiseaseStatus(
         FivStatus fivStatus = FivStatus.Negative,
         FelvStatus felvStatus = FelvStatus.Negative,
@@ -458,6 +432,4 @@ public sealed class InfectiousDiseaseStatusTests
 
         return result.Value;
     }
-
-    #endregion
 }

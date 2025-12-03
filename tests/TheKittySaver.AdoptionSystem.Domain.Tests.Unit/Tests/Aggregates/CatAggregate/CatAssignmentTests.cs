@@ -15,10 +15,9 @@ namespace TheKittySaver.AdoptionSystem.Domain.Tests.Unit.Tests.Aggregates.CatAgg
 public sealed class CatAssignmentTests
 {
     private static readonly Faker Faker = new();
-    private static readonly DateTimeOffset ValidOperationDate = new(2025, 6, 1, 0, 0, 0, TimeSpan.Zero);
-
-    #region Assignment Happy Path Tests
-
+    private static readonly DateTimeOffset ValidOperationDate = 
+        new(2025, 6, 1, 0, 0, 0, TimeSpan.Zero);
+    
     [Fact]
     public void AssignToAdoptionAnnouncement_ShouldAssign_WhenCatIsDraftWithThumbnail()
     {
@@ -35,11 +34,7 @@ public sealed class CatAssignmentTests
         cat.Status.ShouldBe(CatStatusType.Published);
         cat.PublishedAt.ShouldNotBeNull();
     }
-
-    #endregion
-
-    #region Assignment Validation Tests
-
+    
     [Fact]
     public void AssignToAdoptionAnnouncement_ShouldReturnFailure_WhenCatHasNoThumbnail()
     {
@@ -86,11 +81,7 @@ public sealed class CatAssignmentTests
         assign.ShouldThrow<ArgumentException>()
             .ParamName?.ToLower().ShouldContain(nameof(Cat.AdoptionAnnouncementId));
     }
-
-    #endregion
-
-    #region Reassignment Tests
-
+    
     [Fact]
     public void ReassignToAnotherAdoptionAnnouncement_ShouldReassign_WhenCatIsPublished()
     {
@@ -142,11 +133,7 @@ public sealed class CatAssignmentTests
         reassign.ShouldThrow<ArgumentException>()
             .ParamName?.ToLower().ShouldContain($"destination{nameof(Cat.AdoptionAnnouncementId)}");
     }
-
-    #endregion
-
-    #region Unassignment Tests
-
+    
     [Fact]
     public void UnassignFromAdoptionAnnouncement_ShouldUnassign_WhenCatIsPublished()
     {
@@ -178,10 +165,6 @@ public sealed class CatAssignmentTests
         result.IsFailure.ShouldBeTrue();
         result.Error.ShouldBe(DomainErrors.CatEntity.StatusProperty.NotPublished(cat.Id));
     }
-
-    #endregion
-
-    #region Domain Events Tests
 
     [Fact]
     public void ReassignToAnotherAdoptionAnnouncement_ShouldRaiseCatReassignedDomainEvent_WhenSuccessful()
@@ -261,6 +244,4 @@ public sealed class CatAssignmentTests
         IReadOnlyCollection<IDomainEvent> events = cat.GetDomainEvents();
         events.ShouldNotContain(e => e is CatUnassignedFromAnnouncementDomainEvent);
     }
-
-    #endregion
 }

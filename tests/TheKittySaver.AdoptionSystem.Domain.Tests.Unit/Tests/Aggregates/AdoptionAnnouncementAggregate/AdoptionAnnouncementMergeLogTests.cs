@@ -74,6 +74,6 @@ public sealed class AdoptionAnnouncementMergeLogTests
 
         //Assert
         addMergeLog.ShouldThrow<ArgumentException>()
-            .ParamName?.ToLower().ShouldContain("mergedadoptionannouncementid");
+            .ParamName?.ToLower().ShouldContain("mergedadoptionannouncementid".ToLower());
     }
 }

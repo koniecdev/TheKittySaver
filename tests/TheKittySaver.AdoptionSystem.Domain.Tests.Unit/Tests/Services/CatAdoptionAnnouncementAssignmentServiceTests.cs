@@ -18,10 +18,9 @@ namespace TheKittySaver.AdoptionSystem.Domain.Tests.Unit.Tests.Services;
 public sealed class CatAdoptionAnnouncementAssignmentServiceTests
 {
     private static readonly Faker Faker = new();
-    private static readonly DateTimeOffset OperationDate = new(2025, 6, 1, 12, 0, 0, TimeSpan.Zero);
+    private static readonly DateTimeOffset OperationDate =
+        new(2025, 6, 1, 12, 0, 0, TimeSpan.Zero);
     private readonly CatAdoptionAnnouncementAssignmentService _service = new();
-
-    #region Happy Path Tests
 
     [Fact]
     public void AssignCatToAdoptionAnnouncement_ShouldSucceed_WhenAllConditionsAreMet()
@@ -98,10 +97,6 @@ public sealed class CatAdoptionAnnouncementAssignmentServiceTests
         result.IsSuccess.ShouldBeTrue();
     }
 
-    #endregion
-
-    #region PersonId Validation Tests
-
     [Fact]
     public void AssignCatToAdoptionAnnouncement_ShouldFail_WhenPersonIdMismatch()
     {
@@ -127,10 +122,6 @@ public sealed class CatAdoptionAnnouncementAssignmentServiceTests
             announcement.Id,
             announcementPersonId));
     }
-
-    #endregion
-
-    #region Cat Status Validation Tests
 
     [Fact]
     public void AssignCatToAdoptionAnnouncement_ShouldFail_WhenCatIsAlreadyPublished()
@@ -179,10 +170,6 @@ public sealed class CatAdoptionAnnouncementAssignmentServiceTests
         result.Error.ShouldBe(DomainErrors.CatEntity.StatusProperty.MustBeDraftForAssignment(cat.Id));
     }
 
-    #endregion
-
-    #region Announcement Status Validation Tests
-
     [Fact]
     public void AssignCatToAdoptionAnnouncement_ShouldFail_WhenAnnouncementIsClaimed()
     {
@@ -203,10 +190,6 @@ public sealed class CatAdoptionAnnouncementAssignmentServiceTests
         result.IsFailure.ShouldBeTrue();
         result.Error.ShouldBe(DomainErrors.AdoptionAnnouncementErrors.StatusProperty.UnavailableForAssigning);
     }
-
-    #endregion
-
-    #region Already Assigned Validation Tests
 
     [Fact]
     public void AssignCatToAdoptionAnnouncement_ShouldFail_WhenCatIsAlreadyInTheList()
@@ -236,10 +219,6 @@ public sealed class CatAdoptionAnnouncementAssignmentServiceTests
         result.IsFailure.ShouldBeTrue();
         result.Error.ShouldBe(DomainErrors.CatEntity.Assignment.AlreadyAssignedToAnnouncement(cat.Id));
     }
-
-    #endregion
-
-    #region Infectious Disease Compatibility Tests - CRITICAL
 
     [Fact]
     public void AssignCatToAdoptionAnnouncement_ShouldFail_WhenFivPositiveMixesWithFivNegative()
@@ -465,10 +444,6 @@ public sealed class CatAdoptionAnnouncementAssignmentServiceTests
         result.IsSuccess.ShouldBeTrue();
     }
 
-    #endregion
-
-    #region Helper Methods
-
     private static Cat CreateDraftCatWithThumbnail(
         PersonId personId,
         InfectiousDiseaseStatus? diseaseStatus = null)
@@ -510,5 +485,5 @@ public sealed class CatAdoptionAnnouncementAssignmentServiceTests
         return result.Value;
     }
 
-    #endregion
+    
 }
