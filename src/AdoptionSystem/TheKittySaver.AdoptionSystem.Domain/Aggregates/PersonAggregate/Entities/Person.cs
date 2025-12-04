@@ -1,6 +1,7 @@
-﻿using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.ValueObjects;
+﻿// Domain/Aggregates/PersonAggregate/Entities/Person.cs
+
+using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.ValueObjects;
 using TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
-using TheKittySaver.AdoptionSystem.Domain.Core.Enums;
 using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 using TheKittySaver.AdoptionSystem.Domain.Core.Extensions;
 using TheKittySaver.AdoptionSystem.Domain.Core.Guards;
@@ -8,6 +9,7 @@ using TheKittySaver.AdoptionSystem.Domain.Core.Monads.OptionMonad;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.AddressCompounds;
+using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.AddressCompounds.Specifications;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.PhoneNumbers;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.Timestamps;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
@@ -18,35 +20,44 @@ namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.Entitie
 public sealed class Person : AggregateRoot<PersonId>
 {
     private readonly List<Address> _addresses = [];
+
     public IReadOnlyList<Address> Addresses => _addresses.AsReadOnly();
-    
     public IdentityId IdentityId { get; }
     public Username Username { get; private set; }
     public Email Email { get; private set; }
     public PhoneNumber PhoneNumber { get; private set; }
 
     public Result<AddressId> AddAddress(
+        IAddressConsistencySpecification specification,
         CountryCode countryCode,
         AddressName name,
+        AddressPostalCode postalCode,
         AddressRegion region,
-        AddressCity addressCity,
+        AddressCity city,
         Maybe<AddressLine> maybeLine,
         CreatedAt createdAt)
     {
+        ArgumentNullException.ThrowIfNull(specification);
         ArgumentNullException.ThrowIfNull(name);
+        ArgumentNullException.ThrowIfNull(postalCode);
+        ArgumentNullException.ThrowIfNull(region);
+        ArgumentNullException.ThrowIfNull(city);
+        ArgumentNullException.ThrowIfNull(maybeLine);
         ArgumentNullException.ThrowIfNull(createdAt);
 
-        if (_addresses.Any(x=>x.Name == name))
+        if (_addresses.Any(x => x.Name == name))
         {
             return Result.Failure<AddressId>(DomainErrors.AddressEntity.NameAlreadyTaken(name));
         }
 
         Result<Address> createAddressResult = Address.Create(
+            specification: specification,
             personId: Id,
             countryCode: countryCode,
             name: name,
+            postalCode: postalCode,
             region: region,
-            city: addressCity,
+            city: city,
             maybeLine: maybeLine,
             createdAt: createdAt);
 
@@ -63,94 +74,89 @@ public sealed class Person : AggregateRoot<PersonId>
     {
         Ensure.NotEmpty(addressId);
         ArgumentNullException.ThrowIfNull(updatedName);
-        
+
         Maybe<Address> maybeAddress = _addresses.GetByIdOrDefault(addressId);
         if (maybeAddress.HasNoValue)
         {
             return Result.Failure(DomainErrors.AddressEntity.NotFound(addressId));
         }
 
-        if (maybeAddress.Value.Name != updatedName && _addresses.Any(x=>x.Name == updatedName))
+        if (maybeAddress.Value.Name != updatedName && _addresses.Any(x => x.Name == updatedName))
         {
             return Result.Failure(DomainErrors.AddressEntity.NameAlreadyTaken(updatedName));
         }
 
         Result updateNameResult = maybeAddress.Value.UpdateName(updatedName);
-        
         return updateNameResult;
     }
-    
+
     public Result UpdateAddressDetails(
-        AddressId id,
+        IAddressConsistencySpecification specification,
+        AddressId addressId,
+        AddressPostalCode postalCode,
         AddressRegion region,
-        AddressCity addressCity,
+        AddressCity city,
         Maybe<AddressLine> maybeLine)
     {
-        Ensure.NotEmpty(id);
+        ArgumentNullException.ThrowIfNull(specification);
+        Ensure.NotEmpty(addressId);
+        ArgumentNullException.ThrowIfNull(postalCode);
         ArgumentNullException.ThrowIfNull(region);
-        ArgumentNullException.ThrowIfNull(addressCity);
+        ArgumentNullException.ThrowIfNull(city);
         ArgumentNullException.ThrowIfNull(maybeLine);
-        
-        Maybe<Address> maybeAddressThatWeWantToUpdate = _addresses.GetByIdOrDefault(id);
-        if (maybeAddressThatWeWantToUpdate.HasNoValue)
-        {
-            return Result.Failure(DomainErrors.AddressEntity.NotFound(id));
-        }
 
-        Result updateRegionResult = maybeAddressThatWeWantToUpdate.Value.UpdateRegion(region);
-        if (updateRegionResult.IsFailure)
-        {
-            return updateRegionResult;
-        }
-        
-        Result updateCityResult = maybeAddressThatWeWantToUpdate.Value.UpdateCity(addressCity);
-        if (updateCityResult.IsFailure)
-        {
-            return updateCityResult;
-        }
-        
-        Result updateLineResult = maybeAddressThatWeWantToUpdate.Value.UpdateLine(maybeLine);
-        return updateLineResult.IsFailure 
-            ? updateLineResult 
-            : Result.Success();
-    }
-    
-    public Result DeleteAddress(AddressId id)
-    {
-        Ensure.NotEmpty(id);
-
-        Maybe<Address> maybeAddress = _addresses.GetByIdOrDefault(id);
+        Maybe<Address> maybeAddress = _addresses.GetByIdOrDefault(addressId);
         if (maybeAddress.HasNoValue)
         {
-            return Result.Failure(DomainErrors.AddressEntity.NotFound(id));
+            return Result.Failure(DomainErrors.AddressEntity.NotFound(addressId));
+        }
+
+        Result updateAddressDetailsResult = maybeAddress.Value.UpdateDetails(
+            specification,
+            postalCode,
+            region,
+            city,
+            maybeLine);
+        
+        return updateAddressDetailsResult;
+    }
+
+    public Result DeleteAddress(AddressId addressId)
+    {
+        Ensure.NotEmpty(addressId);
+
+        Maybe<Address> maybeAddress = _addresses.GetByIdOrDefault(addressId);
+        if (maybeAddress.HasNoValue)
+        {
+            return Result.Failure(DomainErrors.AddressEntity.NotFound(addressId));
         }
 
         return _addresses.Remove(maybeAddress.Value)
             ? Result.Success()
             : Result.Failure(DomainErrors.DeletionCorruption(nameof(Address)));
     }
-    
+
     internal Result UpdateUsername(Username username)
     {
         ArgumentNullException.ThrowIfNull(username);
         Username = username;
         return Result.Success();
     }
-    
+
     internal Result UpdateEmail(Email email)
     {
         ArgumentNullException.ThrowIfNull(email);
         Email = email;
         return Result.Success();
     }
-    
+
     internal Result UpdatePhoneNumber(PhoneNumber phoneNumber)
     {
         ArgumentNullException.ThrowIfNull(phoneNumber);
         PhoneNumber = phoneNumber;
         return Result.Success();
     }
-    
+
     internal static Result<Person> Create(
         Username username,
         Email email,

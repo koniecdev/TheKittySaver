@@ -1,5 +1,6 @@
 ﻿using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.ValueObjects;
 using TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
+using TheKittySaver.AdoptionSystem.Domain.Core.Enums;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.AddressCompounds;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.PhoneNumbers;
@@ -74,6 +75,20 @@ public static partial class DomainErrors
                 nameof(AddressRegion.Value),
                 AddressRegion.MaxLength);
     }
+    
+    public static class AddressPostalCodeValueObject
+    {
+        public static Error NullOrEmpty
+            => Required(
+                nameof(AddressPostalCode),
+                nameof(AddressPostalCode.Value));
+
+        public static Error LongerThanAllowed
+            => TooManyCharacters(
+                nameof(AddressPostalCode),
+                nameof(AddressPostalCode.Value),
+                AddressPostalCode.MaxLength);
+    }
 
     public static class AddressLineValueObject
     {
@@ -87,6 +102,21 @@ public static partial class DomainErrors
                 nameof(AddressLine),
                 nameof(AddressLine.Value),
                 AddressLine.MaxLength);
+    }
+    
+    public static class AddressConsistency
+    {
+        public static Error PostalCodeRegionMismatch(string postalCode, string region)
+            => new(
+                "AddressConsistency.PostalCodeRegionMismatch",
+                $"Postal code '{postalCode}' does not match the specified region '{region}'.",
+                TypeOfError.Validation);
+
+        public static Error InvalidPostalCodeFormat(string postalCode)
+            => new(
+                "AddressConsistency.InvalidPostalCodeFormat",
+                $"Postal code '{postalCode}' has invalid format for the specified country.",
+                TypeOfError.Validation);
     }
 
     public static class CreatedAtValueObject
