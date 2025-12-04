@@ -1,41 +1,63 @@
 using TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
+using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.OptionMonad;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.AddressCompounds;
+using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.AddressCompounds.Specifications;
+using TheKittySaver.AdoptionSystem.Primitives.Enums;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAggregate.ValueObjects;
 
 public sealed class AdoptionAnnouncementAddress : ValueObject
 {
-    public AddressCity City { get; }
+    public CountryCode CountryCode { get; }
+    public AddressPostalCode PostalCode { get; }
     public AddressRegion Region { get; }
+    public AddressCity City { get; }
     public AddressLine? Line { get; }
 
     public static Result<AdoptionAnnouncementAddress> Create(
-        AddressCity city,
+        IAddressConsistencySpecification specification,
+        CountryCode countryCode,
+        AddressPostalCode postalCode,
         AddressRegion region,
+        AddressCity city,
         Maybe<AddressLine> line)
     {
-        ArgumentNullException.ThrowIfNull(city);
+        ArgumentNullException.ThrowIfNull(specification);
+        ArgumentNullException.ThrowIfNull(postalCode);
         ArgumentNullException.ThrowIfNull(region);
+        ArgumentNullException.ThrowIfNull(city);
         ArgumentNullException.ThrowIfNull(line);
 
+        if (!specification.IsSatisfiedBy(countryCode, postalCode.Value, region.Value))
+        {
+            return Result.Failure<AdoptionAnnouncementAddress>(
+                DomainErrors.AddressConsistency.PostalCodeRegionMismatch(postalCode.Value, region.Value));
+        }
+
         AdoptionAnnouncementAddress instance = new(
-            city,
+            countryCode,
+            postalCode,
             region,
-            line.HasValue 
-                ? line.Value 
+            city,
+            line.HasValue
+                ? line.Value
                 : null);
         return Result.Success(instance);
     }
 
     private AdoptionAnnouncementAddress(
-        AddressCity city,
+        CountryCode countryCode,
+        AddressPostalCode postalCode,
         AddressRegion region,
+        AddressCity city,
         AddressLine? line)
     {
-        City = city;
+        CountryCode = countryCode;
+        PostalCode = postalCode;
         Region = region;
+        City = city;
         Line = line;
     }
 
@@ -47,8 +69,10 @@ public sealed class AdoptionAnnouncementAddress : ValueObject
 
     protected override IEnumerable<object> GetAtomicValues()
     {
-        yield return City;
+        yield return CountryCode;
+        yield return PostalCode;
         yield return Region;
+        yield return City;
 
         if (Line is not null)
         {

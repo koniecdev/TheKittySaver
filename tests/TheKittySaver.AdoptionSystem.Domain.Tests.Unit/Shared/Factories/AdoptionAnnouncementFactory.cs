@@ -5,10 +5,13 @@ using TheKittySaver.AdoptionSystem.Domain.Core.Monads.OptionMonad;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.AddressCompounds;
+using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.AddressCompounds.Specifications;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.PhoneNumbers;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.Timestamps;
 using TheKittySaver.AdoptionSystem.Domain.Tests.Unit.Shared.Extensions;
+using TheKittySaver.AdoptionSystem.Infrastructure.Specifications;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
+using TheKittySaver.AdoptionSystem.Primitives.Enums;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Tests.Unit.Shared.Factories;
 
@@ -57,18 +60,28 @@ public static class AdoptionAnnouncementFactory
 
     public static AdoptionAnnouncementAddress CreateRandomAddress(Faker faker)
     {
+        IAddressConsistencySpecification specification = new PolandAddressConsistencySpecification();
+
+        string regionValue = "Wielkopolskie";
+        Result<AddressRegion> regionResult = AddressRegion.Create(regionValue);
+        regionResult.EnsureSuccess();
+
         Result<AddressCity> cityResult = AddressCity.Create(faker.Address.City());
         cityResult.EnsureSuccess();
 
-        Result<AddressRegion> regionResult = AddressRegion.Create(faker.Address.State());
-        regionResult.EnsureSuccess();
+        string postalCodeValue = "60-123";
+        Result<AddressPostalCode> postalCodeResult = AddressPostalCode.Create(postalCodeValue);
+        postalCodeResult.EnsureSuccess();
 
         Result<AddressLine> lineResult = AddressLine.Create(faker.Address.StreetAddress());
         lineResult.EnsureSuccess();
 
         Result<AdoptionAnnouncementAddress> result = AdoptionAnnouncementAddress.Create(
-            cityResult.Value,
+            specification,
+            CountryCode.PL,
+            postalCodeResult.Value,
             regionResult.Value,
+            cityResult.Value,
             Maybe<AddressLine>.From(lineResult.Value));
         result.EnsureSuccess();
 
