@@ -1,6 +1,7 @@
 using Bogus;
 using Shouldly;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAggregate.ValueObjects;
+using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.OptionMonad;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.AddressCompounds;
@@ -381,7 +382,7 @@ public sealed class AdoptionAnnouncementAddressTests
 
         //Assert
         result.IsSuccess.ShouldBeFalse();
-        result.Error.Code.ShouldBe("AddressConsistency.PostalCodeRegionMismatch");
+        result.Error.Code.ShouldBe(DomainErrors.AddressConsistency.PostalCodeRegionMismatchCode);
     }
 
     [Fact]
@@ -405,7 +406,7 @@ public sealed class AdoptionAnnouncementAddressTests
 
         //Assert
         result.IsSuccess.ShouldBeFalse();
-        result.Error.Code.ShouldBe("AddressConsistency.PostalCodeRegionMismatch");
+        result.Error.Code.ShouldBe(DomainErrors.AddressConsistency.PostalCodeRegionMismatchCode);
     }
 
     [Fact]
@@ -429,7 +430,7 @@ public sealed class AdoptionAnnouncementAddressTests
 
         //Assert
         result.IsSuccess.ShouldBeFalse();
-        result.Error.Code.ShouldBe("AddressConsistency.PostalCodeRegionMismatch");
+        result.Error.Code.ShouldBe(DomainErrors.AddressConsistency.PostalCodeRegionMismatchCode);
     }
 
     [Fact]
@@ -453,6 +454,6 @@ public sealed class AdoptionAnnouncementAddressTests
 
         //Assert
         result.IsSuccess.ShouldBeFalse();
-        result.Error.Code.ShouldBe("AddressConsistency.PostalCodeRegionMismatch");
+        result.Error.Code.ShouldBe(DomainErrors.AddressConsistency.PostalCodeRegionMismatchCode);
     }
 }

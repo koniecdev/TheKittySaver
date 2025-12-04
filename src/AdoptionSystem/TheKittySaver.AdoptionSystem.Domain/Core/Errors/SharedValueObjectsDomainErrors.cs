@@ -106,15 +106,18 @@ public static partial class DomainErrors
     
     public static class AddressConsistency
     {
+        public const string PostalCodeRegionMismatchCode = "AddressConsistency.PostalCodeRegionMismatch";
+        public const string InvalidPostalCodeFormatCode = "AddressConsistency.InvalidPostalCodeFormat";
+
         public static Error PostalCodeRegionMismatch(string postalCode, string region)
             => new(
-                "AddressConsistency.PostalCodeRegionMismatch",
+                PostalCodeRegionMismatchCode,
                 $"Postal code '{postalCode}' does not match the specified region '{region}'.",
                 TypeOfError.Validation);
 
         public static Error InvalidPostalCodeFormat(string postalCode)
             => new(
-                "AddressConsistency.InvalidPostalCodeFormat",
+                InvalidPostalCodeFormatCode,
                 $"Postal code '{postalCode}' has invalid format for the specified country.",
                 TypeOfError.Validation);
     }

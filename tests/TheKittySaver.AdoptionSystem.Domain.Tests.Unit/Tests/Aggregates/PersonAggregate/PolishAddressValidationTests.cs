@@ -2,6 +2,7 @@ using Bogus;
 using Shouldly;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.Entities;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.ValueObjects;
+using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.OptionMonad;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.AddressCompounds;
@@ -426,7 +427,7 @@ public sealed class PolishAddressValidationTests
 
         //Assert
         result.IsSuccess.ShouldBeFalse();
-        result.Error.Code.ShouldContain("PostalCodeRegionMismatch");
+        result.Error.Code.ShouldBe(DomainErrors.AddressConsistency.PostalCodeRegionMismatchCode);
     }
 
     [Fact]
@@ -567,7 +568,7 @@ public sealed class PolishAddressValidationTests
 
         //Assert
         result.IsSuccess.ShouldBeFalse();
-        result.Error.Code.ShouldContain("PostalCodeRegionMismatch");
+        result.Error.Code.ShouldBe(DomainErrors.AddressConsistency.PostalCodeRegionMismatchCode);
         address.PostalCode.Value.ShouldBe("60-123");
     }
 

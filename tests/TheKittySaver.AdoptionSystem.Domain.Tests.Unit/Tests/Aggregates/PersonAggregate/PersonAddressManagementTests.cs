@@ -116,7 +116,7 @@ public sealed class PersonAddressManagementTests
 
         //Assert
         result.IsFailure.ShouldBeTrue();
-        result.Error.Code.ShouldContain("PostalCodeRegionMismatch");
+        result.Error.Code.ShouldBe(DomainErrors.AddressConsistency.PostalCodeRegionMismatchCode);
         person.Addresses.Count.ShouldBe(0);
     }
 
