@@ -51,11 +51,8 @@ public sealed class AdoptionAnnouncementCreationService : IAdoptionAnnouncementC
             [],
             dateTimeOfOperation);
             
-        if (assignmentResult.IsFailure)
-        {
-            return Result.Failure<AdoptionAnnouncement>(assignmentResult.Error);
-        }
-
-        return Result.Success(aaCreationResult.Value);
+        return assignmentResult.IsFailure 
+            ? Result.Failure<AdoptionAnnouncement>(assignmentResult.Error)
+            : Result.Success(aaCreationResult.Value);
     }
 }

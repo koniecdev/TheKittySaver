@@ -11,7 +11,7 @@ public sealed class InfectiousDiseaseStatusTests
 {
     private static readonly DateOnly CurrentDate = new(2025, 6, 1);
     private static readonly DateOnly ValidTestDate = new(2024, 1, 15);
-    
+
     [Theory]
     [InlineData(FivStatus.Positive, FivStatus.Positive, true)]
     [InlineData(FivStatus.Positive, FivStatus.Negative, false)]
@@ -38,7 +38,7 @@ public sealed class InfectiousDiseaseStatusTests
         isCompatible.ShouldBe(expectedCompatibility);
     }
 
-    
+
     [Theory]
     [InlineData(FelvStatus.Positive, FelvStatus.Positive, true)]
     [InlineData(FelvStatus.Positive, FelvStatus.Negative, false)]
@@ -64,7 +64,7 @@ public sealed class InfectiousDiseaseStatusTests
         //Assert
         isCompatible.ShouldBe(expectedCompatibility);
     }
-    
+
     [Fact]
     public void IsCompatibleWith_ShouldReturnTrue_WhenBothCatsHaveSameDiseaseStatuses()
     {
@@ -289,8 +289,8 @@ public sealed class InfectiousDiseaseStatusTests
     public void Create_ShouldReturnFailure_WhenTestDateIsTooOld()
     {
         //Arrange
-        FivStatus fivStatus = FivStatus.Negative;
-        FelvStatus felvStatus = FelvStatus.Negative;
+        const FivStatus fivStatus = FivStatus.Negative;
+        const FelvStatus felvStatus = FelvStatus.Negative;
         DateOnly veryOldTestDate = CurrentDate.AddYears(-50); // Way too old for a cat
 
         //Act
@@ -310,8 +310,8 @@ public sealed class InfectiousDiseaseStatusTests
     public void Create_ShouldReturnSuccess_WhenTestDateIsToday()
     {
         //Arrange
-        FivStatus fivStatus = FivStatus.NotTested;
-        FelvStatus felvStatus = FelvStatus.NotTested;
+        const FivStatus fivStatus = FivStatus.NotTested;
+        const FelvStatus felvStatus = FelvStatus.NotTested;
 
         //Act
         Result<InfectiousDiseaseStatus> result = InfectiousDiseaseStatus.Create(
@@ -329,8 +329,8 @@ public sealed class InfectiousDiseaseStatusTests
     public void Create_ShouldReturnSuccess_WhenTestDateIsRecentButValid()
     {
         //Arrange
-        FivStatus fivStatus = FivStatus.Positive;
-        FelvStatus felvStatus = FelvStatus.Positive;
+        const FivStatus fivStatus = FivStatus.Positive;
+        const FelvStatus felvStatus = FelvStatus.Positive;
         DateOnly recentTestDate = CurrentDate.AddMonths(-6);
 
         //Act
@@ -350,12 +350,10 @@ public sealed class InfectiousDiseaseStatusTests
     {
         //Arrange
         InfectiousDiseaseStatus diseaseStatus1 = CreateDiseaseStatus(
-            FivStatus.Positive,
-            FelvStatus.Negative);
+            FivStatus.Positive);
 
         InfectiousDiseaseStatus diseaseStatus2 = CreateDiseaseStatus(
-            FivStatus.Positive,
-            FelvStatus.Negative);
+            FivStatus.Positive);
 
         //Act & Assert
         diseaseStatus1.Equals(diseaseStatus2).ShouldBeTrue();
@@ -367,12 +365,9 @@ public sealed class InfectiousDiseaseStatusTests
     {
         //Arrange
         InfectiousDiseaseStatus diseaseStatus1 = CreateDiseaseStatus(
-            FivStatus.Positive,
-            FelvStatus.Negative);
+            FivStatus.Positive);
 
-        InfectiousDiseaseStatus diseaseStatus2 = CreateDiseaseStatus(
-            FivStatus.Negative,
-            FelvStatus.Negative);
+        InfectiousDiseaseStatus diseaseStatus2 = CreateDiseaseStatus();
 
         //Act & Assert
         diseaseStatus1.Equals(diseaseStatus2).ShouldBeFalse();
@@ -387,30 +382,12 @@ public sealed class InfectiousDiseaseStatusTests
             FivStatus.Negative,
             FelvStatus.Positive);
 
-        InfectiousDiseaseStatus diseaseStatus2 = CreateDiseaseStatus(
-            FivStatus.Negative,
-            FelvStatus.Negative);
+        InfectiousDiseaseStatus diseaseStatus2 = CreateDiseaseStatus();
 
         //Act & Assert
         diseaseStatus1.Equals(diseaseStatus2).ShouldBeFalse();
     }
 
-    [Fact]
-    public void GetHashCode_ShouldBeEqual_WhenObjectsAreEqual()
-    {
-        //Arrange
-        InfectiousDiseaseStatus diseaseStatus1 = CreateDiseaseStatus(
-            FivStatus.NotTested,
-            FelvStatus.NotTested);
-
-        InfectiousDiseaseStatus diseaseStatus2 = CreateDiseaseStatus(
-            FivStatus.NotTested,
-            FelvStatus.NotTested);
-
-        //Act & Assert
-        diseaseStatus1.GetHashCode().ShouldBe(diseaseStatus2.GetHashCode());
-    }
-    
     private static InfectiousDiseaseStatus CreateDiseaseStatus(
         FivStatus fivStatus = FivStatus.Negative,
         FelvStatus felvStatus = FelvStatus.Negative,

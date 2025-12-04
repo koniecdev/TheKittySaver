@@ -81,6 +81,47 @@ public sealed class CatAssignmentTests
         assign.ShouldThrow<ArgumentException>()
             .ParamName?.ToLower().ShouldContain(nameof(Cat.AdoptionAnnouncementId));
     }
+
+    [Fact]
+    public void AssignToAdoptionAnnouncement_ShouldReturnFailure_WhenPublishedAtCreationFails()
+    {
+        //Arrange
+        Cat cat = CatFactory.CreateWithThumbnail(Faker);
+        AdoptionAnnouncementId announcementId = AdoptionAnnouncementId.New();
+        DateTimeOffset invalidDate = new(2024, 12, 31, 23, 59, 59, TimeSpan.Zero);
+
+        //Act
+        Result result = cat.AssignToAdoptionAnnouncement(announcementId, invalidDate);
+
+        //Assert
+        result.IsFailure.ShouldBeTrue();
+        result.Error.ShouldBe(DomainErrors.PublishedAtValueObject.CannotBeInThePast);
+        cat.AdoptionAnnouncementId.ShouldBeNull();
+        cat.Status.ShouldBe(CatStatusType.Draft);
+    }
+
+    [Fact]
+    public void AssignToAdoptionAnnouncement_ShouldReturnFailure_WhenCatInDraftStatusAlreadyHasAnnouncementId()
+    {
+        //Arrange
+        Cat cat = CatFactory.CreateWithThumbnail(Faker);
+        AdoptionAnnouncementId existingAnnouncementId = AdoptionAnnouncementId.New();
+
+        typeof(Cat)
+            .GetProperty(nameof(Cat.AdoptionAnnouncementId))!
+            .SetValue(cat, existingAnnouncementId);
+
+        AdoptionAnnouncementId newAnnouncementId = AdoptionAnnouncementId.New();
+
+        //Act
+        Result result = cat.AssignToAdoptionAnnouncement(newAnnouncementId, ValidOperationDate);
+
+        //Assert
+        result.IsFailure.ShouldBeTrue();
+        result.Error.ShouldBe(DomainErrors.CatEntity.Assignment.AlreadyAssignedToAnotherAnnouncement(cat.Id));
+        cat.AdoptionAnnouncementId.ShouldBe(existingAnnouncementId);
+        cat.Status.ShouldBe(CatStatusType.Draft);
+    }
     
     [Fact]
     public void ReassignToAnotherAdoptionAnnouncement_ShouldReassign_WhenCatIsPublished()
@@ -133,6 +174,26 @@ public sealed class CatAssignmentTests
         reassign.ShouldThrow<ArgumentException>()
             .ParamName?.ToLower().ShouldContain($"destination{nameof(Cat.AdoptionAnnouncementId)}");
     }
+
+    [Fact]
+    public void ReassignToAnotherAdoptionAnnouncement_ShouldReturnFailure_WhenPublishedAtCreationFails()
+    {
+        //Arrange
+        Cat cat = CatFactory.CreateWithThumbnail(Faker);
+        AdoptionAnnouncementId firstAnnouncementId = AdoptionAnnouncementId.New();
+        cat.AssignToAdoptionAnnouncement(firstAnnouncementId, ValidOperationDate);
+
+        AdoptionAnnouncementId secondAnnouncementId = AdoptionAnnouncementId.New();
+        DateTimeOffset invalidDate = new(2024, 12, 31, 23, 59, 59, TimeSpan.Zero);
+
+        //Act
+        Result result = cat.ReassignToAnotherAdoptionAnnouncement(secondAnnouncementId, invalidDate);
+
+        //Assert
+        result.IsFailure.ShouldBeTrue();
+        result.Error.ShouldBe(DomainErrors.PublishedAtValueObject.CannotBeInThePast);
+        cat.AdoptionAnnouncementId.ShouldBe(firstAnnouncementId);
+    }
     
     [Fact]
     public void UnassignFromAdoptionAnnouncement_ShouldUnassign_WhenCatIsPublished()
@@ -164,6 +225,26 @@ public sealed class CatAssignmentTests
         //Assert
         result.IsFailure.ShouldBeTrue();
         result.Error.ShouldBe(DomainErrors.CatEntity.StatusProperty.NotPublished(cat.Id));
+    }
+
+    [Fact]
+    public void UnassignFromAdoptionAnnouncement_ShouldReturnFailure_WhenCatIsPublishedButHasNoAnnouncementId()
+    {
+        //Arrange
+        Cat cat = CatFactory.CreateWithThumbnail(Faker);
+
+        typeof(Cat)
+            .GetProperty(nameof(Cat.Status))!
+            .SetValue(cat, CatStatusType.Published);
+
+        //Act
+        Result result = cat.UnassignFromAdoptionAnnouncement();
+
+        //Assert
+        result.IsFailure.ShouldBeTrue();
+        result.Error.ShouldBe(DomainErrors.CatEntity.Assignment.NotAssignedToAdoptionAnnouncement(cat.Id));
+        cat.Status.ShouldBe(CatStatusType.Published);
+        cat.AdoptionAnnouncementId.ShouldBeNull();
     }
 
     [Fact]

@@ -291,6 +291,30 @@ public sealed class CatGalleryManagementTests
     }
 
     [Fact]
+    public void ReorderGalleryItems_ShouldReturnFailure_WhenGalleryItemNotFound()
+    {
+        //Arrange
+        Cat cat = CatFactory.CreateRandom(Faker);
+        cat.AddGalleryItem();
+        CatGalleryItemId nonExistentItemId = CatGalleryItemId.New();
+
+        Result<CatGalleryItemDisplayOrder> order0Result = CatGalleryItemDisplayOrder.Create(0, Cat.MaximumGalleryItemsCount);
+        order0Result.EnsureSuccess();
+
+        Dictionary<CatGalleryItemId, CatGalleryItemDisplayOrder> newOrders = new()
+        {
+            { nonExistentItemId, order0Result.Value }
+        };
+
+        //Act
+        Result result = cat.ReorderGalleryItems(newOrders);
+
+        //Assert
+        result.IsFailure.ShouldBeTrue();
+        result.Error.ShouldBe(DomainErrors.CatGalleryItemEntity.NotFound(nonExistentItemId));
+    }
+
+    [Fact]
     public void ReorderGalleryItems_ShouldThrow_WhenNullOrdersAreProvided()
     {
         //Arrange

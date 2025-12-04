@@ -85,6 +85,42 @@ public sealed class PersonAddressManagementTests
     }
 
     [Fact]
+    public void AddAddress_ShouldReturnFailure_WhenAddressValidationFails()
+    {
+        //Arrange
+        Person person = PersonFactory.CreateRandom(Faker);
+        IAddressConsistencySpecification specification = new PolandAddressConsistencySpecification();
+        AddressName name = AddressFactory.CreateRandomName(Faker);
+        Result<CreatedAt> createdAtResult = CreatedAt.Create(TestCreatedAtDate);
+        createdAtResult.EnsureSuccess();
+
+        Result<AddressPostalCode> postalCodeResult = AddressPostalCode.Create("60-123");
+        postalCodeResult.EnsureSuccess();
+
+        Result<AddressRegion> regionResult = AddressRegion.Create("Mazowieckie");
+        regionResult.EnsureSuccess();
+
+        Result<AddressCity> cityResult = AddressCity.Create("Warszawa");
+        cityResult.EnsureSuccess();
+
+        //Act
+        Result<AddressId> result = person.AddAddress(
+            specification,
+            CountryCode.PL,
+            name,
+            postalCodeResult.Value,
+            regionResult.Value,
+            cityResult.Value,
+            Maybe<AddressLine>.None,
+            createdAtResult.Value);
+
+        //Assert
+        result.IsFailure.ShouldBeTrue();
+        result.Error.Code.ShouldContain("PostalCodeRegionMismatch");
+        person.Addresses.Count.ShouldBe(0);
+    }
+
+    [Fact]
     public void AddAddress_ShouldThrow_WhenNullNameIsProvided()
     {
         //Arrange
