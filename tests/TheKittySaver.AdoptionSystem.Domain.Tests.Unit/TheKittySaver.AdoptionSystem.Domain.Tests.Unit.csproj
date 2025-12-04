@@ -29,6 +29,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\src\AdoptionSystem\TheKittySaver.AdoptionSystem.Domain\TheKittySaver.AdoptionSystem.Domain.csproj" />
+      <ProjectReference Include="..\..\src\AdoptionSystem\TheKittySaver.AdoptionSystem.Infrastructure\TheKittySaver.AdoptionSystem.Infrastructure.csproj" />
     </ItemGroup>
 
     <ItemGroup>

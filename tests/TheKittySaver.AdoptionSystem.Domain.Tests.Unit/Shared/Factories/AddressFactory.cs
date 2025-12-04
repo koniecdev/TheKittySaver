@@ -4,8 +4,10 @@ using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.ValueObject
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.OptionMonad;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.AddressCompounds;
+using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.AddressCompounds.Specifications;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.Timestamps;
 using TheKittySaver.AdoptionSystem.Domain.Tests.Unit.Shared.Extensions;
+using TheKittySaver.AdoptionSystem.Infrastructure.Specifications;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
 using TheKittySaver.AdoptionSystem.Primitives.Enums;
 
@@ -29,11 +31,16 @@ public static class AddressFactory
         Result<AddressName> nameResult = AddressName.Create(faker.Address.StreetName());
         nameResult.EnsureSuccess();
 
-        Result<AddressRegion> regionResult = AddressRegion.Create(faker.Address.State());
+        string regionValue = "Wielkopolskie";
+        Result<AddressRegion> regionResult = AddressRegion.Create(regionValue);
         regionResult.EnsureSuccess();
 
         Result<AddressCity> cityResult = AddressCity.Create(faker.Address.City());
         cityResult.EnsureSuccess();
+
+        string postalCodeValue = "60-123";
+        Result<AddressPostalCode> postalCodeResult = AddressPostalCode.Create(postalCodeValue);
+        postalCodeResult.EnsureSuccess();
 
         Maybe<AddressLine> maybeLine = Maybe<AddressLine>.None;
         if (includeLine)
@@ -47,10 +54,14 @@ public static class AddressFactory
             new DateTimeOffset(2025, 1, 1, 0, 0, 0, TimeSpan.Zero));
         createdAtResult.EnsureSuccess();
 
+        IAddressConsistencySpecification specification = new PolandAddressConsistencySpecification();
+
         Result<Address> addressResult = Address.Create(
+            specification: specification,
             personId: replacePersonIdWithEmpty ? PersonId.Empty : thePersonId,
             countryCode: replaceCountryCodeWithUnset ? CountryCode.Unset : CountryCode.PL,
             name: replaceNameWithNull ? null! : nameResult.Value,
+            postalCode: postalCodeResult.Value,
             region: replaceRegionWithNull ? null! : regionResult.Value,
             city: replaceCityWithNull ? null! : cityResult.Value,
             maybeLine: maybeLine,
@@ -84,6 +95,13 @@ public static class AddressFactory
     public static AddressLine CreateRandomLine(Faker faker)
     {
         Result<AddressLine> result = AddressLine.Create(faker.Address.StreetAddress());
+        result.EnsureSuccess();
+        return result.Value;
+    }
+
+    public static AddressPostalCode CreateRandomPostalCode(Faker faker)
+    {
+        Result<AddressPostalCode> result = AddressPostalCode.Create("60-123");
         result.EnsureSuccess();
         return result.Value;
     }
