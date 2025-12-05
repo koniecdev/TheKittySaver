@@ -209,7 +209,7 @@ public sealed class PersonUpdateServiceTests
 
     private static PhoneNumber CreateRandomPhoneNumber()
     {
-        var faker = new Faker();
+        Faker faker = new Faker();
         Result<PhoneNumber> result = PhoneNumber.CreateUnsafe(Faker.Phone.PhoneNumber());
         return result.Value;
     }

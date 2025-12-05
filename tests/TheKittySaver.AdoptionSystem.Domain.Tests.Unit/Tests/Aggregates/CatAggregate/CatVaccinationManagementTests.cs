@@ -213,7 +213,7 @@ public sealed class CatVaccinationManagementTests
         string newNote = Faker.Lorem.Sentence();
 
         //Act
-        var newNoteResult = VaccinationNote.Create(newNote);
+        Result<VaccinationNote> newNoteResult = VaccinationNote.Create(newNote);
         newNoteResult.EnsureSuccess();
         Result result = cat.UpdateVaccinationVeterinarianNote(vaccinationId, newNoteResult.Value);
 

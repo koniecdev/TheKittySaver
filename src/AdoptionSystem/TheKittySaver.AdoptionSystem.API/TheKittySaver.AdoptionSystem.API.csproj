@@ -12,7 +12,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\TheKittySaver.AdoptionSystem.Domain\TheKittySaver.AdoptionSystem.Domain.csproj" />
-      <ProjectReference Include="..\TheKittySaver.AdoptionSystem.Slices\TheKittySaver.AdoptionSystem.Slices.csproj" />
     </ItemGroup>
 
 </Project>
