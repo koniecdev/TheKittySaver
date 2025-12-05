@@ -125,4 +125,23 @@ public sealed class CatClaimTests
         IReadOnlyCollection<IDomainEvent> events = cat.GetDomainEvents();
         events.ShouldNotContain(e => e is CatClaimedDomainEvent);
     }
+
+    [Fact]
+    public void Claim_ShouldReturnFailure_WhenCatIsPublishedButNotAssignedToAnnouncement()
+    {
+        //Arrange
+        Cat cat = CatFactory.CreateWithThumbnail(Faker);
+        AdoptionAnnouncementId announcementId = AdoptionAnnouncementId.New();
+        cat.AssignToAdoptionAnnouncement(announcementId, ValidOperationDate);
+        cat.UnassignFromAdoptionAnnouncement();
+
+        ClaimedAt claimedAt = CatFactory.CreateDefaultClaimedAt();
+
+        //Act
+        Result result = cat.Claim(claimedAt);
+
+        //Assert
+        result.IsFailure.ShouldBeTrue();
+        result.Error.ShouldBe(DomainErrors.CatEntity.StatusProperty.CannotClaimDraftCat(cat.Id));
+    }
 }
