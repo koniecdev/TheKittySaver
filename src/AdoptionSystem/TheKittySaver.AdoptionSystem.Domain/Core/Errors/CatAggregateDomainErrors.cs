@@ -289,39 +289,22 @@ public static partial class DomainErrors
                     VaccinationNote.MaxLength);
         }
 
-        public static class DatesProperty
+        public static class DateProperty
         {
-            public static Error VaccinationDateInFuture(DateTimeOffset vaccinationDate, DateTimeOffset referenceDate)
+            public static Error VaccinationDateInFuture(DateOnly value, DateOnly referenceDate)
                 => CustomMessage(
                     nameof(VaccinationEntity),
-                    $"{nameof(VaccinationDates)}.{nameof(VaccinationDates.VaccinationDate)}",
-                    $"Vaccination date '{vaccinationDate:yyyy-MM-dd}' cannot be in the future (reference date: '{referenceDate:yyyy-MM-dd}').",
+                    $"{nameof(VaccinationDate)}.{nameof(VaccinationDate.Value)}",
+                    $"Vaccination date '{value:yyyy-MM-dd}' cannot be in the future (reference date: '{referenceDate:yyyy-MM-dd}').",
                     "VaccinationDateInFuture",
                     TypeOfError.Validation);
 
-            public static Error VaccinationDateTooOld(DateTimeOffset vaccinationDate, DateTimeOffset referenceDate)
+            public static Error VaccinationDateTooOld(DateOnly value, DateOnly referenceDate)
                 => CustomMessage(
                     nameof(VaccinationEntity),
-                    $"{nameof(VaccinationDates)}.{nameof(VaccinationDates.VaccinationDate)}",
-                    $"Vaccination date '{vaccinationDate:yyyy-MM-dd}' is too old to be valid (reference date: '{referenceDate:yyyy-MM-dd}').",
+                    $"{nameof(VaccinationDate)}.{nameof(VaccinationDate.Value)}",
+                    $"Vaccination date '{value:yyyy-MM-dd}' is too old to be valid (reference date: '{referenceDate:yyyy-MM-dd}').",
                     "VaccinationDateTooOld",
-                    TypeOfError.Validation);
-
-            public static Error NextDueDateInPast(DateTimeOffset nextDueDate, DateTimeOffset referenceDate)
-                => CustomMessage(
-                    nameof(VaccinationEntity),
-                    $"{nameof(VaccinationDates)}.{nameof(VaccinationDates.NextDueDate)}",
-                    $"Next due date '{nextDueDate:yyyy-MM-dd}' cannot be in the past (reference date: '{referenceDate:yyyy-MM-dd}').",
-                    "NextDueDateInPast",
-                    TypeOfError.Validation);
-
-            public static Error NextDueDateBeforeOrEqualVaccinationDate(DateTimeOffset nextDueDate,
-                DateTimeOffset vaccinationDate)
-                => CustomMessage(
-                    nameof(VaccinationEntity),
-                    $"{nameof(VaccinationDates)}.{nameof(VaccinationDates.NextDueDate)}",
-                    $"Next due date '{nextDueDate:yyyy-MM-dd}' must be after the vaccination date '{vaccinationDate:yyyy-MM-dd}'.",
-                    "NextDueDateBeforeOrEqualVaccinationDate",
                     TypeOfError.Validation);
         }
     }

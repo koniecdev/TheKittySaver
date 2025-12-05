@@ -258,9 +258,8 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
 
     public Result<Vaccination> AddVaccination(
         VaccinationType type,
-        DateTimeOffset vaccinationDate,
+        DateOnly vaccinationDate,
         CreatedAt createdAt,
-        DateTimeOffset? nextDueDate = null,
         VaccinationNote? veterinarianNote = null)
     {
         ArgumentNullException.ThrowIfNull(createdAt);
@@ -269,7 +268,6 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
             type,
             vaccinationDate,
             createdAt,
-            nextDueDate,
             veterinarianNote);
 
         if (!vaccinationResult.IsSuccess)
@@ -279,21 +277,6 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
 
         _vaccinations.Add(vaccinationResult.Value);
         return Result.Success(vaccinationResult.Value);
-    }
-
-    public Result RemoveVaccination(VaccinationId vaccinationId)
-    {
-        Ensure.NotEmpty(vaccinationId);
-
-        Maybe<Vaccination> maybeVaccination = _vaccinations.GetByIdOrDefault(vaccinationId);
-        if (maybeVaccination.HasNoValue)
-        {
-            return Result.Failure(DomainErrors.VaccinationEntity.NotFound(vaccinationId));
-        }
-
-        return !_vaccinations.Remove(maybeVaccination.Value)
-            ? Result.Failure(DomainErrors.DeletionCorruption(nameof(Vaccination)))
-            : Result.Success();
     }
 
     public Result UpdateVaccinationType(VaccinationId vaccinationId, VaccinationType updatedType)
@@ -310,37 +293,15 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
         return updateResult;
     }
 
-    public Result UpdateVaccinationDate(
-        VaccinationId vaccinationId,
-        DateTimeOffset updatedVaccinationDate,
-        DateTimeOffset currentDate)
+    public Result UpdateVaccinationDate(VaccinationId vaccinationId, VaccinationDate updatedDate)
     {
-        Ensure.NotEmpty(vaccinationId);
-
         Maybe<Vaccination> maybeVaccination = _vaccinations.GetByIdOrDefault(vaccinationId);
         if (maybeVaccination.HasNoValue)
         {
             return Result.Failure(DomainErrors.VaccinationEntity.NotFound(vaccinationId));
         }
 
-        Result updateResult = maybeVaccination.Value.UpdateVaccinationDate(updatedVaccinationDate, currentDate);
-        return updateResult;
-    }
-
-    public Result UpdateVaccinationNextDueDate(
-        VaccinationId vaccinationId,
-        DateTimeOffset? updatedNextDueDate,
-        DateTimeOffset currentDate)
-    {
-        Ensure.NotEmpty(vaccinationId);
-
-        Maybe<Vaccination> maybeVaccination = _vaccinations.GetByIdOrDefault(vaccinationId);
-        if (maybeVaccination.HasNoValue)
-        {
-            return Result.Failure(DomainErrors.VaccinationEntity.NotFound(vaccinationId));
-        }
-
-        Result updateResult = maybeVaccination.Value.UpdateNextDueDate(updatedNextDueDate, currentDate);
+        Result updateResult = maybeVaccination.Value.UpdateDate(updatedDate);
         return updateResult;
     }
 
@@ -358,6 +319,21 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
 
         Result updateResult = maybeVaccination.Value.UpdateVeterinarianNote(updatedVeterinarianNote);
         return updateResult;
+    }
+    
+    public Result RemoveVaccination(VaccinationId vaccinationId)
+    {
+        Ensure.NotEmpty(vaccinationId);
+
+        Maybe<Vaccination> maybeVaccination = _vaccinations.GetByIdOrDefault(vaccinationId);
+        if (maybeVaccination.HasNoValue)
+        {
+            return Result.Failure(DomainErrors.VaccinationEntity.NotFound(vaccinationId));
+        }
+
+        return !_vaccinations.Remove(maybeVaccination.Value)
+            ? Result.Failure(DomainErrors.DeletionCorruption(nameof(Vaccination)))
+            : Result.Success();
     }
     
     public Result UpdateThumbnail(CatThumbnailId thumbnailId)

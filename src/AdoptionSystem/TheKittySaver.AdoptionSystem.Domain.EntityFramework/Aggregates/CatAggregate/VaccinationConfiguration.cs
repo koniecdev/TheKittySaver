@@ -18,19 +18,13 @@ public sealed class VaccinationConfiguration : IEntityTypeConfiguration<Vaccinat
         builder.Property(x => x.Type)
             .HasConversion<string>()
             .HasMaxLength(EnumConsts.MaxLength);
-        
-        //todo: does vaccination .Dates even have sense?
-        builder.ComplexProperty(x => x.Dates, complexBuilder =>
-        {
-            const string prefix = nameof(Vaccination.Dates);
 
+        builder.ComplexProperty(x => x.Date, complexBuilder =>
+        {
             complexBuilder.IsRequired();
 
-            complexBuilder.Property(x => x.VaccinationDate)
-                .HasColumnName($"{prefix}{nameof(VaccinationDates.VaccinationDate)}");
-
-            complexBuilder.Property(x => x.NextDueDate)
-                .HasColumnName($"{prefix}{nameof(VaccinationDates.NextDueDate)}");
+            complexBuilder.Property(x => x.Value)
+                .HasColumnName(nameof(VaccinationDate));
         });
 
         builder.ComplexProperty(x => x.VeterinarianNote, complexBuilder =>
