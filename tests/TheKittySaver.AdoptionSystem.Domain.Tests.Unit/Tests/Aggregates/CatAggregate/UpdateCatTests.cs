@@ -3,7 +3,9 @@ using Shouldly;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Entities;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.ValueObjects;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
+using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.Timestamps;
 using TheKittySaver.AdoptionSystem.Domain.Tests.Unit.Shared.Factories;
+using TheKittySaver.AdoptionSystem.Primitives.Aggregates.AdoptionAnnouncementAggregate;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Tests.Unit.Tests.Aggregates.CatAggregate;
@@ -391,31 +393,55 @@ public sealed class UpdateCatTests
     }
 
     [Fact]
-    public void UpdateThumbnail_ShouldUpdateThumbnail_WhenValidThumbnailIdIsProvided()
+    public void UpsertThumbnail_ShouldUpdateThumbnail_WhenCalledOnDraftCat()
     {
         //Arrange
         Cat cat = CatFactory.CreateRandom(Faker);
-        CatThumbnailId newThumbnailId = CatThumbnailId.New();
 
         //Act
-        Result result = cat.UpdateThumbnail(newThumbnailId);
+        Result<CatThumbnailId> result = cat.UpsertThumbnail();
 
         //Assert
         result.IsSuccess.ShouldBeTrue();
-        cat.ThumbnailId.ShouldBe(newThumbnailId);
+        result.Value.ShouldNotBe(CatThumbnailId.Empty);
+        cat.Thumbnail.ShouldNotBeNull();
+        cat.Thumbnail.Id.ShouldBe(result.Value);
     }
 
     [Fact]
-    public void UpdateThumbnail_ShouldThrow_WhenEmptyThumbnailIdIsProvided()
+    public void UpsertThumbnail_ShouldUpdateThumbnail_WhenCalledOnPublishedCat()
     {
         //Arrange
-        Cat cat = CatFactory.CreateRandom(Faker);
+        Cat cat = CatFactory.CreateWithThumbnail(Faker);
+        AdoptionAnnouncementId adoptionAnnouncementId = AdoptionAnnouncementId.New();
+        DateTimeOffset dateTimeOfOperation = new(2025, 6, 1, 0, 0, 0, TimeSpan.Zero);
+        cat.AssignToAdoptionAnnouncement(adoptionAnnouncementId, dateTimeOfOperation);
 
         //Act
-        Action updateThumbnail = () => cat.UpdateThumbnail(CatThumbnailId.Empty);
+        Result<CatThumbnailId> result = cat.UpsertThumbnail();
 
         //Assert
-        updateThumbnail.ShouldThrow<ArgumentException>()
-            .ParamName?.ToLowerInvariant().ShouldContain("thumbnailid".ToLowerInvariant());
+        result.IsSuccess.ShouldBeTrue();
+        result.Value.ShouldNotBe(CatThumbnailId.Empty);
+        cat.Thumbnail.ShouldNotBeNull();
+        cat.Thumbnail.Id.ShouldBe(result.Value);
+    }
+
+    [Fact]
+    public void UpsertThumbnail_ShouldFail_WhenCalledOnClaimedCat()
+    {
+        //Arrange
+        Cat cat = CatFactory.CreateWithThumbnail(Faker);
+        AdoptionAnnouncementId adoptionAnnouncementId = AdoptionAnnouncementId.New();
+        DateTimeOffset dateTimeOfOperation = new DateTimeOffset(2025, 6, 1, 0, 0, 0, TimeSpan.Zero);
+        cat.AssignToAdoptionAnnouncement(adoptionAnnouncementId, dateTimeOfOperation);
+        ClaimedAt claimedAt = CatFactory.CreateDefaultClaimedAt();
+        cat.Claim(claimedAt);
+
+        //Act
+        Result<CatThumbnailId> result = cat.UpsertThumbnail();
+
+        //Assert
+        result.IsFailure.ShouldBeTrue();
     }
 }

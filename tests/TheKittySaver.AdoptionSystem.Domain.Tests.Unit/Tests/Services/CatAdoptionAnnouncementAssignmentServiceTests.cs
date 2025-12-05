@@ -29,7 +29,7 @@ public sealed class CatAdoptionAnnouncementAssignmentServiceTests
         PersonId personId = PersonId.New();
         Cat cat = CreateDraftCatWithThumbnail(personId);
         AdoptionAnnouncement announcement = CreateActiveAnnouncement(personId);
-        IReadOnlyCollection<Cat> emptyCatList = Array.Empty<Cat>();
+        IReadOnlyCollection<Cat> emptyCatList = [];
 
         //Act
         Result result = _service.AssignCatToAdoptionAnnouncement(
@@ -63,7 +63,7 @@ public sealed class CatAdoptionAnnouncementAssignmentServiceTests
         Result result = _service.AssignCatToAdoptionAnnouncement(
             newCat,
             announcement,
-            new[] { existingCat },
+            [existingCat],
             OperationDate);
 
         //Assert
@@ -90,7 +90,7 @@ public sealed class CatAdoptionAnnouncementAssignmentServiceTests
         Result result = _service.AssignCatToAdoptionAnnouncement(
             newCat,
             announcement,
-            new[] { existingCat },
+            [existingCat],
             OperationDate);
 
         //Assert
@@ -111,7 +111,7 @@ public sealed class CatAdoptionAnnouncementAssignmentServiceTests
         Result result = _service.AssignCatToAdoptionAnnouncement(
             cat,
             announcement,
-            Array.Empty<Cat>(),
+            [],
             OperationDate);
 
         //Assert
@@ -138,7 +138,7 @@ public sealed class CatAdoptionAnnouncementAssignmentServiceTests
         Result result = _service.AssignCatToAdoptionAnnouncement(
             cat,
             announcement,
-            Array.Empty<Cat>(),
+            [],
             OperationDate);
 
         //Assert
@@ -162,7 +162,7 @@ public sealed class CatAdoptionAnnouncementAssignmentServiceTests
         Result result = _service.AssignCatToAdoptionAnnouncement(
             cat,
             announcement,
-            Array.Empty<Cat>(),
+            [],
             OperationDate);
 
         //Assert
@@ -183,7 +183,7 @@ public sealed class CatAdoptionAnnouncementAssignmentServiceTests
         Result result = _service.AssignCatToAdoptionAnnouncement(
             cat,
             announcement,
-            Array.Empty<Cat>(),
+            [],
             OperationDate);
 
         //Assert
@@ -206,7 +206,7 @@ public sealed class CatAdoptionAnnouncementAssignmentServiceTests
         AdoptionAnnouncement announcement = CreateActiveAnnouncement(personId);
 
         // Incorrectly include the cat we're trying to assign in the already-assigned list
-        IReadOnlyCollection<Cat> catsAlreadyAssigned = new[] { cat, otherCat };
+        IReadOnlyCollection<Cat> catsAlreadyAssigned = [cat, otherCat];
 
         //Act
         Result result = _service.AssignCatToAdoptionAnnouncement(
@@ -239,7 +239,7 @@ public sealed class CatAdoptionAnnouncementAssignmentServiceTests
         Result result = _service.AssignCatToAdoptionAnnouncement(
             newCat,
             announcement,
-            new[] { existingCat },
+            [existingCat],
             OperationDate);
 
         //Assert
@@ -267,7 +267,7 @@ public sealed class CatAdoptionAnnouncementAssignmentServiceTests
         Result result = _service.AssignCatToAdoptionAnnouncement(
             newCat,
             announcement,
-            new[] { existingCat },
+            [existingCat],
             OperationDate);
 
         //Assert
@@ -295,7 +295,7 @@ public sealed class CatAdoptionAnnouncementAssignmentServiceTests
         Result result = _service.AssignCatToAdoptionAnnouncement(
             newCat,
             announcement,
-            new[] { existingCat },
+            [existingCat],
             OperationDate);
 
         //Assert
@@ -321,7 +321,7 @@ public sealed class CatAdoptionAnnouncementAssignmentServiceTests
         Result result = _service.AssignCatToAdoptionAnnouncement(
             newCat,
             announcement,
-            new[] { existingCat },
+            [existingCat],
             OperationDate);
 
         //Assert
@@ -350,7 +350,7 @@ public sealed class CatAdoptionAnnouncementAssignmentServiceTests
         Result result = _service.AssignCatToAdoptionAnnouncement(
             newCat,
             announcement,
-            new[] { existingCat1, existingCat2 },
+            [existingCat1, existingCat2],
             OperationDate);
 
         //Assert
@@ -380,7 +380,7 @@ public sealed class CatAdoptionAnnouncementAssignmentServiceTests
         Result result = _service.AssignCatToAdoptionAnnouncement(
             newCat,
             announcement,
-            new[] { existingCat1, existingCat2 },
+            [existingCat1, existingCat2],
             OperationDate);
 
         //Assert
@@ -408,7 +408,7 @@ public sealed class CatAdoptionAnnouncementAssignmentServiceTests
         Result result = _service.AssignCatToAdoptionAnnouncement(
             newCat,
             announcement,
-            new[] { existingCat },
+            [existingCat],
             OperationDate);
 
         //Assert
@@ -437,7 +437,7 @@ public sealed class CatAdoptionAnnouncementAssignmentServiceTests
         Result result = _service.AssignCatToAdoptionAnnouncement(
             newCat,
             announcement,
-            new[] { existingCat1, existingCat2 },
+            [existingCat1, existingCat2],
             OperationDate);
 
         //Assert
@@ -448,18 +448,15 @@ public sealed class CatAdoptionAnnouncementAssignmentServiceTests
         PersonId personId,
         InfectiousDiseaseStatus? diseaseStatus = null)
     {
-        if (diseaseStatus == null)
+        if (diseaseStatus is null)
         {
             return CatFactory.CreateWithThumbnail(Faker, personId: personId);
         }
 
-        // Create cat with specific disease status
         Cat cat = CatFactory.CreateRandom(
             Faker,
-            personId: personId,
-            thumbnailId: CatThumbnailId.New());
-
-        // We need to update the disease status via UpdateInfectiousDiseaseStatus
+            personId: personId);
+        cat.UpsertThumbnail();
         cat.UpdateInfectiousDiseaseStatus(diseaseStatus).EnsureSuccess();
 
         return cat;

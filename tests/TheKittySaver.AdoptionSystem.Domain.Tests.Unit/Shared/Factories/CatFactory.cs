@@ -28,8 +28,7 @@ internal static class CatFactory
         bool replaceAdoptionHistoryWithNull = false,
         bool replaceListingSourceWithNull = false,
         bool replaceNeuteringStatusWithNull = false,
-        bool replaceInfectiousDiseaseStatusWithNull = false,
-        CatThumbnailId? thumbnailId = null)
+        bool replaceInfectiousDiseaseStatusWithNull = false)
     {
         PersonId thePersonId = personId ?? PersonId.New();
 
@@ -91,10 +90,7 @@ internal static class CatFactory
             adoptionHistory: replaceAdoptionHistoryWithNull ? null! : adoptionHistory,
             listingSource: replaceListingSourceWithNull ? null! : listingSource,
             neuteringStatus: replaceNeuteringStatusWithNull ? null! : neuteringStatus,
-            infectiousDiseaseStatus: replaceInfectiousDiseaseStatusWithNull ? null! : infectiousDiseaseStatus,
-            vaccinations: null,
-            thumbnailId: thumbnailId,
-            galleryItems: null);
+            infectiousDiseaseStatus: replaceInfectiousDiseaseStatusWithNull ? null! : infectiousDiseaseStatus);
         catResult.EnsureSuccess();
 
         return catResult.Value;
@@ -102,7 +98,9 @@ internal static class CatFactory
 
     public static Cat CreateWithThumbnail(Faker faker, PersonId? personId = null)
     {
-        return CreateRandom(faker, personId: personId, thumbnailId: CatThumbnailId.New());
+        Cat cat = CreateRandom(faker, personId: personId);
+        cat.UpsertThumbnail();
+        return cat;
     }
 
     public static CatName CreateRandomName(Faker faker)

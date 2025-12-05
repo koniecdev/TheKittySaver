@@ -148,7 +148,6 @@ public sealed class CatConfiguration : IEntityTypeConfiguration<Cat>
                 .HasMaxLength(ListingSource.MaxSourceNameLength);
         });
 
-
         builder.ComplexProperty(x => x.NeuteringStatus, complexBuilder =>
         {
             const string prefix = nameof(Cat.NeuteringStatus);
@@ -158,8 +157,7 @@ public sealed class CatConfiguration : IEntityTypeConfiguration<Cat>
             complexBuilder.Property(x => x.IsNeutered)
                 .HasColumnName($"{prefix}{nameof(NeuteringStatus.IsNeutered)}");
         });
-
-
+        
         builder.ComplexProperty(x => x.InfectiousDiseaseStatus, complexBuilder =>
         {
             const string prefix = nameof(Cat.InfectiousDiseaseStatus);
@@ -184,10 +182,9 @@ public sealed class CatConfiguration : IEntityTypeConfiguration<Cat>
             .HasConversion<string>()
             .HasMaxLength(EnumConsts.MaxLength);
         
-        builder.HasOne<CatGalleryItem>()
+        builder.HasOne(x=>x.Thumbnail)
             .WithOne()
-            .HasPrincipalKey<Cat>(x=>x.ThumbnailId)
-            .HasForeignKey<CatGalleryItem>(x => x.CatId)
+            .HasForeignKey<CatThumbnail>(x => x.CatId)
             .OnDelete(DeleteBehavior.Cascade);
         
         builder.HasMany<CatGalleryItem>()

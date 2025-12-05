@@ -38,7 +38,6 @@ public sealed class CreateCatTests
         cat.Status.ShouldBe(CatStatusType.Draft);
         cat.Vaccinations.Count.ShouldBe(0);
         cat.GetGalleryItems().Count.ShouldBe(0);
-        cat.ThumbnailId.ShouldBeNull();
         cat.AdoptionAnnouncementId.ShouldBeNull();
         cat.ClaimedAt.ShouldBeNull();
         cat.PublishedAt.ShouldBeNull();

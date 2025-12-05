@@ -209,9 +209,16 @@ public static partial class DomainErrors
             public static Error RequiredForPublishing(CatId catId)
                 => InvalidOperation(
                     nameof(CatEntity),
-                    nameof(Cat.ThumbnailId),
+                    nameof(Cat.Thumbnail),
                     $"Cat with ID '{catId.Value}' must have a thumbnail before being published.",
                     "RequiredForPublishing");
+
+            public static Error InvalidStatusForUpsertThumbnailOperation(CatId catId)
+                => InvalidOperation(
+                    nameof(CatEntity),
+                    nameof(Cat.Thumbnail),
+                    $"Cat with ID '{catId.Value}' must be in draft or published status to modify thumbnail.",
+                    "InvalidStatusForThumbnailOperation");
         }
 
         public static class Assignment

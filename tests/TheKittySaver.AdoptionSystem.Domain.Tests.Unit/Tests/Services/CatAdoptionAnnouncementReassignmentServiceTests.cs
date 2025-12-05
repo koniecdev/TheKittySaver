@@ -30,7 +30,7 @@ public sealed class CatAdoptionAnnouncementReassignmentServiceTests
         AdoptionAnnouncement destinationAnnouncement = CreateActiveAnnouncement(personId);
 
         Cat cat = CreatePublishedCat(personId, sourceAnnouncement.Id);
-        IReadOnlyCollection<Cat> destinationCats = Array.Empty<Cat>();
+        IReadOnlyCollection<Cat> destinationCats = [];
 
         //Act
         Result result = _service.ReassignCatToAnotherAdoptionAnnouncement(
@@ -64,7 +64,7 @@ public sealed class CatAdoptionAnnouncementReassignmentServiceTests
             catToReassign,
             sourceAnnouncement,
             destinationAnnouncement,
-            new[] { existingCatInDestination },
+            [existingCatInDestination],
             OperationDate);
 
         //Assert
@@ -87,7 +87,7 @@ public sealed class CatAdoptionAnnouncementReassignmentServiceTests
             cat,
             sourceAnnouncement,
             destinationAnnouncement,
-            Array.Empty<Cat>(),
+            [],
             OperationDate);
 
         //Assert
@@ -110,7 +110,7 @@ public sealed class CatAdoptionAnnouncementReassignmentServiceTests
             cat,
             sourceAnnouncement,
             destinationAnnouncement,
-            Array.Empty<Cat>(),
+            [],
             OperationDate);
 
         //Assert
@@ -135,7 +135,7 @@ public sealed class CatAdoptionAnnouncementReassignmentServiceTests
             cat,
             sourceAnnouncement,
             destinationAnnouncement,
-            Array.Empty<Cat>(),
+            [],
             OperationDate);
 
         //Assert
@@ -162,7 +162,7 @@ public sealed class CatAdoptionAnnouncementReassignmentServiceTests
             cat,
             sourceAnnouncement,
             destinationAnnouncement,
-            Array.Empty<Cat>(),
+            [],
             OperationDate);
 
         //Assert
@@ -180,7 +180,7 @@ public sealed class CatAdoptionAnnouncementReassignmentServiceTests
         Cat cat = CreatePublishedCat(personId, sourceAnnouncement.Id);
 
         // Cat is already in the destination list
-        IReadOnlyCollection<Cat> destinationCats = new[] { cat };
+        IReadOnlyCollection<Cat> destinationCats = [cat];
 
         //Act
         Result result = _service.ReassignCatToAnotherAdoptionAnnouncement(
@@ -214,7 +214,7 @@ public sealed class CatAdoptionAnnouncementReassignmentServiceTests
             catToReassign,
             sourceAnnouncement,
             destinationAnnouncement,
-            new[] { existingCatInDestination },
+            [existingCatInDestination],
             OperationDate);
 
         //Assert
@@ -242,7 +242,7 @@ public sealed class CatAdoptionAnnouncementReassignmentServiceTests
             catToReassign,
             sourceAnnouncement,
             destinationAnnouncement,
-            new[] { existingCatInDestination },
+            [existingCatInDestination],
             OperationDate);
 
         //Assert
@@ -270,7 +270,7 @@ public sealed class CatAdoptionAnnouncementReassignmentServiceTests
             catToReassign,
             sourceAnnouncement,
             destinationAnnouncement,
-            new[] { existingCatInDestination },
+            [existingCatInDestination],
             OperationDate);
 
         //Assert
@@ -298,7 +298,7 @@ public sealed class CatAdoptionAnnouncementReassignmentServiceTests
             catToReassign,
             sourceAnnouncement,
             destinationAnnouncement,
-            new[] { existingCat1, existingCat2 },
+            [existingCat1, existingCat2],
             OperationDate);
 
         //Assert
@@ -325,7 +325,7 @@ public sealed class CatAdoptionAnnouncementReassignmentServiceTests
             catToReassign,
             sourceAnnouncement,
             destinationAnnouncement,
-            new[] { existingCat1, existingCat2 },
+            [existingCat1, existingCat2],
             OperationDate);
 
         //Assert
@@ -348,7 +348,8 @@ public sealed class CatAdoptionAnnouncementReassignmentServiceTests
 
     private static Cat CreateCatWithDiseaseStatus(PersonId personId, InfectiousDiseaseStatus diseaseStatus)
     {
-        Cat cat = CatFactory.CreateRandom(Faker, personId: personId, thumbnailId: CatThumbnailId.New());
+        Cat cat = CatFactory.CreateRandom(Faker, personId: personId);
+        cat.UpsertThumbnail();
         cat.UpdateInfectiousDiseaseStatus(diseaseStatus).EnsureSuccess();
         return cat;
     }
