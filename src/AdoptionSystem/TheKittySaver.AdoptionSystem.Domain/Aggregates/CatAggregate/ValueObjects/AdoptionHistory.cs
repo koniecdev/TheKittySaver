@@ -6,6 +6,7 @@ namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.ValueObjec
 
 public sealed class AdoptionHistory : ValueObject
 {
+    public const int LastReturnReasonMaxLength = 2000;
     public int ReturnCount { get; }
     public DateTimeOffset? LastReturnDate { get; }
     public string? LastReturnReason { get; }
@@ -38,6 +39,13 @@ public sealed class AdoptionHistory : ValueObject
         }
     
         reason = reason.Trim();
+
+        if (reason.Length > LastReturnReasonMaxLength)
+        {
+            return Result.Failure<AdoptionHistory>(DomainErrors.CatEntity.AdoptionHistoryProperty.LongerThanAllowed);
+        }
+        
+        
         AdoptionHistory adoptionHistory = new(counterHowManyTimesWasTheCatReturned, lastReturn, reason);
     
         return Result.Success(adoptionHistory);

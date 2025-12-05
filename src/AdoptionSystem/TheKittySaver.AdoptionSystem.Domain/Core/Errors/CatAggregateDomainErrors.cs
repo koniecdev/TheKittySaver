@@ -1,9 +1,11 @@
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Entities;
 using CatEntity = TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Entities.Cat;
 using VaccinationEntity = TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Entities.Vaccination;
-using AdoptionHistoryValueObject = TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.ValueObjects.AdoptionHistory;
+using AdoptionHistoryValueObject =
+    TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.ValueObjects.AdoptionHistory;
 using ListingSourceValueObject = TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.ValueObjects.ListingSource;
-using InfectiousDiseaseStatusValueObject = TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.ValueObjects.InfectiousDiseaseStatus;
+using InfectiousDiseaseStatusValueObject =
+    TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.ValueObjects.InfectiousDiseaseStatus;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.ValueObjects;
 using TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
 using TheKittySaver.AdoptionSystem.Domain.Core.Enums;
@@ -87,13 +89,20 @@ public static partial class DomainErrors
                     TypeOfError.Validation);
 
             public static Error LastReturnReasonIsEmpty
-                => Required(nameof(CatEntity), $"{nameof(Cat.AdoptionHistory)}.{nameof(AdoptionHistoryValueObject.LastReturnReason)}");
+                => Required(nameof(CatEntity),
+                    $"{nameof(Cat.AdoptionHistory)}.{nameof(AdoptionHistoryValueObject.LastReturnReason)}");
+
+            public static Error LongerThanAllowed
+                => TooManyCharacters(nameof(CatEntity),
+                    $"{nameof(Cat.AdoptionHistory)}.{nameof(AdoptionHistoryValueObject.LastReturnReason)}",
+                    AdoptionHistoryValueObject.LastReturnReasonMaxLength);
         }
 
         public static class ListingSourceProperty
         {
             public static Error SourceNameNullOrEmpty
-                => Required(nameof(CatEntity), $"{nameof(Cat.ListingSource)}.{nameof(ListingSourceValueObject.SourceName)}");
+                => Required(nameof(CatEntity),
+                    $"{nameof(Cat.ListingSource)}.{nameof(ListingSourceValueObject.SourceName)}");
 
             public static Error SourceNameLongerThanAllowed
                 => TooManyCharacters(
@@ -252,7 +261,8 @@ public static partial class DomainErrors
         public static class DisplayOrderProperty
         {
             public static Error BelowMinimum(int actualValue, int minimumValue)
-                => BelowValue(nameof(CatGalleryItemEntity), nameof(CatGalleryItemDisplayOrder), actualValue, minimumValue);
+                => BelowValue(nameof(CatGalleryItemEntity), nameof(CatGalleryItemDisplayOrder), actualValue,
+                    minimumValue);
 
             public static Error AboveOrEqualMaximum(int actualValue, int maximumValue)
                 => CustomMessage(
@@ -275,7 +285,8 @@ public static partial class DomainErrors
                 => Required(nameof(VaccinationEntity), nameof(Vaccination.VeterinarianNote));
 
             public static Error LongerThanAllowed
-                => TooManyCharacters(nameof(VaccinationEntity), nameof(Vaccination.VeterinarianNote), VaccinationNote.MaxLength);
+                => TooManyCharacters(nameof(VaccinationEntity), nameof(Vaccination.VeterinarianNote),
+                    VaccinationNote.MaxLength);
         }
 
         public static class DatesProperty
@@ -304,7 +315,8 @@ public static partial class DomainErrors
                     "NextDueDateInPast",
                     TypeOfError.Validation);
 
-            public static Error NextDueDateBeforeOrEqualVaccinationDate(DateTimeOffset nextDueDate, DateTimeOffset vaccinationDate)
+            public static Error NextDueDateBeforeOrEqualVaccinationDate(DateTimeOffset nextDueDate,
+                DateTimeOffset vaccinationDate)
                 => CustomMessage(
                     nameof(VaccinationEntity),
                     $"{nameof(VaccinationDates)}.{nameof(VaccinationDates.NextDueDate)}",

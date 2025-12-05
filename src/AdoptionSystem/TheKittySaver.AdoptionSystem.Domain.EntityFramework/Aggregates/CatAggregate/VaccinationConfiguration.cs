@@ -13,5 +13,24 @@ public sealed class VaccinationConfiguration : IEntityTypeConfiguration<Vaccinat
     public void Configure(EntityTypeBuilder<Vaccination> builder)
     {
         builder.ToTable("Vaccinations");
+
+        builder.Property(x => x.Type);
+
+        builder.ComplexProperty(x => x.Dates, complexBuilder =>
+        {
+            complexBuilder.IsRequired();
+            complexBuilder.Property(x => x.VaccinationDate)
+                .HasColumnName("Dates_VaccinationDate");
+            complexBuilder.Property(x => x.NextDueDate)
+                .HasColumnName("Dates_NextDueDate");
+        });
+
+        builder.ComplexProperty(x => x.VeterinarianNote, complexBuilder =>
+        {
+            complexBuilder.IsRequired(false);
+            complexBuilder.Property(x => x.Value)
+                .HasColumnName(nameof(Vaccination.VeterinarianNote))
+                .HasMaxLength(VaccinationNote.MaxLength);
+        });
     }
 }

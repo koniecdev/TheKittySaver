@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(dotnet build:*)"
+      "Bash(dotnet build:*)",
+      "mcp__ide__getDiagnostics"
     ],
     "deny": [],
     "ask": []

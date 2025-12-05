@@ -12,5 +12,12 @@ public sealed class CatGalleryItemConfiguration : IEntityTypeConfiguration<CatGa
     public void Configure(EntityTypeBuilder<CatGalleryItem> builder)
     {
         builder.ToTable("CatGalleryItems");
+
+        builder.ComplexProperty(x => x.DisplayOrder, complexBuilder =>
+        {
+            complexBuilder.IsRequired();
+            complexBuilder.Property(x => x.Value)
+                .HasColumnName(nameof(CatGalleryItem.DisplayOrder));
+        });
     }
 }

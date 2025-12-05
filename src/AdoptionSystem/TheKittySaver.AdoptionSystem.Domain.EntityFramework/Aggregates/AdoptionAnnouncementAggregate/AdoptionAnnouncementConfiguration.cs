@@ -18,5 +18,80 @@ public sealed class AdoptionAnnouncementConfiguration : IEntityTypeConfiguration
     public void Configure(EntityTypeBuilder<AdoptionAnnouncement> builder)
     {
         builder.ToTable("AdoptionAnnouncements");
+
+        builder.Property(x => x.PersonId);
+        builder.Property(x => x.Status);
+        builder.Property(x => x.MergeLogs);
+
+        builder.ComplexProperty(x => x.ClaimedAt, complexBuilder =>
+        {
+            complexBuilder.IsRequired(false);
+            complexBuilder.Property(x => x.Value)
+                .HasColumnName(nameof(AdoptionAnnouncement.ClaimedAt));
+        });
+
+        builder.ComplexProperty(x => x.Description, complexBuilder =>
+        {
+            complexBuilder.IsRequired(false);
+            complexBuilder.Property(x => x.Value)
+                .HasColumnName(nameof(AdoptionAnnouncement.Description))
+                .HasMaxLength(AdoptionAnnouncementDescription.MaxLength);
+        });
+
+        builder.ComplexProperty(x => x.Address, complexBuilder =>
+        {
+            complexBuilder.IsRequired();
+
+            complexBuilder.Property(x => x.CountryCode)
+                .HasColumnName("Address_CountryCode");
+
+            complexBuilder.ComplexProperty(x => x.PostalCode, nestedBuilder =>
+            {
+                nestedBuilder.IsRequired();
+                nestedBuilder.Property(x => x.Value)
+                    .HasColumnName("Address_PostalCode")
+                    .HasMaxLength(AddressPostalCode.MaxLength);
+            });
+
+            complexBuilder.ComplexProperty(x => x.Region, nestedBuilder =>
+            {
+                nestedBuilder.IsRequired();
+                nestedBuilder.Property(x => x.Value)
+                    .HasColumnName("Address_Region")
+                    .HasMaxLength(AddressRegion.MaxLength);
+            });
+
+            complexBuilder.ComplexProperty(x => x.City, nestedBuilder =>
+            {
+                nestedBuilder.IsRequired();
+                nestedBuilder.Property(x => x.Value)
+                    .HasColumnName("Address_City")
+                    .HasMaxLength(AddressCity.MaxLength);
+            });
+
+            complexBuilder.ComplexProperty(x => x.Line, nestedBuilder =>
+            {
+                nestedBuilder.IsRequired(false);
+                nestedBuilder.Property(x => x.Value)
+                    .HasColumnName("Address_Line")
+                    .HasMaxLength(AddressLine.MaxLength);
+            });
+        });
+
+        builder.ComplexProperty(x => x.Email, complexBuilder =>
+        {
+            complexBuilder.IsRequired();
+            complexBuilder.Property(x => x.Value)
+                .HasColumnName(nameof(AdoptionAnnouncement.Email))
+                .HasMaxLength(Email.MaxLength);
+        });
+
+        builder.ComplexProperty(x => x.PhoneNumber, complexBuilder =>
+        {
+            complexBuilder.IsRequired();
+            complexBuilder.Property(x => x.Value)
+                .HasColumnName(nameof(AdoptionAnnouncement.PhoneNumber))
+                .HasMaxLength(PhoneNumber.MaxLength);
+        });
     }
 }
