@@ -2,14 +2,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAggregate.Entities;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAggregate.ValueObjects;
+using TheKittySaver.AdoptionSystem.Domain.EntityFramework.Consts;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.AddressCompounds;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.PhoneNumbers;
-using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.Timestamps;
-using TheKittySaver.AdoptionSystem.Primitives.Aggregates.AdoptionAnnouncementAggregate;
-using TheKittySaver.AdoptionSystem.Primitives.Aggregates.AdoptionAnnouncementAggregate.Enums;
-using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
-using TheKittySaver.AdoptionSystem.Primitives.Enums;
 
 namespace TheKittySaver.AdoptionSystem.Domain.EntityFramework.Aggregates.AdoptionAnnouncementAggregate;
 
@@ -18,11 +14,10 @@ public sealed class AdoptionAnnouncementConfiguration : IEntityTypeConfiguration
     public void Configure(EntityTypeBuilder<AdoptionAnnouncement> builder)
     {
         builder.ToTable("AdoptionAnnouncements");
-
-        builder.Property(x => x.PersonId);
-        builder.Property(x => x.Status);
-        builder.Property(x => x.MergeLogs);
-
+        
+        builder.Property(x => x.Id)
+            .ValueGeneratedNever();
+        
         builder.ComplexProperty(x => x.ClaimedAt, complexBuilder =>
         {
             complexBuilder.IsRequired(false);
@@ -40,16 +35,20 @@ public sealed class AdoptionAnnouncementConfiguration : IEntityTypeConfiguration
 
         builder.ComplexProperty(x => x.Address, complexBuilder =>
         {
+            const string prefix = nameof(AdoptionAnnouncement.Address);
+
             complexBuilder.IsRequired();
 
             complexBuilder.Property(x => x.CountryCode)
-                .HasColumnName("Address_CountryCode");
+                .HasColumnName($"{prefix}{nameof(AdoptionAnnouncementAddress.CountryCode)}")
+                .HasConversion<string>()
+                .HasMaxLength(EnumConsts.MaxLength);
 
             complexBuilder.ComplexProperty(x => x.PostalCode, nestedBuilder =>
             {
                 nestedBuilder.IsRequired();
                 nestedBuilder.Property(x => x.Value)
-                    .HasColumnName("Address_PostalCode")
+                    .HasColumnName($"{prefix}{nameof(AdoptionAnnouncementAddress.PostalCode)}")
                     .HasMaxLength(AddressPostalCode.MaxLength);
             });
 
@@ -57,7 +56,7 @@ public sealed class AdoptionAnnouncementConfiguration : IEntityTypeConfiguration
             {
                 nestedBuilder.IsRequired();
                 nestedBuilder.Property(x => x.Value)
-                    .HasColumnName("Address_Region")
+                    .HasColumnName($"{prefix}{nameof(AdoptionAnnouncementAddress.Region)}")
                     .HasMaxLength(AddressRegion.MaxLength);
             });
 
@@ -65,7 +64,7 @@ public sealed class AdoptionAnnouncementConfiguration : IEntityTypeConfiguration
             {
                 nestedBuilder.IsRequired();
                 nestedBuilder.Property(x => x.Value)
-                    .HasColumnName("Address_City")
+                    .HasColumnName($"{prefix}{nameof(AdoptionAnnouncementAddress.City)}")
                     .HasMaxLength(AddressCity.MaxLength);
             });
 
@@ -73,7 +72,7 @@ public sealed class AdoptionAnnouncementConfiguration : IEntityTypeConfiguration
             {
                 nestedBuilder.IsRequired(false);
                 nestedBuilder.Property(x => x.Value)
-                    .HasColumnName("Address_Line")
+                    .HasColumnName($"{prefix}{nameof(AdoptionAnnouncementAddress.Line)}")
                     .HasMaxLength(AddressLine.MaxLength);
             });
         });
@@ -92,6 +91,17 @@ public sealed class AdoptionAnnouncementConfiguration : IEntityTypeConfiguration
             complexBuilder.Property(x => x.Value)
                 .HasColumnName(nameof(AdoptionAnnouncement.PhoneNumber))
                 .HasMaxLength(PhoneNumber.MaxLength);
+        });
+
+        builder.Property(x => x.Status)
+            .HasConversion<string>()
+            .HasMaxLength(EnumConsts.MaxLength);
+
+        builder.ComplexCollection(x => x.MergeLogs, complexBuilder =>
+        {
+            complexBuilder.ToJson();
+
+            complexBuilder.Property(x => x.MergedAdoptionAnnouncementId);
         });
     }
 }

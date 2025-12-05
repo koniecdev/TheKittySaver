@@ -15,7 +15,11 @@ public sealed class PersonConfiguration : IEntityTypeConfiguration<Person>
     {
         builder.ToTable("Persons");
 
-        builder.Property(x => x.IdentityId);
+        builder.Property(x => x.Id)
+            .ValueGeneratedNever();
+        
+        builder.Property(x => x.IdentityId)
+            .ValueGeneratedNever();
         
         builder.ComplexProperty(x => x.Username, complexBuilder =>
         {

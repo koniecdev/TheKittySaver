@@ -11,7 +11,10 @@ public sealed class CatConfiguration : IEntityTypeConfiguration<Cat>
     public void Configure(EntityTypeBuilder<Cat> builder)
     {
         builder.ToTable("Cats");
-
+        
+        builder.Property(x => x.Id)
+            .ValueGeneratedNever();
+        
         builder.ComplexProperty(x => x.ClaimedAt, complexBuilder =>
         {
             complexBuilder.IsRequired(false);

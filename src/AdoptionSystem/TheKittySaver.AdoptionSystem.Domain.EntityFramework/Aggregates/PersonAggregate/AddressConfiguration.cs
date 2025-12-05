@@ -12,6 +12,9 @@ public sealed class AddressConfiguration : IEntityTypeConfiguration<Address>
     {
         builder.ToTable("Addresses");
         
+        builder.Property(x => x.Id)
+            .ValueGeneratedNever();
+        
         builder.Property(x => x.CountryCode);
 
         builder.ComplexProperty(x => x.Name, complexBuilder =>
