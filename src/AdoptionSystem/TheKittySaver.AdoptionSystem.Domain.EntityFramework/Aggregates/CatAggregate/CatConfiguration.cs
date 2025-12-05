@@ -71,7 +71,7 @@ public sealed class CatConfiguration : IEntityTypeConfiguration<Cat>
         {
             complexBuilder.IsRequired();
             complexBuilder.Property(x => x.ValueInKilograms)
-                .HasColumnName(nameof(Cat.Weight))
+                .HasColumnName($"{nameof(Cat.Weight)}{nameof(CatWeight.ValueInKilograms)}")
                 .HasPrecision(5, 2);
         });
         
@@ -181,6 +181,8 @@ public sealed class CatConfiguration : IEntityTypeConfiguration<Cat>
             .HasConversion<string>()
             .HasMaxLength(EnumConsts.MaxLength);
         
-        builder.Property(x => x.ThumbnailId);
+        builder.HasOne<CatGalleryItem>()
+            .WithOne()
+            .HasForeignKey<CatGalleryItem>(x => x.CatId);
     }
 }

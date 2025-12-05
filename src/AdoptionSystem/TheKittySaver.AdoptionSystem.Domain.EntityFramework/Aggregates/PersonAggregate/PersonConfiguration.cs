@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAggregate.Entities;
+using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Entities;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.Entities;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.ValueObjects;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects;
@@ -40,6 +42,16 @@ public sealed class PersonConfiguration : IEntityTypeConfiguration<Person>
         });
         
         builder.HasMany(x=>x.Addresses)
+            .WithOne()
+            .HasForeignKey(x=>x.PersonId)
+            .OnDelete(DeleteBehavior.Cascade);
+        
+        builder.HasMany<Cat>()
+            .WithOne()
+            .HasForeignKey(x=>x.PersonId)
+            .OnDelete(DeleteBehavior.Cascade);
+        
+        builder.HasMany<AdoptionAnnouncement>()
             .WithOne()
             .HasForeignKey(x=>x.PersonId)
             .OnDelete(DeleteBehavior.Cascade);

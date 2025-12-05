@@ -384,7 +384,7 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
         }
 
         Result<CatGalleryItem> galleryItemCreationResult =
-            CatGalleryItem.Create(displayOrderResult.Value, CreatedAt);
+            CatGalleryItem.Create(Id, displayOrderResult.Value, CreatedAt);
 
         if (galleryItemCreationResult.IsFailure)
         {
