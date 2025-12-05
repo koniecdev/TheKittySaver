@@ -1,18 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <TargetFramework>net10.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    </PropertyGroup>
-
     <ItemGroup>
         <PackageReference Include="StronglyTypedId" />
         <PackageReference Include="System.Net.Http" />
         <PackageReference Include="System.Text.RegularExpressions" />
     </ItemGroup>
-    
+
     <ItemGroup>
       <Compile Update="Aggregates\PersonAggregate\IdentityId.cs">
         <Generator>MSBuild:GenerateCodeFromAttributes</Generator>

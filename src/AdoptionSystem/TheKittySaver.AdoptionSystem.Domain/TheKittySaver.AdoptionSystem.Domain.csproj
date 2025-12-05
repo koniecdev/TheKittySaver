@@ -1,11 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <TargetFramework>net10.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-    </PropertyGroup>
-
     <ItemGroup>
       <PackageReference Include="libphonenumber-csharp" />
     </ItemGroup>
@@ -13,11 +7,11 @@
     <ItemGroup>
         <InternalsVisibleTo Include="TheKittySaver.AdoptionSystem.Domain.Tests.Unit" />
     </ItemGroup>
-    
+
     <ItemGroup>
       <ProjectReference Include="..\TheKittySaver.AdoptionSystem.Primitives\TheKittySaver.AdoptionSystem.Primitives.csproj" />
     </ItemGroup>
-    
+
     <ItemGroup>
       <Compile Update="Core\BuildingBlocks\ValueObject.cs">
         <Generator>MSBuild:GenerateCodeFromAttributes</Generator>
