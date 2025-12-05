@@ -26,7 +26,6 @@ public sealed class CreateAddressTests
         address.Region.ShouldNotBeNull();
         address.City.ShouldNotBeNull();
         address.Line.ShouldNotBeNull();
-        address.CreatedAt.ShouldNotBeNull();
     }
 
     [Fact]
@@ -93,16 +92,5 @@ public sealed class CreateAddressTests
         //Assert
         addressCreation.ShouldThrow<ArgumentNullException>()
             .ParamName?.ToLowerInvariant().ShouldBe(nameof(Address.City).ToLowerInvariant());
-    }
-
-    [Fact]
-    public void Create_ShouldThrow_WhenNullCreatedAtIsProvided()
-    {
-        //Arrange & Act
-        Func<Address> addressCreation = () => AddressFactory.CreateRandom(Faker, replaceCreatedAtWithNull: true);
-
-        //Assert
-        addressCreation.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLowerInvariant().ShouldBe(nameof(Address.CreatedAt).ToLowerInvariant());
     }
 }

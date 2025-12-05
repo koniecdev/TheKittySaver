@@ -26,7 +26,6 @@ public sealed class CreateAdoptionAnnouncementTests
         announcement.Address.ShouldNotBeNull();
         announcement.Email.ShouldNotBeNull();
         announcement.PhoneNumber.ShouldNotBeNull();
-        announcement.CreatedAt.ShouldNotBeNull();
         announcement.Status.ShouldBe(AnnouncementStatusType.Active);
         announcement.MergeLogs.Count.ShouldBe(0);
         announcement.ClaimedAt.ShouldBeNull();
@@ -90,17 +89,5 @@ public sealed class CreateAdoptionAnnouncementTests
         //Assert
         announcementCreation.ShouldThrow<ArgumentNullException>()
             .ParamName?.ToLowerInvariant().ShouldBe(nameof(AdoptionAnnouncement.PhoneNumber).ToLowerInvariant());
-    }
-
-    [Fact]
-    public void Create_ShouldThrow_WhenNullCreatedAtIsProvided()
-    {
-        //Arrange & Act
-        Func<AdoptionAnnouncement> announcementCreation = () => AdoptionAnnouncementFactory.CreateRandom(
-            Faker, replaceCreatedAtWithNull: true);
-
-        //Assert
-        announcementCreation.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLowerInvariant().ShouldBe(nameof(AdoptionAnnouncement.CreatedAt).ToLowerInvariant());
     }
 }

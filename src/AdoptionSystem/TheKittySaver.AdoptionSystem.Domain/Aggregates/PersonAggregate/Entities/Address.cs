@@ -64,8 +64,7 @@ public sealed class Address : Entity<AddressId>
         AddressPostalCode postalCode,
         AddressRegion region,
         AddressCity city,
-        Maybe<AddressLine> maybeLine,
-        CreatedAt createdAt)
+        Maybe<AddressLine> maybeLine)
     {
         ArgumentNullException.ThrowIfNull(specification);
         Ensure.NotEmpty(personId);
@@ -75,7 +74,6 @@ public sealed class Address : Entity<AddressId>
         ArgumentNullException.ThrowIfNull(region);
         ArgumentNullException.ThrowIfNull(city);
         ArgumentNullException.ThrowIfNull(maybeLine);
-        ArgumentNullException.ThrowIfNull(createdAt);
 
         if (!specification.IsSatisfiedBy(countryCode, postalCode.Value, region.Value))
         {
@@ -92,8 +90,7 @@ public sealed class Address : Entity<AddressId>
             postalCode,
             region,
             city,
-            maybeLine.HasValue ? maybeLine.Value : null,
-            createdAt);
+            maybeLine.HasValue ? maybeLine.Value : null);
 
         return Result.Success(instance);
     }
@@ -106,8 +103,7 @@ public sealed class Address : Entity<AddressId>
         AddressPostalCode postalCode,
         AddressRegion region,
         AddressCity city,
-        AddressLine? line,
-        CreatedAt createdAt) : base(id, createdAt)
+        AddressLine? line) : base(id)
     {
         PersonId = personId;
         CountryCode = countryCode;

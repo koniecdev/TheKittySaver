@@ -259,15 +259,15 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
     public Result<Vaccination> AddVaccination(
         VaccinationType type,
         DateOnly vaccinationDate,
-        CreatedAt createdAt,
+        DateTimeOffset dateOfOperation,
         VaccinationNote? veterinarianNote = null)
     {
-        ArgumentNullException.ThrowIfNull(createdAt);
 
         Result<Vaccination> vaccinationResult = Vaccination.Create(
+            Id,
             type,
             vaccinationDate,
-            createdAt,
+            dateOfOperation,
             veterinarianNote);
 
         if (!vaccinationResult.IsSuccess)
@@ -360,7 +360,7 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
         }
 
         Result<CatGalleryItem> galleryItemCreationResult =
-            CatGalleryItem.Create(Id, displayOrderResult.Value, CreatedAt);
+            CatGalleryItem.Create(Id, displayOrderResult.Value);
 
         if (galleryItemCreationResult.IsFailure)
         {
@@ -459,7 +459,6 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
         ListingSource listingSource,
         NeuteringStatus neuteringStatus,
         InfectiousDiseaseStatus infectiousDiseaseStatus,
-        CreatedAt createdAt,
         IReadOnlyList<Vaccination>? vaccinations,
         CatThumbnailId? thumbnailId,
         IReadOnlyList<CatGalleryItem>? galleryItems)
@@ -478,7 +477,6 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
         ArgumentNullException.ThrowIfNull(listingSource);
         ArgumentNullException.ThrowIfNull(neuteringStatus);
         ArgumentNullException.ThrowIfNull(infectiousDiseaseStatus);
-        ArgumentNullException.ThrowIfNull(createdAt);
 
         CatId id = CatId.New();
         Cat instance = new(
@@ -497,7 +495,6 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
             listingSource,
             neuteringStatus,
             infectiousDiseaseStatus,
-            createdAt,
             CatStatusType.Draft,
             vaccinations ?? [],
             thumbnailId,
@@ -522,11 +519,10 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
         ListingSource listingSource,
         NeuteringStatus neuteringStatus,
         InfectiousDiseaseStatus infectiousDiseaseStatus,
-        CreatedAt createdAt,
         CatStatusType status,
         IReadOnlyList<Vaccination> vaccinations,
         CatThumbnailId? thumbnailId,
-        IReadOnlyList<CatGalleryItem> galleryItems) : base(id, createdAt)
+        IReadOnlyList<CatGalleryItem> galleryItems) : base(id)
     {
         PersonId = personId;
         Name = name;

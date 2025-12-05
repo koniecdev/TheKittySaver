@@ -29,16 +29,14 @@ public sealed class AdoptionAnnouncementCreationService : IAdoptionAnnouncementC
         Email email,
         PhoneNumber phoneNumber,
         Maybe<AdoptionAnnouncementDescription> description,
-        DateTimeOffset dateTimeOfOperation,
-        CreatedAt createdAt)
+        DateTimeOffset dateTimeOfOperation)
     {
         Result<AdoptionAnnouncement> aaCreationResult = AdoptionAnnouncement.Create(
             personId: catToAssign.PersonId,
             description: description,
             address: address,
             email: email,
-            phoneNumber: phoneNumber,
-            createdAt: createdAt);
+            phoneNumber: phoneNumber);
             
         if (aaCreationResult.IsFailure)
         {

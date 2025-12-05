@@ -21,7 +21,7 @@ public abstract class AggregateRoot<TId> : Entity<TId>, IAggregateRoot where TId
         _domainEvents.Add(domainEvent);
     }
 
-    protected AggregateRoot(TId id, CreatedAt createdAt) : base(id, createdAt)
+    protected AggregateRoot(TId id) : base(id)
     {
     }
 

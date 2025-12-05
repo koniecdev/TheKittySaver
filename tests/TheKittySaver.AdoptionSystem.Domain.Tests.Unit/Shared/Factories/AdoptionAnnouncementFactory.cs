@@ -24,8 +24,7 @@ internal static class AdoptionAnnouncementFactory
         bool replaceDescriptionWithNull = false,
         bool replaceAddressWithNull = false,
         bool replaceEmailWithNull = false,
-        bool replacePhoneNumberWithNull = false,
-        bool replaceCreatedAtWithNull = false)
+        bool replacePhoneNumberWithNull = false)
     {
         PersonId thePersonId = personId ?? PersonId.New();
 
@@ -36,15 +35,13 @@ internal static class AdoptionAnnouncementFactory
         AdoptionAnnouncementAddress address = CreateRandomAddress(faker);
         Email email = CreateRandomEmail(faker);
         PhoneNumber phoneNumber = CreateRandomPhoneNumber(faker);
-        CreatedAt createdAt = CreateDefaultCreatedAt();
 
         Result<AdoptionAnnouncement> result = AdoptionAnnouncement.Create(
             personId: replacePersonIdWithEmpty ? PersonId.Empty : thePersonId,
             description: replaceDescriptionWithNull ? null! : maybeDescription,
             address: replaceAddressWithNull ? null! : address,
             email: replaceEmailWithNull ? null! : email,
-            phoneNumber: replacePhoneNumberWithNull ? null! : phoneNumber,
-            createdAt: replaceCreatedAtWithNull ? null! : createdAt);
+            phoneNumber: replacePhoneNumberWithNull ? null! : phoneNumber);
         result.EnsureSuccess();
 
         return result.Value;
@@ -62,14 +59,14 @@ internal static class AdoptionAnnouncementFactory
     {
         IAddressConsistencySpecification specification = new PolandAddressConsistencySpecification();
 
-        string regionValue = "Wielkopolskie";
+        const string regionValue = "Wielkopolskie";
         Result<AddressRegion> regionResult = AddressRegion.Create(regionValue);
         regionResult.EnsureSuccess();
 
         Result<AddressCity> cityResult = AddressCity.Create(faker.Address.City());
         cityResult.EnsureSuccess();
 
-        string postalCodeValue = "60-123";
+        const string postalCodeValue = "60-123";
         Result<AddressPostalCode> postalCodeResult = AddressPostalCode.Create(postalCodeValue);
         postalCodeResult.EnsureSuccess();
 
@@ -99,14 +96,6 @@ internal static class AdoptionAnnouncementFactory
     {
         PhoneNumber phoneNumber = PhoneNumber.CreateUnsafe(faker.Person.Phone);
         return phoneNumber;
-    }
-
-    public static CreatedAt CreateDefaultCreatedAt()
-    {
-        Result<CreatedAt> result = CreatedAt.Create(
-            new DateTimeOffset(2025, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        result.EnsureSuccess();
-        return result.Value;
     }
 
     public static ClaimedAt CreateDefaultClaimedAt()

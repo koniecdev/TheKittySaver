@@ -17,6 +17,5 @@ public interface IAdoptionAnnouncementCreationService
         Email email,
         PhoneNumber phoneNumber,
         Maybe<AdoptionAnnouncementDescription> description,
-        DateTimeOffset dateTimeOfOperation,
-        CreatedAt createdAt);
+        DateTimeOffset dateTimeOfOperation);
 }

@@ -21,21 +21,19 @@ public sealed class CatGalleryItem : Entity<CatGalleryItemId>
     
     internal static Result<CatGalleryItem> Create(
         CatId catId,
-        CatGalleryItemDisplayOrder order,
-        CreatedAt createdAt)
+        CatGalleryItemDisplayOrder order)
     {
         Ensure.NotEmpty(catId);
         ArgumentNullException.ThrowIfNull(order);
         CatGalleryItemId id = CatGalleryItemId.New();
-        CatGalleryItem instance = new(catId, id, order, createdAt);
+        CatGalleryItem instance = new(catId, id, order);
         return Result.Success(instance);
     }
 
     private CatGalleryItem(
         CatId catId,
         CatGalleryItemId id,
-        CatGalleryItemDisplayOrder displayOrder,
-        CreatedAt createdAt) : base(id, createdAt)
+        CatGalleryItemDisplayOrder displayOrder) : base(id)
     {
         CatId = catId;
         DisplayOrder = displayOrder;

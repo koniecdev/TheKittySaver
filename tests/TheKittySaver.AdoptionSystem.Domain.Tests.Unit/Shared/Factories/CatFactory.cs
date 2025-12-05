@@ -29,7 +29,6 @@ internal static class CatFactory
         bool replaceListingSourceWithNull = false,
         bool replaceNeuteringStatusWithNull = false,
         bool replaceInfectiousDiseaseStatusWithNull = false,
-        bool replaceCreatedAtWithNull = false,
         CatThumbnailId? thumbnailId = null)
     {
         PersonId thePersonId = personId ?? PersonId.New();
@@ -77,7 +76,6 @@ internal static class CatFactory
             NeuteringStatus.NotNeutered(),
             NeuteringStatus.Neutered());
         InfectiousDiseaseStatus infectiousDiseaseStatus = CreateFixedNormalInfectiousDiseaseStatus();
-        CreatedAt createdAt = CreateDefaultCreatedAt();
 
         Result<Cat> catResult = Cat.Create(
             personId: replacePersonIdWithEmpty ? PersonId.Empty : thePersonId,
@@ -94,7 +92,6 @@ internal static class CatFactory
             listingSource: replaceListingSourceWithNull ? null! : listingSource,
             neuteringStatus: replaceNeuteringStatusWithNull ? null! : neuteringStatus,
             infectiousDiseaseStatus: replaceInfectiousDiseaseStatusWithNull ? null! : infectiousDiseaseStatus,
-            createdAt: replaceCreatedAtWithNull ? null! : createdAt,
             vaccinations: null,
             thumbnailId: thumbnailId,
             galleryItems: null);
@@ -168,14 +165,6 @@ internal static class CatFactory
             faker.PickRandomParam(FelvStatus.Negative, FelvStatus.Positive, FelvStatus.NotTested),
             lastTestedAt,
             currentDate);
-        result.EnsureSuccess();
-        return result.Value;
-    }
-
-    public static CreatedAt CreateDefaultCreatedAt()
-    {
-        Result<CreatedAt> result = CreatedAt.Create(
-            new DateTimeOffset(2025, 1, 1, 0, 0, 0, TimeSpan.Zero));
         result.EnsureSuccess();
         return result.Value;
     }

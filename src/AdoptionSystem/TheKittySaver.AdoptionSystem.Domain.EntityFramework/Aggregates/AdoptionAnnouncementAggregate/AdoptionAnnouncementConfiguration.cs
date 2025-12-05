@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAggregate.Entities;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAggregate.ValueObjects;
+using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Entities;
 using TheKittySaver.AdoptionSystem.Domain.EntityFramework.Consts;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.AddressCompounds;
@@ -103,5 +104,10 @@ public sealed class AdoptionAnnouncementConfiguration : IEntityTypeConfiguration
 
             complexBuilder.Property(x => x.MergedAdoptionAnnouncementId);
         });
+        
+        builder.HasMany<Cat>()
+            .WithOne()
+            .HasForeignKey(x=>x.AdoptionAnnouncementId)
+            .OnDelete(DeleteBehavior.SetNull);
     }
 }

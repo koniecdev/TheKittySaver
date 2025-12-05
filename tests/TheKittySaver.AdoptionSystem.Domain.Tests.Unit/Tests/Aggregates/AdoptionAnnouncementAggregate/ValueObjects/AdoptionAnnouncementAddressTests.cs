@@ -20,10 +20,10 @@ public sealed class AdoptionAnnouncementAddressTests
     public void Create_ShouldReturnSuccess_WhenValidValuesAreProvidedWithLine()
     {
         //Arrange
-        string regionValue = "Wielkopolskie";
+        const string regionValue = "Wielkopolskie";
         Result<AddressRegion> regionResult = AddressRegion.Create(regionValue);
         Result<AddressCity> cityResult = AddressCity.Create(Faker.Address.City());
-        string postalCodeValue = "60-123";
+        const string postalCodeValue = "60-123";
         Result<AddressPostalCode> postalCodeResult = AddressPostalCode.Create(postalCodeValue);
         Result<AddressLine> lineResult = AddressLine.Create(Faker.Address.StreetAddress());
 
@@ -49,10 +49,10 @@ public sealed class AdoptionAnnouncementAddressTests
     public void Create_ShouldReturnSuccess_WhenValidValuesAreProvidedWithoutLine()
     {
         //Arrange
-        string regionValue = "Wielkopolskie";
+        const string regionValue = "Wielkopolskie";
         Result<AddressRegion> regionResult = AddressRegion.Create(regionValue);
         Result<AddressCity> cityResult = AddressCity.Create(Faker.Address.City());
-        string postalCodeValue = "60-123";
+        const string postalCodeValue = "60-123";
         Result<AddressPostalCode> postalCodeResult = AddressPostalCode.Create(postalCodeValue);
 
         //Act
@@ -77,9 +77,9 @@ public sealed class AdoptionAnnouncementAddressTests
     public void Create_ShouldThrow_WhenNullCityIsProvided()
     {
         //Arrange
-        string regionValue = "Wielkopolskie";
+        const string regionValue = "Wielkopolskie";
         Result<AddressRegion> regionResult = AddressRegion.Create(regionValue);
-        string postalCodeValue = "60-123";
+        const string postalCodeValue = "60-123";
         Result<AddressPostalCode> postalCodeResult = AddressPostalCode.Create(postalCodeValue);
 
         //Act
@@ -101,7 +101,7 @@ public sealed class AdoptionAnnouncementAddressTests
     {
         //Arrange
         Result<AddressCity> cityResult = AddressCity.Create(Faker.Address.City());
-        string postalCodeValue = "60-123";
+        const string postalCodeValue = "60-123";
         Result<AddressPostalCode> postalCodeResult = AddressPostalCode.Create(postalCodeValue);
 
         //Act
@@ -122,10 +122,10 @@ public sealed class AdoptionAnnouncementAddressTests
     public void ToString_ShouldReturnExpectedValue_WhenAddressWithLineIsProvided()
     {
         //Arrange
-        string regionValue = "Wielkopolskie";
+        const string regionValue = "Wielkopolskie";
         Result<AddressRegion> regionResult = AddressRegion.Create(regionValue);
         Result<AddressCity> cityResult = AddressCity.Create(Faker.Address.City());
-        string postalCodeValue = "60-123";
+        const string postalCodeValue = "60-123";
         Result<AddressPostalCode> postalCodeResult = AddressPostalCode.Create(postalCodeValue);
         Result<AddressLine> lineResult = AddressLine.Create(Faker.Address.StreetAddress());
         Result<AdoptionAnnouncementAddress> addressResult = AdoptionAnnouncementAddress.Create(
@@ -149,10 +149,10 @@ public sealed class AdoptionAnnouncementAddressTests
     public void ToString_ShouldReturnExpectedValue_WhenAddressWithoutLineIsProvided()
     {
         //Arrange
-        string regionValue = "Wielkopolskie";
+        const string regionValue = "Wielkopolskie";
         Result<AddressRegion> regionResult = AddressRegion.Create(regionValue);
         Result<AddressCity> cityResult = AddressCity.Create(Faker.Address.City());
-        string postalCodeValue = "60-123";
+        const string postalCodeValue = "60-123";
         Result<AddressPostalCode> postalCodeResult = AddressPostalCode.Create(postalCodeValue);
         Result<AdoptionAnnouncementAddress> addressResult = AdoptionAnnouncementAddress.Create(
             Specification,
@@ -175,10 +175,10 @@ public sealed class AdoptionAnnouncementAddressTests
     public void Equality_ShouldReturnTrue_WhenValuesAreEqualWithLine()
     {
         //Arrange
-        string regionValue = "Wielkopolskie";
+        const string regionValue = "Wielkopolskie";
         Result<AddressRegion> regionResult = AddressRegion.Create(regionValue);
         Result<AddressCity> cityResult = AddressCity.Create(Faker.Address.City());
-        string postalCodeValue = "60-123";
+        const string postalCodeValue = "60-123";
         Result<AddressPostalCode> postalCodeResult = AddressPostalCode.Create(postalCodeValue);
         Result<AddressLine> lineResult = AddressLine.Create(Faker.Address.StreetAddress());
 
@@ -206,10 +206,10 @@ public sealed class AdoptionAnnouncementAddressTests
     public void Equality_ShouldReturnTrue_WhenValuesAreEqualWithoutLine()
     {
         //Arrange
-        string regionValue = "Wielkopolskie";
+        const string regionValue = "Wielkopolskie";
         Result<AddressRegion> regionResult = AddressRegion.Create(regionValue);
         Result<AddressCity> cityResult = AddressCity.Create(Faker.Address.City());
-        string postalCodeValue = "60-123";
+        const string postalCodeValue = "60-123";
         Result<AddressPostalCode> postalCodeResult = AddressPostalCode.Create(postalCodeValue);
 
         Result<AdoptionAnnouncementAddress> result1 = AdoptionAnnouncementAddress.Create(
@@ -236,11 +236,11 @@ public sealed class AdoptionAnnouncementAddressTests
     public void Equality_ShouldReturnFalse_WhenCitiesAreDifferent()
     {
         //Arrange
-        string regionValue = "Wielkopolskie";
+        const string regionValue = "Wielkopolskie";
         Result<AddressRegion> regionResult = AddressRegion.Create(regionValue);
         Result<AddressCity> city1Result = AddressCity.Create(Faker.Address.City());
         Result<AddressCity> city2Result = AddressCity.Create(Faker.Address.City() + "_different");
-        string postalCodeValue = "60-123";
+        const string postalCodeValue = "60-123";
         Result<AddressPostalCode> postalCodeResult = AddressPostalCode.Create(postalCodeValue);
 
         Result<AdoptionAnnouncementAddress> result1 = AdoptionAnnouncementAddress.Create(
@@ -268,11 +268,11 @@ public sealed class AdoptionAnnouncementAddressTests
     {
         //Arrange
         Result<AddressCity> cityResult = AddressCity.Create(Faker.Address.City());
-        string postalCodeValue = "60-123";
+        const string postalCodeValue = "60-123";
         Result<AddressPostalCode> postalCodeResult = AddressPostalCode.Create(postalCodeValue);
-        string region1Value = "Wielkopolskie";
+        const string region1Value = "Wielkopolskie";
         Result<AddressRegion> region1Result = AddressRegion.Create(region1Value);
-        string region2Value = "Mazowieckie";
+        const string region2Value = "Mazowieckie";
         Result<AddressRegion> region2Result = AddressRegion.Create(region2Value);
 
         Result<AdoptionAnnouncementAddress> result1 = AdoptionAnnouncementAddress.Create(
@@ -283,7 +283,7 @@ public sealed class AdoptionAnnouncementAddressTests
             cityResult.Value,
             Maybe<AddressLine>.None);
 
-        string postalCode2Value = "00-001";
+        const string postalCode2Value = "00-001";
         Result<AddressPostalCode> postalCode2Result = AddressPostalCode.Create(postalCode2Value);
 
         Result<AdoptionAnnouncementAddress> result2 = AdoptionAnnouncementAddress.Create(
@@ -302,10 +302,10 @@ public sealed class AdoptionAnnouncementAddressTests
     public void Equality_ShouldReturnFalse_WhenLinesAreDifferent()
     {
         //Arrange
-        string regionValue = "Wielkopolskie";
+        const string regionValue = "Wielkopolskie";
         Result<AddressRegion> regionResult = AddressRegion.Create(regionValue);
         Result<AddressCity> cityResult = AddressCity.Create(Faker.Address.City());
-        string postalCodeValue = "60-123";
+        const string postalCodeValue = "60-123";
         Result<AddressPostalCode> postalCodeResult = AddressPostalCode.Create(postalCodeValue);
         Result<AddressLine> line1Result = AddressLine.Create(Faker.Address.StreetAddress());
         Result<AddressLine> line2Result = AddressLine.Create(Faker.Address.StreetAddress() + "_different");
@@ -334,10 +334,10 @@ public sealed class AdoptionAnnouncementAddressTests
     public void Equality_ShouldReturnFalse_WhenOneHasLineAndOtherDoesNot()
     {
         //Arrange
-        string regionValue = "Wielkopolskie";
+        const string regionValue = "Wielkopolskie";
         Result<AddressRegion> regionResult = AddressRegion.Create(regionValue);
         Result<AddressCity> cityResult = AddressCity.Create(Faker.Address.City());
-        string postalCodeValue = "60-123";
+        const string postalCodeValue = "60-123";
         Result<AddressPostalCode> postalCodeResult = AddressPostalCode.Create(postalCodeValue);
         Result<AddressLine> lineResult = AddressLine.Create(Faker.Address.StreetAddress());
 
@@ -365,10 +365,10 @@ public sealed class AdoptionAnnouncementAddressTests
     public void Create_ShouldReturnFailure_WhenPostalCodeDoesNotMatchRegion()
     {
         //Arrange
-        string regionValue = "Mazowieckie";
+        const string regionValue = "Mazowieckie";
         Result<AddressRegion> regionResult = AddressRegion.Create(regionValue);
         Result<AddressCity> cityResult = AddressCity.Create(Faker.Address.City());
-        string postalCodeValue = "60-123";
+        const string postalCodeValue = "60-123";
         Result<AddressPostalCode> postalCodeResult = AddressPostalCode.Create(postalCodeValue);
 
         //Act
@@ -389,10 +389,10 @@ public sealed class AdoptionAnnouncementAddressTests
     public void Create_ShouldReturnFailure_WhenWielkopolskiePostalCodeUsedWithMalopolskie()
     {
         //Arrange
-        string regionValue = "Małopolskie";
+        const string regionValue = "Małopolskie";
         Result<AddressRegion> regionResult = AddressRegion.Create(regionValue);
         Result<AddressCity> cityResult = AddressCity.Create(Faker.Address.City());
-        string postalCodeValue = "62-800";
+        const string postalCodeValue = "62-800";
         Result<AddressPostalCode> postalCodeResult = AddressPostalCode.Create(postalCodeValue);
 
         //Act
@@ -413,10 +413,10 @@ public sealed class AdoptionAnnouncementAddressTests
     public void Create_ShouldReturnFailure_WhenLodzkiePostalCodeUsedWithSlaskie()
     {
         //Arrange
-        string regionValue = "Śląskie";
+        const string regionValue = "Śląskie";
         Result<AddressRegion> regionResult = AddressRegion.Create(regionValue);
         Result<AddressCity> cityResult = AddressCity.Create(Faker.Address.City());
-        string postalCodeValue = "93-456";
+        const string postalCodeValue = "93-456";
         Result<AddressPostalCode> postalCodeResult = AddressPostalCode.Create(postalCodeValue);
 
         //Act
@@ -437,10 +437,10 @@ public sealed class AdoptionAnnouncementAddressTests
     public void Create_ShouldReturnFailure_WhenPomorskiePostalCodeUsedWithZachodniopomorskie()
     {
         //Arrange
-        string regionValue = "Zachodniopomorskie";
+        const string regionValue = "Zachodniopomorskie";
         Result<AddressRegion> regionResult = AddressRegion.Create(regionValue);
         Result<AddressCity> cityResult = AddressCity.Create(Faker.Address.City());
-        string postalCodeValue = "80-001";
+        const string postalCodeValue = "80-001";
         Result<AddressPostalCode> postalCodeResult = AddressPostalCode.Create(postalCodeValue);
 
         //Act

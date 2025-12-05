@@ -14,22 +14,18 @@ public abstract class Entity<TId> : IEquatable<Entity<TId>> where TId : struct
     protected Entity()
     {
         Id = default;
-        CreatedAt = null!;
     }
 
-    protected Entity(TId id, CreatedAt createdAt)
+    protected Entity(TId id)
     {
         Id = id;
-        CreatedAt = createdAt;
     }
 
     /// <summary>
     /// Gets or sets the entity identifier.
     /// </summary>
     public TId Id { get; }
-
-    public CreatedAt CreatedAt { get; }
-
+    
     public static bool operator ==(Entity<TId>? a, Entity<TId>? b)
     {
         if (a is null && b is null)

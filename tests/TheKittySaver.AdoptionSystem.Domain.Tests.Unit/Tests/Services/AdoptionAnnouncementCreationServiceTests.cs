@@ -40,7 +40,6 @@ public sealed class AdoptionAnnouncementCreationServiceTests
         Email email = AdoptionAnnouncementFactory.CreateRandomEmail(Faker);
         PhoneNumber phoneNumber = AdoptionAnnouncementFactory.CreateRandomPhoneNumber(Faker);
         Maybe<AdoptionAnnouncementDescription> description = Maybe<AdoptionAnnouncementDescription>.None;
-        CreatedAt createdAt = AdoptionAnnouncementFactory.CreateDefaultCreatedAt();
 
         //Act
         Result<AdoptionAnnouncement> result = _service.Create(
@@ -49,8 +48,7 @@ public sealed class AdoptionAnnouncementCreationServiceTests
             email,
             phoneNumber,
             description,
-            OperationDate,
-            createdAt);
+            OperationDate);
 
         //Assert
         result.IsSuccess.ShouldBeTrue();
@@ -73,7 +71,6 @@ public sealed class AdoptionAnnouncementCreationServiceTests
         PhoneNumber phoneNumber = AdoptionAnnouncementFactory.CreateRandomPhoneNumber(Faker);
         AdoptionAnnouncementDescription desc = AdoptionAnnouncementFactory.CreateRandomDescription(Faker);
         Maybe<AdoptionAnnouncementDescription> description = Maybe<AdoptionAnnouncementDescription>.From(desc);
-        CreatedAt createdAt = AdoptionAnnouncementFactory.CreateDefaultCreatedAt();
 
         //Act
         Result<AdoptionAnnouncement> result = _service.Create(
@@ -82,8 +79,7 @@ public sealed class AdoptionAnnouncementCreationServiceTests
             email,
             phoneNumber,
             description,
-            OperationDate,
-            createdAt);
+            OperationDate);
 
         //Assert
         result.IsSuccess.ShouldBeTrue();
@@ -100,7 +96,6 @@ public sealed class AdoptionAnnouncementCreationServiceTests
         Email email = AdoptionAnnouncementFactory.CreateRandomEmail(Faker);
         PhoneNumber phoneNumber = AdoptionAnnouncementFactory.CreateRandomPhoneNumber(Faker);
         Maybe<AdoptionAnnouncementDescription> description = Maybe<AdoptionAnnouncementDescription>.None;
-        CreatedAt createdAt = AdoptionAnnouncementFactory.CreateDefaultCreatedAt();
 
         //Act
         Result<AdoptionAnnouncement> result = _service.Create(
@@ -109,8 +104,7 @@ public sealed class AdoptionAnnouncementCreationServiceTests
             email,
             phoneNumber,
             description,
-            OperationDate,
-            createdAt);
+            OperationDate);
 
         //Assert
         result.IsSuccess.ShouldBeTrue();
@@ -128,7 +122,6 @@ public sealed class AdoptionAnnouncementCreationServiceTests
         Email email = AdoptionAnnouncementFactory.CreateRandomEmail(Faker);
         PhoneNumber phoneNumber = AdoptionAnnouncementFactory.CreateRandomPhoneNumber(Faker);
         Maybe<AdoptionAnnouncementDescription> description = Maybe<AdoptionAnnouncementDescription>.None;
-        CreatedAt createdAt = AdoptionAnnouncementFactory.CreateDefaultCreatedAt();
 
         //Act
         Result<AdoptionAnnouncement> result = _service.Create(
@@ -137,8 +130,7 @@ public sealed class AdoptionAnnouncementCreationServiceTests
             email,
             phoneNumber,
             description,
-            OperationDate,
-            createdAt);
+            OperationDate);
 
         //Assert
         result.IsFailure.ShouldBeTrue();
@@ -160,7 +152,6 @@ public sealed class AdoptionAnnouncementCreationServiceTests
         Email email = AdoptionAnnouncementFactory.CreateRandomEmail(Faker);
         PhoneNumber phoneNumber = AdoptionAnnouncementFactory.CreateRandomPhoneNumber(Faker);
         Maybe<AdoptionAnnouncementDescription> description = Maybe<AdoptionAnnouncementDescription>.None;
-        CreatedAt createdAt = AdoptionAnnouncementFactory.CreateDefaultCreatedAt();
 
         //Act
         Result<AdoptionAnnouncement> result = _service.Create(
@@ -169,8 +160,7 @@ public sealed class AdoptionAnnouncementCreationServiceTests
             email,
             phoneNumber,
             description,
-            OperationDate,
-            createdAt);
+            OperationDate);
 
         //Assert
         result.IsFailure.ShouldBeTrue();
@@ -185,7 +175,6 @@ public sealed class AdoptionAnnouncementCreationServiceTests
         Email email = AdoptionAnnouncementFactory.CreateRandomEmail(Faker);
         PhoneNumber phoneNumber = AdoptionAnnouncementFactory.CreateRandomPhoneNumber(Faker);
         Maybe<AdoptionAnnouncementDescription> description = Maybe<AdoptionAnnouncementDescription>.None;
-        CreatedAt createdAt = AdoptionAnnouncementFactory.CreateDefaultCreatedAt();
 
         CatStatusType originalStatus = cat.Status;
 
@@ -196,8 +185,7 @@ public sealed class AdoptionAnnouncementCreationServiceTests
             email,
             phoneNumber,
             description,
-            OperationDate,
-            createdAt);
+            OperationDate);
 
         //Assert
         result.IsFailure.ShouldBeTrue();
@@ -214,7 +202,6 @@ public sealed class AdoptionAnnouncementCreationServiceTests
         Email email = AdoptionAnnouncementFactory.CreateRandomEmail(Faker);
         PhoneNumber phoneNumber = AdoptionAnnouncementFactory.CreateRandomPhoneNumber(Faker);
         Maybe<AdoptionAnnouncementDescription> description = Maybe<AdoptionAnnouncementDescription>.None;
-        CreatedAt createdAt = AdoptionAnnouncementFactory.CreateDefaultCreatedAt();
 
         //Act
         Result<AdoptionAnnouncement> result = _service.Create(
@@ -223,8 +210,7 @@ public sealed class AdoptionAnnouncementCreationServiceTests
             email,
             phoneNumber,
             description,
-            OperationDate,
-            createdAt);
+            OperationDate);
 
         //Assert - Both announcement creation AND cat assignment should succeed together
         result.IsSuccess.ShouldBeTrue();
@@ -242,7 +228,6 @@ public sealed class AdoptionAnnouncementCreationServiceTests
         Email email = AdoptionAnnouncementFactory.CreateRandomEmail(Faker);
         PhoneNumber phoneNumber = AdoptionAnnouncementFactory.CreateRandomPhoneNumber(Faker);
         Maybe<AdoptionAnnouncementDescription> description = Maybe<AdoptionAnnouncementDescription>.None;
-        CreatedAt createdAt = AdoptionAnnouncementFactory.CreateDefaultCreatedAt();
 
         //Act
         Result<AdoptionAnnouncement> result = _service.Create(
@@ -251,8 +236,7 @@ public sealed class AdoptionAnnouncementCreationServiceTests
             email,
             phoneNumber,
             description,
-            OperationDate,
-            createdAt);
+            OperationDate);
 
         //Assert - Verify assignment service logic was applied (cat published with published date)
         result.IsSuccess.ShouldBeTrue();
@@ -269,7 +253,6 @@ public sealed class AdoptionAnnouncementCreationServiceTests
         Email email = AdoptionAnnouncementFactory.CreateRandomEmail(Faker);
         PhoneNumber phoneNumber = AdoptionAnnouncementFactory.CreateRandomPhoneNumber(Faker);
         Maybe<AdoptionAnnouncementDescription> description = Maybe<AdoptionAnnouncementDescription>.None;
-        CreatedAt createdAt = AdoptionAnnouncementFactory.CreateDefaultCreatedAt();
 
         //Act
         Result<AdoptionAnnouncement> result = _service.Create(
@@ -278,8 +261,7 @@ public sealed class AdoptionAnnouncementCreationServiceTests
             email,
             phoneNumber,
             description,
-            OperationDate,
-            createdAt);
+            OperationDate);
 
         //Assert - Should succeed as there are no existing cats to check compatibility with
         result.IsSuccess.ShouldBeTrue();

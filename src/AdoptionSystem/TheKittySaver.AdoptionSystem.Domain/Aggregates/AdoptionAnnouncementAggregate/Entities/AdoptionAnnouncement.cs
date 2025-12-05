@@ -106,15 +106,13 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
         Maybe<AdoptionAnnouncementDescription> description,
         AdoptionAnnouncementAddress address,
         Email email,
-        PhoneNumber phoneNumber,
-        CreatedAt createdAt)
+        PhoneNumber phoneNumber)
     {
         Ensure.NotEmpty(personId);
         ArgumentNullException.ThrowIfNull(description);
         ArgumentNullException.ThrowIfNull(address);
         ArgumentNullException.ThrowIfNull(email);
         ArgumentNullException.ThrowIfNull(phoneNumber);
-        ArgumentNullException.ThrowIfNull(createdAt);
         
         AdoptionAnnouncementId id = AdoptionAnnouncementId.New();
         AdoptionAnnouncement instance = new(
@@ -124,8 +122,7 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
             address,
             email,
             phoneNumber,
-            AnnouncementStatusType.Active,
-            createdAt);
+            AnnouncementStatusType.Active);
 
         return Result.Success(instance);
     }
@@ -137,8 +134,7 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
         AdoptionAnnouncementAddress address,
         Email email,
         PhoneNumber phoneNumber,
-        AnnouncementStatusType status,
-        CreatedAt createdAt) : base(id, createdAt)
+        AnnouncementStatusType status) : base(id)
     {
         PersonId = personId;
         Description = description;

@@ -22,7 +22,6 @@ public sealed class CreatePersonTests
         person.Username.ShouldNotBeNull();
         person.Email.ShouldNotBeNull();
         person.PhoneNumber.ShouldNotBeNull();
-        person.CreatedAt.ShouldNotBeNull();
         person.IdentityId.ShouldNotBe(IdentityId.Empty);
         person.Addresses.Count.ShouldBe(0);
     }

@@ -73,7 +73,7 @@ public sealed class EmailTests
     public void Create_ShouldReturnFailure_WhenValueExceedsMaxLength()
     {
         //Arrange
-        string domain = "@example.com";
+        const string domain = "@example.com";
         string localPart = Faker.Random.String2(Email.MaxLength);
         string tooLongEmail = $"{localPart}{domain}";
 

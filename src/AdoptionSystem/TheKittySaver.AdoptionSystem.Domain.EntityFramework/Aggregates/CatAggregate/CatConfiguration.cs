@@ -186,6 +186,18 @@ public sealed class CatConfiguration : IEntityTypeConfiguration<Cat>
         
         builder.HasOne<CatGalleryItem>()
             .WithOne()
-            .HasForeignKey<CatGalleryItem>(x => x.CatId);
+            .HasPrincipalKey<Cat>(x=>x.ThumbnailId)
+            .HasForeignKey<CatGalleryItem>(x => x.CatId)
+            .OnDelete(DeleteBehavior.Cascade);
+        
+        builder.HasMany<CatGalleryItem>()
+            .WithOne()
+            .HasForeignKey(x => x.CatId)
+            .OnDelete(DeleteBehavior.Cascade);
+        
+        builder.HasMany<Vaccination>()
+            .WithOne()
+            .HasForeignKey(x => x.CatId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

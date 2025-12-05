@@ -121,14 +121,6 @@ public static partial class DomainErrors
                 $"Postal code '{postalCode}' has invalid format for the specified country.",
                 TypeOfError.Validation);
     }
-
-    public static class CreatedAtValueObject
-    {
-        public static Error CannotBeInThePast
-            => DateIsInThePast(
-                nameof(CreatedAt),
-                nameof(CreatedAt.Value));
-    }
     
     public static class ClaimedAtValueObject
     {

@@ -1,6 +1,7 @@
 ﻿using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.ValueObjects;
 using TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
 using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
+using TheKittySaver.AdoptionSystem.Domain.Core.Guards;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.Timestamps;
@@ -11,6 +12,7 @@ namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Entities;
 
 public sealed class Vaccination : Entity<VaccinationId>
 {
+    public CatId CatId { get; }
     public VaccinationType Type { get; private set; }
     public VaccinationDate Date { get; private set; }
     public VaccinationNote? VeterinarianNote { get; private set; }
@@ -36,16 +38,17 @@ public sealed class Vaccination : Entity<VaccinationId>
     }
     
     internal static Result<Vaccination> Create(
+        CatId catId,
         VaccinationType type,
         DateOnly vaccinationDate,
-        CreatedAt createdAt,
+        DateTimeOffset dateTimeOfOperation,
         VaccinationNote? veterinarianNote = null)
     {
-        ArgumentNullException.ThrowIfNull(createdAt);
+        Ensure.NotEmpty(catId);
 
         Result<VaccinationDate> dateResult = VaccinationDate.Create(
             vaccinationDate,
-            DateOnly.FromDateTime(createdAt.Value.DateTime));
+            DateOnly.FromDateTime(dateTimeOfOperation.UtcDateTime));
 
         if (!dateResult.IsSuccess)
         {
@@ -53,19 +56,25 @@ public sealed class Vaccination : Entity<VaccinationId>
         }
 
         VaccinationId id = VaccinationId.New();
-        Vaccination instance = new(id, type, dateResult.Value, veterinarianNote, createdAt);
+        Vaccination instance = new(catId, id, type, dateResult.Value, veterinarianNote);
         return Result.Success(instance);
     }
 
     private Vaccination(
+        CatId catId,
         VaccinationId id,
         VaccinationType type,
         VaccinationDate date,
-        VaccinationNote? veterinarianNote,
-        CreatedAt createdAt) : base(id, createdAt)
+        VaccinationNote? veterinarianNote) : base(id)
     {
+        CatId = catId;
         Type = type;
         Date = date;
         VeterinarianNote = veterinarianNote;
+    }
+
+    private Vaccination()
+    {
+        Date = null!;
     }
 }

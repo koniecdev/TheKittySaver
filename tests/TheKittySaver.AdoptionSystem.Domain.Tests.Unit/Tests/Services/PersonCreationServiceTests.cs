@@ -33,7 +33,6 @@ public sealed class PersonCreationServiceTests
         Username username = CreateRandomUsername();
         Email email = CreateRandomEmail();
         PhoneNumber phoneNumber = CreateRandomPhoneNumber();
-        CreatedAt createdAt = CreateDefaultCreatedAt();
         IdentityId identityId = IdentityId.New();
 
         _uniquenessChecker.IsEmailTakenAsync(email, Arg.Any<CancellationToken>())
@@ -46,7 +45,6 @@ public sealed class PersonCreationServiceTests
             username,
             email,
             phoneNumber,
-            createdAt,
             identityId);
 
         //Assert
@@ -65,7 +63,6 @@ public sealed class PersonCreationServiceTests
         Username username = CreateRandomUsername();
         Email email = CreateRandomEmail();
         PhoneNumber phoneNumber = CreateRandomPhoneNumber();
-        CreatedAt createdAt = CreateDefaultCreatedAt();
         IdentityId identityId = IdentityId.New();
 
         _uniquenessChecker.IsEmailTakenAsync(email, Arg.Any<CancellationToken>())
@@ -74,7 +71,7 @@ public sealed class PersonCreationServiceTests
             .Returns(Task.FromResult(false));
 
         //Act
-        await _service.CreateAsync(username, email, phoneNumber, createdAt, identityId);
+        await _service.CreateAsync(username, email, phoneNumber, identityId);
 
         //Assert
         await _uniquenessChecker.Received(1).IsEmailTakenAsync(email, Arg.Any<CancellationToken>());
@@ -88,7 +85,6 @@ public sealed class PersonCreationServiceTests
         Username username = CreateRandomUsername();
         Email email = CreateRandomEmail();
         PhoneNumber phoneNumber = CreateRandomPhoneNumber();
-        CreatedAt createdAt = CreateDefaultCreatedAt();
         IdentityId identityId = IdentityId.New();
 
         _uniquenessChecker.IsEmailTakenAsync(email, Arg.Any<CancellationToken>())
@@ -99,7 +95,6 @@ public sealed class PersonCreationServiceTests
             username,
             email,
             phoneNumber,
-            createdAt,
             identityId);
 
         //Assert
@@ -114,14 +109,13 @@ public sealed class PersonCreationServiceTests
         Username username = CreateRandomUsername();
         Email email = CreateRandomEmail();
         PhoneNumber phoneNumber = CreateRandomPhoneNumber();
-        CreatedAt createdAt = CreateDefaultCreatedAt();
         IdentityId identityId = IdentityId.New();
 
         _uniquenessChecker.IsEmailTakenAsync(email, Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(true));
 
         //Act
-        await _service.CreateAsync(username, email, phoneNumber, createdAt, identityId);
+        await _service.CreateAsync(username, email, phoneNumber, identityId);
 
         //Assert
         await _uniquenessChecker.Received(1).IsEmailTakenAsync(email, Arg.Any<CancellationToken>());
@@ -135,7 +129,6 @@ public sealed class PersonCreationServiceTests
         Username username = CreateRandomUsername();
         Email email = CreateRandomEmail();
         PhoneNumber phoneNumber = CreateRandomPhoneNumber();
-        CreatedAt createdAt = CreateDefaultCreatedAt();
         IdentityId identityId = IdentityId.New();
 
         _uniquenessChecker.IsEmailTakenAsync(email, Arg.Any<CancellationToken>())
@@ -148,7 +141,6 @@ public sealed class PersonCreationServiceTests
             username,
             email,
             phoneNumber,
-            createdAt,
             identityId);
 
         //Assert
@@ -163,7 +155,6 @@ public sealed class PersonCreationServiceTests
         Username username = CreateRandomUsername();
         Email email = CreateRandomEmail();
         PhoneNumber phoneNumber = CreateRandomPhoneNumber();
-        CreatedAt createdAt = CreateDefaultCreatedAt();
         IdentityId identityId = IdentityId.New();
 
         _uniquenessChecker.IsEmailTakenAsync(email, Arg.Any<CancellationToken>())
@@ -176,7 +167,6 @@ public sealed class PersonCreationServiceTests
             username,
             email,
             phoneNumber,
-            createdAt,
             identityId);
 
         //Assert
@@ -191,7 +181,6 @@ public sealed class PersonCreationServiceTests
         Username username = CreateRandomUsername();
         Email email = CreateRandomEmail();
         PhoneNumber phoneNumber = CreateRandomPhoneNumber();
-        CreatedAt createdAt = CreateDefaultCreatedAt();
         IdentityId identityId = IdentityId.New();
         CancellationToken cancellationToken = CancellationToken.None;
 
@@ -201,7 +190,7 @@ public sealed class PersonCreationServiceTests
             .Returns(Task.FromResult(false));
 
         //Act
-        await _service.CreateAsync(username, email, phoneNumber, createdAt, identityId, cancellationToken);
+        await _service.CreateAsync(username, email, phoneNumber, identityId, cancellationToken);
 
         //Assert
         await _uniquenessChecker.Received(1).IsEmailTakenAsync(email, cancellationToken);
@@ -215,7 +204,6 @@ public sealed class PersonCreationServiceTests
         Username username = CreateRandomUsername();
         Email email = CreateRandomEmail();
         PhoneNumber phoneNumber = CreateRandomPhoneNumber();
-        CreatedAt createdAt = CreateDefaultCreatedAt();
         IdentityId identityId = IdentityId.New();
 
         _uniquenessChecker.IsEmailTakenAsync(email, Arg.Any<CancellationToken>())
@@ -228,13 +216,11 @@ public sealed class PersonCreationServiceTests
             username,
             email,
             phoneNumber,
-            createdAt,
             identityId);
 
         //Assert - Verify Person.Create() was successful
         result.IsSuccess.ShouldBeTrue();
         result.Value.ShouldBeOfType<Person>();
-        result.Value.CreatedAt.ShouldBe(createdAt);
     }
 
     private static Username CreateRandomUsername()
@@ -255,14 +241,4 @@ public sealed class PersonCreationServiceTests
     {
         return PhoneNumber.CreateUnsafe(Faker.Person.Phone);
     }
-
-    private static CreatedAt CreateDefaultCreatedAt()
-    {
-        Result<CreatedAt> result = CreatedAt.Create(
-            new DateTimeOffset(2025, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        result.EnsureSuccess();
-        return result.Value;
-    }
-
-    
 }

@@ -106,10 +106,6 @@ public sealed class PolishAddressValidationTests
         Result<AddressPostalCode> postalCodeResult = AddressPostalCode.Create(postalCode);
         postalCodeResult.EnsureSuccess();
 
-        Result<CreatedAt> createdAtResult = CreatedAt.Create(
-            new DateTimeOffset(2025, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        createdAtResult.EnsureSuccess();
-
         //Act
         Result<Address> result = Address.Create(
             specification: _specification,
@@ -119,8 +115,7 @@ public sealed class PolishAddressValidationTests
             postalCode: postalCodeResult.Value,
             region: regionResult.Value,
             city: cityResult.Value,
-            maybeLine: Maybe<AddressLine>.None,
-            createdAt: createdAtResult.Value);
+            maybeLine: Maybe<AddressLine>.None);
 
         //Assert
         result.IsSuccess.ShouldBeFalse();
@@ -131,8 +126,8 @@ public sealed class PolishAddressValidationTests
     public void Create_ShouldFail_WhenWielkopolskiePostalCodeUsedWithŁódzkieRegion()
     {
         //Arrange
-        string postalCode = "60-123";
-        string region = "Łódzkie";
+        const string postalCode = "60-123";
+        const string region = "Łódzkie";
 
         Result<AddressName> nameResult = AddressName.Create(Faker.Address.StreetName());
         nameResult.EnsureSuccess();
@@ -146,9 +141,6 @@ public sealed class PolishAddressValidationTests
         Result<AddressPostalCode> postalCodeResult = AddressPostalCode.Create(postalCode);
         postalCodeResult.EnsureSuccess();
 
-        Result<CreatedAt> createdAtResult = CreatedAt.Create(
-            new DateTimeOffset(2025, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        createdAtResult.EnsureSuccess();
 
         //Act
         Result<Address> result = Address.Create(
@@ -159,8 +151,7 @@ public sealed class PolishAddressValidationTests
             postalCode: postalCodeResult.Value,
             region: regionResult.Value,
             city: cityResult.Value,
-            maybeLine: Maybe<AddressLine>.None,
-            createdAt: createdAtResult.Value);
+            maybeLine: Maybe<AddressLine>.None);
 
         //Assert
         result.IsSuccess.ShouldBeFalse();
@@ -170,8 +161,8 @@ public sealed class PolishAddressValidationTests
     public void Create_ShouldFail_WhenMazowieckiePostalCodeUsedWithMałopolskieRegion()
     {
         //Arrange
-        string postalCode = "00-001";
-        string region = "Małopolskie";
+        const string postalCode = "00-001";
+        const string region = "Małopolskie";
 
         Result<AddressName> nameResult = AddressName.Create(Faker.Address.StreetName());
         nameResult.EnsureSuccess();
@@ -185,9 +176,6 @@ public sealed class PolishAddressValidationTests
         Result<AddressPostalCode> postalCodeResult = AddressPostalCode.Create(postalCode);
         postalCodeResult.EnsureSuccess();
 
-        Result<CreatedAt> createdAtResult = CreatedAt.Create(
-            new DateTimeOffset(2025, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        createdAtResult.EnsureSuccess();
 
         //Act
         Result<Address> result = Address.Create(
@@ -198,8 +186,7 @@ public sealed class PolishAddressValidationTests
             postalCode: postalCodeResult.Value,
             region: regionResult.Value,
             city: cityResult.Value,
-            maybeLine: Maybe<AddressLine>.None,
-            createdAt: createdAtResult.Value);
+            maybeLine: Maybe<AddressLine>.None);
 
         //Assert
         result.IsSuccess.ShouldBeFalse();
@@ -380,8 +367,8 @@ public sealed class PolishAddressValidationTests
     public void Create_ShouldCreateAddress_WhenRegionNameHasLeadingAndTrailingSpaces()
     {
         //Arrange
-        string postalCode = "60-123";
-        string region = "  Wielkopolskie  ";
+        const string postalCode = "60-123";
+        const string region = "  Wielkopolskie  ";
 
         Result<AddressName> nameResult = AddressName.Create(Faker.Address.StreetName());
         nameResult.EnsureSuccess();
@@ -395,9 +382,6 @@ public sealed class PolishAddressValidationTests
         Result<AddressPostalCode> postalCodeResult = AddressPostalCode.Create(postalCode);
         postalCodeResult.EnsureSuccess();
 
-        Result<CreatedAt> createdAtResult = CreatedAt.Create(
-            new DateTimeOffset(2025, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        createdAtResult.EnsureSuccess();
 
         //Act
         Result<Address> result = Address.Create(
@@ -408,8 +392,7 @@ public sealed class PolishAddressValidationTests
             postalCode: postalCodeResult.Value,
             region: regionResult.Value,
             city: cityResult.Value,
-            maybeLine: Maybe<AddressLine>.None,
-            createdAt: createdAtResult.Value);
+            maybeLine: Maybe<AddressLine>.None);
 
         //Assert
         result.IsSuccess.ShouldBeTrue();
@@ -438,9 +421,6 @@ public sealed class PolishAddressValidationTests
             ? Maybe<AddressLine>.From(line)
             : Maybe<AddressLine>.None;
 
-        Result<CreatedAt> createdAtResult = CreatedAt.Create(
-            new DateTimeOffset(2025, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        createdAtResult.EnsureSuccess();
 
         Result<Address> result = Address.Create(
             specification: _specification,
@@ -450,8 +430,7 @@ public sealed class PolishAddressValidationTests
             postalCode: postalCodeResult.Value,
             region: regionResult.Value,
             city: cityResult.Value,
-            maybeLine: maybeLine,
-            createdAt: createdAtResult.Value);
+            maybeLine: maybeLine);
 
         result.EnsureSuccess();
         return result.Value;

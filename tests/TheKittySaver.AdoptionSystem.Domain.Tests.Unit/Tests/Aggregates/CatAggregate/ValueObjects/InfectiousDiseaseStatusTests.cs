@@ -246,8 +246,8 @@ public sealed class InfectiousDiseaseStatusTests
     public void Create_ShouldReturnSuccess_WhenValidDataIsProvided()
     {
         //Arrange
-        FivStatus fivStatus = FivStatus.Negative;
-        FelvStatus felvStatus = FelvStatus.Negative;
+        const FivStatus fivStatus = FivStatus.Negative;
+        const FelvStatus felvStatus = FelvStatus.Negative;
         DateOnly testDate = ValidTestDate;
 
         //Act
@@ -268,8 +268,8 @@ public sealed class InfectiousDiseaseStatusTests
     public void Create_ShouldReturnFailure_WhenTestDateIsInFuture()
     {
         //Arrange
-        FivStatus fivStatus = FivStatus.Positive;
-        FelvStatus felvStatus = FelvStatus.Negative;
+        const FivStatus fivStatus = FivStatus.Positive;
+        const FelvStatus felvStatus = FelvStatus.Negative;
         DateOnly futureTestDate = CurrentDate.AddDays(30);
 
         //Act

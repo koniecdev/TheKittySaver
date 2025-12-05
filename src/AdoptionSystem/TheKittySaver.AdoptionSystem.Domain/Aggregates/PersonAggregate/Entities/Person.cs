@@ -9,7 +9,6 @@ using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.AddressCompounds;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.AddressCompounds.Specifications;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.PhoneNumbers;
-using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.Timestamps;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
 using TheKittySaver.AdoptionSystem.Primitives.Enums;
 
@@ -32,8 +31,7 @@ public sealed class Person : AggregateRoot<PersonId>
         AddressPostalCode postalCode,
         AddressRegion region,
         AddressCity city,
-        Maybe<AddressLine> maybeLine,
-        CreatedAt createdAt)
+        Maybe<AddressLine> maybeLine)
     {
         ArgumentNullException.ThrowIfNull(specification);
         ArgumentNullException.ThrowIfNull(name);
@@ -41,7 +39,6 @@ public sealed class Person : AggregateRoot<PersonId>
         ArgumentNullException.ThrowIfNull(region);
         ArgumentNullException.ThrowIfNull(city);
         ArgumentNullException.ThrowIfNull(maybeLine);
-        ArgumentNullException.ThrowIfNull(createdAt);
 
         if (_addresses.Any(x => x.Name == name))
         {
@@ -56,8 +53,7 @@ public sealed class Person : AggregateRoot<PersonId>
             postalCode: postalCode,
             region: region,
             city: city,
-            maybeLine: maybeLine,
-            createdAt: createdAt);
+            maybeLine: maybeLine);
 
         if (createAddressResult.IsFailure)
         {
@@ -159,17 +155,15 @@ public sealed class Person : AggregateRoot<PersonId>
         Username username,
         Email email,
         PhoneNumber phoneNumber,
-        CreatedAt createdAt,
         IdentityId identityId)
     {
         Ensure.NotEmpty(identityId);
         ArgumentNullException.ThrowIfNull(username);
         ArgumentNullException.ThrowIfNull(email);
         ArgumentNullException.ThrowIfNull(phoneNumber);
-        ArgumentNullException.ThrowIfNull(createdAt);
 
         PersonId id = PersonId.New();
-        Person instance = new(id, username, email, phoneNumber, createdAt, identityId);
+        Person instance = new(id, username, email, phoneNumber, identityId);
 
         return Result.Success(instance);
     }
@@ -179,8 +173,7 @@ public sealed class Person : AggregateRoot<PersonId>
         Username username,
         Email email,
         PhoneNumber phoneNumber,
-        CreatedAt createdAt,
-        IdentityId identityId) : base(id, createdAt)
+        IdentityId identityId) : base(id)
     {
         Username = username;
         Email = email;

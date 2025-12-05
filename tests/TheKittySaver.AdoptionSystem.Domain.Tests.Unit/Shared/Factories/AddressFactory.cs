@@ -23,7 +23,6 @@ internal static class AddressFactory
         bool replaceNameWithNull = false,
         bool replaceRegionWithNull = false,
         bool replaceCityWithNull = false,
-        bool replaceCreatedAtWithNull = false,
         bool includeLine = true)
     {
         PersonId thePersonId = personId ?? PersonId.New();
@@ -31,14 +30,14 @@ internal static class AddressFactory
         Result<AddressName> nameResult = AddressName.Create(faker.Address.StreetName());
         nameResult.EnsureSuccess();
 
-        string regionValue = "Wielkopolskie";
+        const string regionValue = "Wielkopolskie";
         Result<AddressRegion> regionResult = AddressRegion.Create(regionValue);
         regionResult.EnsureSuccess();
 
         Result<AddressCity> cityResult = AddressCity.Create(faker.Address.City());
         cityResult.EnsureSuccess();
 
-        string postalCodeValue = "60-123";
+        const string postalCodeValue = "60-123";
         Result<AddressPostalCode> postalCodeResult = AddressPostalCode.Create(postalCodeValue);
         postalCodeResult.EnsureSuccess();
 
@@ -50,10 +49,6 @@ internal static class AddressFactory
             maybeLine = Maybe<AddressLine>.From(lineResult.Value);
         }
 
-        Result<CreatedAt> createdAtResult = CreatedAt.Create(
-            new DateTimeOffset(2025, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        createdAtResult.EnsureSuccess();
-
         IAddressConsistencySpecification specification = new PolandAddressConsistencySpecification();
 
         Result<Address> addressResult = Address.Create(
@@ -64,8 +59,7 @@ internal static class AddressFactory
             postalCode: postalCodeResult.Value,
             region: replaceRegionWithNull ? null! : regionResult.Value,
             city: replaceCityWithNull ? null! : cityResult.Value,
-            maybeLine: maybeLine,
-            createdAt: replaceCreatedAtWithNull ? null! : createdAtResult.Value);
+            maybeLine: maybeLine);
         addressResult.EnsureSuccess();
 
         return addressResult.Value;

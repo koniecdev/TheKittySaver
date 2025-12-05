@@ -17,7 +17,6 @@ internal static class PersonFactory
         bool replaceUsernameWithNull = false,
         bool replaceEmailWithNull = false,
         bool replacePhoneNumberWithNull = false,
-        bool replaceCreatedAtWithNull = false,
         bool replaceIdentityIdWithEmpty = false)
     {
         Result<Username> usernameCreationResult = Username.Create(faker.Person.UserName);
@@ -28,17 +27,12 @@ internal static class PersonFactory
         
         PhoneNumber thePhoneNumber = PhoneNumber.CreateUnsafe(faker.Person.Phone);
         
-        Result<CreatedAt> createdAtCreationResult = CreatedAt.Create(
-            new DateTimeOffset(2025, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        createdAtCreationResult.EnsureSuccess();
-        
         IdentityId theIdentityId = IdentityId.New();
         
         Result<Person> personCreationResult = Person.Create(
             username: replaceUsernameWithNull ? null! : usernameCreationResult.Value,
             email: replaceEmailWithNull ? null! : emailCreationResult.Value,
             phoneNumber: replacePhoneNumberWithNull ? null! : thePhoneNumber,
-            createdAt: replaceCreatedAtWithNull ? null! : createdAtCreationResult.Value,
             identityId: replaceIdentityIdWithEmpty ? IdentityId.Empty : theIdentityId);
         personCreationResult.EnsureSuccess();
         

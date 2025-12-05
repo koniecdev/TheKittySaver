@@ -35,7 +35,6 @@ public sealed class CreateCatTests
         cat.ListingSource.ShouldNotBeNull();
         cat.NeuteringStatus.ShouldNotBeNull();
         cat.InfectiousDiseaseStatus.ShouldNotBeNull();
-        cat.CreatedAt.ShouldNotBeNull();
         cat.Status.ShouldBe(CatStatusType.Draft);
         cat.Vaccinations.Count.ShouldBe(0);
         cat.GetGalleryItems().Count.ShouldBe(0);
@@ -197,16 +196,5 @@ public sealed class CreateCatTests
         //Assert
         catCreation.ShouldThrow<ArgumentNullException>()
             .ParamName?.ToLowerInvariant().ShouldBe(nameof(Cat.InfectiousDiseaseStatus).ToLowerInvariant());
-    }
-
-    [Fact]
-    public void Create_ShouldThrow_WhenNullCreatedAtIsProvided()
-    {
-        //Arrange & Act
-        Func<Cat> catCreation = () => CatFactory.CreateRandom(Faker, replaceCreatedAtWithNull: true);
-
-        //Assert
-        catCreation.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLowerInvariant().ShouldBe(nameof(Cat.CreatedAt).ToLowerInvariant());
     }
 }

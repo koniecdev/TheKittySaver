@@ -18,19 +18,20 @@ public sealed class CatVaccinationManagementTests
     private static readonly DateOnly TheVaccinationDate = new(2024, 12, 1);
     private static readonly DateOnly TestCurrentDate = new(2025, 6, 1);
     private static readonly DateOnly TestNewVaccinationDate = new(2025, 1, 1);
+    private static readonly DateTimeOffset FixedDateOfOperation = 
+        new(2025, 1, 2, 0, 0, 0, TimeSpan.Zero);
 
     [Fact]
     public void AddVaccination_ShouldAddVaccination_WhenValidDataAreProvided()
     {
         //Arrange
         Cat cat = CatFactory.CreateRandom(Faker);
-        CreatedAt createdAt = CatFactory.CreateDefaultCreatedAt();
 
         //Act
         Result<Vaccination> result = cat.AddVaccination(
             VaccinationType.Rabies,
             TheVaccinationDate,
-            createdAt);
+            FixedDateOfOperation);
 
         //Assert
         result.IsSuccess.ShouldBeTrue();
@@ -39,29 +40,12 @@ public sealed class CatVaccinationManagementTests
     }
 
     [Fact]
-    public void AddVaccination_ShouldThrow_WhenNullCreatedAtIsProvided()
-    {
-        //Arrange
-        Cat cat = CatFactory.CreateRandom(Faker);
-
-        //Act
-        Action addVaccination = () => cat.AddVaccination(
-            VaccinationType.Rabies,
-            TheVaccinationDate,
-            null!);
-
-        //Assert
-        addVaccination.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLowerInvariant().ShouldContain("createdat".ToLowerInvariant());
-    }
-
-    [Fact]
     public void RemoveVaccination_ShouldRemoveVaccination_WhenVaccinationExists()
     {
         //Arrange
         Cat cat = CatFactory.CreateRandom(Faker);
-        CreatedAt createdAt = CatFactory.CreateDefaultCreatedAt();
-        Result<Vaccination> addResult = cat.AddVaccination(VaccinationType.Rabies, TheVaccinationDate, createdAt);
+        Result<Vaccination> addResult = 
+            cat.AddVaccination(VaccinationType.Rabies, TheVaccinationDate, FixedDateOfOperation);
         VaccinationId vaccinationId = addResult.Value.Id;
 
         //Act
@@ -106,8 +90,8 @@ public sealed class CatVaccinationManagementTests
     {
         //Arrange
         Cat cat = CatFactory.CreateRandom(Faker);
-        CreatedAt createdAt = CatFactory.CreateDefaultCreatedAt();
-        Result<Vaccination> addResult = cat.AddVaccination(VaccinationType.Rabies, TheVaccinationDate, createdAt);
+        Result<Vaccination> addResult = 
+            cat.AddVaccination(VaccinationType.Rabies, TheVaccinationDate, FixedDateOfOperation);
         VaccinationId vaccinationId = addResult.Value.Id;
 
         //Act
@@ -138,8 +122,8 @@ public sealed class CatVaccinationManagementTests
     {
         //Arrange
         Cat cat = CatFactory.CreateRandom(Faker);
-        CreatedAt createdAt = CatFactory.CreateDefaultCreatedAt();
-        Result<Vaccination> addResult = cat.AddVaccination(VaccinationType.Rabies, TheVaccinationDate, createdAt);
+        Result<Vaccination> addResult = 
+            cat.AddVaccination(VaccinationType.Rabies, TheVaccinationDate, FixedDateOfOperation);
         VaccinationId vaccinationId = addResult.Value.Id;
 
         //Act
@@ -174,17 +158,16 @@ public sealed class CatVaccinationManagementTests
     {
         //Arrange
         Cat cat = CatFactory.CreateRandom(Faker);
-        CreatedAt createdAt = CatFactory.CreateDefaultCreatedAt();
         DateOnly futureDate = new(2050, 1, 1);
 
         //Act
-        Result<Vaccination> result = cat.AddVaccination(VaccinationType.Rabies, futureDate, createdAt);
+        Result<Vaccination> result = cat.AddVaccination(VaccinationType.Rabies, futureDate, FixedDateOfOperation);
 
         //Assert
         result.IsFailure.ShouldBeTrue();
         result.Error.ShouldBe(DomainErrors.VaccinationEntity.DateProperty.VaccinationDateInFuture(
             futureDate,
-            DateOnly.FromDateTime(createdAt.Value.DateTime)));
+            DateOnly.FromDateTime(FixedDateOfOperation.DateTime)));
     }
 
     [Fact]
@@ -192,17 +175,16 @@ public sealed class CatVaccinationManagementTests
     {
         //Arrange
         Cat cat = CatFactory.CreateRandom(Faker);
-        CreatedAt createdAt = CatFactory.CreateDefaultCreatedAt();
         DateOnly tooOldDate = new(1980, 1, 1);
 
         //Act
-        Result<Vaccination> result = cat.AddVaccination(VaccinationType.Rabies, tooOldDate, createdAt);
+        Result<Vaccination> result = cat.AddVaccination(VaccinationType.Rabies, tooOldDate, FixedDateOfOperation);
 
         //Assert
         result.IsFailure.ShouldBeTrue();
         result.Error.ShouldBe(DomainErrors.VaccinationEntity.DateProperty.VaccinationDateTooOld(
             tooOldDate,
-            DateOnly.FromDateTime(createdAt.Value.DateTime)));
+            DateOnly.FromDateTime(FixedDateOfOperation.DateTime)));
     }
 
     [Fact]
@@ -210,8 +192,8 @@ public sealed class CatVaccinationManagementTests
     {
         //Arrange
         Cat cat = CatFactory.CreateRandom(Faker);
-        CreatedAt createdAt = CatFactory.CreateDefaultCreatedAt();
-        Result<Vaccination> addResult = cat.AddVaccination(VaccinationType.Rabies, TheVaccinationDate, createdAt);
+        Result<Vaccination> addResult = 
+            cat.AddVaccination(VaccinationType.Rabies, TheVaccinationDate, FixedDateOfOperation);
         VaccinationId vaccinationId = addResult.Value.Id;
         string newNote = Faker.Lorem.Sentence();
 

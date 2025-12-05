@@ -22,7 +22,6 @@ internal sealed class PersonCreationService : IPersonCreationService
         Username username,
         Email email,
         PhoneNumber phoneNumber,
-        CreatedAt createdAt,
         IdentityId identityId,
         CancellationToken cancellationToken = default)
     {
@@ -40,7 +39,6 @@ internal sealed class PersonCreationService : IPersonCreationService
             username: username,
             email: email,
             phoneNumber: phoneNumber,
-            createdAt: createdAt,
             identityId: identityId);
 
         return createPersonResult;
