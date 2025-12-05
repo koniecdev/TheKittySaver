@@ -209,7 +209,6 @@ public sealed class PersonUpdateServiceTests
 
     private static PhoneNumber CreateRandomPhoneNumber()
     {
-        Faker faker = new Faker();
         Result<PhoneNumber> result = PhoneNumber.CreateUnsafe(Faker.Phone.PhoneNumber());
         return result.Value;
     }

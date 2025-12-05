@@ -1,6 +1,4 @@
-﻿// Infrastructure/PhoneValidation/LibPhoneNumberNormalizer.cs
-
-using PhoneNumbers;
+﻿using PhoneNumbers;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.PhoneNumbers;
 using PhoneNumber = PhoneNumbers.PhoneNumber;
 
@@ -19,17 +17,10 @@ public class LibPhoneNumberNormalizer : IPhoneNumberNormalizer
         
         try 
         {
-            PhoneNumber parsedNumber;
-            
-            if (phoneNumber.StartsWith('+') || phoneNumber.StartsWith("00"))
-            {
-                parsedNumber = _phoneNumberUtil.Parse(phoneNumber, null);
-            }
-            else
-            {
-                parsedNumber = _phoneNumberUtil.Parse(phoneNumber, "PL");
-            }
-            
+            PhoneNumber parsedNumber = phoneNumber.StartsWith('+') || phoneNumber.StartsWith("00", StringComparison.Ordinal)
+                ? _phoneNumberUtil.Parse(phoneNumber, null)
+                : _phoneNumberUtil.Parse(phoneNumber, "PL");
+
             string normalized = _phoneNumberUtil.Format(parsedNumber, PhoneNumberFormat.E164);
             return normalized;
         }

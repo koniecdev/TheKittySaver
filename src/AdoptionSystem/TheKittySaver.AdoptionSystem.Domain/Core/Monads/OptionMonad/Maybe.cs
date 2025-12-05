@@ -12,7 +12,10 @@ public sealed class Maybe<T> : IEquatable<Maybe<T>> where T : class
     /// Initializes a new instance of the <see cref="Maybe{T}"/> class.
     /// </summary>
     /// <param name="value">The value.</param>
-    private Maybe(T? value) => _value = value;
+    private Maybe(T? value)
+    {
+        _value = value;
+    }
 
     /// <summary>
     /// Gets a value indicating whether or not the value exists.

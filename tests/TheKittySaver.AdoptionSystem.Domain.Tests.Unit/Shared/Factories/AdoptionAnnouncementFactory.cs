@@ -15,7 +15,7 @@ using TheKittySaver.AdoptionSystem.Primitives.Enums;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Tests.Unit.Shared.Factories;
 
-public static class AdoptionAnnouncementFactory
+internal static class AdoptionAnnouncementFactory
 {
     public static AdoptionAnnouncement CreateRandom(
         Faker faker,

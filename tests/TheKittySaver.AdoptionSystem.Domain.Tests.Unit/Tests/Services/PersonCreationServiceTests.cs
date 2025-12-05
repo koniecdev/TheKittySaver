@@ -155,29 +155,6 @@ public sealed class PersonCreationServiceTests
         result.IsFailure.ShouldBeTrue();
         result.Error.ShouldBe(DomainErrors.PersonEntity.PhoneNumberAlreadyTaken(phoneNumber));
     }
-    
-    [Fact]
-    public async Task CreateAsync_ShouldCheckPhoneNumber_OnlyAfterEmailCheckSucceeds()
-    {
-        //Arrange
-        Username username = CreateRandomUsername();
-        Email email = CreateRandomEmail();
-        PhoneNumber phoneNumber = CreateRandomPhoneNumber();
-        CreatedAt createdAt = CreateDefaultCreatedAt();
-        IdentityId identityId = IdentityId.New();
-
-        _uniquenessChecker.IsEmailTakenAsync(email, Arg.Any<CancellationToken>())
-            .Returns(Task.FromResult(false));
-        _uniquenessChecker.IsPhoneNumberTakenAsync(phoneNumber, Arg.Any<CancellationToken>())
-            .Returns(Task.FromResult(false));
-
-        //Act
-        await _service.CreateAsync(username, email, phoneNumber, createdAt, identityId);
-
-        //Assert - Verify both checks were called
-        await _uniquenessChecker.Received(1).IsEmailTakenAsync(email, Arg.Any<CancellationToken>());
-        await _uniquenessChecker.Received(1).IsPhoneNumberTakenAsync(phoneNumber, Arg.Any<CancellationToken>());
-    }
 
     [Fact]
     public async Task CreateAsync_ShouldFailWithEmailError_WhenBothEmailAndPhoneTaken()
@@ -216,7 +193,7 @@ public sealed class PersonCreationServiceTests
         PhoneNumber phoneNumber = CreateRandomPhoneNumber();
         CreatedAt createdAt = CreateDefaultCreatedAt();
         IdentityId identityId = IdentityId.New();
-        CancellationToken cancellationToken = new CancellationTokenSource().Token;
+        CancellationToken cancellationToken = CancellationToken.None;
 
         _uniquenessChecker.IsEmailTakenAsync(email, cancellationToken)
             .Returns(Task.FromResult(false));

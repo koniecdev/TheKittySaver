@@ -41,7 +41,7 @@ public sealed class CreateAdoptionAnnouncementTests
 
         //Assert
         announcementCreation.ShouldThrow<ArgumentException>()
-            .ParamName?.ToLower().ShouldBe(nameof(AdoptionAnnouncement.PersonId).ToLower());
+            .ParamName?.ToLowerInvariant().ShouldBe(nameof(AdoptionAnnouncement.PersonId).ToLowerInvariant());
     }
 
     [Fact]
@@ -53,7 +53,7 @@ public sealed class CreateAdoptionAnnouncementTests
 
         //Assert
         announcementCreation.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldBe(nameof(AdoptionAnnouncement.Description).ToLower());
+            .ParamName?.ToLowerInvariant().ShouldBe(nameof(AdoptionAnnouncement.Description).ToLowerInvariant());
     }
 
     [Fact]
@@ -65,7 +65,7 @@ public sealed class CreateAdoptionAnnouncementTests
 
         //Assert
         announcementCreation.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldBe(nameof(AdoptionAnnouncement.Address).ToLower());
+            .ParamName?.ToLowerInvariant().ShouldBe(nameof(AdoptionAnnouncement.Address).ToLowerInvariant());
     }
 
     [Fact]
@@ -77,7 +77,7 @@ public sealed class CreateAdoptionAnnouncementTests
 
         //Assert
         announcementCreation.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldBe(nameof(AdoptionAnnouncement.Email).ToLower());
+            .ParamName?.ToLowerInvariant().ShouldBe(nameof(AdoptionAnnouncement.Email).ToLowerInvariant());
     }
 
     [Fact]
@@ -89,7 +89,7 @@ public sealed class CreateAdoptionAnnouncementTests
 
         //Assert
         announcementCreation.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldBe(nameof(AdoptionAnnouncement.PhoneNumber).ToLower());
+            .ParamName?.ToLowerInvariant().ShouldBe(nameof(AdoptionAnnouncement.PhoneNumber).ToLowerInvariant());
     }
 
     [Fact]
@@ -101,6 +101,6 @@ public sealed class CreateAdoptionAnnouncementTests
 
         //Assert
         announcementCreation.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldBe(nameof(AdoptionAnnouncement.CreatedAt).ToLower());
+            .ParamName?.ToLowerInvariant().ShouldBe(nameof(AdoptionAnnouncement.CreatedAt).ToLowerInvariant());
     }
 }

@@ -3,7 +3,10 @@ namespace TheKittySaver.AdoptionSystem.Domain.Core.Monads.OptionMonad;
 public readonly struct ValueMaybe<T> where T : struct
 {
     private readonly T? _value;
-    private ValueMaybe(T? value) => _value = value;
+    private ValueMaybe(T? value)
+    {
+        _value = value;
+    }
     public static ValueMaybe<T> From(T? value) => new(value);
     public static ValueMaybe<T> None() => new(null);
     public bool HasValue => !HasNoValue;

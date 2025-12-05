@@ -1,4 +1,5 @@
-﻿using TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
+﻿using System.Globalization;
+using TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
 using TheKittySaver.AdoptionSystem.Domain.Core.Enums;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Core.Errors;
@@ -7,42 +8,42 @@ public static partial class DomainErrors
 {
     private static Error HasNotBeenFound(string entity, Guid id) 
         => new($"{entity}.NotFound",
-            $"The {entity.ToLower()} with id: {id} has not been found.",
+            $"The {entity.ToLowerInvariant()} with id: {id} has not been found.",
             TypeOfError.NotFound);
     
     private static Error Required(string entity, string property) 
         => new($"{entity}.{property}.NullOrEmpty",
-            $"The {property.ToLower()} is required.",
+            $"The {property.ToLowerInvariant()} is required.",
             TypeOfError.Validation);
     
     private static Error AlreadyHasBeenTaken(string entity, string property, object alreadyTakenValue) 
         => new($"{entity}.{property}.AlreadyTaken",
-            $"The {property.ToLower()} value '{alreadyTakenValue}' is already taken.",
+            $"The {property.ToLowerInvariant()} value '{alreadyTakenValue}' is already taken.",
             TypeOfError.Conflict);
 
     private static Error TooManyCharacters(string entity, string property, int maxLength) 
         => new($"{entity}.{property}.LongerThanAllowed", 
-            $"The {property.ToLower()} exceeds maximum length of {maxLength}.",
+            $"The {property.ToLowerInvariant()} exceeds maximum length of {maxLength}.",
             TypeOfError.Validation);
 
     private static Error BadFormat(string entity, string property)
         => new($"{entity}.{property}.InvalidFormat",
-            $"The {property.ToLower()} format is invalid.",
+            $"The {property.ToLowerInvariant()} format is invalid.",
             TypeOfError.Validation);
 
     private static Error BelowValue<T>(string entity, string property, T actualValue, T minimalValue) where T : struct
         => new($"{entity}.{property}.BelowValue", 
-            $"The {property.ToLower()} has been set with value '{actualValue}', and it is below the minimum required value '{minimalValue}'.",
+            $"The {property.ToLowerInvariant()} has been set with value '{actualValue}', and it is below the minimum required value '{minimalValue}'.",
             TypeOfError.Validation);
     
     private static Error AboveValue<T>(string entity, string property, T actualValue, T maximumValue) where T : struct
         => new($"{entity}.{property}.AboveValue", 
-            $"The {property.ToLower()} has been set with value '{actualValue}', and it is above the maximum required value '{maximumValue}'.",
+            $"The {property.ToLowerInvariant()} has been set with value '{actualValue}', and it is above the maximum required value '{maximumValue}'.",
             TypeOfError.Validation);
     
     private static Error DateIsInThePast(string entity, string property)
         => new($"{entity}.{property}.DateIsInThePast",
-            $"The {property.ToLower()} can't be in the past.",
+            $"The {property.ToLowerInvariant()} can't be in the past.",
             TypeOfError.Validation);
 
     /// <summary>

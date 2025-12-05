@@ -39,7 +39,7 @@ public sealed class UpdateAddressTests
 
         //Assert
         updateName.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldBe(nameof(Address.Name).ToLower());
+            .ParamName?.ToLowerInvariant().ShouldBe(nameof(Address.Name).ToLowerInvariant());
     }
 
 }

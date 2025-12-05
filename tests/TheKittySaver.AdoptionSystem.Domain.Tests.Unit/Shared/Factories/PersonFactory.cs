@@ -10,7 +10,7 @@ using Person = TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.En
 
 namespace TheKittySaver.AdoptionSystem.Domain.Tests.Unit.Shared.Factories;
 
-public static class PersonFactory
+internal static class PersonFactory
 {
     public static Person CreateRandom(
         Faker faker,

@@ -243,7 +243,6 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
                 return Result.Failure(DomainErrors.CatEntity.StatusProperty.CannotClaimDraftCat(Id));
             case CatStatusType.Claimed:
                 return Result.Failure(DomainErrors.CatEntity.StatusProperty.AlreadyClaimed(Id));
-            case CatStatusType.Published:
             default:
                 if (AdoptionAnnouncementId is null)
                 {
@@ -485,9 +484,9 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
         NeuteringStatus neuteringStatus,
         InfectiousDiseaseStatus infectiousDiseaseStatus,
         CreatedAt createdAt,
-        List<Vaccination>? vaccinations,
+        IReadOnlyList<Vaccination>? vaccinations,
         CatThumbnailId? thumbnailId,
-        List<CatGalleryItem>? galleryItems)
+        IReadOnlyList<CatGalleryItem>? galleryItems)
     {
         Ensure.NotEmpty(personId);
         ArgumentNullException.ThrowIfNull(name);
@@ -549,9 +548,9 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
         InfectiousDiseaseStatus infectiousDiseaseStatus,
         CreatedAt createdAt,
         CatStatusType status,
-        List<Vaccination> vaccinations,
+        IReadOnlyList<Vaccination> vaccinations,
         CatThumbnailId? thumbnailId,
-        List<CatGalleryItem> galleryItems) : base(id, createdAt)
+        IReadOnlyList<CatGalleryItem> galleryItems) : base(id, createdAt)
     {
         PersonId = personId;
         Name = name;
@@ -568,8 +567,8 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
         NeuteringStatus = neuteringStatus;
         InfectiousDiseaseStatus = infectiousDiseaseStatus;
         Status = status;
-        _vaccinations = vaccinations;
+        _vaccinations = [..vaccinations];
         ThumbnailId = thumbnailId;
-        _galleryItems = galleryItems;
+        _galleryItems = [..galleryItems];
     }
 }

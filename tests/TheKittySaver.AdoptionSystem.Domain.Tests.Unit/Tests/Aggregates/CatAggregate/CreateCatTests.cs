@@ -53,7 +53,7 @@ public sealed class CreateCatTests
 
         //Assert
         catCreation.ShouldThrow<ArgumentException>()
-            .ParamName?.ToLower().ShouldBe(nameof(Cat.PersonId).ToLower());
+            .ParamName?.ToLowerInvariant().ShouldBe(nameof(Cat.PersonId).ToLowerInvariant());
     }
 
     [Fact]
@@ -64,7 +64,7 @@ public sealed class CreateCatTests
 
         //Assert
         catCreation.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldBe(nameof(Cat.Name).ToLower());
+            .ParamName?.ToLowerInvariant().ShouldBe(nameof(Cat.Name).ToLowerInvariant());
     }
 
     [Fact]
@@ -75,7 +75,7 @@ public sealed class CreateCatTests
 
         //Assert
         catCreation.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldBe(nameof(Cat.Description).ToLower());
+            .ParamName?.ToLowerInvariant().ShouldBe(nameof(Cat.Description).ToLowerInvariant());
     }
 
     [Fact]
@@ -86,7 +86,7 @@ public sealed class CreateCatTests
 
         //Assert
         catCreation.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldBe(nameof(Cat.Age).ToLower());
+            .ParamName?.ToLowerInvariant().ShouldBe(nameof(Cat.Age).ToLowerInvariant());
     }
 
     [Fact]
@@ -97,7 +97,7 @@ public sealed class CreateCatTests
 
         //Assert
         catCreation.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldBe(nameof(Cat.Gender).ToLower());
+            .ParamName?.ToLowerInvariant().ShouldBe(nameof(Cat.Gender).ToLowerInvariant());
     }
 
     [Fact]
@@ -108,7 +108,7 @@ public sealed class CreateCatTests
 
         //Assert
         catCreation.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldBe(nameof(Cat.Color).ToLower());
+            .ParamName?.ToLowerInvariant().ShouldBe(nameof(Cat.Color).ToLowerInvariant());
     }
 
     [Fact]
@@ -119,7 +119,7 @@ public sealed class CreateCatTests
 
         //Assert
         catCreation.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldBe(nameof(Cat.Weight).ToLower());
+            .ParamName?.ToLowerInvariant().ShouldBe(nameof(Cat.Weight).ToLowerInvariant());
     }
 
     [Fact]
@@ -130,7 +130,7 @@ public sealed class CreateCatTests
 
         //Assert
         catCreation.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldBe(nameof(Cat.HealthStatus).ToLower());
+            .ParamName?.ToLowerInvariant().ShouldBe(nameof(Cat.HealthStatus).ToLowerInvariant());
     }
 
     [Fact]
@@ -141,7 +141,7 @@ public sealed class CreateCatTests
 
         //Assert
         catCreation.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldBe(nameof(Cat.SpecialNeeds).ToLower());
+            .ParamName?.ToLowerInvariant().ShouldBe(nameof(Cat.SpecialNeeds).ToLowerInvariant());
     }
 
     [Fact]
@@ -152,7 +152,7 @@ public sealed class CreateCatTests
 
         //Assert
         catCreation.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldBe(nameof(Cat.Temperament).ToLower());
+            .ParamName?.ToLowerInvariant().ShouldBe(nameof(Cat.Temperament).ToLowerInvariant());
     }
 
     [Fact]
@@ -163,7 +163,7 @@ public sealed class CreateCatTests
 
         //Assert
         catCreation.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldBe(nameof(Cat.AdoptionHistory).ToLower());
+            .ParamName?.ToLowerInvariant().ShouldBe(nameof(Cat.AdoptionHistory).ToLowerInvariant());
     }
 
     [Fact]
@@ -174,7 +174,7 @@ public sealed class CreateCatTests
 
         //Assert
         catCreation.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldBe(nameof(Cat.ListingSource).ToLower());
+            .ParamName?.ToLowerInvariant().ShouldBe(nameof(Cat.ListingSource).ToLowerInvariant());
     }
 
     [Fact]
@@ -185,7 +185,7 @@ public sealed class CreateCatTests
 
         //Assert
         catCreation.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldBe(nameof(Cat.NeuteringStatus).ToLower());
+            .ParamName?.ToLowerInvariant().ShouldBe(nameof(Cat.NeuteringStatus).ToLowerInvariant());
     }
 
     [Fact]
@@ -196,7 +196,7 @@ public sealed class CreateCatTests
 
         //Assert
         catCreation.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldBe(nameof(Cat.InfectiousDiseaseStatus).ToLower());
+            .ParamName?.ToLowerInvariant().ShouldBe(nameof(Cat.InfectiousDiseaseStatus).ToLowerInvariant());
     }
 
     [Fact]
@@ -207,6 +207,6 @@ public sealed class CreateCatTests
 
         //Assert
         catCreation.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldBe(nameof(Cat.CreatedAt).ToLower());
+            .ParamName?.ToLowerInvariant().ShouldBe(nameof(Cat.CreatedAt).ToLowerInvariant());
     }
 }

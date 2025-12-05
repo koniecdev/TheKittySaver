@@ -35,7 +35,7 @@ public sealed class CreatePersonTests
         
         //Assert
         personCreation.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldBe(nameof(Person.Username).ToLower());
+            .ParamName?.ToLowerInvariant().ShouldBe(nameof(Person.Username).ToLowerInvariant());
     }
     
     [Fact]
@@ -46,7 +46,7 @@ public sealed class CreatePersonTests
         
         //Assert
         personCreation.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldBe(nameof(Person.Email).ToLower());
+            .ParamName?.ToLowerInvariant().ShouldBe(nameof(Person.Email).ToLowerInvariant());
     }
     
     [Fact]
@@ -57,7 +57,7 @@ public sealed class CreatePersonTests
         
         //Assert
         personCreation.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldBe(nameof(Person.PhoneNumber).ToLower());
+            .ParamName?.ToLowerInvariant().ShouldBe(nameof(Person.PhoneNumber).ToLowerInvariant());
     }
     
     [Fact]
@@ -68,6 +68,6 @@ public sealed class CreatePersonTests
         
         //Assert
         personCreation.ShouldThrow<ArgumentException>()
-            .ParamName?.ToLower().ShouldBe(nameof(Person.IdentityId).ToLower());
+            .ParamName?.ToLowerInvariant().ShouldBe(nameof(Person.IdentityId).ToLowerInvariant());
     }
 }

@@ -38,7 +38,7 @@ public sealed class UpdateCatTests
 
         //Assert
         updateName.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldContain("name".ToLower());
+            .ParamName?.ToLowerInvariant().ShouldContain("name".ToLowerInvariant());
     }
 
     [Fact]
@@ -67,7 +67,7 @@ public sealed class UpdateCatTests
 
         //Assert
         updateDescription.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldContain("description".ToLower());
+            .ParamName?.ToLowerInvariant().ShouldContain("description".ToLowerInvariant());
     }
 
     [Fact]
@@ -96,7 +96,7 @@ public sealed class UpdateCatTests
 
         //Assert
         updateAge.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldContain("age".ToLower());
+            .ParamName?.ToLowerInvariant().ShouldContain("age".ToLowerInvariant());
     }
 
     [Fact]
@@ -125,7 +125,7 @@ public sealed class UpdateCatTests
 
         //Assert
         updateGender.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldContain("gender".ToLower());
+            .ParamName?.ToLowerInvariant().ShouldContain("gender".ToLowerInvariant());
     }
 
     [Fact]
@@ -154,7 +154,7 @@ public sealed class UpdateCatTests
 
         //Assert
         updateColor.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldContain("color".ToLower());
+            .ParamName?.ToLowerInvariant().ShouldContain("color".ToLowerInvariant());
     }
 
     [Fact]
@@ -183,7 +183,7 @@ public sealed class UpdateCatTests
 
         //Assert
         updateWeight.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldContain("weight".ToLower());
+            .ParamName?.ToLowerInvariant().ShouldContain("weight".ToLowerInvariant());
     }
 
     [Fact]
@@ -212,7 +212,7 @@ public sealed class UpdateCatTests
 
         //Assert
         updateHealthStatus.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldContain("healthstatus".ToLower());
+            .ParamName?.ToLowerInvariant().ShouldContain("healthstatus".ToLowerInvariant());
     }
 
     [Fact]
@@ -241,7 +241,7 @@ public sealed class UpdateCatTests
 
         //Assert
         updateSpecialNeeds.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldContain("specialneeds".ToLower());
+            .ParamName?.ToLowerInvariant().ShouldContain("specialneeds".ToLowerInvariant());
     }
 
     [Fact]
@@ -270,7 +270,7 @@ public sealed class UpdateCatTests
 
         //Assert
         updateTemperament.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldContain("temperament".ToLower());
+            .ParamName?.ToLowerInvariant().ShouldContain("temperament".ToLowerInvariant());
     }
 
     [Fact]
@@ -299,7 +299,7 @@ public sealed class UpdateCatTests
 
         //Assert
         updateAdoptionHistory.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldContain("adoptionhistory".ToLower());
+            .ParamName?.ToLowerInvariant().ShouldContain("adoptionhistory".ToLowerInvariant());
     }
 
     [Fact]
@@ -328,7 +328,7 @@ public sealed class UpdateCatTests
 
         //Assert
         updateListingSource.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldContain("listingsource".ToLower());
+            .ParamName?.ToLowerInvariant().ShouldContain("listingsource".ToLowerInvariant());
     }
 
     [Fact]
@@ -358,7 +358,7 @@ public sealed class UpdateCatTests
 
         //Assert
         updateNeuteringStatus.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldContain("neuteringstatus".ToLower());
+            .ParamName?.ToLowerInvariant().ShouldContain("neuteringstatus".ToLowerInvariant());
     }
 
     [Fact]
@@ -387,7 +387,7 @@ public sealed class UpdateCatTests
 
         //Assert
         updateStatus.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldContain("infectiousdiseasestatus".ToLower());
+            .ParamName?.ToLowerInvariant().ShouldContain("infectiousdiseasestatus".ToLowerInvariant());
     }
 
     [Fact]
@@ -416,6 +416,6 @@ public sealed class UpdateCatTests
 
         //Assert
         updateThumbnail.ShouldThrow<ArgumentException>()
-            .ParamName?.ToLower().ShouldContain("thumbnailid".ToLower());
+            .ParamName?.ToLowerInvariant().ShouldContain("thumbnailid".ToLowerInvariant());
     }
 }

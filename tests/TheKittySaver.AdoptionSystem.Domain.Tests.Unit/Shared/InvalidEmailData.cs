@@ -1,6 +1,6 @@
 ﻿namespace TheKittySaver.AdoptionSystem.Domain.Tests.Unit.Shared;
 
-public class InvalidEmailData : TheoryData<string>
+internal sealed class InvalidEmailData : TheoryData<string>
 {
     public InvalidEmailData()
     {

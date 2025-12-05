@@ -84,7 +84,7 @@ public sealed class CatClaimTests
 
         //Assert
         claim.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldContain(nameof(Cat.ClaimedAt));
+            .ParamName?.ToLowerInvariant().ShouldContain(nameof(Cat.ClaimedAt));
     }
     
     [Fact]

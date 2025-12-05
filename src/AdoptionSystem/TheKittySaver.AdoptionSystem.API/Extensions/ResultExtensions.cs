@@ -5,7 +5,7 @@ using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
 
 namespace TheKittySaver.AdoptionSystem.API.Extensions;
 
-public static class ResultExtensions
+internal static class ResultExtensions
 {
     public static IActionResult ToActionResult(this Result result) =>
         result.IsSuccess 

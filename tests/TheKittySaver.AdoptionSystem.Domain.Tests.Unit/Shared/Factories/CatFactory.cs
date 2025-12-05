@@ -10,7 +10,7 @@ using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Tests.Unit.Shared.Factories;
 
-public static class CatFactory
+internal static class CatFactory
 {
     public static Cat CreateRandom(
         Faker faker,
@@ -76,7 +76,7 @@ public static class CatFactory
         NeuteringStatus neuteringStatus = faker.PickRandomParam(
             NeuteringStatus.NotNeutered(),
             NeuteringStatus.Neutered());
-        InfectiousDiseaseStatus infectiousDiseaseStatus = CreateFixedNormalInfectiousDiseaseStatus(); //todo provide filv felv bools in parameters
+        InfectiousDiseaseStatus infectiousDiseaseStatus = CreateFixedNormalInfectiousDiseaseStatus();
         CreatedAt createdAt = CreateDefaultCreatedAt();
 
         Result<Cat> catResult = Cat.Create(

@@ -28,7 +28,7 @@ public sealed class PersonAddressManagementTests
         Person person = PersonFactory.CreateRandom(Faker);
         IAddressConsistencySpecification specification = new PolandAddressConsistencySpecification();
         AddressName name = AddressFactory.CreateRandomName(Faker);
-        AddressPostalCode postalCode = AddressFactory.CreateRandomPostalCode(Faker);
+        AddressPostalCode postalCode = AddressFactory.CreateFixedPostalCode();
         AddressRegion region = AddressFactory.CreateRandomRegion(Faker);
         AddressCity city = AddressFactory.CreateRandomCity(Faker);
         AddressLine line = AddressFactory.CreateRandomLine(Faker);
@@ -60,7 +60,7 @@ public sealed class PersonAddressManagementTests
         Person person = PersonFactory.CreateRandom(Faker);
         IAddressConsistencySpecification specification = new PolandAddressConsistencySpecification();
         AddressName name = AddressFactory.CreateRandomName(Faker);
-        AddressPostalCode postalCode = AddressFactory.CreateRandomPostalCode(Faker);
+        AddressPostalCode postalCode = AddressFactory.CreateFixedPostalCode();
         AddressRegion region = AddressFactory.CreateRandomRegion(Faker);
         AddressCity city = AddressFactory.CreateRandomCity(Faker);
         Result<CreatedAt> createdAtResult = CreatedAt.Create(TestCreatedAtDate);
@@ -126,7 +126,7 @@ public sealed class PersonAddressManagementTests
         //Arrange
         Person person = PersonFactory.CreateRandom(Faker);
         IAddressConsistencySpecification specification = new PolandAddressConsistencySpecification();
-        AddressPostalCode postalCode = AddressFactory.CreateRandomPostalCode(Faker);
+        AddressPostalCode postalCode = AddressFactory.CreateFixedPostalCode();
         AddressRegion region = AddressFactory.CreateRandomRegion(Faker);
         AddressCity city = AddressFactory.CreateRandomCity(Faker);
         Result<CreatedAt> createdAtResult = CreatedAt.Create(TestCreatedAtDate);
@@ -145,7 +145,7 @@ public sealed class PersonAddressManagementTests
 
         //Assert
         addAddress.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldBe("name");
+            .ParamName?.ToLowerInvariant().ShouldBe("name");
     }
 
     [Fact]
@@ -155,7 +155,7 @@ public sealed class PersonAddressManagementTests
         Person person = PersonFactory.CreateRandom(Faker);
         IAddressConsistencySpecification specification = new PolandAddressConsistencySpecification();
         AddressName originalName = AddressFactory.CreateRandomName(Faker);
-        AddressPostalCode postalCode = AddressFactory.CreateRandomPostalCode(Faker);
+        AddressPostalCode postalCode = AddressFactory.CreateFixedPostalCode();
         AddressRegion region = AddressFactory.CreateRandomRegion(Faker);
         AddressCity city = AddressFactory.CreateRandomCity(Faker);
         Result<CreatedAt> createdAtResult = CreatedAt.Create(TestCreatedAtDate);
@@ -204,7 +204,7 @@ public sealed class PersonAddressManagementTests
         IAddressConsistencySpecification specification = new PolandAddressConsistencySpecification();
         AddressName firstName = AddressFactory.CreateRandomName(Faker);
         AddressName secondName = AddressFactory.CreateRandomName(Faker);
-        AddressPostalCode postalCode = AddressFactory.CreateRandomPostalCode(Faker);
+        AddressPostalCode postalCode = AddressFactory.CreateFixedPostalCode();
         AddressRegion region = AddressFactory.CreateRandomRegion(Faker);
         AddressCity city = AddressFactory.CreateRandomCity(Faker);
         Result<CreatedAt> createdAtResult = CreatedAt.Create(TestCreatedAtDate);
@@ -245,7 +245,7 @@ public sealed class PersonAddressManagementTests
         Person person = PersonFactory.CreateRandom(Faker);
         IAddressConsistencySpecification specification = new PolandAddressConsistencySpecification();
         AddressName originalName = AddressFactory.CreateRandomName(Faker);
-        AddressPostalCode postalCode = AddressFactory.CreateRandomPostalCode(Faker);
+        AddressPostalCode postalCode = AddressFactory.CreateFixedPostalCode();
         AddressRegion region = AddressFactory.CreateRandomRegion(Faker);
         AddressCity city = AddressFactory.CreateRandomCity(Faker);
         Result<CreatedAt> createdAtResult = CreatedAt.Create(TestCreatedAtDate);
@@ -276,7 +276,7 @@ public sealed class PersonAddressManagementTests
         Person person = PersonFactory.CreateRandom(Faker);
         IAddressConsistencySpecification specification = new PolandAddressConsistencySpecification();
         AddressName name = AddressFactory.CreateRandomName(Faker);
-        AddressPostalCode originalPostalCode = AddressFactory.CreateRandomPostalCode(Faker);
+        AddressPostalCode originalPostalCode = AddressFactory.CreateFixedPostalCode();
         AddressRegion originalRegion = AddressFactory.CreateRandomRegion(Faker);
         AddressCity originalCity = AddressFactory.CreateRandomCity(Faker);
         Result<CreatedAt> createdAtResult = CreatedAt.Create(TestCreatedAtDate);
@@ -292,7 +292,7 @@ public sealed class PersonAddressManagementTests
             Maybe<AddressLine>.None,
             createdAtResult.Value);
 
-        AddressPostalCode newPostalCode = AddressFactory.CreateRandomPostalCode(Faker);
+        AddressPostalCode newPostalCode = AddressFactory.CreateFixedPostalCode();
         AddressRegion newRegion = AddressFactory.CreateRandomRegion(Faker);
         AddressCity newCity = AddressFactory.CreateRandomCity(Faker);
         AddressLine newLine = AddressFactory.CreateRandomLine(Faker);
@@ -321,7 +321,7 @@ public sealed class PersonAddressManagementTests
         Person person = PersonFactory.CreateRandom(Faker);
         IAddressConsistencySpecification specification = new PolandAddressConsistencySpecification();
         AddressId nonExistentAddressId = AddressId.New();
-        AddressPostalCode postalCode = AddressFactory.CreateRandomPostalCode(Faker);
+        AddressPostalCode postalCode = AddressFactory.CreateFixedPostalCode();
         AddressRegion region = AddressFactory.CreateRandomRegion(Faker);
         AddressCity city = AddressFactory.CreateRandomCity(Faker);
 
@@ -346,7 +346,7 @@ public sealed class PersonAddressManagementTests
         Person person = PersonFactory.CreateRandom(Faker);
         IAddressConsistencySpecification specification = new PolandAddressConsistencySpecification();
         AddressName name = AddressFactory.CreateRandomName(Faker);
-        AddressPostalCode postalCode = AddressFactory.CreateRandomPostalCode(Faker);
+        AddressPostalCode postalCode = AddressFactory.CreateFixedPostalCode();
         AddressRegion region = AddressFactory.CreateRandomRegion(Faker);
         AddressCity city = AddressFactory.CreateRandomCity(Faker);
         Result<CreatedAt> createdAtResult = CreatedAt.Create(TestCreatedAtDate);

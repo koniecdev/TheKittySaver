@@ -79,7 +79,7 @@ public sealed class CatAssignmentTests
 
         //Assert
         assign.ShouldThrow<ArgumentException>()
-            .ParamName?.ToLower().ShouldContain(nameof(Cat.AdoptionAnnouncementId));
+            .ParamName?.ToLowerInvariant().ShouldContain(nameof(Cat.AdoptionAnnouncementId));
     }
 
     [Fact]
@@ -172,7 +172,7 @@ public sealed class CatAssignmentTests
 
         //Assert
         reassign.ShouldThrow<ArgumentException>()
-            .ParamName?.ToLower().ShouldContain($"destination{nameof(Cat.AdoptionAnnouncementId)}");
+            .ParamName?.ToLowerInvariant().ShouldContain($"destination{nameof(Cat.AdoptionAnnouncementId)}");
     }
 
     [Fact]

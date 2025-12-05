@@ -42,7 +42,7 @@ public sealed class UpdatePersonTests
 
         //Assert
         updateUsername.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldBe(nameof(Person.Username).ToLower());
+            .ParamName?.ToLowerInvariant().ShouldBe(nameof(Person.Username).ToLowerInvariant());
     }
 
     [Fact]
@@ -73,7 +73,7 @@ public sealed class UpdatePersonTests
 
         //Assert
         updateEmail.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldBe(nameof(Person.Email).ToLower());
+            .ParamName?.ToLowerInvariant().ShouldBe(nameof(Person.Email).ToLowerInvariant());
     }
 
     [Fact]
@@ -102,6 +102,6 @@ public sealed class UpdatePersonTests
 
         //Assert
         updatePhoneNumber.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldBe(nameof(Person.PhoneNumber).ToLower());
+            .ParamName?.ToLowerInvariant().ShouldBe(nameof(Person.PhoneNumber).ToLowerInvariant());
     }
 }

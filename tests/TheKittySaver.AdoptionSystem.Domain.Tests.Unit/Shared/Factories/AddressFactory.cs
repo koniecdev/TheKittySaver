@@ -13,7 +13,7 @@ using TheKittySaver.AdoptionSystem.Primitives.Enums;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Tests.Unit.Shared.Factories;
 
-public static class AddressFactory
+internal static class AddressFactory
 {
     public static Address CreateRandom(
         Faker faker,
@@ -99,9 +99,9 @@ public static class AddressFactory
         return result.Value;
     }
 
-    public static AddressPostalCode CreateRandomPostalCode(Faker faker)
+    public static AddressPostalCode CreateFixedPostalCode()
     {
-        Result<AddressPostalCode> result = AddressPostalCode.Create("60-123");
+        Result<AddressPostalCode> result = AddressPostalCode.Create("60-365");
         result.EnsureSuccess();
         return result.Value;
     }

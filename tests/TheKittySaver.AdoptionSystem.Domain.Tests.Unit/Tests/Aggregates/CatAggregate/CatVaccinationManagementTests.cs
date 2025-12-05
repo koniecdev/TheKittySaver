@@ -57,7 +57,7 @@ public sealed class CatVaccinationManagementTests
 
         //Assert
         addVaccination.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldContain("createdat".ToLower());
+            .ParamName?.ToLowerInvariant().ShouldContain("createdat".ToLowerInvariant());
     }
 
     [Fact]
@@ -103,7 +103,7 @@ public sealed class CatVaccinationManagementTests
 
         //Assert
         removeVaccination.ShouldThrow<ArgumentException>()
-            .ParamName?.ToLower().ShouldContain("vaccinationid".ToLower());
+            .ParamName?.ToLowerInvariant().ShouldContain("vaccinationid".ToLowerInvariant());
     }
 
     [Fact]

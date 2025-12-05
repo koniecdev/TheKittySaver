@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Globalization;
+using System.Runtime.CompilerServices;
 using TheKittySaver.AdoptionSystem.Primitives.Common;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Core.Guards;
@@ -17,7 +18,7 @@ public static class Ensure
         [CallerArgumentExpression(nameof(value))] string argumentName = "")
         where TEnum : struct, Enum
     {
-        if (Convert.ToInt32(value) == 0)
+        if (Convert.ToInt32(value, CultureInfo.InvariantCulture) == 0)
         {
             throw new ArgumentException($"{argumentName} must have a valid value.", argumentName);
         }

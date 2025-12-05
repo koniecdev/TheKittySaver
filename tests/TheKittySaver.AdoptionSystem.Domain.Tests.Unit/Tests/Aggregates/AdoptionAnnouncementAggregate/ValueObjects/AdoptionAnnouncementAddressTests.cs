@@ -93,7 +93,7 @@ public sealed class AdoptionAnnouncementAddressTests
 
         //Assert
         addressCreation.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldBe(nameof(AdoptionAnnouncementAddress.City).ToLower());
+            .ParamName?.ToLowerInvariant().ShouldBe(nameof(AdoptionAnnouncementAddress.City).ToLowerInvariant());
     }
 
     [Fact]
@@ -115,7 +115,7 @@ public sealed class AdoptionAnnouncementAddressTests
 
         //Assert
         addressCreation.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldBe(nameof(AdoptionAnnouncementAddress.Region).ToLower());
+            .ParamName?.ToLowerInvariant().ShouldBe(nameof(AdoptionAnnouncementAddress.Region).ToLowerInvariant());
     }
 
     [Fact]

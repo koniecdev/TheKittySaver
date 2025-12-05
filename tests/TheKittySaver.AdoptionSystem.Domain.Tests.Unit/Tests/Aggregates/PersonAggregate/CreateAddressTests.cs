@@ -48,7 +48,7 @@ public sealed class CreateAddressTests
 
         //Assert
         addressCreation.ShouldThrow<ArgumentException>()
-            .ParamName?.ToLower().ShouldBe(nameof(Address.PersonId).ToLower());
+            .ParamName?.ToLowerInvariant().ShouldBe(nameof(Address.PersonId).ToLowerInvariant());
     }
 
     [Fact]
@@ -59,7 +59,7 @@ public sealed class CreateAddressTests
 
         //Assert
         addressCreation.ShouldThrow<ArgumentException>()
-            .ParamName?.ToLower().ShouldBe(nameof(Address.CountryCode).ToLower());
+            .ParamName?.ToLowerInvariant().ShouldBe(nameof(Address.CountryCode).ToLowerInvariant());
     }
 
     [Fact]
@@ -70,7 +70,7 @@ public sealed class CreateAddressTests
 
         //Assert
         addressCreation.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldBe(nameof(Address.Name).ToLower());
+            .ParamName?.ToLowerInvariant().ShouldBe(nameof(Address.Name).ToLowerInvariant());
     }
 
     [Fact]
@@ -81,7 +81,7 @@ public sealed class CreateAddressTests
 
         //Assert
         addressCreation.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldBe(nameof(Address.Region).ToLower());
+            .ParamName?.ToLowerInvariant().ShouldBe(nameof(Address.Region).ToLowerInvariant());
     }
 
     [Fact]
@@ -92,7 +92,7 @@ public sealed class CreateAddressTests
 
         //Assert
         addressCreation.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldBe(nameof(Address.City).ToLower());
+            .ParamName?.ToLowerInvariant().ShouldBe(nameof(Address.City).ToLowerInvariant());
     }
 
     [Fact]
@@ -103,6 +103,6 @@ public sealed class CreateAddressTests
 
         //Assert
         addressCreation.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldBe(nameof(Address.CreatedAt).ToLower());
+            .ParamName?.ToLowerInvariant().ShouldBe(nameof(Address.CreatedAt).ToLowerInvariant());
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace TheKittySaver.AdoptionSystem.Domain.Tests.Unit.Shared;
 
-public class NullOrEmptyData : TheoryData<string?>
+internal sealed class NullOrEmptyData : TheoryData<string?>
 {
     public NullOrEmptyData()
     {

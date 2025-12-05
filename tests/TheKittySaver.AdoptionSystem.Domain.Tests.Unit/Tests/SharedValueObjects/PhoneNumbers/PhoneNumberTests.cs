@@ -44,7 +44,7 @@ public sealed class PhoneNumberTests
 
         //Assert
         createAction.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLower().ShouldBe(nameof(PhoneNumber.Value).ToLower());
+            .ParamName?.ToLowerInvariant().ShouldBe(nameof(PhoneNumber.Value).ToLowerInvariant());
     }
 
     [Fact]

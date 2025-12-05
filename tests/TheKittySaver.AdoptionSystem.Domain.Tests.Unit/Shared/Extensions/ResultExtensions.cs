@@ -2,7 +2,7 @@
 
 namespace TheKittySaver.AdoptionSystem.Domain.Tests.Unit.Shared.Extensions;
 
-public static class ResultExtensions
+internal static class ResultExtensions
 {
     extension<T>(Result<T> result)
     {
@@ -21,6 +21,6 @@ public static class ResultExtensions
             return;
         }
             
-        throw new Exception(result.Error.ToString());
+        throw new InvalidOperationException(result.Error.ToString());
     }
 }
