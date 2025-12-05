@@ -1,6 +1,4 @@
-﻿// Domain/Aggregates/PersonAggregate/Entities/Address.cs
-
-using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.ValueObjects;
+﻿using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.ValueObjects;
 using TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
 using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 using TheKittySaver.AdoptionSystem.Domain.Core.Guards;
