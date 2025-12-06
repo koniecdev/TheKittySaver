@@ -1,4 +1,7 @@
 ﻿namespace TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
 
 [StronglyTypedId(jsonConverter: StronglyTypedIdJsonConverter.SystemTextJson)]
-public partial struct IdentityId : IStronglyTypedId;
+public partial struct IdentityId : IStronglyTypedId<IdentityId>
+{
+    public static IdentityId Create(Guid id) => new(id);
+}

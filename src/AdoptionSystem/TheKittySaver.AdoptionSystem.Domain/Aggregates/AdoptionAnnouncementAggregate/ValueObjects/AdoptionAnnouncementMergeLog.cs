@@ -1,6 +1,6 @@
 ﻿using TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
-using TheKittySaver.AdoptionSystem.Domain.Core.Guards;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.AdoptionAnnouncementAggregate;
+using TheKittySaver.AdoptionSystem.Primitives.Guards;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAggregate.ValueObjects;
 

@@ -1,14 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
-using TheKittySaver.AdoptionSystem.Domain.Core.Guards;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.OptionMonad;
 using TheKittySaver.AdoptionSystem.Persistence.DbContexts.WriteDbContexts;
 using TheKittySaver.AdoptionSystem.Primitives.Common;
+using TheKittySaver.AdoptionSystem.Primitives.Guards;
 
 namespace TheKittySaver.AdoptionSystem.Persistence;
 
 internal abstract class GenericRepository<TAggregateRoot, TAggregateRootId> : IRepository<TAggregateRoot, TAggregateRootId>
-    where TAggregateRootId : struct, IStronglyTypedId
+    where TAggregateRootId : struct, IStronglyTypedId<TAggregateRootId>
     where TAggregateRoot : AggregateRoot<TAggregateRootId>
 {
     protected readonly ApplicationWriteDbContext DbContext;

@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using Microsoft.EntityFrameworkCore;
+using TheKittySaver.AdoptionSystem.Persistence.Converters;
 using TheKittySaver.AdoptionSystem.ReadModels.Aggregates.AdoptionAnnouncementAggregate;
 using TheKittySaver.AdoptionSystem.ReadModels.Aggregates.CatAggregate;
 using TheKittySaver.AdoptionSystem.ReadModels.Aggregates.PersonAggregate;
@@ -20,6 +21,12 @@ internal sealed class ApplicationReadDbContext : DbContext, IApplicationReadDbCo
     public DbSet<CatGalleryItemReadModel> CatGalleryItems => Set<CatGalleryItemReadModel>();
     public DbSet<VaccinationReadModel> Vaccinations => Set<VaccinationReadModel>();
     public DbSet<AdoptionAnnouncementReadModel> AdoptionAnnouncements => Set<AdoptionAnnouncementReadModel>();
+    
+    protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+    {
+        configurationBuilder.RegisterAllStronglyTypedIdConverters();
+        base.ConfigureConventions(configurationBuilder);
+    }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

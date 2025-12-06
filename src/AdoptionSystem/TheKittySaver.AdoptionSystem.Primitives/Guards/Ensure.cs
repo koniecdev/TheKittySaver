@@ -1,8 +1,7 @@
 ﻿using System.Globalization;
 using System.Runtime.CompilerServices;
-using TheKittySaver.AdoptionSystem.Primitives.Common;
 
-namespace TheKittySaver.AdoptionSystem.Domain.Core.Guards;
+namespace TheKittySaver.AdoptionSystem.Primitives.Guards;
 
 public static class Ensure
 {
@@ -33,7 +32,7 @@ public static class Ensure
     /// <exception cref="ArgumentException">if the specified value is empty.</exception>
     public static void NotEmpty<T>(
         T id,
-        [CallerArgumentExpression(nameof(id))] string argumentName = "") where T : IStronglyTypedId
+        [CallerArgumentExpression(nameof(id))] string argumentName = "") where T : IStronglyTypedId<T>
     {
         if (id.Value == Guid.Empty)
         {
