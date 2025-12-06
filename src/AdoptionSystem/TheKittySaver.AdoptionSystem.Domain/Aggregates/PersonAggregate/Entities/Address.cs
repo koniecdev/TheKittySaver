@@ -113,4 +113,12 @@ public sealed class Address : Entity<AddressId>
         City = city;
         Line = line;
     }
+
+    private Address()
+    {
+        Name = null!;
+        PostalCode = null!;
+        Region = null!;
+        City = null!;
+    }
 }

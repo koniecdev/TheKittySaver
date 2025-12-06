@@ -61,6 +61,13 @@ public sealed class AdoptionAnnouncementAddress : ValueObject
         Line = line;
     }
 
+    private AdoptionAnnouncementAddress()
+    {
+        PostalCode = null!;
+        Region = null!;
+        City = null!;
+    }
+
     public override string ToString()
     {
         string lineText = Line is not null ? $"{Line.Value}, " : string.Empty;

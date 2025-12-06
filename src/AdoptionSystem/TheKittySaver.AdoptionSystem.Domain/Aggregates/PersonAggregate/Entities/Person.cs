@@ -180,4 +180,11 @@ public sealed class Person : AggregateRoot<PersonId>
         PhoneNumber = phoneNumber;
         IdentityId = identityId;
     }
+
+    private Person()
+    {
+        Username = null!;
+        Email= null!;
+        PhoneNumber= null!;
+    }
 }

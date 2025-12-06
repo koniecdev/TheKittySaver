@@ -25,7 +25,7 @@ public abstract class AggregateRoot<TId> : Entity<TId>, IAggregateRoot where TId
     {
     }
 
-    private AggregateRoot()
+    protected AggregateRoot()
     {
     }
 

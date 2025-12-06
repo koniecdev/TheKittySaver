@@ -18,12 +18,12 @@ public sealed class CatThumbnail : Entity<CatThumbnailId>
         return Result.Success(instance);
     }
 
-    public CatThumbnail(CatId catId, CatThumbnailId id) : base(id)
+    private CatThumbnail(CatId catId, CatThumbnailId id) : base(id)
     {
         CatId = catId;
     }
 
-    public CatThumbnail()
+    private CatThumbnail()
     {
     }
 }

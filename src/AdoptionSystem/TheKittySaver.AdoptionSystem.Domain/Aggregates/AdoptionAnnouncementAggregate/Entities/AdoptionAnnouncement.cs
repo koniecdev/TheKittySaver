@@ -143,4 +143,11 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
         PhoneNumber = phoneNumber;
         Status = status;
     }
+
+    private AdoptionAnnouncement()
+    {
+        Address = null!;
+        Email = null!;
+        PhoneNumber = null!;
+    }
 }

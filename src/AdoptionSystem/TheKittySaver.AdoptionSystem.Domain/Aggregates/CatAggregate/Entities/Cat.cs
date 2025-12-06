@@ -28,10 +28,8 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
     
     public ClaimedAt? ClaimedAt { get; private set; }
     public PublishedAt? PublishedAt { get; private set; }
-    
     public CatName Name { get; private set; }
     public CatDescription Description { get; private set; }
-    
     public CatAge Age { get; private set; }
     public CatGender Gender { get; private set; }
     public CatColor Color { get; private set; }
@@ -43,7 +41,6 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
     public ListingSource ListingSource { get; private set; }
     public NeuteringStatus NeuteringStatus { get; private set; }
     public InfectiousDiseaseStatus InfectiousDiseaseStatus { get; private set; }
-    
     public CatThumbnail? Thumbnail { get; private set; }
     
     public IReadOnlyList<CatGalleryItem> GalleryItems => _galleryItems.AsReadOnly();
@@ -538,5 +535,22 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
         ListingSource = listingSource;
         NeuteringStatus = neuteringStatus;
         InfectiousDiseaseStatus = infectiousDiseaseStatus;
+    }
+
+    private Cat()
+    {
+        Name = null!;
+        Description = null!;
+        Age = null!;
+        Gender = null!;
+        Color = null!;
+        Weight = null!;
+        HealthStatus = null!;
+        SpecialNeeds = null!;
+        Temperament = null!;
+        AdoptionHistory = null!;
+        ListingSource = null!;
+        NeuteringStatus = null!;
+        InfectiousDiseaseStatus = null!;
     }
 }

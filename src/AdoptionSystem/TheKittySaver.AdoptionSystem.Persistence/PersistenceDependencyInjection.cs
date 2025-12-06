@@ -18,7 +18,7 @@ public static class PersistenceDependencyInjection
 {
     public static IServiceCollection AddPersistence(this IServiceCollection services)
     {
-        services.AddValidatorsFromAssembly(typeof(IPersistenceAssemblyMarker).Assembly);
+        services.AddSingleton<IValidator<ConnectionStringSettings>, ConnectionStringSettingsValidator>();
         services.AddOptionsWithFluentValidation<ConnectionStringSettings>(ConnectionStringSettings.ConfigurationSection);
 
         services.AddDbContextFactory<ApplicationWriteDbContext>((sp, options) =>
