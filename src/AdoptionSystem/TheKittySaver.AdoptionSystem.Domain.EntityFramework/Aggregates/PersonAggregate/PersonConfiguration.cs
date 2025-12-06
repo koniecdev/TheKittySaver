@@ -17,9 +17,8 @@ public sealed class PersonConfiguration : IEntityTypeConfiguration<Person>
 
         builder.Property(x => x.Id)
             .ValueGeneratedNever();
-        
-        builder.Property(x => x.IdentityId)
-            .ValueGeneratedNever();
+
+        builder.Property(x => x.IdentityId);
         
         builder.ComplexProperty(x => x.Username, complexBuilder =>
         {

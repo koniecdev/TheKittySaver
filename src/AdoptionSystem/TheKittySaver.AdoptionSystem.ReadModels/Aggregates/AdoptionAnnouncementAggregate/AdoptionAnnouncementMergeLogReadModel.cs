@@ -1,0 +1,6 @@
+﻿using TheKittySaver.AdoptionSystem.Primitives.Aggregates.AdoptionAnnouncementAggregate;
+
+namespace TheKittySaver.AdoptionSystem.ReadModels.Aggregates.AdoptionAnnouncementAggregate;
+
+public sealed record AdoptionAnnouncementMergeLogReadModel(
+    AdoptionAnnouncementId MergedAdoptionAnnouncementId);
