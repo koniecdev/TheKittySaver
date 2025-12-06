@@ -9,5 +9,5 @@ public interface ICatRepository : IRepository<Cat, CatId>
 {
     public Task<IReadOnlyCollection<Cat>> GetCatsByAdoptionAnnouncementIdAsync(
         AdoptionAnnouncementId adoptionAnnouncementId,
-        CancellationToken cancellationToken = default);
+        CancellationToken cancellationToken);
 }

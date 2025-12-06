@@ -34,7 +34,7 @@ internal abstract class DesignTimeDbContextFactoryBase<TContext> : IDesignTimeDb
         
         if (!string.IsNullOrWhiteSpace(connectionStringOverride))
         {
-            LogInfo($"Using connection string from command line arguments");
+            LogInfo("Using connection string from command line arguments");
             return CreateContextWithConnectionString(connectionStringOverride);
         }
 
@@ -144,7 +144,7 @@ internal abstract class DesignTimeDbContextFactoryBase<TContext> : IDesignTimeDb
         {
             if (args[i].Equals(argumentName, StringComparison.OrdinalIgnoreCase))
             {
-                return args[i + 1];
+                return args[i + 1]; 
             }
         }
         return null;

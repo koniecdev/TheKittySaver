@@ -46,7 +46,7 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
     
     public CatThumbnail? Thumbnail { get; private set; }
     
-    public IReadOnlyList<CatGalleryItem> GetGalleryItems() => _galleryItems.AsReadOnly();
+    public IReadOnlyList<CatGalleryItem> GalleryItems => _galleryItems.AsReadOnly();
     public IReadOnlyList<Vaccination> Vaccinations => _vaccinations.AsReadOnly();
 
     public CatStatusType Status { get; private set; } = CatStatusType.Draft;

@@ -2,5 +2,5 @@
 
 namespace TheKittySaver.AdoptionSystem.ReadModels.Aggregates.AdoptionAnnouncementAggregate;
 
-public sealed record AdoptionAnnouncementMergeLogReadModel(
+public sealed record AdoptionAnnouncementMergeLogReadModel( 
     AdoptionAnnouncementId MergedAdoptionAnnouncementId);

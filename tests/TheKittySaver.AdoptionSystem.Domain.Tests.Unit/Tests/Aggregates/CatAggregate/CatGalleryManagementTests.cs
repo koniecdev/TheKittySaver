@@ -25,8 +25,8 @@ public sealed class CatGalleryManagementTests
 
         //Assert
         result.IsSuccess.ShouldBeTrue();
-        cat.GetGalleryItems().Count.ShouldBe(1);
-        cat.GetGalleryItems()[0].DisplayOrder.Value.ShouldBe(0);
+        cat.GalleryItems.Count.ShouldBe(1);
+        cat.GalleryItems[0].DisplayOrder.Value.ShouldBe(0);
     }
 
     [Fact]
@@ -41,10 +41,10 @@ public sealed class CatGalleryManagementTests
         cat.AddGalleryItem();
 
         //Assert
-        cat.GetGalleryItems().Count.ShouldBe(3);
-        cat.GetGalleryItems()[0].DisplayOrder.Value.ShouldBe(0);
-        cat.GetGalleryItems()[1].DisplayOrder.Value.ShouldBe(1);
-        cat.GetGalleryItems()[2].DisplayOrder.Value.ShouldBe(2);
+        cat.GalleryItems.Count.ShouldBe(3);
+        cat.GalleryItems[0].DisplayOrder.Value.ShouldBe(0);
+        cat.GalleryItems[1].DisplayOrder.Value.ShouldBe(1);
+        cat.GalleryItems[2].DisplayOrder.Value.ShouldBe(2);
     }
 
     [Fact]
@@ -62,7 +62,7 @@ public sealed class CatGalleryManagementTests
 
         //Assert
         result.IsSuccess.ShouldBeTrue();
-        cat.GetGalleryItems().Count.ShouldBe(Cat.MaximumGalleryItemsCount);
+        cat.GalleryItems.Count.ShouldBe(Cat.MaximumGalleryItemsCount);
     }
 
     [Fact]
@@ -96,7 +96,7 @@ public sealed class CatGalleryManagementTests
 
         //Assert
         result.IsSuccess.ShouldBeTrue();
-        cat.GetGalleryItems().Count.ShouldBe(0);
+        cat.GalleryItems.Count.ShouldBe(0);
     }
 
     [Fact]
@@ -114,9 +114,9 @@ public sealed class CatGalleryManagementTests
 
         //Assert
         result.IsSuccess.ShouldBeTrue();
-        cat.GetGalleryItems().Count.ShouldBe(2);
-        cat.GetGalleryItems()[0].DisplayOrder.Value.ShouldBe(0);
-        cat.GetGalleryItems()[1].DisplayOrder.Value.ShouldBe(1);
+        cat.GalleryItems.Count.ShouldBe(2);
+        cat.GalleryItems[0].DisplayOrder.Value.ShouldBe(0);
+        cat.GalleryItems[1].DisplayOrder.Value.ShouldBe(1);
     }
 
     [Fact]
@@ -134,9 +134,9 @@ public sealed class CatGalleryManagementTests
 
         //Assert
         result.IsSuccess.ShouldBeTrue();
-        cat.GetGalleryItems().Count.ShouldBe(2);
-        cat.GetGalleryItems()[0].DisplayOrder.Value.ShouldBe(0);
-        cat.GetGalleryItems()[1].DisplayOrder.Value.ShouldBe(1);
+        cat.GalleryItems.Count.ShouldBe(2);
+        cat.GalleryItems[0].DisplayOrder.Value.ShouldBe(0);
+        cat.GalleryItems[1].DisplayOrder.Value.ShouldBe(1);
     }
 
     [Fact]
@@ -154,9 +154,9 @@ public sealed class CatGalleryManagementTests
 
         //Assert
         result.IsSuccess.ShouldBeTrue();
-        cat.GetGalleryItems().Count.ShouldBe(2);
-        cat.GetGalleryItems()[0].DisplayOrder.Value.ShouldBe(0);
-        cat.GetGalleryItems()[1].DisplayOrder.Value.ShouldBe(1);
+        cat.GalleryItems.Count.ShouldBe(2);
+        cat.GalleryItems[0].DisplayOrder.Value.ShouldBe(0);
+        cat.GalleryItems[1].DisplayOrder.Value.ShouldBe(1);
     }
 
     [Fact]
