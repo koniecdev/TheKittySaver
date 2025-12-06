@@ -4,34 +4,19 @@ using Microsoft.Extensions.Configuration;
 
 namespace TheKittySaver.AdoptionSystem.Persistence.DbContexts.WriteDbContexts.DesignTimeFactories;
 
-/// <summary>
-/// Base class for design-time DbContext creation used by EF Core tools.
-/// Supports: dotnet ef migrations add/remove/script, dotnet ef database update
-/// </summary>
-/// <typeparam name="TContext">The DbContext type to create</typeparam>
 internal abstract class DesignTimeDbContextFactoryBase<TContext> : IDesignTimeDbContextFactory<TContext>
     where TContext : DbContext
 {
+    private const string ConfigurationSection = "ConnectionStringSettings";
     private const string DefaultConnectionStringName = "Database";
     private const string DefaultEnvironment = "Development";
-    
-    /// <summary>
-    /// Override to use a different connection string name from appsettings.
-    /// </summary>
+
     protected virtual string ConnectionStringName => DefaultConnectionStringName;
 
-    /// <summary>
-    /// Creates DbContext instance for EF Core tools.
-    /// </summary>
-    /// <param name="args">
-    /// Command line arguments. Supports:
-    /// --connection "your-connection-string" to override appsettings
-    /// --environment EnvironmentName to specify environment
-    /// </param>
     public TContext CreateDbContext(string[] args)
     {
         string? connectionStringOverride = GetArgumentValue(args, "--connection");
-        
+
         if (!string.IsNullOrWhiteSpace(connectionStringOverride))
         {
             LogInfo("Using connection string from command line arguments");
@@ -52,14 +37,8 @@ internal abstract class DesignTimeDbContextFactoryBase<TContext> : IDesignTimeDb
         return CreateContextWithConnectionString(connectionString);
     }
 
-    /// <summary>
-    /// Implement to create the DbContext instance with configured options.
-    /// </summary>
     protected abstract TContext CreateNewInstance(DbContextOptions<TContext> options);
 
-    /// <summary>
-    /// Configure database provider and options.
-    /// </summary>
     protected abstract void ConfigureOptions(DbContextOptionsBuilder<TContext> optionsBuilder, string connectionString);
 
     private TContext CreateContextWithConnectionString(string connectionString)
@@ -78,16 +57,16 @@ internal abstract class DesignTimeDbContextFactoryBase<TContext> : IDesignTimeDb
             .SetBasePath(basePath)
             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: false)
             .AddJsonFile($"appsettings.{environment}.json", optional: true, reloadOnChange: false)
-            .AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: false) // gitignored local overrides
+            .AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: false)
             .AddEnvironmentVariables()
             .Build();
 
-        string? connectionString = configuration.GetConnectionString(ConnectionStringName);
+        string? connectionString = configuration[$"{ConfigurationSection}:{ConnectionStringName}"];
 
         if (string.IsNullOrWhiteSpace(connectionString))
         {
             throw new InvalidOperationException(
-                $"Connection string '{ConnectionStringName}' not found. " +
+                $"Connection string '{ConfigurationSection}:{ConnectionStringName}' not found. " +
                 $"Searched in: appsettings.json, appsettings.{environment}.json, appsettings.Local.json, environment variables. " +
                 $"Base path: {basePath}");
         }
@@ -97,7 +76,6 @@ internal abstract class DesignTimeDbContextFactoryBase<TContext> : IDesignTimeDb
 
     private static string ResolveBasePath()
     {
-        // EF Core tools set current directory to the project folder
         string currentDir = Directory.GetCurrentDirectory();
 
         if (File.Exists(Path.Combine(currentDir, "appsettings.json")))
@@ -105,9 +83,8 @@ internal abstract class DesignTimeDbContextFactoryBase<TContext> : IDesignTimeDb
             return currentDir;
         }
 
-        // Fallback: search parent directories (useful when running from bin/Debug/...)
         DirectoryInfo? directory = new(currentDir);
-        
+
         while (directory is not null)
         {
             if (File.Exists(Path.Combine(directory.FullName, "appsettings.json")))
@@ -117,7 +94,6 @@ internal abstract class DesignTimeDbContextFactoryBase<TContext> : IDesignTimeDb
             directory = directory.Parent;
         }
 
-        // Last resort: use current directory and let ConfigurationBuilder fail with clear message
         return currentDir;
     }
 
@@ -130,7 +106,6 @@ internal abstract class DesignTimeDbContextFactoryBase<TContext> : IDesignTimeDb
                 nameof(connectionString));
         }
 
-        // Basic sanity check for SQL Server connection string
         if (!connectionString.Contains("Server", StringComparison.OrdinalIgnoreCase) &&
             !connectionString.Contains("Data Source", StringComparison.OrdinalIgnoreCase))
         {
@@ -144,7 +119,7 @@ internal abstract class DesignTimeDbContextFactoryBase<TContext> : IDesignTimeDb
         {
             if (args[i].Equals(argumentName, StringComparison.OrdinalIgnoreCase))
             {
-                return args[i + 1]; 
+                return args[i + 1];
             }
         }
         return null;
