@@ -20,7 +20,6 @@ internal sealed class ApplicationReadDbContext : DbContext, IApplicationReadDbCo
     public DbSet<CatGalleryItemReadModel> CatGalleryItems => Set<CatGalleryItemReadModel>();
     public DbSet<VaccinationReadModel> Vaccinations => Set<VaccinationReadModel>();
     public DbSet<AdoptionAnnouncementReadModel> AdoptionAnnouncements => Set<AdoptionAnnouncementReadModel>();
-    public DbSet<AdoptionAnnouncementMergeLogReadModel> AdoptionAnnouncementMergeLogs => Set<AdoptionAnnouncementMergeLogReadModel>();
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
