@@ -97,11 +97,11 @@ public sealed class AdoptionAnnouncementConfiguration : IEntityTypeConfiguration
         builder.Property(x => x.Status)
             .HasConversion<string>()
             .HasMaxLength(EnumConsts.MaxLength);
-
-        builder.ComplexCollection(x => x.MergeLogs, complexBuilder =>
+        
+        builder.Ignore(x=>x.MergeLogs);
+        builder.ComplexCollection<List<AdoptionAnnouncementMergeLog>, AdoptionAnnouncementMergeLog>("_mergeLogs", complexBuilder =>
         {
             complexBuilder.ToJson();
-
             complexBuilder.Property(x => x.MergedAdoptionAnnouncementId);
         });
         
