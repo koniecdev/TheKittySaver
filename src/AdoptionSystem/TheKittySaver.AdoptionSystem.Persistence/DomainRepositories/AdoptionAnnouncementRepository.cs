@@ -14,17 +14,4 @@ internal sealed class AdoptionAnnouncementRepository :
     public AdoptionAnnouncementRepository(ApplicationWriteDbContext db) : base(db)
     {
     }
-
-    public override async Task<Maybe<AdoptionAnnouncement>> GetByIdAsync(
-        AdoptionAnnouncementId id,
-        CancellationToken cancellationToken)
-    {
-        Ensure.NotEmpty(id);
-        
-        AdoptionAnnouncement? result = await DbContext.AdoptionAnnouncements
-            .Where(x => x.Id == id)
-            .FirstOrDefaultAsync(cancellationToken);
-        
-        return Maybe<AdoptionAnnouncement>.From(result);
-    }
 }
