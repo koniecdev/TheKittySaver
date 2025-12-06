@@ -1,10 +1,11 @@
-﻿using FluentValidation;
+using FluentValidation;
 using FluentValidation.Results;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-namespace TheKittySaver.AdoptionSystem.API.Settings;
+namespace TheKittySaver.AdoptionSystem.Persistence.Settings;
 
-internal class FluentValidateOptions<TOptions> : IValidateOptions<TOptions>
+internal sealed class FluentValidateOptions<TOptions> : IValidateOptions<TOptions>
     where TOptions : class
 {
     private readonly IServiceProvider _serviceProvider;

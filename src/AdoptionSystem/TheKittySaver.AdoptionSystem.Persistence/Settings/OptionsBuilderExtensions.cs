@@ -1,8 +1,9 @@
-﻿using Microsoft.Extensions.Options;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
-namespace TheKittySaver.AdoptionSystem.API.Settings;
+namespace TheKittySaver.AdoptionSystem.Persistence.Settings;
 
-internal static class OptionsBuilderDependencyInjectionExtension
+internal static class OptionsBuilderExtensions
 {
     public static OptionsBuilder<TOptions> ValidateFluentValidation<TOptions>(this OptionsBuilder<TOptions> builder)
         where TOptions : class

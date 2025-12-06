@@ -1,4 +1,7 @@
+using TheKittySaver.AdoptionSystem.API;
+
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+builder.Services.Register();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();
 

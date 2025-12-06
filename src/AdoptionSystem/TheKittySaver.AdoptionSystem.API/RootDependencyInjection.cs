@@ -6,10 +6,8 @@ internal static class RootDependencyInjection
 {
     public static IServiceCollection Register(this IServiceCollection services)
     {
-        services.RegisterOptions();
-        
         services.AddPersistence();
-        
+
         return services;
     }
 }

@@ -1,6 +1,6 @@
-﻿using TheKittySaver.AdoptionSystem.API.Settings;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace TheKittySaver.AdoptionSystem.API.DependencyInjectionExtensions;
+namespace TheKittySaver.AdoptionSystem.Persistence.Settings;
 
 internal static class ServiceCollectionExtensions
 {
