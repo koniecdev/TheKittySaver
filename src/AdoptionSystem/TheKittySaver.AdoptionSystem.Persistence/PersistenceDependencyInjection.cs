@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAggregate.Repositories;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Repositories;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.Repositories;
@@ -13,16 +14,13 @@ namespace TheKittySaver.AdoptionSystem.Persistence;
 
 public static class PersistenceDependencyInjection
 {
-    public static IServiceCollection AddPersistence(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddPersistence(this IServiceCollection services)
     {
-        string connectionString = configuration.GetConnectionString("Database")
-                                  ?? throw new InvalidOperationException("Connection string 'Database' not found.");
-
-        services.AddDbContextFactory<ApplicationWriteDbContext>(options =>
-            options.UseSqlServer(connectionString));
+        services.AddDbContextFactory<ApplicationWriteDbContext>((sp, options) =>
+            options.UseSqlServer(sp.GetRequiredService<IOptions<ConnectionStrings>>().Value.Database));
         
-        services.AddDbContextFactory<ApplicationReadDbContext>(options =>
-            options.UseSqlServer(connectionString)
+        services.AddDbContextFactory<ApplicationReadDbContext>((sp, options) =>
+                options.UseSqlServer(sp.GetRequiredService<IOptions<ConnectionStrings>>().Value.Database))
                 .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking));
         
         services.AddScoped<IApplicationReadDbContext>(serviceProvider => 
