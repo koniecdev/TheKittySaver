@@ -13,7 +13,7 @@ using TheKittySaver.AdoptionSystem.Persistence.DbContexts.WriteDbContexts;
 namespace TheKittySaver.AdoptionSystem.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationWriteDbContext))]
-    [Migration("20251206231153_InitialMigration")]
+    [Migration("20251206233516_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -553,7 +553,7 @@ namespace TheKittySaver.AdoptionSystem.Persistence.Migrations
                     b.HasOne("TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.Entities.Person", null)
                         .WithMany()
                         .HasForeignKey("PersonId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
@@ -567,7 +567,7 @@ namespace TheKittySaver.AdoptionSystem.Persistence.Migrations
                     b.HasOne("TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.Entities.Person", null)
                         .WithMany()
                         .HasForeignKey("PersonId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 

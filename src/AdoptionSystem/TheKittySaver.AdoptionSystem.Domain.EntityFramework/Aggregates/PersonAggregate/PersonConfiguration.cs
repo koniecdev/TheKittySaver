@@ -52,11 +52,11 @@ public sealed class PersonConfiguration : IEntityTypeConfiguration<Person>
         builder.HasMany<Cat>()
             .WithOne()
             .HasForeignKey(x=>x.PersonId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.Restrict);
         
         builder.HasMany<AdoptionAnnouncement>()
             .WithOne()
             .HasForeignKey(x=>x.PersonId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

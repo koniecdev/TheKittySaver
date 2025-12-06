@@ -76,7 +76,7 @@ namespace TheKittySaver.AdoptionSystem.Persistence.Migrations
                         column: x => x.PersonId,
                         principalTable: "Persons",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -124,7 +124,7 @@ namespace TheKittySaver.AdoptionSystem.Persistence.Migrations
                         column: x => x.PersonId,
                         principalTable: "Persons",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(

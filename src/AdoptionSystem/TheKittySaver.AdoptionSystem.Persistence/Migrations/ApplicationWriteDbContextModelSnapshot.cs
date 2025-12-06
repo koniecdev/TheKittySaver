@@ -550,7 +550,7 @@ namespace TheKittySaver.AdoptionSystem.Persistence.Migrations
                     b.HasOne("TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.Entities.Person", null)
                         .WithMany()
                         .HasForeignKey("PersonId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
@@ -564,7 +564,7 @@ namespace TheKittySaver.AdoptionSystem.Persistence.Migrations
                     b.HasOne("TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.Entities.Person", null)
                         .WithMany()
                         .HasForeignKey("PersonId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
