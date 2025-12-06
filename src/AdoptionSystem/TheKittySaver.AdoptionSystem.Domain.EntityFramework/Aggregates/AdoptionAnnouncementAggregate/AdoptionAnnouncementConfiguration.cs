@@ -72,8 +72,7 @@ public sealed class AdoptionAnnouncementConfiguration : IEntityTypeConfiguration
                 nestedBuilder.IsRequired(false);
                 nestedBuilder.Property(x => x.Value)
                     .HasColumnName($"{prefix}{nameof(AdoptionAnnouncementAddress.Line)}")
-                    .HasMaxLength(AddressLine.MaxLength)
-                    .IsRequired(false);
+                    .HasMaxLength(AddressLine.MaxLength);
             });
         });
 

@@ -54,8 +54,7 @@ public sealed class AddressConfiguration : IEntityTypeConfiguration<Address>
             complexBuilder.IsRequired(false);
             complexBuilder.Property(x => x.Value)
                 .HasColumnName(nameof(Address.Line))
-                .HasMaxLength(AddressLine.MaxLength)
-                .IsRequired(false);
+                .HasMaxLength(AddressLine.MaxLength);
         });
     }
 }
