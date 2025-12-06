@@ -1,0 +1,3 @@
+﻿namespace TheKittySaver.AdoptionSystem.ReadModels.EntityFramework;
+
+public interface IReadModelsEntityFrameworkAssemblyReference;

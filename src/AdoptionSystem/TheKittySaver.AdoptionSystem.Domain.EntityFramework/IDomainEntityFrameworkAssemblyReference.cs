@@ -1,0 +1,3 @@
+﻿namespace TheKittySaver.AdoptionSystem.Domain.EntityFramework;
+
+public interface IDomainEntityFrameworkAssemblyReference;
