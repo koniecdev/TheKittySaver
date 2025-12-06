@@ -41,9 +41,7 @@ public sealed class AdoptionAnnouncementConfiguration : IEntityTypeConfiguration
             complexBuilder.IsRequired();
 
             complexBuilder.Property(x => x.CountryCode)
-                .HasColumnName($"{prefix}{nameof(AdoptionAnnouncementAddress.CountryCode)}")
-                .HasConversion<string>()
-                .HasMaxLength(EnumConsts.MaxLength);
+                .HasColumnName($"{prefix}{nameof(AdoptionAnnouncementAddress.CountryCode)}");
 
             complexBuilder.ComplexProperty(x => x.PostalCode, nestedBuilder =>
             {
@@ -74,7 +72,8 @@ public sealed class AdoptionAnnouncementConfiguration : IEntityTypeConfiguration
                 nestedBuilder.IsRequired(false);
                 nestedBuilder.Property(x => x.Value)
                     .HasColumnName($"{prefix}{nameof(AdoptionAnnouncementAddress.Line)}")
-                    .HasMaxLength(AddressLine.MaxLength);
+                    .HasMaxLength(AddressLine.MaxLength)
+                    .IsRequired(false);
             });
         });
 

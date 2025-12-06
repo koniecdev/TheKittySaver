@@ -187,12 +187,12 @@ public sealed class CatConfiguration : IEntityTypeConfiguration<Cat>
             .HasForeignKey<CatThumbnail>(x => x.CatId)
             .OnDelete(DeleteBehavior.Cascade);
         
-        builder.HasMany<CatGalleryItem>()
+        builder.HasMany(x=>x.GalleryItems)
             .WithOne()
             .HasForeignKey(x => x.CatId)
             .OnDelete(DeleteBehavior.Cascade);
         
-        builder.HasMany<Vaccination>()
+        builder.HasMany(x=>x.Vaccinations)
             .WithOne()
             .HasForeignKey(x => x.CatId)
             .OnDelete(DeleteBehavior.Cascade);
