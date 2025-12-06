@@ -2,6 +2,7 @@
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate.Enums;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.AdoptionAnnouncementAggregate;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
+using TheKittySaver.AdoptionSystem.ReadModels.Aggregates.AdoptionAnnouncementAggregate;
 
 namespace TheKittySaver.AdoptionSystem.ReadModels.Aggregates.CatAggregate;
 
@@ -33,6 +34,7 @@ public sealed record CatReadModel(
     DateOnly InfectiousDiseaseStatusLastTestedAt,
     CatStatusType Status)
 {
+    public AdoptionAnnouncementReadModel? AdoptionAnnouncement { get; init; }
     public CatThumbnailReadModel? Thumbnail { get; init; }
     public IReadOnlyList<CatGalleryItemReadModel> GalleryItems { get; init; } = [];
     public IReadOnlyList<VaccinationReadModel> Vaccinations { get; init; } = [];

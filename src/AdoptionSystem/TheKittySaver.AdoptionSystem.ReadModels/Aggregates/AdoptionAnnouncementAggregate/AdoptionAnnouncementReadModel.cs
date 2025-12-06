@@ -2,6 +2,8 @@
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.AdoptionAnnouncementAggregate.Enums;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
 using TheKittySaver.AdoptionSystem.Primitives.Enums;
+using TheKittySaver.AdoptionSystem.ReadModels.Aggregates.CatAggregate;
+using TheKittySaver.AdoptionSystem.ReadModels.Aggregates.PersonAggregate;
 
 namespace TheKittySaver.AdoptionSystem.ReadModels.Aggregates.AdoptionAnnouncementAggregate;
 
@@ -20,4 +22,6 @@ public sealed record AdoptionAnnouncementReadModel(
     AnnouncementStatusType Status)
 {
     public IReadOnlyList<AdoptionAnnouncementMergeLogReadModel> MergeLogs { get; init; } = [];
+    public PersonReadModel Person { get; init; } = null!;
+    public IReadOnlyList<CatReadModel> Cats { get; init; } = [];
 }
