@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAggregate.Repositories;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Repositories;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.Repositories;
+using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.PhoneNumbers;
 using TheKittySaver.AdoptionSystem.Persistence.DbContexts.Abstractions;
 using TheKittySaver.AdoptionSystem.Persistence.DbContexts.ReadDbContexts;
 using TheKittySaver.AdoptionSystem.Persistence.DbContexts.WriteDbContexts;
@@ -33,7 +34,7 @@ public static class PersistenceDependencyInjection
 
         services.AddScoped<IUnitOfWork>(serviceProvider =>
             serviceProvider.GetRequiredService<ApplicationWriteDbContext>());
-
+        
         services.AddScoped<IPersonRepository, PersonRepository>();
         services.AddScoped<ICatRepository, CatRepository>();
         services.AddScoped<IAdoptionAnnouncementRepository, AdoptionAnnouncementRepository>();

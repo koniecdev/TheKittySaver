@@ -1,11 +1,24 @@
 using System.Reflection;
 using TheKittySaver.AdoptionSystem.API;
 using TheKittySaver.AdoptionSystem.API.Extensions;
+using Asp.Versioning;
+using Asp.Versioning.Builder;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Services.Register();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();
+
+
+builder.Services.AddApiVersioning(options =>
+{
+    options.DefaultApiVersion = new ApiVersion(1);
+    options.ApiVersionReader = new UrlSegmentApiVersionReader();
+}).AddApiExplorer(options =>
+{
+    options.GroupNameFormat = "'v'V";
+    options.SubstituteApiVersionInUrl = true;
+});
 
 builder.Services.AddEndpoints(Assembly.GetExecutingAssembly());
 
@@ -27,5 +40,7 @@ RouteGroupBuilder versionedGroup = app
     .WithApiVersionSet(apiVersionSet);
 
 app.MapEndpoints(versionedGroup);
+
+app.MapGet("/", () => "Hello World!");
 
 await app.RunAsync();
