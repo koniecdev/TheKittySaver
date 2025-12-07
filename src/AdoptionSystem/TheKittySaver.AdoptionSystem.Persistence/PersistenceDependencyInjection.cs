@@ -1,16 +1,16 @@
 ﻿using FluentValidation;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAggregate.Repositories;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Repositories;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.Repositories;
-using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.PhoneNumbers;
+using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.Services;
 using TheKittySaver.AdoptionSystem.Persistence.DbContexts.Abstractions;
 using TheKittySaver.AdoptionSystem.Persistence.DbContexts.ReadDbContexts;
 using TheKittySaver.AdoptionSystem.Persistence.DbContexts.WriteDbContexts;
 using TheKittySaver.AdoptionSystem.Persistence.DomainRepositories;
+using TheKittySaver.AdoptionSystem.Persistence.DomainServices;
 using TheKittySaver.AdoptionSystem.Persistence.Settings;
 
 namespace TheKittySaver.AdoptionSystem.Persistence;
@@ -38,6 +38,8 @@ public static class PersistenceDependencyInjection
         services.AddScoped<IPersonRepository, PersonRepository>();
         services.AddScoped<ICatRepository, CatRepository>();
         services.AddScoped<IAdoptionAnnouncementRepository, AdoptionAnnouncementRepository>();
+
+        services.AddScoped<IPersonUniquenessCheckerService, PersonUniquenessCheckerService>();
 
         return services;
     }
