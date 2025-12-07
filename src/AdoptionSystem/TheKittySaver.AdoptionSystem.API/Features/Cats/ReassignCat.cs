@@ -16,11 +16,11 @@ using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate;
 
 namespace TheKittySaver.AdoptionSystem.API.Features.Cats;
 
-internal sealed class ReassignCatToAnotherAdoptionAnnouncement : IEndpoint
+internal sealed class ReassignCat : IEndpoint
 {
     internal sealed record Command(
         CatId CatId,
-        AdoptionAnnouncementId DestinationAdoptionAnnouncementId) : ICommand<Result>;
+        AdoptionAnnouncementId AdoptionAnnouncementId) : ICommand<Result>;
 
     internal sealed class Handler : ICommandHandler<Command, Result>
     {
@@ -59,7 +59,7 @@ internal sealed class ReassignCatToAnotherAdoptionAnnouncement : IEndpoint
                 return Result.Failure(DomainErrors.CatEntity.Assignment.NotAssignedToAdoptionAnnouncement(command.CatId));
             }
 
-            if (cat.AdoptionAnnouncementId == command.DestinationAdoptionAnnouncementId)
+            if (cat.AdoptionAnnouncementId == command.AdoptionAnnouncementId)
             {
                 return Result.Failure(DomainErrors.CatEntity.Assignment.CannotReassignToSameAnnouncement(command.CatId));
             }
@@ -73,15 +73,15 @@ internal sealed class ReassignCatToAnotherAdoptionAnnouncement : IEndpoint
             }
 
             Maybe<AdoptionAnnouncement> maybeDestinationAnnouncement = await _adoptionAnnouncementRepository.GetByIdAsync(
-                command.DestinationAdoptionAnnouncementId,
+                command.AdoptionAnnouncementId,
                 cancellationToken);
             if (maybeDestinationAnnouncement.HasNoValue)
             {
-                return Result.Failure(DomainErrors.AdoptionAnnouncementErrors.NotFound(command.DestinationAdoptionAnnouncementId));
+                return Result.Failure(DomainErrors.AdoptionAnnouncementErrors.NotFound(command.AdoptionAnnouncementId));
             }
 
             IReadOnlyCollection<Cat> catsInDestination = await _catRepository.GetCatsByAdoptionAnnouncementIdAsync(
-                command.DestinationAdoptionAnnouncementId,
+                command.AdoptionAnnouncementId,
                 cancellationToken);
 
             Result reassignResult = _reassignmentService.ReassignCatToAnotherAdoptionAnnouncement(
@@ -104,15 +104,13 @@ internal sealed class ReassignCatToAnotherAdoptionAnnouncement : IEndpoint
 
     public void MapEndpoint(IEndpointRouteBuilder endpointRouteBuilder)
     {
-        endpointRouteBuilder.MapPut("cats/{catId:guid}/reassign", async (
+        endpointRouteBuilder.MapPut("cats/{catId:guid}/assignment", async (
             Guid catId,
             ReassignCatRequest request,
             ISender sender,
             CancellationToken cancellationToken) =>
         {
-            Command command = new(
-                new CatId(catId),
-                request.DestinationAdoptionAnnouncementId);
+            Command command = request.MapToCommand(new CatId(catId));
 
             Result commandResult = await sender.Send(command, cancellationToken);
 
@@ -120,5 +118,19 @@ internal sealed class ReassignCatToAnotherAdoptionAnnouncement : IEndpoint
                 ? Results.Problem(commandResult.Error.ToProblemDetails())
                 : Results.NoContent();
         });
+    }
+}
+
+internal static class ReassignCatMappings
+{
+    extension(ReassignCatRequest request)
+    {
+        public ReassignCat.Command MapToCommand(CatId catId)
+        {
+            ReassignCat.Command command = new(
+                CatId: catId,
+                AdoptionAnnouncementId: request.AdoptionAnnouncementId);
+            return command;
+        }
     }
 }

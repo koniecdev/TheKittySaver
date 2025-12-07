@@ -1,6 +1,7 @@
 using Mediator;
 using TheKittySaver.AdoptionSystem.API.Common;
 using TheKittySaver.AdoptionSystem.API.Extensions;
+using TheKittySaver.AdoptionSystem.Contracts.Aggregates.CatAggregate.Requests;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAggregate.Entities;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAggregate.Repositories;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Entities;
@@ -13,13 +14,13 @@ using TheKittySaver.AdoptionSystem.Persistence.DbContexts.Abstractions;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.AdoptionAnnouncementAggregate;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate;
 
-namespace TheKittySaver.AdoptionSystem.API.Features.AdoptionAnnouncements;
+namespace TheKittySaver.AdoptionSystem.API.Features.Cats;
 
-internal sealed class AssignCatToAdoptionAnnouncement : IEndpoint
+internal sealed class AssignCat : IEndpoint
 {
     internal sealed record Command(
-        AdoptionAnnouncementId AdoptionAnnouncementId,
-        CatId CatId) : ICommand<Result>;
+        CatId CatId,
+        AdoptionAnnouncementId AdoptionAnnouncementId) : ICommand<Result>;
 
     internal sealed class Handler : ICommandHandler<Command, Result>
     {
@@ -45,19 +46,18 @@ internal sealed class AssignCatToAdoptionAnnouncement : IEndpoint
 
         public async ValueTask<Result> Handle(Command command, CancellationToken cancellationToken)
         {
-            Maybe<AdoptionAnnouncement> maybeAnnouncement = await _adoptionAnnouncementRepository.GetByIdAsync(
-                command.AdoptionAnnouncementId,
-                cancellationToken);
-
-            if (maybeAnnouncement.HasNoValue)
-            {
-                return Result.Failure(DomainErrors.AdoptionAnnouncementErrors.NotFound(command.AdoptionAnnouncementId));
-            }
-
             Maybe<Cat> maybeCat = await _catRepository.GetByIdAsync(command.CatId, cancellationToken);
             if (maybeCat.HasNoValue)
             {
                 return Result.Failure(DomainErrors.CatEntity.NotFound(command.CatId));
+            }
+
+            Maybe<AdoptionAnnouncement> maybeAnnouncement = await _adoptionAnnouncementRepository.GetByIdAsync(
+                command.AdoptionAnnouncementId,
+                cancellationToken);
+            if (maybeAnnouncement.HasNoValue)
+            {
+                return Result.Failure(DomainErrors.AdoptionAnnouncementErrors.NotFound(command.AdoptionAnnouncementId));
             }
 
             IReadOnlyCollection<Cat> catsAlreadyAssigned = await _catRepository.GetCatsByAdoptionAnnouncementIdAsync(
@@ -83,9 +83,9 @@ internal sealed class AssignCatToAdoptionAnnouncement : IEndpoint
 
     public void MapEndpoint(IEndpointRouteBuilder endpointRouteBuilder)
     {
-        endpointRouteBuilder.MapPost("/cats/{catId:guid}/assign-to-adoption-announcement", async (
+        endpointRouteBuilder.MapPost("cats/{catId:guid}/assignment", async (
             Guid catId,
-            AssignCatToAdoptionAnnouncementRequest request,
+            AssignCatRequest request,
             ISender sender,
             CancellationToken cancellationToken) =>
         {
@@ -100,13 +100,13 @@ internal sealed class AssignCatToAdoptionAnnouncement : IEndpoint
     }
 }
 
-internal static class AssignCatToAdoptionAnnouncementMappings
+internal static class AssignCatMappings
 {
-    extension(AssignCatToAdoptionAnnouncementRequest request)
+    extension(AssignCatRequest request)
     {
-        public AssignCatToAdoptionAnnouncement.Command MapToCommand(CatId catId)
+        public AssignCat.Command MapToCommand(CatId catId)
         {
-            AssignCatToAdoptionAnnouncement.Command command = new(
+            AssignCat.Command command = new(
                 CatId: catId,
                 AdoptionAnnouncementId: request.AdoptionAnnouncementId);
             return command;

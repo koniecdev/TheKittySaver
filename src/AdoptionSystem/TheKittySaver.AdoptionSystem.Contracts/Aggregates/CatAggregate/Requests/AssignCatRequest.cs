@@ -2,5 +2,5 @@ using TheKittySaver.AdoptionSystem.Primitives.Aggregates.AdoptionAnnouncementAgg
 
 namespace TheKittySaver.AdoptionSystem.Contracts.Aggregates.CatAggregate.Requests;
 
-public sealed record ReassignCatRequest(
+public sealed record AssignCatRequest(
     AdoptionAnnouncementId AdoptionAnnouncementId);

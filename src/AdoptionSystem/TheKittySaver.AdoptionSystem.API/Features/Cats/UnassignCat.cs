@@ -1,36 +1,30 @@
 using Mediator;
 using TheKittySaver.AdoptionSystem.API.Common;
 using TheKittySaver.AdoptionSystem.API.Extensions;
-using TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAggregate.Entities;
-using TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAggregate.Repositories;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Entities;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Repositories;
 using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.OptionMonad;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
 using TheKittySaver.AdoptionSystem.Persistence.DbContexts.Abstractions;
-using TheKittySaver.AdoptionSystem.Primitives.Aggregates.AdoptionAnnouncementAggregate;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate;
 
-namespace TheKittySaver.AdoptionSystem.API.Features.AdoptionAnnouncements;
+namespace TheKittySaver.AdoptionSystem.API.Features.Cats;
 
-internal sealed class UnassignCatFromAdoptionAnnouncement : IEndpoint
+internal sealed class UnassignCat : IEndpoint
 {
     internal sealed record Command(
         CatId CatId) : ICommand<Result>;
 
     internal sealed class Handler : ICommandHandler<Command, Result>
     {
-        private readonly IAdoptionAnnouncementRepository _adoptionAnnouncementRepository;
         private readonly ICatRepository _catRepository;
         private readonly IUnitOfWork _unitOfWork;
 
         public Handler(
-            IAdoptionAnnouncementRepository adoptionAnnouncementRepository,
             ICatRepository catRepository,
             IUnitOfWork unitOfWork)
         {
-            _adoptionAnnouncementRepository = adoptionAnnouncementRepository;
             _catRepository = catRepository;
             _unitOfWork = unitOfWork;
         }
@@ -59,13 +53,12 @@ internal sealed class UnassignCatFromAdoptionAnnouncement : IEndpoint
 
     public void MapEndpoint(IEndpointRouteBuilder endpointRouteBuilder)
     {
-        endpointRouteBuilder.MapPost("/cats/{catId:guid}/unassign-from-adoption-announcement", async (
+        endpointRouteBuilder.MapDelete("cats/{catId:guid}/assignment", async (
             Guid catId,
             ISender sender,
             CancellationToken cancellationToken) =>
         {
-            Command command = new(
-                new CatId(catId));
+            Command command = new(new CatId(catId));
 
             Result commandResult = await sender.Send(command, cancellationToken);
 
