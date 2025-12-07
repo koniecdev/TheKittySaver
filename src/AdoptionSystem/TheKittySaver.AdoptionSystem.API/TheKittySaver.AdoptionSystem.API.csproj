@@ -1,8 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
     <ItemGroup>
+        <PackageReference Include="Asp.Versioning.Http" />
+        <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" />
         <PackageReference Include="FluentValidation" />
         <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
+        <PackageReference Include="Mediator.Abstractions" />
         <PackageReference Include="Mediator.SourceGenerator">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -16,7 +19,10 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\TheKittySaver.AdoptionSystem.Calculators\TheKittySaver.AdoptionSystem.Calculators.csproj" />
+      <ProjectReference Include="..\TheKittySaver.AdoptionSystem.Contracts\TheKittySaver.AdoptionSystem.Contracts.csproj" />
       <ProjectReference Include="..\TheKittySaver.AdoptionSystem.Domain\TheKittySaver.AdoptionSystem.Domain.csproj" />
+      <ProjectReference Include="..\TheKittySaver.AdoptionSystem.Infrastructure\TheKittySaver.AdoptionSystem.Infrastructure.csproj" />
       <ProjectReference Include="..\TheKittySaver.AdoptionSystem.Persistence\TheKittySaver.AdoptionSystem.Persistence.csproj" />
     </ItemGroup>
 
