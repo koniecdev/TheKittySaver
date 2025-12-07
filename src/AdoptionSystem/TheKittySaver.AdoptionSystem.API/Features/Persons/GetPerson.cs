@@ -27,7 +27,6 @@ internal sealed class GetPerson : IEndpoint
         public async ValueTask<Result<PersonResponse>> Handle(Query query, CancellationToken cancellationToken)
         {
             PersonReadModel? person = await _readDbContext.Persons
-                .AsNoTracking()
                 .FirstOrDefaultAsync(p => p.Id == query.PersonId, cancellationToken);
 
             if (person is null)

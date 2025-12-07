@@ -41,6 +41,4 @@ RouteGroupBuilder versionedGroup = app
 
 app.MapEndpoints(versionedGroup);
 
-app.MapGet("/", () => "Hello World!");
-
 await app.RunAsync();

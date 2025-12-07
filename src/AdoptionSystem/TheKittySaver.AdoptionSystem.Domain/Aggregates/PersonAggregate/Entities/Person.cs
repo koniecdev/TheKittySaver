@@ -130,7 +130,7 @@ public sealed class Person : AggregateRoot<PersonId>
             : Result.Failure(DomainErrors.DeletionCorruption(nameof(Address)));
     }
 
-    internal Result UpdateUsername(Username username)
+    public Result UpdateUsername(Username username)
     {
         ArgumentNullException.ThrowIfNull(username);
         Username = username;

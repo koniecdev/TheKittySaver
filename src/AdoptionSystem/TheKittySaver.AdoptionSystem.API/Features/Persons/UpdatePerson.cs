@@ -6,6 +6,7 @@ using TheKittySaver.AdoptionSystem.Contracts.Aggregates.PersonAggregate.Response
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.Entities;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.Repositories;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.Services;
+using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.ValueObjects;
 using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.OptionMonad;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;

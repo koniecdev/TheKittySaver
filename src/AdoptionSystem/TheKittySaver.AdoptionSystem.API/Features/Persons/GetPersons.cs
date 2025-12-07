@@ -10,7 +10,7 @@ namespace TheKittySaver.AdoptionSystem.API.Features.Persons;
 
 internal sealed class GetPersons : IEndpoint
 {
-    internal sealed record Query() : IQuery<Result<IReadOnlyList<PersonResponse>>>;
+    internal sealed record Query : IQuery<Result<IReadOnlyList<PersonResponse>>>;
 
     internal sealed class Handler : IQueryHandler<Query, Result<IReadOnlyList<PersonResponse>>>
     {
@@ -21,10 +21,11 @@ internal sealed class GetPersons : IEndpoint
             _readDbContext = readDbContext;
         }
 
-        public async ValueTask<Result<IReadOnlyList<PersonResponse>>> Handle(Query query, CancellationToken cancellationToken)
+        public async ValueTask<Result<IReadOnlyList<PersonResponse>>> Handle(
+            Query query,
+            CancellationToken cancellationToken)
         {
             List<PersonReadModel> persons = await _readDbContext.Persons
-                .AsNoTracking()
                 .ToListAsync(cancellationToken);
 
             IReadOnlyList<PersonResponse> response = persons
