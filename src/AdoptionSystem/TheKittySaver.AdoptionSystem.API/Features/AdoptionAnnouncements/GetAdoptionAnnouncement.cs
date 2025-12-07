@@ -26,29 +26,28 @@ internal sealed class GetAdoptionAnnouncement : IEndpoint
 
         public async ValueTask<Result<AdoptionAnnouncementResponse>> Handle(Query query, CancellationToken cancellationToken)
         {
-            AdoptionAnnouncementReadModel? announcement = await _readDbContext.AdoptionAnnouncements
-                .AsNoTracking()
-                .FirstOrDefaultAsync(a => a.Id == query.AdoptionAnnouncementId, cancellationToken);
+            AdoptionAnnouncementResponse? response = await _readDbContext.AdoptionAnnouncements
+                .Where(announcement => announcement.Id == query.AdoptionAnnouncementId)
+                .Select(announcement => new AdoptionAnnouncementResponse(
+                    Id: announcement.Id,
+                    PersonId: announcement.PersonId,
+                    Description: announcement.Description,
+                    AddressCountryCode: announcement.AddressCountryCode,
+                    AddressPostalCode: announcement.AddressPostalCode,
+                    AddressRegion: announcement.AddressRegion,
+                    AddressCity: announcement.AddressCity,
+                    AddressLine: announcement.AddressLine,
+                    Email: announcement.Email,
+                    PhoneNumber: announcement.PhoneNumber,
+                    Status: announcement.Status))
+                .FirstOrDefaultAsync(cancellationToken);
 
-            if (announcement is null)
+            if (response is null)
             {
                 return Result.Failure<AdoptionAnnouncementResponse>(
                     DomainErrors.AdoptionAnnouncementErrors.NotFound(query.AdoptionAnnouncementId));
             }
-
-            AdoptionAnnouncementResponse response = new(
-                Id: announcement.Id,
-                PersonId: announcement.PersonId,
-                Description: announcement.Description,
-                AddressCountryCode: announcement.AddressCountryCode,
-                AddressPostalCode: announcement.AddressPostalCode,
-                AddressRegion: announcement.AddressRegion,
-                AddressCity: announcement.AddressCity,
-                AddressLine: announcement.AddressLine,
-                Email: announcement.Email,
-                PhoneNumber: announcement.PhoneNumber,
-                Status: announcement.Status);
-
+            
             return response;
         }
     }

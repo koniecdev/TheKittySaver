@@ -57,6 +57,8 @@ public static partial class DomainErrors
     /// Creates a conflict error when an operation cannot be performed due to current state.
     /// Use for "Cannot X" or "Must be X" scenarios (e.g., CannotClaimDraftCat, MustBeDraftForAssignment).
     /// </summary>
+    private static Error InvalidOperation(string entity, string message, string code)
+        => new($"{entity}.{code}", message, TypeOfError.Conflict);
     private static Error InvalidOperation(string entity, string property, string message, string code)
         => new($"{entity}.{property}.{code}", message, TypeOfError.Conflict);
     

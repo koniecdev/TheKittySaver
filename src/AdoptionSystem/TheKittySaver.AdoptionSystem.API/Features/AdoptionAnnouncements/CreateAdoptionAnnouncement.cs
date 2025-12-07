@@ -76,7 +76,8 @@ internal sealed class CreateAdoptionAnnouncement : IEndpoint
             Maybe<AdoptionAnnouncementDescription> maybeDescription = Maybe<AdoptionAnnouncementDescription>.None;
             if (!string.IsNullOrWhiteSpace(command.Description))
             {
-                Result<AdoptionAnnouncementDescription> createDescriptionResult = AdoptionAnnouncementDescription.Create(command.Description);
+                Result<AdoptionAnnouncementDescription> createDescriptionResult = 
+                    AdoptionAnnouncementDescription.Create(command.Description);
                 if (createDescriptionResult.IsFailure)
                 {
                     return Result.Failure<AdoptionAnnouncementResponse>(createDescriptionResult.Error);

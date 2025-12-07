@@ -17,7 +17,6 @@ namespace TheKittySaver.AdoptionSystem.API.Features.AdoptionAnnouncements;
 internal sealed class UnassignCatFromAdoptionAnnouncement : IEndpoint
 {
     internal sealed record Command(
-        AdoptionAnnouncementId AdoptionAnnouncementId,
         CatId CatId) : ICommand<Result>;
 
     internal sealed class Handler : ICommandHandler<Command, Result>
@@ -38,15 +37,6 @@ internal sealed class UnassignCatFromAdoptionAnnouncement : IEndpoint
 
         public async ValueTask<Result> Handle(Command command, CancellationToken cancellationToken)
         {
-            Maybe<AdoptionAnnouncement> maybeAnnouncement = await _adoptionAnnouncementRepository.GetByIdAsync(
-                command.AdoptionAnnouncementId,
-                cancellationToken);
-
-            if (maybeAnnouncement.HasNoValue)
-            {
-                return Result.Failure(DomainErrors.AdoptionAnnouncementErrors.NotFound(command.AdoptionAnnouncementId));
-            }
-
             Maybe<Cat> maybeCat = await _catRepository.GetByIdAsync(command.CatId, cancellationToken);
             if (maybeCat.HasNoValue)
             {
@@ -54,11 +44,6 @@ internal sealed class UnassignCatFromAdoptionAnnouncement : IEndpoint
             }
 
             Cat cat = maybeCat.Value;
-
-            if (cat.AdoptionAnnouncementId != command.AdoptionAnnouncementId)
-            {
-                return Result.Failure(DomainErrors.CatEntity.Assignment.NotAssignedToAdoptionAnnouncement(command.CatId));
-            }
 
             Result unassignResult = cat.UnassignFromAdoptionAnnouncement();
             if (unassignResult.IsFailure)
@@ -74,14 +59,12 @@ internal sealed class UnassignCatFromAdoptionAnnouncement : IEndpoint
 
     public void MapEndpoint(IEndpointRouteBuilder endpointRouteBuilder)
     {
-        endpointRouteBuilder.MapDelete("adoption-announcements/{adoptionAnnouncementId:guid}/cats/{catId:guid}", async (
-            Guid adoptionAnnouncementId,
+        endpointRouteBuilder.MapPost("/cats/{catId:guid}/unassign-from-adoption-announcement", async (
             Guid catId,
             ISender sender,
             CancellationToken cancellationToken) =>
         {
             Command command = new(
-                new AdoptionAnnouncementId(adoptionAnnouncementId),
                 new CatId(catId));
 
             Result commandResult = await sender.Send(command, cancellationToken);

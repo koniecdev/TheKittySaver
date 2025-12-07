@@ -83,15 +83,13 @@ internal sealed class AssignCatToAdoptionAnnouncement : IEndpoint
 
     public void MapEndpoint(IEndpointRouteBuilder endpointRouteBuilder)
     {
-        endpointRouteBuilder.MapPost("adoption-announcements/{adoptionAnnouncementId:guid}/cats/{catId:guid}", async (
-            Guid adoptionAnnouncementId,
+        endpointRouteBuilder.MapPost("/cats/{catId:guid}/assign-to-adoption-announcement", async (
             Guid catId,
+            AssignCatToAdoptionAnnouncementRequest request,
             ISender sender,
             CancellationToken cancellationToken) =>
         {
-            Command command = new(
-                new AdoptionAnnouncementId(adoptionAnnouncementId),
-                new CatId(catId));
+            Command command = request.MapToCommand(new CatId(catId));
 
             Result commandResult = await sender.Send(command, cancellationToken);
 
@@ -99,5 +97,19 @@ internal sealed class AssignCatToAdoptionAnnouncement : IEndpoint
                 ? Results.Problem(commandResult.Error.ToProblemDetails())
                 : Results.NoContent();
         });
+    }
+}
+
+internal static class AssignCatToAdoptionAnnouncementMappings
+{
+    extension(AssignCatToAdoptionAnnouncementRequest request)
+    {
+        public AssignCatToAdoptionAnnouncement.Command MapToCommand(CatId catId)
+        {
+            AssignCatToAdoptionAnnouncement.Command command = new(
+                CatId: catId,
+                AdoptionAnnouncementId: request.AdoptionAnnouncementId);
+            return command;
+        }
     }
 }

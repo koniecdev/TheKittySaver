@@ -23,11 +23,7 @@ internal sealed class GetAdoptionAnnouncements : IEndpoint
 
         public async ValueTask<Result<IReadOnlyList<AdoptionAnnouncementResponse>>> Handle(Query query, CancellationToken cancellationToken)
         {
-            List<AdoptionAnnouncementReadModel> announcements = await _readDbContext.AdoptionAnnouncements
-                .AsNoTracking()
-                .ToListAsync(cancellationToken);
-
-            IReadOnlyList<AdoptionAnnouncementResponse> response = announcements
+            IReadOnlyList<AdoptionAnnouncementResponse> response = await _readDbContext.AdoptionAnnouncements
                 .Select(a => new AdoptionAnnouncementResponse(
                     Id: a.Id,
                     PersonId: a.PersonId,
@@ -40,7 +36,7 @@ internal sealed class GetAdoptionAnnouncements : IEndpoint
                     Email: a.Email,
                     PhoneNumber: a.PhoneNumber,
                     Status: a.Status))
-                .ToList();
+                .ToListAsync(cancellationToken);
 
             return Result.Success(response);
         }

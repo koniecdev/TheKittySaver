@@ -12,6 +12,12 @@ public static partial class DomainErrors
         public static Error NotFound(AdoptionAnnouncementId id)
             => HasNotBeenFound(nameof(AdoptionAnnouncementErrors), id.Value);
 
+        public static Error CannotDeleteAnnouncementWithClaimedCats
+            => InvalidOperation(
+                nameof(AdoptionAnnouncementErrors),
+                "Cannot delete announcement with claimed cats. Please unassign cats that are not claimed first - this will make the announcement claimed as well.",
+                nameof(CannotDeleteAnnouncementWithClaimedCats));
+        
         public static class StatusProperty
         {
             public static Error UnavailableForAssigning
@@ -19,28 +25,29 @@ public static partial class DomainErrors
                     nameof(AdoptionAnnouncementErrors),
                     nameof(AdoptionAnnouncementEntity.Status),
                     "Cat can be assigned to Announcement only when it is in Active status.",
-                    "UnavailableForAssigning");
+                    nameof(UnavailableForAssigning));
 
             public static Error AlreadyClaimed(AdoptionAnnouncementId id)
                 => StateConflict(
                     nameof(AdoptionAnnouncementErrors),
                     nameof(AdoptionAnnouncementEntity.Status),
                     $"Adoption announcement with id '{id.Value}' is already claimed.",
-                    "AlreadyClaimed");
+                    nameof(AlreadyClaimed));
 
             public static Error CanOnlyUpdateWhenActive
                 => InvalidOperation(
                     nameof(AdoptionAnnouncementErrors),
                     nameof(AdoptionAnnouncementEntity.Status),
                     "Can only update announcement when it is active.",
-                    "CanOnlyUpdateWhenActive");
+                    nameof(CanOnlyUpdateWhenActive));
 
             public static Error CannotReassignCatToInactiveAnnouncement
                 => InvalidOperation(
                     nameof(AdoptionAnnouncementErrors),
                     nameof(AdoptionAnnouncementEntity.Status),
                     "Cannot reassign cat to an adoption announcement that is not active.",
-                    "CannotReassignCatToInactiveAnnouncement");
+                    nameof(CannotReassignCatToInactiveAnnouncement));
+            
         }
 
         public static class MergeLogsProperty
@@ -50,7 +57,7 @@ public static partial class DomainErrors
                     nameof(AdoptionAnnouncementErrors),
                     nameof(AdoptionAnnouncementEntity.MergeLogs),
                     "Merge log for this adoption announcement already exists.",
-                    "AlreadyExists");
+                    nameof(AlreadyExists));
         }
 
         public static class DescriptionProperty
