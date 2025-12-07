@@ -35,6 +35,18 @@ public static partial class DomainErrors
                 "The reorder operation is invalid. The number of items in the new order must match the current gallery items count.",
                 "InvalidReorderOperation",
                 TypeOfError.Validation);
+        
+        public static Error TheOnlyAdoptionAnnouncementCatRemoval
+            => InvalidDeleteOperation(
+                nameof(CatEntity),
+                "Cannot remove cat from an adoption announcement that has no other cats assigned to it. Please unassign it first.",
+                "TheOnlyAdoptionAnnouncementCatRemoval");
+        
+        public static Error ClaimedCatRemoval
+            => InvalidDeleteOperation(
+                nameof(CatEntity),
+                "Claimed cat cannot be deleted.",
+                "ClaimedCatRemoval");
 
         public static Error DuplicateDisplayOrders
             => CustomMessage(

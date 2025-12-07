@@ -67,7 +67,6 @@ internal sealed class ReassignCatToAnotherAdoptionAnnouncement : IEndpoint
             Maybe<AdoptionAnnouncement> maybeSourceAnnouncement = await _adoptionAnnouncementRepository.GetByIdAsync(
                 cat.AdoptionAnnouncementId.Value,
                 cancellationToken);
-
             if (maybeSourceAnnouncement.HasNoValue)
             {
                 return Result.Failure(DomainErrors.AdoptionAnnouncementErrors.NotFound(cat.AdoptionAnnouncementId.Value));
@@ -76,7 +75,6 @@ internal sealed class ReassignCatToAnotherAdoptionAnnouncement : IEndpoint
             Maybe<AdoptionAnnouncement> maybeDestinationAnnouncement = await _adoptionAnnouncementRepository.GetByIdAsync(
                 command.DestinationAdoptionAnnouncementId,
                 cancellationToken);
-
             if (maybeDestinationAnnouncement.HasNoValue)
             {
                 return Result.Failure(DomainErrors.AdoptionAnnouncementErrors.NotFound(command.DestinationAdoptionAnnouncementId));

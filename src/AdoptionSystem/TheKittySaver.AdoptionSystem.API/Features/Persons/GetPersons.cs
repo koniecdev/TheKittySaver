@@ -25,16 +25,13 @@ internal sealed class GetPersons : IEndpoint
             Query query,
             CancellationToken cancellationToken)
         {
-            List<PersonReadModel> persons = await _readDbContext.Persons
-                .ToListAsync(cancellationToken);
-
-            IReadOnlyList<PersonResponse> response = persons
+            IReadOnlyList<PersonResponse> response = await _readDbContext.Persons
                 .Select(p => new PersonResponse(
                     Id: p.Id,
                     Username: p.Username,
                     Email: p.Email,
                     PhoneNumber: p.PhoneNumber))
-                .ToList();
+                .ToListAsync(cancellationToken);
 
             return Result.Success(response);
         }

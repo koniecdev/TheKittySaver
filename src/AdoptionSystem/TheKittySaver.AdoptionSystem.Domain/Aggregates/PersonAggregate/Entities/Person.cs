@@ -24,7 +24,7 @@ public sealed class Person : AggregateRoot<PersonId>
     public Email Email { get; private set; }
     public PhoneNumber PhoneNumber { get; private set; }
 
-    public Result<AddressId> AddAddress(
+    public Result<Address> AddAddress(
         IAddressConsistencySpecification specification,
         CountryCode countryCode,
         AddressName name,
@@ -42,7 +42,7 @@ public sealed class Person : AggregateRoot<PersonId>
 
         if (_addresses.Any(x => x.Name == name))
         {
-            return Result.Failure<AddressId>(DomainErrors.AddressEntity.NameAlreadyTaken(name));
+            return Result.Failure<Address>(DomainErrors.AddressEntity.NameAlreadyTaken(name));
         }
 
         Result<Address> createAddressResult = Address.Create(
@@ -57,11 +57,11 @@ public sealed class Person : AggregateRoot<PersonId>
 
         if (createAddressResult.IsFailure)
         {
-            return Result.Failure<AddressId>(createAddressResult.Error);
+            return Result.Failure<Address>(createAddressResult.Error);
         }
 
         _addresses.Add(createAddressResult.Value);
-        return Result.Success(createAddressResult.Value.Id);
+        return Result.Success(createAddressResult.Value);
     }
 
     public Result UpdateAddressName(AddressId addressId, AddressName updatedName)

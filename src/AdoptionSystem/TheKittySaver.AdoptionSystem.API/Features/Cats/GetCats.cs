@@ -10,7 +10,7 @@ namespace TheKittySaver.AdoptionSystem.API.Features.Cats;
 
 internal sealed class GetCats : IEndpoint
 {
-    internal sealed record Query() : IQuery<Result<IReadOnlyList<CatResponse>>>;
+    internal sealed record Query : IQuery<Result<IReadOnlyList<CatResponse>>>;
 
     internal sealed class Handler : IQueryHandler<Query, Result<IReadOnlyList<CatResponse>>>
     {
@@ -23,11 +23,7 @@ internal sealed class GetCats : IEndpoint
 
         public async ValueTask<Result<IReadOnlyList<CatResponse>>> Handle(Query query, CancellationToken cancellationToken)
         {
-            List<CatReadModel> cats = await _readDbContext.Cats
-                .AsNoTracking()
-                .ToListAsync(cancellationToken);
-
-            IReadOnlyList<CatResponse> response = cats
+            IReadOnlyList<CatResponse> response = await _readDbContext.Cats
                 .Select(c => new CatResponse(
                     Id: c.Id,
                     PersonId: c.PersonId,
@@ -52,8 +48,8 @@ internal sealed class GetCats : IEndpoint
                     InfectiousDiseaseStatusFivStatus: c.InfectiousDiseaseStatusFivStatus,
                     InfectiousDiseaseStatusFelvStatus: c.InfectiousDiseaseStatusFelvStatus,
                     InfectiousDiseaseStatusLastTestedAt: c.InfectiousDiseaseStatusLastTestedAt))
-                .ToList();
-
+                .ToListAsync(cancellationToken);
+            
             return Result.Success(response);
         }
     }

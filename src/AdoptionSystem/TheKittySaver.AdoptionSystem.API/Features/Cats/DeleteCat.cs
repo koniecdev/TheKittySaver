@@ -8,6 +8,7 @@ using TheKittySaver.AdoptionSystem.Domain.Core.Monads.OptionMonad;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
 using TheKittySaver.AdoptionSystem.Persistence.DbContexts.Abstractions;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate;
+using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate.Enums;
 
 namespace TheKittySaver.AdoptionSystem.API.Features.Cats;
 
@@ -36,6 +37,17 @@ internal sealed class DeleteCat : IEndpoint
                 return Result.Failure(DomainErrors.CatEntity.NotFound(command.CatId));
             }
 
+            switch (maybeCat.Value)
+            {
+                case {AdoptionAnnouncementId: not null, Status: CatStatusType.Claimed}:
+                    return Result.Failure(DomainErrors.CatEntity.ClaimedCatRemoval);
+                case {AdoptionAnnouncementId: not null, Status: CatStatusType.Published}
+                    when (await _catRepository.GetCatsByAdoptionAnnouncementIdAsync(
+                        maybeCat.Value.AdoptionAnnouncementId.Value,
+                        cancellationToken)).Count > 1:
+                    return Result.Failure(DomainErrors.CatEntity.TheOnlyAdoptionAnnouncementCatRemoval);
+            }
+            
             _catRepository.Remove(maybeCat.Value);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 

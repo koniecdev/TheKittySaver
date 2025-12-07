@@ -59,6 +59,9 @@ public static partial class DomainErrors
     /// </summary>
     private static Error InvalidOperation(string entity, string property, string message, string code)
         => new($"{entity}.{property}.{code}", message, TypeOfError.Conflict);
+    
+    private static Error InvalidDeleteOperation(string entity, string message, string code)
+        => new($"{entity}.{code}", message);
 
     private static Error CustomMessage(
         string entity,

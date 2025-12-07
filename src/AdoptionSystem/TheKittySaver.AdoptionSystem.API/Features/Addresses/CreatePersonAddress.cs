@@ -89,7 +89,7 @@ internal sealed class CreatePersonAddress : IEndpoint
                 maybeLine = Maybe<AddressLine>.From(createLineResult.Value);
             }
 
-            Result<AddressId> addAddressResult = person.AddAddress(
+            Result<Address> addAddressResult = person.AddAddress(
                 _addressConsistencySpecification,
                 command.TwoLetterIsoCountryCode,
                 createNameResult.Value,
@@ -104,18 +104,16 @@ internal sealed class CreatePersonAddress : IEndpoint
             }
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-            Address address = person.Addresses.First(a => a.Id == addAddressResult.Value);
-
+            
             PersonAddressResponse response = new(
-                Id: address.Id,
+                Id: addAddressResult.Value.Id,
                 PersonId: person.Id,
-                CountryCode: address.CountryCode,
-                Name: address.Name.Value,
-                PostalCode: address.PostalCode.Value,
-                Region: address.Region.Value,
-                City: address.City.Value,
-                Line: address.Line?.Value);
+                CountryCode: addAddressResult.Value.CountryCode,
+                Name: addAddressResult.Value.Name.Value,
+                PostalCode: addAddressResult.Value.PostalCode.Value,
+                Region: addAddressResult.Value.Region.Value,
+                City: addAddressResult.Value.City.Value,
+                Line: addAddressResult.Value.Line?.Value);
 
             return response;
         }

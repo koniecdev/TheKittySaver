@@ -26,41 +26,35 @@ internal sealed class GetCat : IEndpoint
 
         public async ValueTask<Result<CatResponse>> Handle(Query query, CancellationToken cancellationToken)
         {
-            CatReadModel? cat = await _readDbContext.Cats
-                .AsNoTracking()
-                .FirstOrDefaultAsync(c => c.Id == query.CatId, cancellationToken);
+            CatResponse? response = await _readDbContext.Cats
+                .Where(c => c.Id == query.CatId)
+                .Select(cat => new CatResponse(
+                    Id: cat.Id,
+                    PersonId: cat.PersonId,
+                    AdoptionAnnouncementId: cat.AdoptionAnnouncementId,
+                    Name: cat.Name,
+                    Description: cat.Description,
+                    Age: cat.Age,
+                    Gender: cat.Gender,
+                    Color: cat.Color,
+                    WeightValueInKilograms: cat.WeightValueInKilograms,
+                    HealthStatus: cat.HealthStatus,
+                    SpecialNeedsStatusHasSpecialNeeds: cat.SpecialNeedsStatusHasSpecialNeeds,
+                    SpecialNeedsStatusDescription: cat.SpecialNeedsStatusDescription,
+                    SpecialNeedsStatusSeverityType: cat.SpecialNeedsStatusSeverityType,
+                    Temperament: cat.Temperament,
+                    AdoptionHistoryReturnCount: cat.AdoptionHistoryReturnCount,
+                    AdoptionHistoryLastReturnDate: cat.AdoptionHistoryLastReturnDate,
+                    AdoptionHistoryLastReturnReason: cat.AdoptionHistoryLastReturnReason,
+                    ListingSourceType: cat.ListingSourceType,
+                    ListingSourceSourceName: cat.ListingSourceSourceName,
+                    IsNeutered: cat.NeuteringStatusIsNeutered,
+                    InfectiousDiseaseStatusFivStatus: cat.InfectiousDiseaseStatusFivStatus,
+                    InfectiousDiseaseStatusFelvStatus: cat.InfectiousDiseaseStatusFelvStatus,
+                    InfectiousDiseaseStatusLastTestedAt: cat.InfectiousDiseaseStatusLastTestedAt))
+                .FirstOrDefaultAsync(cancellationToken);
 
-            if (cat is null)
-            {
-                return Result.Failure<CatResponse>(DomainErrors.CatEntity.NotFound(query.CatId));
-            }
-
-            CatResponse response = new(
-                Id: cat.Id,
-                PersonId: cat.PersonId,
-                AdoptionAnnouncementId: cat.AdoptionAnnouncementId,
-                Name: cat.Name,
-                Description: cat.Description,
-                Age: cat.Age,
-                Gender: cat.Gender,
-                Color: cat.Color,
-                WeightValueInKilograms: cat.WeightValueInKilograms,
-                HealthStatus: cat.HealthStatus,
-                SpecialNeedsStatusHasSpecialNeeds: cat.SpecialNeedsStatusHasSpecialNeeds,
-                SpecialNeedsStatusDescription: cat.SpecialNeedsStatusDescription,
-                SpecialNeedsStatusSeverityType: cat.SpecialNeedsStatusSeverityType,
-                Temperament: cat.Temperament,
-                AdoptionHistoryReturnCount: cat.AdoptionHistoryReturnCount,
-                AdoptionHistoryLastReturnDate: cat.AdoptionHistoryLastReturnDate,
-                AdoptionHistoryLastReturnReason: cat.AdoptionHistoryLastReturnReason,
-                ListingSourceType: cat.ListingSourceType,
-                ListingSourceSourceName: cat.ListingSourceSourceName,
-                IsNeutered: cat.NeuteringStatusIsNeutered,
-                InfectiousDiseaseStatusFivStatus: cat.InfectiousDiseaseStatusFivStatus,
-                InfectiousDiseaseStatusFelvStatus: cat.InfectiousDiseaseStatusFelvStatus,
-                InfectiousDiseaseStatusLastTestedAt: cat.InfectiousDiseaseStatusLastTestedAt);
-
-            return response;
+            return response ?? Result.Failure<CatResponse>(DomainErrors.CatEntity.NotFound(query.CatId));
         }
     }
 

@@ -74,7 +74,7 @@ internal sealed class CreateCat : IEndpoint
                 return Result.Failure<CatResponse>(createAgeResult.Error);
             }
 
-            CatGender gender = command.Gender == CatGenderType.Male
+            CatGender gender = command.Gender is CatGenderType.Male
                 ? CatGender.Male()
                 : CatGender.Female();
 
@@ -99,11 +99,11 @@ internal sealed class CreateCat : IEndpoint
 
             HealthStatus healthStatus = command.HealthStatus switch
             {
-                HealthStatusType.Healthy => Domain.Aggregates.CatAggregate.ValueObjects.HealthStatus.Healthy(),
-                HealthStatusType.MinorIssues => Domain.Aggregates.CatAggregate.ValueObjects.HealthStatus.MinorIssues(),
-                HealthStatusType.Recovering => Domain.Aggregates.CatAggregate.ValueObjects.HealthStatus.Recovering(),
-                HealthStatusType.ChronicIllness => Domain.Aggregates.CatAggregate.ValueObjects.HealthStatus.ChronicIllness(),
-                _ => Domain.Aggregates.CatAggregate.ValueObjects.HealthStatus.Critical()
+                HealthStatusType.Healthy => HealthStatus.Healthy(),
+                HealthStatusType.MinorIssues => HealthStatus.MinorIssues(),
+                HealthStatusType.Recovering => HealthStatus.Recovering(),
+                HealthStatusType.ChronicIllness => HealthStatus.ChronicIllness(),
+                _ => HealthStatus.Critical()
             };
 
             SpecialNeedsStatus specialNeeds;
@@ -125,17 +125,16 @@ internal sealed class CreateCat : IEndpoint
 
             Temperament temperament = command.Temperament switch
             {
-                TemperamentType.Friendly => Domain.Aggregates.CatAggregate.ValueObjects.Temperament.Friendly(),
-                TemperamentType.Independent => Domain.Aggregates.CatAggregate.ValueObjects.Temperament.Independent(),
-                TemperamentType.Timid => Domain.Aggregates.CatAggregate.ValueObjects.Temperament.Timid(),
-                TemperamentType.VeryTimid => Domain.Aggregates.CatAggregate.ValueObjects.Temperament.VeryTimid(),
-                _ => Domain.Aggregates.CatAggregate.ValueObjects.Temperament.Aggressive()
+                TemperamentType.Friendly => Temperament.Friendly(),
+                TemperamentType.Independent => Temperament.Independent(),
+                TemperamentType.Timid => Temperament.Timid(),
+                TemperamentType.VeryTimid => Temperament.VeryTimid(),
+                _ => Temperament.Aggressive()
             };
 
             AdoptionHistory adoptionHistory;
-            if (command.AdoptionHistoryReturnCount > 0 &&
-                command.AdoptionHistoryLastReturnDate.HasValue &&
-                !string.IsNullOrWhiteSpace(command.AdoptionHistoryLastReturnReason))
+            if (command is { AdoptionHistoryReturnCount: > 0, AdoptionHistoryLastReturnDate: not null }
+                && !string.IsNullOrWhiteSpace(command.AdoptionHistoryLastReturnReason))
             {
                 Result<AdoptionHistory> createAdoptionHistoryResult = AdoptionHistory.CatHasBeenReturned(
                     command.AdoptionHistoryReturnCount,

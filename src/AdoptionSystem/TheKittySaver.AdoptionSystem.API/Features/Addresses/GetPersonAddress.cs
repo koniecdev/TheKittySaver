@@ -28,28 +28,23 @@ internal sealed class GetPersonAddress : IEndpoint
 
         public async ValueTask<Result<PersonAddressResponse>> Handle(Query query, CancellationToken cancellationToken)
         {
-            AddressReadModel? address = await _readDbContext.Addresses
-                .AsNoTracking()
-                .FirstOrDefaultAsync(
-                    a => a.PersonId == query.PersonId && a.Id == query.AddressId,
-                    cancellationToken);
+            PersonAddressResponse? response = await _readDbContext.Addresses
+                .Where(a => 
+                        a.PersonId == query.PersonId 
+                        && a.Id == query.AddressId)
+                .Select(address => new PersonAddressResponse(
+                    Id: address.Id,
+                    PersonId: address.PersonId,
+                    CountryCode: address.CountryCode,
+                    Name: address.Name,
+                    PostalCode: address.PostalCode,
+                    Region: address.Region,
+                    City: address.City,
+                    Line: address.Line))
+                .FirstOrDefaultAsync(cancellationToken);
 
-            if (address is null)
-            {
-                return Result.Failure<PersonAddressResponse>(DomainErrors.AddressEntity.NotFound(query.AddressId));
-            }
-
-            PersonAddressResponse response = new(
-                Id: address.Id,
-                PersonId: address.PersonId,
-                CountryCode: address.CountryCode,
-                Name: address.Name,
-                PostalCode: address.PostalCode,
-                Region: address.Region,
-                City: address.City,
-                Line: address.Line);
-
-            return response;
+            return response ?? Result.Failure<PersonAddressResponse>(
+                DomainErrors.AddressEntity.NotFound(query.AddressId));
         }
     }
 

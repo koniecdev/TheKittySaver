@@ -27,7 +27,6 @@ internal sealed class GetPersonAddresses : IEndpoint
         public async ValueTask<Result<IReadOnlyList<PersonAddressResponse>>> Handle(Query query, CancellationToken cancellationToken)
         {
             bool personExists = await _readDbContext.Persons
-                .AsNoTracking()
                 .AnyAsync(p => p.Id == query.PersonId, cancellationToken);
 
             if (!personExists)
@@ -35,13 +34,9 @@ internal sealed class GetPersonAddresses : IEndpoint
                 return Result.Failure<IReadOnlyList<PersonAddressResponse>>(
                     DomainErrors.PersonEntity.NotFound(query.PersonId));
             }
-
-            List<AddressReadModel> addresses = await _readDbContext.Addresses
-                .AsNoTracking()
+            
+            IReadOnlyList<PersonAddressResponse> response = await _readDbContext.Addresses
                 .Where(a => a.PersonId == query.PersonId)
-                .ToListAsync(cancellationToken);
-
-            IReadOnlyList<PersonAddressResponse> response = addresses
                 .Select(a => new PersonAddressResponse(
                     Id: a.Id,
                     PersonId: a.PersonId,
@@ -51,7 +46,7 @@ internal sealed class GetPersonAddresses : IEndpoint
                     Region: a.Region,
                     City: a.City,
                     Line: a.Line))
-                .ToList();
+                .ToListAsync(cancellationToken);
 
             return Result.Success(response);
         }

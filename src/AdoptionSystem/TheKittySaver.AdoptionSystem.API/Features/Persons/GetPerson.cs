@@ -26,21 +26,17 @@ internal sealed class GetPerson : IEndpoint
 
         public async ValueTask<Result<PersonResponse>> Handle(Query query, CancellationToken cancellationToken)
         {
-            PersonReadModel? person = await _readDbContext.Persons
-                .FirstOrDefaultAsync(p => p.Id == query.PersonId, cancellationToken);
+            PersonResponse? response = await _readDbContext.Persons
+                .Where(p => p.Id == query.PersonId)
+                .Select(person => new PersonResponse(
+                    Id: person.Id,
+                    Username: person.Username,
+                    Email: person.Email,
+                    PhoneNumber: person.PhoneNumber))
+                .FirstOrDefaultAsync(cancellationToken);
 
-            if (person is null)
-            {
-                return Result.Failure<PersonResponse>(DomainErrors.PersonEntity.NotFound(query.PersonId));
-            }
-
-            PersonResponse response = new(
-                Id: person.Id,
-                Username: person.Username,
-                Email: person.Email,
-                PhoneNumber: person.PhoneNumber);
-
-            return response;
+            return response ?? Result.Failure<PersonResponse>(
+                DomainErrors.PersonEntity.NotFound(query.PersonId));
         }
     }
 
