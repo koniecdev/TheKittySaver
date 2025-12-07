@@ -4,4 +4,9 @@
       <ProjectReference Include="..\TheKittySaver.AdoptionSystem.Primitives\TheKittySaver.AdoptionSystem.Primitives.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Aggregates\PersonAggregate\Requests\" />
+      <Folder Include="Aggregates\PersonAggregate\Responses\" />
+    </ItemGroup>
+
 </Project>
