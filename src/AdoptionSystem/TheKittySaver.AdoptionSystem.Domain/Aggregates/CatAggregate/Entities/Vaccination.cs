@@ -45,6 +45,7 @@ public sealed class Vaccination : Entity<VaccinationId>
         VaccinationNote? veterinarianNote = null)
     {
         Ensure.NotEmpty(catId);
+        Ensure.IsInEnum(type);
 
         Result<VaccinationDate> dateResult = VaccinationDate.Create(
             vaccinationDate,

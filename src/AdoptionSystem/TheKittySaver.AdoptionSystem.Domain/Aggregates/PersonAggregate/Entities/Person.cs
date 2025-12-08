@@ -33,6 +33,7 @@ public sealed class Person : AggregateRoot<PersonId>
         AddressCity city,
         Maybe<AddressLine> maybeLine)
     {
+        Ensure.IsInEnum(countryCode);
         ArgumentNullException.ThrowIfNull(specification);
         ArgumentNullException.ThrowIfNull(name);
         ArgumentNullException.ThrowIfNull(postalCode);

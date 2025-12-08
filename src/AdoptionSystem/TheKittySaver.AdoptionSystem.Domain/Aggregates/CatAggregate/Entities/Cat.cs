@@ -258,7 +258,7 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
         DateTimeOffset dateOfOperation,
         VaccinationNote? veterinarianNote = null)
     {
-
+        Ensure.IsInEnum(type);
         Result<Vaccination> vaccinationResult = Vaccination.Create(
             Id,
             type,
@@ -277,6 +277,7 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
 
     public Result UpdateVaccinationType(VaccinationId vaccinationId, VaccinationType updatedType)
     {
+        Ensure.IsInEnum(updatedType);
         Ensure.NotEmpty(vaccinationId);
 
         Maybe<Vaccination> maybeVaccination = _vaccinations.GetByIdOrDefault(vaccinationId);
