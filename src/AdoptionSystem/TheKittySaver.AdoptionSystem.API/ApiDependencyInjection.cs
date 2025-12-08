@@ -1,4 +1,7 @@
-﻿namespace TheKittySaver.AdoptionSystem.API;
+using TheKittySaver.AdoptionSystem.API.DomainEventHandlers;
+using TheKittySaver.AdoptionSystem.API.Interceptors;
+
+namespace TheKittySaver.AdoptionSystem.API;
 
 internal static class ApiDependencyInjection
 {
@@ -8,6 +11,9 @@ internal static class ApiDependencyInjection
         {
             options.ServiceLifetime = ServiceLifetime.Scoped;
         });
+
+        services.AddScoped<IDomainEventPublisher, MediatorDomainEventPublisher>();
+        services.AddScoped<PublishDomainEventsInterceptor>();
 
         return services;
     }

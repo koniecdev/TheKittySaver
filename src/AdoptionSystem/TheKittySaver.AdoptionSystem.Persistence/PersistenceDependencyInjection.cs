@@ -1,5 +1,6 @@
-﻿using FluentValidation;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAggregate.Repositories;
@@ -17,13 +18,23 @@ namespace TheKittySaver.AdoptionSystem.Persistence;
 
 public static class PersistenceDependencyInjection
 {
-    public static IServiceCollection AddPersistence(this IServiceCollection services)
+    public static IServiceCollection AddPersistence(
+        this IServiceCollection services,
+        Func<IServiceProvider, IEnumerable<IInterceptor>>? interceptorsFactory = null)
     {
         services.AddSingleton<IValidator<ConnectionStringSettings>, ConnectionStringSettingsValidator>();
         services.AddOptionsWithFluentValidation<ConnectionStringSettings>(ConnectionStringSettings.ConfigurationSection);
 
         services.AddDbContextFactory<ApplicationWriteDbContext>((sp, options) =>
-            options.UseSqlServer(sp.GetRequiredService<IOptions<ConnectionStringSettings>>().Value.Database));
+        {
+            options.UseSqlServer(sp.GetRequiredService<IOptions<ConnectionStringSettings>>().Value.Database);
+
+            if (interceptorsFactory is not null)
+            {
+                IEnumerable<IInterceptor> interceptors = interceptorsFactory(sp);
+                options.AddInterceptors(interceptors.ToArray());
+            }
+        });
 
         services.AddDbContextFactory<ApplicationReadDbContext>((sp, options) =>
             options.UseSqlServer(sp.GetRequiredService<IOptions<ConnectionStringSettings>>().Value.Database)
@@ -34,7 +45,7 @@ public static class PersistenceDependencyInjection
 
         services.AddScoped<IUnitOfWork>(serviceProvider =>
             serviceProvider.GetRequiredService<ApplicationWriteDbContext>());
-        
+
         services.AddScoped<IPersonRepository, PersonRepository>();
         services.AddScoped<ICatRepository, CatRepository>();
         services.AddScoped<IAdoptionAnnouncementRepository, AdoptionAnnouncementRepository>();

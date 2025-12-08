@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore.Diagnostics;
+using TheKittySaver.AdoptionSystem.API.Interceptors;
 using TheKittySaver.AdoptionSystem.Domain;
 using TheKittySaver.AdoptionSystem.Infrastructure;
 using TheKittySaver.AdoptionSystem.Persistence;
@@ -10,9 +12,14 @@ internal static class RootDependencyInjection
     {
         services.AddInfrastructure();
         services.AddDomain();
-        services.AddPersistence();
         services.AddApi();
+        services.AddPersistence(GetInterceptors);
 
         return services;
+    }
+
+    private static IEnumerable<IInterceptor> GetInterceptors(IServiceProvider serviceProvider)
+    {
+        yield return serviceProvider.GetRequiredService<PublishDomainEventsInterceptor>();
     }
 }

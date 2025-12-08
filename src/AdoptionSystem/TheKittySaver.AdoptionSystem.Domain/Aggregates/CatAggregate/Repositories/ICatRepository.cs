@@ -11,8 +11,16 @@ public interface ICatRepository : IRepository<Cat, CatId>
     public Task<IReadOnlyCollection<Cat>> GetCatsByAdoptionAnnouncementIdAsync(
         AdoptionAnnouncementId adoptionAnnouncementId,
         CancellationToken cancellationToken);
-    
+
     public Task<IReadOnlyCollection<Cat>> GetCatsByPersonIdAsync(
         PersonId personId,
+        CancellationToken cancellationToken);
+
+    public Task<int> CountCatsByAdoptionAnnouncementIdAsync(
+        AdoptionAnnouncementId adoptionAnnouncementId,
+        CancellationToken cancellationToken);
+
+    public Task<int> CountUnclaimedCatsByAdoptionAnnouncementIdAsync(
+        AdoptionAnnouncementId adoptionAnnouncementId,
         CancellationToken cancellationToken);
 }
