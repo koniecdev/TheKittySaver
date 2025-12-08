@@ -269,6 +269,13 @@ public static partial class DomainErrors
                     nameof(Cat.InfectiousDiseaseStatus),
                     $"Cat with ID '{catId.Value}' cannot be reassigned to an adoption announcement with incompatible infectious disease status.",
                     "IncompatibleInfectiousDiseaseStatus");
+
+            public static Error CannotReassignToSameOwner(CatId catId)
+                => InvalidOperation(
+                    nameof(CatEntity),
+                    nameof(Cat.PersonId),
+                    $"Cat with ID '{catId.Value}' cannot be reassigned to an adoption announcement belonging to the same owner.",
+                    "CannotReassignToSameOwner");
         }
     }
 

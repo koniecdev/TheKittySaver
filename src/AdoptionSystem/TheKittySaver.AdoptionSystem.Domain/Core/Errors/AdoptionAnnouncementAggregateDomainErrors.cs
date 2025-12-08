@@ -70,6 +70,13 @@ public static partial class DomainErrors
                     nameof(AdoptionAnnouncementErrors),
                     nameof(AdoptionAnnouncementEntity.Description),
                     AdoptionAnnouncementDescription.MaxLength);
+            
+            public static Error CanOnlyUpdateWhenActive
+                => InvalidOperation(
+                    nameof(AdoptionAnnouncementErrors),
+                    nameof(AdoptionAnnouncementEntity.Description),
+                    "Can only update announcement when it is active.",
+                    nameof(CanOnlyUpdateWhenActive));
         }
     }
 }

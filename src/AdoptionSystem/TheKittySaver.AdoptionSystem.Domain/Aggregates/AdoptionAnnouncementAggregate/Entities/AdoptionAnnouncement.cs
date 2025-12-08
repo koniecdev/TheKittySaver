@@ -41,6 +41,12 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
     public Result UpdateDescription(Maybe<AdoptionAnnouncementDescription> updatedDescription)
     {
         ArgumentNullException.ThrowIfNull(updatedDescription);
+        
+        if (Status is not AnnouncementStatusType.Active)
+        {
+            return Result.Failure(DomainErrors.AdoptionAnnouncementErrors.DescriptionProperty.CanOnlyUpdateWhenActive);
+        }
+        
         Description = updatedDescription.HasValue 
             ? updatedDescription.Value 
             : null;

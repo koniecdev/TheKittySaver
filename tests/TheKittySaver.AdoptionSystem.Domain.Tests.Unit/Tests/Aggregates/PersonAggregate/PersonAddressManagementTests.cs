@@ -1,5 +1,6 @@
 using Bogus;
 using Shouldly;
+using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.Entities;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.ValueObjects;
 using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.OptionMonad;
@@ -35,7 +36,7 @@ public sealed class PersonAddressManagementTests
         
 
         //Act
-        Result<AddressId> result = person.AddAddress(
+        Result<Address> result = person.AddAddress(
             specification,
             CountryCode.PL,
             name,
@@ -46,7 +47,7 @@ public sealed class PersonAddressManagementTests
 
         //Assert
         result.IsSuccess.ShouldBeTrue();
-        result.Value.ShouldNotBe(AddressId.Empty);
+        result.Value.Id.ShouldNotBe(AddressId.Empty);
         person.Addresses.Count.ShouldBe(1);
         person.Addresses[0].Name.ShouldBe(name);
     }
@@ -67,7 +68,7 @@ public sealed class PersonAddressManagementTests
         person.AddAddress(specification, CountryCode.PL, name, postalCode, region, city, Maybe<AddressLine>.None);
 
         //Act
-        Result<AddressId> result = person.AddAddress(
+        Result<Address> result = person.AddAddress(
             specification,
             CountryCode.DE,
             name,
@@ -101,7 +102,7 @@ public sealed class PersonAddressManagementTests
         cityResult.EnsureSuccess();
 
         //Act
-        Result<AddressId> result = person.AddAddress(
+        Result<Address> result = person.AddAddress(
             specification,
             CountryCode.PL,
             name,
@@ -156,7 +157,7 @@ public sealed class PersonAddressManagementTests
         
         
 
-        Result<AddressId> addResult = person.AddAddress(
+        Result<Address> addResult = person.AddAddress(
             specification,
             CountryCode.PL,
             originalName,
@@ -167,7 +168,7 @@ public sealed class PersonAddressManagementTests
         AddressName newName = AddressFactory.CreateRandomName(Faker);
 
         //Act
-        Result result = person.UpdateAddressName(addResult.Value, newName);
+        Result result = person.UpdateAddressName(addResult.Value.Id, newName);
 
         //Assert
         result.IsSuccess.ShouldBeTrue();
@@ -213,7 +214,7 @@ public sealed class PersonAddressManagementTests
             city,
             Maybe<AddressLine>.None);
 
-        Result<AddressId> secondAddressResult = person.AddAddress(
+        Result<Address> secondAddressResult = person.AddAddress(
             specification,
             CountryCode.DE,
             secondName,
@@ -223,7 +224,7 @@ public sealed class PersonAddressManagementTests
             Maybe<AddressLine>.None);
 
         //Act
-        Result result = person.UpdateAddressName(secondAddressResult.Value, firstName);
+        Result result = person.UpdateAddressName(secondAddressResult.Value.Id, firstName);
 
         //Assert
         result.IsFailure.ShouldBeTrue();
@@ -243,7 +244,7 @@ public sealed class PersonAddressManagementTests
         
         
 
-        Result<AddressId> addResult = person.AddAddress(
+        Result<Address> addResult = person.AddAddress(
             specification,
             CountryCode.PL,
             originalName,
@@ -253,7 +254,7 @@ public sealed class PersonAddressManagementTests
             Maybe<AddressLine>.None);
 
         //Act
-        Result result = person.UpdateAddressName(addResult.Value, originalName);
+        Result result = person.UpdateAddressName(addResult.Value.Id, originalName);
 
         //Assert
         result.IsSuccess.ShouldBeTrue();
@@ -273,7 +274,7 @@ public sealed class PersonAddressManagementTests
         
         
 
-        Result<AddressId> addResult = person.AddAddress(
+        Result<Address> addResult = person.AddAddress(
             specification,
             CountryCode.PL,
             name,
@@ -290,7 +291,7 @@ public sealed class PersonAddressManagementTests
         //Act
         Result result = person.UpdateAddressDetails(
             specification,
-            addResult.Value,
+            addResult.Value.Id,
             newPostalCode,
             newRegion,
             newCity,
@@ -342,7 +343,7 @@ public sealed class PersonAddressManagementTests
         
         
 
-        Result<AddressId> addResult = person.AddAddress(
+        Result<Address> addResult = person.AddAddress(
             specification,
             CountryCode.PL,
             name,
@@ -352,7 +353,7 @@ public sealed class PersonAddressManagementTests
             Maybe<AddressLine>.None);
 
         //Act
-        Result result = person.DeleteAddress(addResult.Value);
+        Result result = person.DeleteAddress(addResult.Value.Id);
 
         //Assert
         result.IsSuccess.ShouldBeTrue();
