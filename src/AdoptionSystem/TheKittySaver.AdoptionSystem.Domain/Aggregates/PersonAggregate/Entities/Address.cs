@@ -42,10 +42,9 @@ public sealed class Address : Entity<AddressId>
         ArgumentNullException.ThrowIfNull(city);
         ArgumentNullException.ThrowIfNull(maybeLine);
 
-        if (!specification.IsSatisfiedBy(CountryCode, postalCode.Value, region.Value))
+        if (!specification.IsSatisfiedBy(CountryCode, postalCode.Value, region.Value, out Error? error))
         {
-            return Result.Failure(
-                DomainErrors.AddressConsistency.PostalCodeRegionMismatch(postalCode.Value, region.Value));
+            return Result.Failure(error!);
         }
 
         PostalCode = postalCode;
@@ -75,10 +74,9 @@ public sealed class Address : Entity<AddressId>
         ArgumentNullException.ThrowIfNull(city);
         ArgumentNullException.ThrowIfNull(maybeLine);
 
-        if (!specification.IsSatisfiedBy(countryCode, postalCode.Value, region.Value))
+        if (!specification.IsSatisfiedBy(countryCode, postalCode.Value, region.Value, out Error? error))
         {
-            return Result.Failure<Address>(
-                DomainErrors.AddressConsistency.PostalCodeRegionMismatch(postalCode.Value, region.Value));
+            return Result.Failure<Address>(error!);
         }
 
         AddressId id = AddressId.New();

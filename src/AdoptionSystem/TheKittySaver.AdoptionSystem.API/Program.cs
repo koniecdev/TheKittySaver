@@ -5,7 +5,7 @@ using Asp.Versioning;
 using Asp.Versioning.Builder;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
-builder.Services.Register();
+builder.Services.Register(builder.Configuration);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();
 

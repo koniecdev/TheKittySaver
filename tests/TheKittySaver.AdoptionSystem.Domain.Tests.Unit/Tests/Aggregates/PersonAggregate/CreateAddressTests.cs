@@ -1,7 +1,14 @@
 using Bogus;
 using Shouldly;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.Entities;
+using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.ValueObjects;
+using TheKittySaver.AdoptionSystem.Domain.Core.Monads.OptionMonad;
+using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
+using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.AddressCompounds;
+using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.AddressCompounds.Specifications;
+using TheKittySaver.AdoptionSystem.Domain.Tests.Unit.Shared.Extensions;
 using TheKittySaver.AdoptionSystem.Domain.Tests.Unit.Shared.Factories;
+using TheKittySaver.AdoptionSystem.Infrastructure.Specifications;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
 using TheKittySaver.AdoptionSystem.Primitives.Enums;
 
@@ -92,5 +99,84 @@ public sealed class CreateAddressTests
         //Assert
         addressCreation.ShouldThrow<ArgumentNullException>()
             .ParamName?.ToLowerInvariant().ShouldBe(nameof(Address.City).ToLowerInvariant());
+    }
+
+    [Fact]
+    public void Create_ShouldThrow_WhenNullSpecificationIsProvided()
+    {
+        //Arrange
+        PersonId personId = PersonId.New();
+        AddressName name = AddressFactory.CreateRandomName(Faker);
+        AddressPostalCode postalCode = AddressFactory.CreateFixedPostalCode();
+        AddressRegion region = AddressFactory.CreateFixedRegion();
+        AddressCity city = AddressFactory.CreateRandomCity(Faker);
+
+        //Act
+        Action addressCreation = () => Address.Create(
+            null!,
+            personId,
+            CountryCode.PL,
+            name,
+            postalCode,
+            region,
+            city,
+            Maybe<AddressLine>.None);
+
+        //Assert
+        addressCreation.ShouldThrow<ArgumentNullException>()
+            .ParamName?.ToLowerInvariant().ShouldBe("specification");
+    }
+
+    [Fact]
+    public void Create_ShouldThrow_WhenNullPostalCodeIsProvided()
+    {
+        //Arrange
+        IAddressConsistencySpecification specification = new PolandAddressConsistencySpecification();
+        PersonId personId = PersonId.New();
+        AddressName name = AddressFactory.CreateRandomName(Faker);
+        AddressRegion region = AddressFactory.CreateFixedRegion();
+        AddressCity city = AddressFactory.CreateRandomCity(Faker);
+
+        //Act
+        Action addressCreation = () => Address.Create(
+            specification,
+            personId,
+            CountryCode.PL,
+            name,
+            null!,
+            region,
+            city,
+            Maybe<AddressLine>.None);
+
+        //Assert
+        addressCreation.ShouldThrow<ArgumentNullException>()
+            .ParamName?.ToLowerInvariant().ShouldBe("postalcode");
+    }
+
+    [Fact]
+    public void Create_ShouldThrow_WhenNullMaybeLineIsProvided()
+    {
+        //Arrange
+        IAddressConsistencySpecification specification = new PolandAddressConsistencySpecification();
+        PersonId personId = PersonId.New();
+        AddressName name = AddressFactory.CreateRandomName(Faker);
+        AddressPostalCode postalCode = AddressFactory.CreateFixedPostalCode();
+        AddressRegion region = AddressFactory.CreateFixedRegion();
+        AddressCity city = AddressFactory.CreateRandomCity(Faker);
+
+        //Act
+        Action addressCreation = () => Address.Create(
+            specification,
+            personId,
+            CountryCode.PL,
+            name,
+            postalCode,
+            region,
+            city,
+            null!);
+
+        //Assert
+        addressCreation.ShouldThrow<ArgumentNullException>()
+            .ParamName?.ToLowerInvariant().ShouldBe("maybeline");
     }
 }

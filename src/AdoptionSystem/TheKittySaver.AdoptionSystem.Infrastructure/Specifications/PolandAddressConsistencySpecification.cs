@@ -1,7 +1,10 @@
 ﻿using System.Text.RegularExpressions;
+using TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
 using TheKittySaver.AdoptionSystem.Domain.Core.Enums;
+using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.AddressCompounds.Specifications;
 using TheKittySaver.AdoptionSystem.Primitives.Enums;
+using TheKittySaver.AdoptionSystem.Primitives.Guards;
 
 namespace TheKittySaver.AdoptionSystem.Infrastructure.Specifications;
 
@@ -171,8 +174,12 @@ public sealed partial class PolandAddressConsistencySpecification : IAddressCons
             ["zachodniopomorskie"] = PolandVoivodeship.Zachodniopomorskie,
         };
 
-    public bool IsSatisfiedBy(CountryCode countryCode, string postalCode, string region)
+    public bool IsSatisfiedBy(CountryCode countryCode, string postalCode, string region, out Error? error)
     {
+        Ensure.IsInEnum(countryCode);
+        
+        error = null;
+
         if (countryCode != CountryCode.PL)
         {
             return true;
@@ -180,6 +187,7 @@ public sealed partial class PolandAddressConsistencySpecification : IAddressCons
 
         if (string.IsNullOrWhiteSpace(postalCode))
         {
+            error = DomainErrors.AddressConsistency.PostalCodeRequired;
             return false;
         }
 
@@ -187,6 +195,7 @@ public sealed partial class PolandAddressConsistencySpecification : IAddressCons
 
         if (!PolishPostalCodeRegex.IsMatch(postalCode))
         {
+            error = DomainErrors.AddressConsistency.InvalidPostalCodeFormat(postalCode);
             return false;
         }
 
@@ -199,6 +208,7 @@ public sealed partial class PolandAddressConsistencySpecification : IAddressCons
 
         if (!PostalCodePrefixToVoivodeship.TryGetValue(prefix, out PolandVoivodeship expectedVoivodeship))
         {
+            error = DomainErrors.AddressConsistency.UnknownPostalCodePrefix(prefix);
             return false;
         }
 
@@ -206,10 +216,17 @@ public sealed partial class PolandAddressConsistencySpecification : IAddressCons
 
         if (!VoivodeshipNameMapping.TryGetValue(normalizedRegion, out PolandVoivodeship actualVoivodeship))
         {
-            return true;
+            error = DomainErrors.AddressConsistency.InvalidRegion(normalizedRegion);
+            return false;
         }
 
-        return expectedVoivodeship == actualVoivodeship;
+        if (expectedVoivodeship != actualVoivodeship)
+        {
+            error = DomainErrors.AddressConsistency.PostalCodeRegionMismatch(postalCode, normalizedRegion);
+            return false;
+        }
+
+        return true;
     }
 
     [GeneratedRegex(@"^\d{2}-\d{3}$", RegexOptions.Compiled)]

@@ -29,7 +29,7 @@ public sealed class PersonAddressManagementTests
         IAddressConsistencySpecification specification = new PolandAddressConsistencySpecification();
         AddressName name = AddressFactory.CreateRandomName(Faker);
         AddressPostalCode postalCode = AddressFactory.CreateFixedPostalCode();
-        AddressRegion region = AddressFactory.CreateRandomRegion(Faker);
+        AddressRegion region = AddressFactory.CreateFixedRegion();
         AddressCity city = AddressFactory.CreateRandomCity(Faker);
         AddressLine line = AddressFactory.CreateRandomLine(Faker);
         
@@ -60,7 +60,7 @@ public sealed class PersonAddressManagementTests
         IAddressConsistencySpecification specification = new PolandAddressConsistencySpecification();
         AddressName name = AddressFactory.CreateRandomName(Faker);
         AddressPostalCode postalCode = AddressFactory.CreateFixedPostalCode();
-        AddressRegion region = AddressFactory.CreateRandomRegion(Faker);
+        AddressRegion region = AddressFactory.CreateFixedRegion();
         AddressCity city = AddressFactory.CreateRandomCity(Faker);
         
         
@@ -73,7 +73,7 @@ public sealed class PersonAddressManagementTests
             CountryCode.DE,
             name,
             postalCode,
-            AddressFactory.CreateRandomRegion(Faker),
+            AddressFactory.CreateFixedRegion(),
             AddressFactory.CreateRandomCity(Faker),
             Maybe<AddressLine>.None);
 
@@ -124,7 +124,7 @@ public sealed class PersonAddressManagementTests
         Person person = PersonFactory.CreateRandom(Faker);
         IAddressConsistencySpecification specification = new PolandAddressConsistencySpecification();
         AddressPostalCode postalCode = AddressFactory.CreateFixedPostalCode();
-        AddressRegion region = AddressFactory.CreateRandomRegion(Faker);
+        AddressRegion region = AddressFactory.CreateFixedRegion();
         AddressCity city = AddressFactory.CreateRandomCity(Faker);
         
         
@@ -152,7 +152,7 @@ public sealed class PersonAddressManagementTests
         IAddressConsistencySpecification specification = new PolandAddressConsistencySpecification();
         AddressName originalName = AddressFactory.CreateRandomName(Faker);
         AddressPostalCode postalCode = AddressFactory.CreateFixedPostalCode();
-        AddressRegion region = AddressFactory.CreateRandomRegion(Faker);
+        AddressRegion region = AddressFactory.CreateFixedRegion();
         AddressCity city = AddressFactory.CreateRandomCity(Faker);
         
         
@@ -200,7 +200,7 @@ public sealed class PersonAddressManagementTests
         AddressName firstName = AddressFactory.CreateRandomName(Faker);
         AddressName secondName = AddressFactory.CreateRandomName(Faker);
         AddressPostalCode postalCode = AddressFactory.CreateFixedPostalCode();
-        AddressRegion region = AddressFactory.CreateRandomRegion(Faker);
+        AddressRegion region = AddressFactory.CreateFixedRegion();
         AddressCity city = AddressFactory.CreateRandomCity(Faker);
         
         
@@ -239,7 +239,7 @@ public sealed class PersonAddressManagementTests
         IAddressConsistencySpecification specification = new PolandAddressConsistencySpecification();
         AddressName originalName = AddressFactory.CreateRandomName(Faker);
         AddressPostalCode postalCode = AddressFactory.CreateFixedPostalCode();
-        AddressRegion region = AddressFactory.CreateRandomRegion(Faker);
+        AddressRegion region = AddressFactory.CreateFixedRegion();
         AddressCity city = AddressFactory.CreateRandomCity(Faker);
         
         
@@ -269,7 +269,7 @@ public sealed class PersonAddressManagementTests
         IAddressConsistencySpecification specification = new PolandAddressConsistencySpecification();
         AddressName name = AddressFactory.CreateRandomName(Faker);
         AddressPostalCode originalPostalCode = AddressFactory.CreateFixedPostalCode();
-        AddressRegion originalRegion = AddressFactory.CreateRandomRegion(Faker);
+        AddressRegion originalRegion = AddressFactory.CreateFixedRegion();
         AddressCity originalCity = AddressFactory.CreateRandomCity(Faker);
         
         
@@ -284,7 +284,7 @@ public sealed class PersonAddressManagementTests
             Maybe<AddressLine>.None);
 
         AddressPostalCode newPostalCode = AddressFactory.CreateFixedPostalCode();
-        AddressRegion newRegion = AddressFactory.CreateRandomRegion(Faker);
+        AddressRegion newRegion = AddressFactory.CreateFixedRegion();
         AddressCity newCity = AddressFactory.CreateRandomCity(Faker);
         AddressLine newLine = AddressFactory.CreateRandomLine(Faker);
 
@@ -313,7 +313,7 @@ public sealed class PersonAddressManagementTests
         IAddressConsistencySpecification specification = new PolandAddressConsistencySpecification();
         AddressId nonExistentAddressId = AddressId.New();
         AddressPostalCode postalCode = AddressFactory.CreateFixedPostalCode();
-        AddressRegion region = AddressFactory.CreateRandomRegion(Faker);
+        AddressRegion region = AddressFactory.CreateFixedRegion();
         AddressCity city = AddressFactory.CreateRandomCity(Faker);
 
         //Act
@@ -338,7 +338,7 @@ public sealed class PersonAddressManagementTests
         IAddressConsistencySpecification specification = new PolandAddressConsistencySpecification();
         AddressName name = AddressFactory.CreateRandomName(Faker);
         AddressPostalCode postalCode = AddressFactory.CreateFixedPostalCode();
-        AddressRegion region = AddressFactory.CreateRandomRegion(Faker);
+        AddressRegion region = AddressFactory.CreateFixedRegion();
         AddressCity city = AddressFactory.CreateRandomCity(Faker);
         
         
@@ -373,5 +373,445 @@ public sealed class PersonAddressManagementTests
         //Assert
         result.IsFailure.ShouldBeTrue();
         result.Error.ShouldBe(DomainErrors.AddressEntity.NotFound(nonExistentAddressId));
+    }
+
+    [Fact]
+    public void DeleteAddress_ShouldThrow_WhenEmptyAddressIdIsProvided()
+    {
+        //Arrange
+        Person person = PersonFactory.CreateRandom(Faker);
+
+        //Act
+        Action deleteAddress = () => person.DeleteAddress(AddressId.Empty);
+
+        //Assert
+        deleteAddress.ShouldThrow<ArgumentException>()
+            .ParamName?.ToLowerInvariant().ShouldBe("addressid");
+    }
+
+    [Fact]
+    public void AddAddress_ShouldThrow_WhenNullSpecificationIsProvided()
+    {
+        //Arrange
+        Person person = PersonFactory.CreateRandom(Faker);
+        AddressName name = AddressFactory.CreateRandomName(Faker);
+        AddressPostalCode postalCode = AddressFactory.CreateFixedPostalCode();
+        AddressRegion region = AddressFactory.CreateFixedRegion();
+        AddressCity city = AddressFactory.CreateRandomCity(Faker);
+
+        //Act
+        Action addAddress = () => person.AddAddress(
+            null!,
+            CountryCode.PL,
+            name,
+            postalCode,
+            region,
+            city,
+            Maybe<AddressLine>.None);
+
+        //Assert
+        addAddress.ShouldThrow<ArgumentNullException>()
+            .ParamName?.ToLowerInvariant().ShouldBe("specification");
+    }
+
+    [Fact]
+    public void AddAddress_ShouldThrow_WhenUnsetCountryCodeIsProvided()
+    {
+        //Arrange
+        Person person = PersonFactory.CreateRandom(Faker);
+        IAddressConsistencySpecification specification = new PolandAddressConsistencySpecification();
+        AddressName name = AddressFactory.CreateRandomName(Faker);
+        AddressPostalCode postalCode = AddressFactory.CreateFixedPostalCode();
+        AddressRegion region = AddressFactory.CreateFixedRegion();
+        AddressCity city = AddressFactory.CreateRandomCity(Faker);
+
+        //Act
+        Action addAddress = () => person.AddAddress(
+            specification,
+            CountryCode.Unset,
+            name,
+            postalCode,
+            region,
+            city,
+            Maybe<AddressLine>.None);
+
+        //Assert
+        addAddress.ShouldThrow<ArgumentException>()
+            .ParamName?.ToLowerInvariant().ShouldBe("countrycode");
+    }
+
+    [Fact]
+    public void AddAddress_ShouldThrow_WhenNullPostalCodeIsProvided()
+    {
+        //Arrange
+        Person person = PersonFactory.CreateRandom(Faker);
+        IAddressConsistencySpecification specification = new PolandAddressConsistencySpecification();
+        AddressName name = AddressFactory.CreateRandomName(Faker);
+        AddressRegion region = AddressFactory.CreateFixedRegion();
+        AddressCity city = AddressFactory.CreateRandomCity(Faker);
+
+        //Act
+        Action addAddress = () => person.AddAddress(
+            specification,
+            CountryCode.PL,
+            name,
+            null!,
+            region,
+            city,
+            Maybe<AddressLine>.None);
+
+        //Assert
+        addAddress.ShouldThrow<ArgumentNullException>()
+            .ParamName?.ToLowerInvariant().ShouldBe("postalcode");
+    }
+
+    [Fact]
+    public void AddAddress_ShouldThrow_WhenNullRegionIsProvided()
+    {
+        //Arrange
+        Person person = PersonFactory.CreateRandom(Faker);
+        IAddressConsistencySpecification specification = new PolandAddressConsistencySpecification();
+        AddressName name = AddressFactory.CreateRandomName(Faker);
+        AddressPostalCode postalCode = AddressFactory.CreateFixedPostalCode();
+        AddressCity city = AddressFactory.CreateRandomCity(Faker);
+
+        //Act
+        Action addAddress = () => person.AddAddress(
+            specification,
+            CountryCode.PL,
+            name,
+            postalCode,
+            null!,
+            city,
+            Maybe<AddressLine>.None);
+
+        //Assert
+        addAddress.ShouldThrow<ArgumentNullException>()
+            .ParamName?.ToLowerInvariant().ShouldBe("region");
+    }
+
+    [Fact]
+    public void AddAddress_ShouldThrow_WhenNullCityIsProvided()
+    {
+        //Arrange
+        Person person = PersonFactory.CreateRandom(Faker);
+        IAddressConsistencySpecification specification = new PolandAddressConsistencySpecification();
+        AddressName name = AddressFactory.CreateRandomName(Faker);
+        AddressPostalCode postalCode = AddressFactory.CreateFixedPostalCode();
+        AddressRegion region = AddressFactory.CreateFixedRegion();
+
+        //Act
+        Action addAddress = () => person.AddAddress(
+            specification,
+            CountryCode.PL,
+            name,
+            postalCode,
+            region,
+            null!,
+            Maybe<AddressLine>.None);
+
+        //Assert
+        addAddress.ShouldThrow<ArgumentNullException>()
+            .ParamName?.ToLowerInvariant().ShouldBe("city");
+    }
+
+    [Fact]
+    public void AddAddress_ShouldThrow_WhenNullMaybeLineIsProvided()
+    {
+        //Arrange
+        Person person = PersonFactory.CreateRandom(Faker);
+        IAddressConsistencySpecification specification = new PolandAddressConsistencySpecification();
+        AddressName name = AddressFactory.CreateRandomName(Faker);
+        AddressPostalCode postalCode = AddressFactory.CreateFixedPostalCode();
+        AddressRegion region = AddressFactory.CreateFixedRegion();
+        AddressCity city = AddressFactory.CreateRandomCity(Faker);
+
+        //Act
+        Action addAddress = () => person.AddAddress(
+            specification,
+            CountryCode.PL,
+            name,
+            postalCode,
+            region,
+            city,
+            null!);
+
+        //Assert
+        addAddress.ShouldThrow<ArgumentNullException>()
+            .ParamName?.ToLowerInvariant().ShouldBe("maybeline");
+    }
+
+    [Fact]
+    public void UpdateAddressName_ShouldThrow_WhenEmptyAddressIdIsProvided()
+    {
+        //Arrange
+        Person person = PersonFactory.CreateRandom(Faker);
+        AddressName newName = AddressFactory.CreateRandomName(Faker);
+
+        //Act
+        Action updateAddressName = () => person.UpdateAddressName(AddressId.Empty, newName);
+
+        //Assert
+        updateAddressName.ShouldThrow<ArgumentException>()
+            .ParamName?.ToLowerInvariant().ShouldBe("addressid");
+    }
+
+    [Fact]
+    public void UpdateAddressName_ShouldThrow_WhenNullUpdatedNameIsProvided()
+    {
+        //Arrange
+        Person person = PersonFactory.CreateRandom(Faker);
+        IAddressConsistencySpecification specification = new PolandAddressConsistencySpecification();
+        AddressName originalName = AddressFactory.CreateRandomName(Faker);
+        AddressPostalCode postalCode = AddressFactory.CreateFixedPostalCode();
+        AddressRegion region = AddressFactory.CreateFixedRegion();
+        AddressCity city = AddressFactory.CreateRandomCity(Faker);
+
+        Result<Address> addResult = person.AddAddress(
+            specification,
+            CountryCode.PL,
+            originalName,
+            postalCode,
+            region,
+            city,
+            Maybe<AddressLine>.None);
+
+        //Act
+        Action updateAddressName = () => person.UpdateAddressName(addResult.Value.Id, null!);
+
+        //Assert
+        updateAddressName.ShouldThrow<ArgumentNullException>()
+            .ParamName?.ToLowerInvariant().ShouldBe("updatedname");
+    }
+
+    [Fact]
+    public void UpdateAddressDetails_ShouldThrow_WhenNullSpecificationIsProvided()
+    {
+        //Arrange
+        Person person = PersonFactory.CreateRandom(Faker);
+        IAddressConsistencySpecification specification = new PolandAddressConsistencySpecification();
+        AddressName name = AddressFactory.CreateRandomName(Faker);
+        AddressPostalCode postalCode = AddressFactory.CreateFixedPostalCode();
+        AddressRegion region = AddressFactory.CreateFixedRegion();
+        AddressCity city = AddressFactory.CreateRandomCity(Faker);
+
+        Result<Address> addResult = person.AddAddress(
+            specification,
+            CountryCode.PL,
+            name,
+            postalCode,
+            region,
+            city,
+            Maybe<AddressLine>.None);
+
+        //Act
+        Action updateAddressDetails = () => person.UpdateAddressDetails(
+            null!,
+            addResult.Value.Id,
+            postalCode,
+            region,
+            city,
+            Maybe<AddressLine>.None);
+
+        //Assert
+        updateAddressDetails.ShouldThrow<ArgumentNullException>()
+            .ParamName?.ToLowerInvariant().ShouldBe("specification");
+    }
+
+    [Fact]
+    public void UpdateAddressDetails_ShouldThrow_WhenEmptyAddressIdIsProvided()
+    {
+        //Arrange
+        Person person = PersonFactory.CreateRandom(Faker);
+        IAddressConsistencySpecification specification = new PolandAddressConsistencySpecification();
+        AddressPostalCode postalCode = AddressFactory.CreateFixedPostalCode();
+        AddressRegion region = AddressFactory.CreateFixedRegion();
+        AddressCity city = AddressFactory.CreateRandomCity(Faker);
+
+        //Act
+        Action updateAddressDetails = () => person.UpdateAddressDetails(
+            specification,
+            AddressId.Empty,
+            postalCode,
+            region,
+            city,
+            Maybe<AddressLine>.None);
+
+        //Assert
+        updateAddressDetails.ShouldThrow<ArgumentException>()
+            .ParamName?.ToLowerInvariant().ShouldBe("addressid");
+    }
+
+    [Fact]
+    public void UpdateAddressDetails_ShouldThrow_WhenNullPostalCodeIsProvided()
+    {
+        //Arrange
+        Person person = PersonFactory.CreateRandom(Faker);
+        IAddressConsistencySpecification specification = new PolandAddressConsistencySpecification();
+        AddressName name = AddressFactory.CreateRandomName(Faker);
+        AddressPostalCode postalCode = AddressFactory.CreateFixedPostalCode();
+        AddressRegion region = AddressFactory.CreateFixedRegion();
+        AddressCity city = AddressFactory.CreateRandomCity(Faker);
+
+        Result<Address> addResult = person.AddAddress(
+            specification,
+            CountryCode.PL,
+            name,
+            postalCode,
+            region,
+            city,
+            Maybe<AddressLine>.None);
+
+        //Act
+        Action updateAddressDetails = () => person.UpdateAddressDetails(
+            specification,
+            addResult.Value.Id,
+            null!,
+            region,
+            city,
+            Maybe<AddressLine>.None);
+
+        //Assert
+        updateAddressDetails.ShouldThrow<ArgumentNullException>()
+            .ParamName?.ToLowerInvariant().ShouldBe("postalcode");
+    }
+
+    [Fact]
+    public void UpdateAddressDetails_ShouldThrow_WhenNullRegionIsProvided()
+    {
+        //Arrange
+        Person person = PersonFactory.CreateRandom(Faker);
+        IAddressConsistencySpecification specification = new PolandAddressConsistencySpecification();
+        AddressName name = AddressFactory.CreateRandomName(Faker);
+        AddressPostalCode postalCode = AddressFactory.CreateFixedPostalCode();
+        AddressRegion region = AddressFactory.CreateFixedRegion();
+        AddressCity city = AddressFactory.CreateRandomCity(Faker);
+
+        Result<Address> addResult = person.AddAddress(
+            specification,
+            CountryCode.PL,
+            name,
+            postalCode,
+            region,
+            city,
+            Maybe<AddressLine>.None);
+
+        //Act
+        Action updateAddressDetails = () => person.UpdateAddressDetails(
+            specification,
+            addResult.Value.Id,
+            postalCode,
+            null!,
+            city,
+            Maybe<AddressLine>.None);
+
+        //Assert
+        updateAddressDetails.ShouldThrow<ArgumentNullException>()
+            .ParamName?.ToLowerInvariant().ShouldBe("region");
+    }
+
+    [Fact]
+    public void UpdateAddressDetails_ShouldThrow_WhenNullCityIsProvided()
+    {
+        //Arrange
+        Person person = PersonFactory.CreateRandom(Faker);
+        IAddressConsistencySpecification specification = new PolandAddressConsistencySpecification();
+        AddressName name = AddressFactory.CreateRandomName(Faker);
+        AddressPostalCode postalCode = AddressFactory.CreateFixedPostalCode();
+        AddressRegion region = AddressFactory.CreateFixedRegion();
+        AddressCity city = AddressFactory.CreateRandomCity(Faker);
+
+        Result<Address> addResult = person.AddAddress(
+            specification,
+            CountryCode.PL,
+            name,
+            postalCode,
+            region,
+            city,
+            Maybe<AddressLine>.None);
+
+        //Act
+        Action updateAddressDetails = () => person.UpdateAddressDetails(
+            specification,
+            addResult.Value.Id,
+            postalCode,
+            region,
+            null!,
+            Maybe<AddressLine>.None);
+
+        //Assert
+        updateAddressDetails.ShouldThrow<ArgumentNullException>()
+            .ParamName?.ToLowerInvariant().ShouldBe("city");
+    }
+
+    [Fact]
+    public void UpdateAddressDetails_ShouldThrow_WhenNullMaybeLineIsProvided()
+    {
+        //Arrange
+        Person person = PersonFactory.CreateRandom(Faker);
+        IAddressConsistencySpecification specification = new PolandAddressConsistencySpecification();
+        AddressName name = AddressFactory.CreateRandomName(Faker);
+        AddressPostalCode postalCode = AddressFactory.CreateFixedPostalCode();
+        AddressRegion region = AddressFactory.CreateFixedRegion();
+        AddressCity city = AddressFactory.CreateRandomCity(Faker);
+
+        Result<Address> addResult = person.AddAddress(
+            specification,
+            CountryCode.PL,
+            name,
+            postalCode,
+            region,
+            city,
+            Maybe<AddressLine>.None);
+
+        //Act
+        Action updateAddressDetails = () => person.UpdateAddressDetails(
+            specification,
+            addResult.Value.Id,
+            postalCode,
+            region,
+            city,
+            null!);
+
+        //Assert
+        updateAddressDetails.ShouldThrow<ArgumentNullException>()
+            .ParamName?.ToLowerInvariant().ShouldBe("maybeline");
+    }
+
+    [Fact]
+    public void UpdateAddressDetails_ShouldReturnFailure_WhenValidationFails()
+    {
+        //Arrange
+        Person person = PersonFactory.CreateRandom(Faker);
+        IAddressConsistencySpecification specification = new PolandAddressConsistencySpecification();
+        AddressName name = AddressFactory.CreateRandomName(Faker);
+        AddressPostalCode postalCode = AddressFactory.CreateFixedPostalCode();
+        AddressRegion region = AddressFactory.CreateFixedRegion();
+        AddressCity city = AddressFactory.CreateRandomCity(Faker);
+
+        Result<Address> addResult = person.AddAddress(
+            specification,
+            CountryCode.PL,
+            name,
+            postalCode,
+            region,
+            city,
+            Maybe<AddressLine>.None);
+
+        Result<AddressPostalCode> mismatchedPostalCodeResult = AddressPostalCode.Create("00-001");
+        mismatchedPostalCodeResult.EnsureSuccess();
+
+        //Act
+        Result result = person.UpdateAddressDetails(
+            specification,
+            addResult.Value.Id,
+            mismatchedPostalCodeResult.Value,
+            region,
+            city,
+            Maybe<AddressLine>.None);
+
+        //Assert
+        result.IsFailure.ShouldBeTrue();
+        result.Error.Code.ShouldBe(DomainErrors.AddressConsistency.PostalCodeRegionMismatchCode);
     }
 }

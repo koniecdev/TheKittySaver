@@ -3,6 +3,7 @@ using TheKittySaver.AdoptionSystem.API.Common;
 using TheKittySaver.AdoptionSystem.API.Extensions;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Entities;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Repositories;
+using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Services;
 using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.OptionMonad;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
@@ -21,13 +22,16 @@ internal sealed class DeleteCatGalleryItem : IEndpoint
     {
         private readonly ICatRepository _catRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ICatFileStorage _catFileStorage;
 
         public Handler(
             ICatRepository catRepository,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            ICatFileStorage catFileStorage)
         {
             _catRepository = catRepository;
             _unitOfWork = unitOfWork;
+            _catFileStorage = catFileStorage;
         }
 
         public async ValueTask<Result> Handle(Command command, CancellationToken cancellationToken)
@@ -44,6 +48,16 @@ internal sealed class DeleteCatGalleryItem : IEndpoint
             if (deleteResult.IsFailure)
             {
                 return deleteResult;
+            }
+
+            Result deleteFileResult = await _catFileStorage.DeleteGalleryItemAsync(
+                command.CatId,
+                command.GalleryItemId,
+                cancellationToken);
+
+            if (deleteFileResult.IsFailure)
+            {
+                return deleteFileResult;
             }
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);

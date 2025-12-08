@@ -1,5 +1,4 @@
 using TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
-using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.OptionMonad;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.AddressCompounds;
@@ -30,10 +29,9 @@ public sealed class AdoptionAnnouncementAddress : ValueObject
         ArgumentNullException.ThrowIfNull(city);
         ArgumentNullException.ThrowIfNull(line);
 
-        if (!specification.IsSatisfiedBy(countryCode, postalCode.Value, region.Value))
+        if (!specification.IsSatisfiedBy(countryCode, postalCode.Value, region.Value, out Error? error))
         {
-            return Result.Failure<AdoptionAnnouncementAddress>(
-                DomainErrors.AddressConsistency.PostalCodeRegionMismatch(postalCode.Value, region.Value));
+            return Result.Failure<AdoptionAnnouncementAddress>(error!);
         }
 
         AdoptionAnnouncementAddress instance = new(

@@ -8,9 +8,9 @@ namespace TheKittySaver.AdoptionSystem.API;
 
 internal static class RootDependencyInjection
 {
-    public static IServiceCollection Register(this IServiceCollection services)
+    public static IServiceCollection Register(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddInfrastructure();
+        services.AddInfrastructure(configuration);
         services.AddDomain();
         services.AddApi();
         services.AddPersistence(GetInterceptors);

@@ -108,6 +108,9 @@ public static partial class DomainErrors
     {
         public const string PostalCodeRegionMismatchCode = "AddressConsistency.PostalCodeRegionMismatch";
         public const string InvalidPostalCodeFormatCode = "AddressConsistency.InvalidPostalCodeFormat";
+        public const string InvalidRegionCode = "AddressConsistency.InvalidRegion";
+        public const string PostalCodeRequiredCode = "AddressConsistency.PostalCodeRequired";
+        public const string UnknownPostalCodePrefixCode = "AddressConsistency.UnknownPostalCodePrefix";
 
         public static Error PostalCodeRegionMismatch(string postalCode, string region)
             => new(
@@ -119,6 +122,24 @@ public static partial class DomainErrors
             => new(
                 InvalidPostalCodeFormatCode,
                 $"Postal code '{postalCode}' has invalid format for the specified country.",
+                TypeOfError.Validation);
+
+        public static Error InvalidRegion(string region)
+            => new(
+                InvalidRegionCode,
+                $"Region '{region}' is not a valid region for the specified country.",
+                TypeOfError.Validation);
+
+        public static Error PostalCodeRequired
+            => new(
+                PostalCodeRequiredCode,
+                "Postal code is required.",
+                TypeOfError.Validation);
+
+        public static Error UnknownPostalCodePrefix(string prefix)
+            => new(
+                UnknownPostalCodePrefixCode,
+                $"Postal code prefix '{prefix}' is not recognized for the specified country.",
                 TypeOfError.Validation);
     }
     

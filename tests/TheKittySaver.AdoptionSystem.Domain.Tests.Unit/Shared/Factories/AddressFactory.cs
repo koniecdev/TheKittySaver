@@ -72,9 +72,9 @@ internal static class AddressFactory
         return result.Value;
     }
 
-    public static AddressRegion CreateRandomRegion(Faker faker)
+    public static AddressRegion CreateFixedRegion()
     {
-        Result<AddressRegion> result = AddressRegion.Create(faker.Address.State());
+        Result<AddressRegion> result = AddressRegion.Create("Wielkopolskie");
         result.EnsureSuccess();
         return result.Value;
     }

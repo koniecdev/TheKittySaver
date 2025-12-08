@@ -4,6 +4,7 @@ using TheKittySaver.AdoptionSystem.API.Extensions;
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.CatAggregate.Gallery.Responses;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Entities;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Repositories;
+using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Services;
 using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.OptionMonad;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
@@ -14,19 +15,25 @@ namespace TheKittySaver.AdoptionSystem.API.Features.Gallery;
 
 internal sealed class CreateCatGalleryItem : IEndpoint
 {
-    internal sealed record Command(CatId CatId) : ICommand<Result<CatGalleryItemResponse>>;
+    internal sealed record Command(
+        CatId CatId,
+        Stream FileStream,
+        string ContentType) : ICommand<Result<CatGalleryItemResponse>>;
 
     internal sealed class Handler : ICommandHandler<Command, Result<CatGalleryItemResponse>>
     {
         private readonly ICatRepository _catRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ICatFileStorage _catFileStorage;
 
         public Handler(
             ICatRepository catRepository,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            ICatFileStorage catFileStorage)
         {
             _catRepository = catRepository;
             _unitOfWork = unitOfWork;
+            _catFileStorage = catFileStorage;
         }
 
         public async ValueTask<Result<CatGalleryItemResponse>> Handle(Command command, CancellationToken cancellationToken)
@@ -43,6 +50,18 @@ internal sealed class CreateCatGalleryItem : IEndpoint
             if (addGalleryItemResult.IsFailure)
             {
                 return Result.Failure<CatGalleryItemResponse>(addGalleryItemResult.Error);
+            }
+
+            Result saveFileResult = await _catFileStorage.SaveGalleryItemAsync(
+                command.CatId,
+                addGalleryItemResult.Value,
+                command.FileStream,
+                command.ContentType,
+                cancellationToken);
+
+            if (saveFileResult.IsFailure)
+            {
+                return Result.Failure<CatGalleryItemResponse>(saveFileResult.Error);
             }
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
@@ -62,16 +81,18 @@ internal sealed class CreateCatGalleryItem : IEndpoint
     {
         endpointRouteBuilder.MapPost("cats/{catId:guid}/gallery", async (
             Guid catId,
+            IFormFile file,
             ISender sender,
             CancellationToken cancellationToken) =>
         {
-            Command command = new(new CatId(catId));
+            await using Stream fileStream = file.OpenReadStream();
+            Command command = new(new CatId(catId), fileStream, file.ContentType);
 
             Result<CatGalleryItemResponse> commandResult = await sender.Send(command, cancellationToken);
 
             return commandResult.IsFailure
                 ? Results.Problem(commandResult.Error.ToProblemDetails())
                 : Results.Created($"/api/v1/cats/{catId}/gallery/{commandResult.Value.Id}", commandResult.Value);
-        });
+        }).DisableAntiforgery();
     }
 }
