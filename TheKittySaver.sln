@@ -37,6 +37,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "EntityFrameworkRelated", "E
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheKittySaver.AdoptionSystem.Calculators", "src\AdoptionSystem\TheKittySaver.AdoptionSystem.Calculators\TheKittySaver.AdoptionSystem.Calculators.csproj", "{4E769B44-DA8B-4D3E-BC32-C345CE76691A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheKittySaver.AdoptionSystem.API.Tests.Integration", "tests\TheKittySaver.AdoptionSystem.API.Tests.Integration\TheKittySaver.AdoptionSystem.API.Tests.Integration.csproj", "{2C78BAFC-C573-4418-B91F-C27FEFDA3A84}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,6 +89,10 @@ Global
 		{4E769B44-DA8B-4D3E-BC32-C345CE76691A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4E769B44-DA8B-4D3E-BC32-C345CE76691A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4E769B44-DA8B-4D3E-BC32-C345CE76691A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C78BAFC-C573-4418-B91F-C27FEFDA3A84}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C78BAFC-C573-4418-B91F-C27FEFDA3A84}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C78BAFC-C573-4418-B91F-C27FEFDA3A84}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C78BAFC-C573-4418-B91F-C27FEFDA3A84}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{09730183-4947-4668-BBDE-1C2E42682029} = {D7E265E7-B9B7-4623-AE53-F4E8AA78A498}
@@ -102,5 +108,6 @@ Global
 		{FF37E434-21C6-4B76-B0B6-6411F246D276} = {B51AE6DA-2019-425F-9B6D-2C101122CF6B}
 		{14098AF1-4B12-4FDC-A7A8-1DC179CCA85E} = {B51AE6DA-2019-425F-9B6D-2C101122CF6B}
 		{4E769B44-DA8B-4D3E-BC32-C345CE76691A} = {1121B2CB-1F63-46AC-8773-6246B51E71DA}
+		{2C78BAFC-C573-4418-B91F-C27FEFDA3A84} = {D7E265E7-B9B7-4623-AE53-F4E8AA78A498}
 	EndGlobalSection
 EndGlobal
