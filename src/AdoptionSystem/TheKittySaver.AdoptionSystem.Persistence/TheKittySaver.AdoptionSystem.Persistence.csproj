@@ -1,24 +1,27 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <ItemGroup>
-    <PackageReference Include="FluentValidation" />
-    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Configuration" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" />
-    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\TheKittySaver.AdoptionSystem.Domain.EntityFramework\TheKittySaver.AdoptionSystem.Domain.EntityFramework.csproj" />
-    <ProjectReference Include="..\TheKittySaver.AdoptionSystem.ReadModels.EntityFramework\TheKittySaver.AdoptionSystem.ReadModels.EntityFramework.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="FluentValidation"/>
+        <PackageReference Include="FluentValidation.DependencyInjectionExtensions"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.Extensions.Configuration"/>
+        <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables"/>
+        <PackageReference Include="Microsoft.Extensions.Configuration.Json"/>
+        <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\TheKittySaver.AdoptionSystem.Domain.EntityFramework\TheKittySaver.AdoptionSystem.Domain.EntityFramework.csproj"/>
+        <ProjectReference Include="..\TheKittySaver.AdoptionSystem.ReadModels.EntityFramework\TheKittySaver.AdoptionSystem.ReadModels.EntityFramework.csproj"/>
+    </ItemGroup>
+    <ItemGroup>
+        <InternalsVisibleTo Include="TheKittySaver.AdoptionSystem.API.Tests.Integration"/>
+    </ItemGroup>
 </Project>

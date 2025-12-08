@@ -25,5 +25,8 @@
       <ProjectReference Include="..\TheKittySaver.AdoptionSystem.Infrastructure\TheKittySaver.AdoptionSystem.Infrastructure.csproj" />
       <ProjectReference Include="..\TheKittySaver.AdoptionSystem.Persistence\TheKittySaver.AdoptionSystem.Persistence.csproj" />
     </ItemGroup>
-
+    
+    <ItemGroup>
+        <InternalsVisibleTo Include="TheKittySaver.AdoptionSystem.API.Tests.Integration" />
+    </ItemGroup>
 </Project>
