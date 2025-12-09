@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text.RegularExpressions;
 using TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
 using TheKittySaver.AdoptionSystem.Domain.Core.Enums;
 using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
@@ -174,7 +175,11 @@ public sealed partial class PolandAddressConsistencySpecification : IAddressCons
             ["zachodniopomorskie"] = PolandVoivodeship.Zachodniopomorskie,
         };
 
-    public bool IsSatisfiedBy(CountryCode countryCode, string postalCode, string region, out Error? error)
+    public bool IsSatisfiedBy(
+        CountryCode countryCode,
+        string postalCode,
+        string region,
+        [NotNullWhen(false)] out Error? error)
     {
         Ensure.IsInEnum(countryCode);
         
