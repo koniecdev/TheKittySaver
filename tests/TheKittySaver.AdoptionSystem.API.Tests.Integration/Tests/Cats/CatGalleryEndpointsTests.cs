@@ -1,7 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
-using System.Text;
 using System.Text.Json;
+using Bogus;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -19,10 +19,11 @@ using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
 namespace TheKittySaver.AdoptionSystem.API.Tests.Integration.Tests.Cats;
 
 [Collection("Api")]
-public class CatGalleryEndpointsTests : IAsyncLifetime
+public sealed class CatGalleryEndpointsTests : IAsyncLifetime
 {
     private readonly HttpClient _httpClient;
     private readonly JsonSerializerOptions _jsonSerializerOptions;
+    private readonly Faker _faker = new();
 
     public CatGalleryEndpointsTests(TheKittySaverApiFactory appFactory)
     {
@@ -30,8 +31,6 @@ public class CatGalleryEndpointsTests : IAsyncLifetime
         _jsonSerializerOptions =
             appFactory.Services.GetRequiredService<IOptions<JsonOptions>>().Value.SerializerOptions;
     }
-
-    #region Create Gallery Item Tests
 
     [Fact]
     public async Task CreateCatGalleryItem_ShouldReturnGalleryItem_WhenValidFileIsProvided()
@@ -103,10 +102,6 @@ public class CatGalleryEndpointsTests : IAsyncLifetime
         item1.DisplayOrder.ShouldBe(0);
         item2.DisplayOrder.ShouldBe(1);
     }
-
-    #endregion
-
-    #region Get Gallery Item Tests
 
     [Fact]
     public async Task GetCatGalleryItem_ShouldReturnGalleryItem_WhenItemExists()
@@ -182,10 +177,6 @@ public class CatGalleryEndpointsTests : IAsyncLifetime
         httpResponseMessage.Content.Headers.ContentType?.MediaType.ShouldBe("image/png");
     }
 
-    #endregion
-
-    #region Delete Gallery Item Tests
-
     [Fact]
     public async Task DeleteCatGalleryItem_ShouldReturnNoContent_WhenItemExists()
     {
@@ -222,10 +213,6 @@ public class CatGalleryEndpointsTests : IAsyncLifetime
         // Assert
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
-
-    #endregion
-
-    #region Reorder Gallery Tests
 
     [Fact]
     public async Task ReorderCatGallery_ShouldReorderItems_WhenValidOrderIsProvided()
@@ -272,10 +259,6 @@ public class CatGalleryEndpointsTests : IAsyncLifetime
         // Assert
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
-
-    #endregion
-
-    #region Thumbnail Tests
 
     [Fact]
     public async Task UpsertCatThumbnail_ShouldReturnThumbnail_WhenValidFileIsProvided()
@@ -329,7 +312,6 @@ public class CatGalleryEndpointsTests : IAsyncLifetime
         CatThumbnailResponse thumbnail2 = JsonSerializer.Deserialize<CatThumbnailResponse>(stringResponse2, _jsonSerializerOptions)!;
 
         thumbnail2.CatId.ShouldBe(cat.Id);
-        // The ID might be the same or different depending on implementation
     }
 
     [Fact]
@@ -402,17 +384,13 @@ public class CatGalleryEndpointsTests : IAsyncLifetime
         httpResponseMessage.Content.Headers.ContentType?.MediaType.ShouldBe("image/png");
     }
 
-    #endregion
-
-    #region Helper Methods
-
     private async Task<PersonResponse> CreateTestPersonAsync()
     {
         CreatePersonRequest request = new(
             IdentityId.New(),
-            $"testuser_{Guid.NewGuid():N}"[..20],
-            $"test_{Guid.NewGuid():N}@example.com"[..30],
-            "+48535143330");
+            _faker.Internet.UserName(),
+            _faker.Internet.Email(),
+            $"+48{new Random().Next(100000000, 999999999)}");
 
         HttpResponseMessage httpResponseMessage = await _httpClient.PostAsJsonAsync("api/v1/persons", request);
         httpResponseMessage.EnsureSuccessStatusCode();
@@ -422,26 +400,26 @@ public class CatGalleryEndpointsTests : IAsyncLifetime
             ?? throw new JsonException("Failed to deserialize PersonResponse");
     }
 
-    private async Task<CatResponse> CreateTestCatAsync(PersonId personId, string name = "Mruczek")
+    private async Task<CatResponse> CreateTestCatAsync(PersonId personId, string? name = null)
     {
         CreateCatRequest request = new(
             personId,
-            name,
-            "Friendly orange cat",
-            3,
-            CatGenderType.Male,
-            ColorType.Orange,
-            4.5m,
+            name ?? _faker.Name.FirstName(),
+            _faker.Lorem.Sentence(),
+            _faker.Random.Int(1, 15),
+            _faker.PickRandom<CatGenderType>(),
+            _faker.PickRandom<ColorType>(),
+            _faker.Random.Decimal(2.0m, 8.0m),
             HealthStatusType.Healthy,
             false,
             null,
             SpecialNeedsSeverityType.None,
-            TemperamentType.Friendly,
+            _faker.PickRandom<TemperamentType>(),
             0,
             null,
             null,
             ListingSourceType.Shelter,
-            "Test Shelter",
+            _faker.Company.CompanyName(),
             true,
             FivStatus.Negative,
             FelvStatus.Negative,
@@ -483,30 +461,29 @@ public class CatGalleryEndpointsTests : IAsyncLifetime
 
     private static MultipartFormDataContent CreateTestImageContent()
     {
-        // Create a minimal valid PNG file (1x1 pixel transparent PNG)
         byte[] pngBytes =
         [
-            0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, // PNG signature
-            0x00, 0x00, 0x00, 0x0D, 0x49, 0x48, 0x44, 0x52, // IHDR chunk
+            0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A,
+            0x00, 0x00, 0x00, 0x0D, 0x49, 0x48, 0x44, 0x52,
             0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01,
             0x08, 0x06, 0x00, 0x00, 0x00, 0x1F, 0x15, 0xC4,
-            0x89, 0x00, 0x00, 0x00, 0x0A, 0x49, 0x44, 0x41, // IDAT chunk
+            0x89, 0x00, 0x00, 0x00, 0x0A, 0x49, 0x44, 0x41,
             0x54, 0x78, 0x9C, 0x63, 0x00, 0x01, 0x00, 0x00,
             0x05, 0x00, 0x01, 0x0D, 0x0A, 0x2D, 0xB4, 0x00,
-            0x00, 0x00, 0x00, 0x49, 0x45, 0x4E, 0x44, 0xAE, // IEND chunk
+            0x00, 0x00, 0x00, 0x49, 0x45, 0x4E, 0x44, 0xAE,
             0x42, 0x60, 0x82
         ];
 
-        ByteArrayContent fileContent = new(pngBytes);
+        using ByteArrayContent fileContent = new(pngBytes);
         fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/png");
 
-        MultipartFormDataContent content = new();
-        content.Add(fileContent, "file", "test.png");
+        MultipartFormDataContent content = new()
+        {
+            { fileContent, "file", "test.png" }
+        };
 
         return content;
     }
-
-    #endregion
 
     public Task InitializeAsync() => Task.CompletedTask;
     public Task DisposeAsync() => Task.CompletedTask;

@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
+using Bogus;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -12,10 +13,11 @@ using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
 namespace TheKittySaver.AdoptionSystem.API.Tests.Integration.Tests.Persons;
 
 [Collection("Api")]
-public class PersonEndpointsTests : IAsyncLifetime
+public sealed class PersonEndpointsTests : IAsyncLifetime
 {
     private readonly HttpClient _httpClient;
     private readonly JsonSerializerOptions _jsonSerializerOptions;
+    private readonly Faker _faker = new();
 
     public PersonEndpointsTests(TheKittySaverApiFactory appFactory)
     {
@@ -23,8 +25,6 @@ public class PersonEndpointsTests : IAsyncLifetime
         _jsonSerializerOptions =
             appFactory.Services.GetRequiredService<IOptions<JsonOptions>>().Value.SerializerOptions;
     }
-
-    #region Create Person Tests
 
     [Fact]
     public async Task CreatePerson_ShouldReturnPerson_WhenValidDataIsProvided()
@@ -34,7 +34,7 @@ public class PersonEndpointsTests : IAsyncLifetime
             IdentityId.New(),
             "testuser",
             "testuser@example.com",
-            "+48535143330");
+            $"+48{new Random().Next(100000000, 999999999)}");
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.PostAsJsonAsync("api/v1/persons", request);
@@ -48,9 +48,9 @@ public class PersonEndpointsTests : IAsyncLifetime
             ?? throw new JsonException("Failed to deserialize PersonResponse");
 
         personResponse.ShouldNotBeNull();
-        personResponse.Username.ShouldBe("testuser");
-        personResponse.Email.ShouldBe("testuser@example.com");
-        personResponse.PhoneNumber.ShouldBe("+48535143330");
+        personResponse.Username.ShouldBe(request.Username);
+        personResponse.Email.ShouldBe(request.Email);
+        personResponse.PhoneNumber.ShouldBe(request.PhoneNumber);
     }
 
     [Fact]
@@ -59,9 +59,9 @@ public class PersonEndpointsTests : IAsyncLifetime
         // Arrange
         CreatePersonRequest request = new(
             IdentityId.New(),
-            "testuser",
+            _faker.Internet.UserName(),
             "invalid-email",
-            "+48535143330");
+            $"+48{new Random().Next(100000000, 999999999)}");
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.PostAsJsonAsync("api/v1/persons", request);
@@ -76,8 +76,8 @@ public class PersonEndpointsTests : IAsyncLifetime
         // Arrange
         CreatePersonRequest request = new(
             IdentityId.New(),
-            "testuser",
-            "testuser@example.com",
+            _faker.Internet.UserName(),
+            _faker.Internet.Email(),
             "invalid-phone");
 
         // Act
@@ -86,10 +86,6 @@ public class PersonEndpointsTests : IAsyncLifetime
         // Assert
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
     }
-
-    #endregion
-
-    #region Get Person Tests
 
     [Fact]
     public async Task GetPerson_ShouldReturnPerson_WhenPersonExists()
@@ -132,7 +128,7 @@ public class PersonEndpointsTests : IAsyncLifetime
     {
         // Arrange
         await CreateTestPersonAsync();
-        await CreateTestPersonAsync("anotheruser", "another@example.com");
+        await CreateTestPersonAsync();
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.GetAsync("api/v1/persons");
@@ -140,10 +136,6 @@ public class PersonEndpointsTests : IAsyncLifetime
         // Assert
         httpResponseMessage.EnsureSuccessStatusCode();
     }
-
-    #endregion
-
-    #region Update Person Tests
 
     [Fact]
     public async Task UpdatePerson_ShouldReturnUpdatedPerson_WhenValidDataIsProvided()
@@ -208,10 +200,6 @@ public class PersonEndpointsTests : IAsyncLifetime
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
     }
 
-    #endregion
-
-    #region Delete Person Tests
-
     [Fact]
     public async Task DeletePerson_ShouldReturnNoContent_WhenPersonExists()
     {
@@ -243,20 +231,13 @@ public class PersonEndpointsTests : IAsyncLifetime
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
-    #endregion
-
-    #region Helper Methods
-
-    private async Task<PersonResponse> CreateTestPersonAsync(
-        string username = "testuser",
-        string email = "testuser@example.com",
-        string phoneNumber = "+48535143330")
+    private async Task<PersonResponse> CreateTestPersonAsync()
     {
         CreatePersonRequest request = new(
             IdentityId.New(),
-            username,
-            email,
-            phoneNumber);
+            _faker.Internet.UserName(),
+            _faker.Internet.Email(),
+            $"+48{new Random().Next(100000000, 999999999)}");
 
         HttpResponseMessage httpResponseMessage = await _httpClient.PostAsJsonAsync("api/v1/persons", request);
         httpResponseMessage.EnsureSuccessStatusCode();
@@ -265,8 +246,6 @@ public class PersonEndpointsTests : IAsyncLifetime
         return JsonSerializer.Deserialize<PersonResponse>(stringResponse, _jsonSerializerOptions)
             ?? throw new JsonException("Failed to deserialize PersonResponse");
     }
-
-    #endregion
 
     public Task InitializeAsync() => Task.CompletedTask;
     public Task DisposeAsync() => Task.CompletedTask;

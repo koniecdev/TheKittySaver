@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
+using Bogus;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -20,10 +21,11 @@ using TheKittySaver.AdoptionSystem.Primitives.Enums;
 namespace TheKittySaver.AdoptionSystem.API.Tests.Integration.Tests.Cats;
 
 [Collection("Api")]
-public class CatAssignmentEndpointsTests : IAsyncLifetime
+public sealed class CatAssignmentEndpointsTests : IAsyncLifetime
 {
     private readonly HttpClient _httpClient;
     private readonly JsonSerializerOptions _jsonSerializerOptions;
+    private readonly Faker _faker = new();
 
     public CatAssignmentEndpointsTests(TheKittySaverApiFactory appFactory)
     {
@@ -31,8 +33,6 @@ public class CatAssignmentEndpointsTests : IAsyncLifetime
         _jsonSerializerOptions =
             appFactory.Services.GetRequiredService<IOptions<JsonOptions>>().Value.SerializerOptions;
     }
-
-    #region Assign Cat Tests
 
     [Fact]
     public async Task AssignCat_ShouldReturnSuccess_WhenCatAndAnnouncementExist()
@@ -93,10 +93,6 @@ public class CatAssignmentEndpointsTests : IAsyncLifetime
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
-    #endregion
-
-    #region Reassign Cat Tests
-
     [Fact]
     public async Task ReassignCat_ShouldReturnSuccess_WhenCatIsAlreadyAssigned()
     {
@@ -112,7 +108,7 @@ public class CatAssignmentEndpointsTests : IAsyncLifetime
         assignResponse.EnsureSuccessStatusCode();
 
         // Create second cat and announcement for reassignment
-        CatResponse cat2 = await CreateTestCatAsync(person.Id, "SecondCat");
+        CatResponse cat2 = await CreateTestCatAsync(person.Id);
         AdoptionAnnouncementResponse announcement2 = await CreateTestAdoptionAnnouncementAsync(cat2.Id);
 
         ReassignCatRequest reassignRequest = new(announcement2.Id);
@@ -147,10 +143,6 @@ public class CatAssignmentEndpointsTests : IAsyncLifetime
         // Assert
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
-
-    #endregion
-
-    #region Unassign Cat Tests
 
     [Fact]
     public async Task UnassignCat_ShouldReturnSuccess_WhenCatIsAssigned()
@@ -192,10 +184,6 @@ public class CatAssignmentEndpointsTests : IAsyncLifetime
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
-    #endregion
-
-    #region Claim Cat Tests
-
     [Fact]
     public async Task ClaimCat_ShouldReturnSuccess_WhenCatIsAssigned()
     {
@@ -232,17 +220,13 @@ public class CatAssignmentEndpointsTests : IAsyncLifetime
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
-    #endregion
-
-    #region Helper Methods
-
     private async Task<PersonResponse> CreateTestPersonAsync()
     {
         CreatePersonRequest request = new(
             IdentityId.New(),
-            $"testuser_{Guid.NewGuid():N}"[..20],
-            $"test_{Guid.NewGuid():N}@example.com"[..30],
-            "+48535143330");
+            _faker.Internet.UserName(),
+            _faker.Internet.Email(),
+            $"+48{new Random().Next(100000000, 999999999)}");
 
         HttpResponseMessage httpResponseMessage = await _httpClient.PostAsJsonAsync("api/v1/persons", request);
         httpResponseMessage.EnsureSuccessStatusCode();
@@ -252,26 +236,26 @@ public class CatAssignmentEndpointsTests : IAsyncLifetime
             ?? throw new JsonException("Failed to deserialize PersonResponse");
     }
 
-    private async Task<CatResponse> CreateTestCatAsync(PersonId personId, string name = "Mruczek")
+    private async Task<CatResponse> CreateTestCatAsync(PersonId personId, string? name = null)
     {
         CreateCatRequest request = new(
             personId,
-            name,
-            "Friendly orange cat",
-            3,
-            CatGenderType.Male,
-            ColorType.Orange,
-            4.5m,
+            name ?? _faker.Name.FirstName(),
+            _faker.Lorem.Sentence(),
+            _faker.Random.Int(1, 15),
+            _faker.PickRandom<CatGenderType>(),
+            _faker.PickRandom<ColorType>(),
+            _faker.Random.Decimal(2.0m, 8.0m),
             HealthStatusType.Healthy,
             false,
             null,
             SpecialNeedsSeverityType.None,
-            TemperamentType.Friendly,
+            _faker.PickRandom<TemperamentType>(),
             0,
             null,
             null,
             ListingSourceType.Shelter,
-            "Test Shelter",
+            _faker.Company.CompanyName(),
             true,
             FivStatus.Negative,
             FelvStatus.Negative,
@@ -289,13 +273,13 @@ public class CatAssignmentEndpointsTests : IAsyncLifetime
     {
         CreateAdoptionAnnouncementRequest request = new(
             catId,
-            "Test adoption announcement description",
+            _faker.Lorem.Paragraph(),
             CountryCode.PL,
-            "00-001",
-            "Mazowieckie",
-            "Warszawa",
-            "ul. Testowa 1",
-            "contact@shelter.pl",
+            _faker.Address.ZipCode("##-###"),
+            _faker.Address.State(),
+            _faker.Address.City(),
+            _faker.Address.StreetAddress(),
+            _faker.Internet.Email(),
             "+48600700800");
 
         HttpResponseMessage httpResponseMessage = await _httpClient.PostAsJsonAsync(
@@ -316,8 +300,6 @@ public class CatAssignmentEndpointsTests : IAsyncLifetime
         return JsonSerializer.Deserialize<CatResponse>(stringResponse, _jsonSerializerOptions)
             ?? throw new JsonException("Failed to deserialize CatResponse");
     }
-
-    #endregion
 
     public Task InitializeAsync() => Task.CompletedTask;
     public Task DisposeAsync() => Task.CompletedTask;

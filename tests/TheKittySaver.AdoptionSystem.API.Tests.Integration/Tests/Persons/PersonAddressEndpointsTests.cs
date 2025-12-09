@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
+using Bogus;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -13,10 +14,11 @@ using TheKittySaver.AdoptionSystem.Primitives.Enums;
 namespace TheKittySaver.AdoptionSystem.API.Tests.Integration.Tests.Persons;
 
 [Collection("Api")]
-public class PersonAddressEndpointsTests : IAsyncLifetime
+public sealed class PersonAddressEndpointsTests : IAsyncLifetime
 {
     private readonly HttpClient _httpClient;
     private readonly JsonSerializerOptions _jsonSerializerOptions;
+    private readonly Faker _faker = new();
 
     public PersonAddressEndpointsTests(TheKittySaverApiFactory appFactory)
     {
@@ -24,8 +26,6 @@ public class PersonAddressEndpointsTests : IAsyncLifetime
         _jsonSerializerOptions =
             appFactory.Services.GetRequiredService<IOptions<JsonOptions>>().Value.SerializerOptions;
     }
-
-    #region Create Address Tests
 
     [Fact]
     public async Task CreatePersonAddress_ShouldReturnAddress_WhenValidDataIsProvided()
@@ -69,10 +69,10 @@ public class PersonAddressEndpointsTests : IAsyncLifetime
         PersonResponse person = await CreateTestPersonAsync();
         CreatePersonAddressRequest request = new(
             CountryCode.PL,
-            "Home",
-            "00-001",
-            "Mazowieckie",
-            "Warszawa");
+            _faker.Lorem.Word(),
+            _faker.Address.ZipCode("##-###"),
+            _faker.Address.State(),
+            _faker.Address.City());
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.PostAsJsonAsync(
@@ -96,10 +96,10 @@ public class PersonAddressEndpointsTests : IAsyncLifetime
         Guid nonExistentPersonId = Guid.NewGuid();
         CreatePersonAddressRequest request = new(
             CountryCode.PL,
-            "Home",
-            "00-001",
-            "Mazowieckie",
-            "Warszawa");
+            _faker.Lorem.Word(),
+            _faker.Address.ZipCode("##-###"),
+            _faker.Address.State(),
+            _faker.Address.City());
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.PostAsJsonAsync(
@@ -108,10 +108,6 @@ public class PersonAddressEndpointsTests : IAsyncLifetime
         // Assert
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
-
-    #endregion
-
-    #region Get Address Tests
 
     [Fact]
     public async Task GetPersonAddress_ShouldReturnAddress_WhenAddressExists()
@@ -156,8 +152,8 @@ public class PersonAddressEndpointsTests : IAsyncLifetime
     {
         // Arrange
         PersonResponse person = await CreateTestPersonAsync();
-        await CreateTestAddressAsync(person.Id, "Home");
-        await CreateTestAddressAsync(person.Id, "Work");
+        await CreateTestAddressAsync(person.Id);
+        await CreateTestAddressAsync(person.Id);
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.GetAsync(
@@ -166,10 +162,6 @@ public class PersonAddressEndpointsTests : IAsyncLifetime
         // Assert
         httpResponseMessage.EnsureSuccessStatusCode();
     }
-
-    #endregion
-
-    #region Update Address Tests
 
     [Fact]
     public async Task UpdatePersonAddress_ShouldReturnUpdatedAddress_WhenValidDataIsProvided()
@@ -221,10 +213,6 @@ public class PersonAddressEndpointsTests : IAsyncLifetime
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
-    #endregion
-
-    #region Delete Address Tests
-
     [Fact]
     public async Task DeletePersonAddress_ShouldReturnNoContent_WhenAddressExists()
     {
@@ -260,17 +248,14 @@ public class PersonAddressEndpointsTests : IAsyncLifetime
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
-    #endregion
-
-    #region Helper Methods
-
     private async Task<PersonResponse> CreateTestPersonAsync()
     {
+        int number = new Random().Next(100000000, 999999999);
         CreatePersonRequest request = new(
             IdentityId.New(),
-            $"testuser_{Guid.NewGuid():N}".Substring(0, 20),
-            $"test_{Guid.NewGuid():N}@example.com".Substring(0, 30),
-            "+48535143330");
+            _faker.Internet.UserName(),
+            _faker.Internet.Email(),
+            $"+48{number}");
 
         HttpResponseMessage httpResponseMessage = await _httpClient.PostAsJsonAsync("api/v1/persons", request);
         httpResponseMessage.EnsureSuccessStatusCode();
@@ -280,15 +265,22 @@ public class PersonAddressEndpointsTests : IAsyncLifetime
             ?? throw new JsonException("Failed to deserialize PersonResponse");
     }
 
-    private async Task<PersonAddressResponse> CreateTestAddressAsync(PersonId personId, string name = "Home")
+    private async Task<PersonAddressResponse> CreateTestAddressAsync(PersonId personId, string? name = null)
     {
+        List<(string zipCode, string voivodeship)> polishData =
+        [
+            ("89-240", "Kujawsko-Pomorskie"),
+            ("00-001", "Warmińsko-Mazurskie"),
+            ("60-365", "Wielkopolskie")
+        ];
+        int randomIndex = _faker.Random.Int(0, polishData.Count-1);
         CreatePersonAddressRequest request = new(
             CountryCode.PL,
-            name,
-            "00-001",
-            "Mazowieckie",
-            "Warszawa",
-            "ul. Testowa 1");
+            name ?? _faker.Lorem.Word(),
+            polishData[randomIndex].zipCode,
+            polishData[randomIndex].voivodeship,
+            _faker.Address.City(),
+            _faker.Address.StreetAddress());
 
         HttpResponseMessage httpResponseMessage = await _httpClient.PostAsJsonAsync(
             $"api/v1/persons/{personId.Value}/addresses", request);
@@ -298,8 +290,6 @@ public class PersonAddressEndpointsTests : IAsyncLifetime
         return JsonSerializer.Deserialize<PersonAddressResponse>(stringResponse, _jsonSerializerOptions)
             ?? throw new JsonException("Failed to deserialize PersonAddressResponse");
     }
-
-    #endregion
 
     public Task InitializeAsync() => Task.CompletedTask;
     public Task DisposeAsync() => Task.CompletedTask;

@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
+using Bogus;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -16,10 +17,11 @@ using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
 namespace TheKittySaver.AdoptionSystem.API.Tests.Integration.Tests.Cats;
 
 [Collection("Api")]
-public class CatEndpointsTests : IAsyncLifetime
+public sealed class CatEndpointsTests : IAsyncLifetime
 {
     private readonly HttpClient _httpClient;
     private readonly JsonSerializerOptions _jsonSerializerOptions;
+    private readonly Faker _faker = new();
 
     public CatEndpointsTests(TheKittySaverApiFactory appFactory)
     {
@@ -27,8 +29,6 @@ public class CatEndpointsTests : IAsyncLifetime
         _jsonSerializerOptions =
             appFactory.Services.GetRequiredService<IOptions<JsonOptions>>().Value.SerializerOptions;
     }
-
-    #region Create Cat Tests
 
     [Fact]
     public async Task CreateCat_ShouldReturnCat_WhenValidDataIsProvided()
@@ -161,10 +161,6 @@ public class CatEndpointsTests : IAsyncLifetime
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
-    #endregion
-
-    #region Get Cat Tests
-
     [Fact]
     public async Task GetCat_ShouldReturnCat_WhenCatExists()
     {
@@ -205,8 +201,8 @@ public class CatEndpointsTests : IAsyncLifetime
     {
         // Arrange
         PersonResponse person = await CreateTestPersonAsync();
-        await CreateTestCatAsync(person.Id, "Cat1");
-        await CreateTestCatAsync(person.Id, "Cat2");
+        await CreateTestCatAsync(person.Id);
+        await CreateTestCatAsync(person.Id);
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.GetAsync("api/v1/cats");
@@ -214,10 +210,6 @@ public class CatEndpointsTests : IAsyncLifetime
         // Assert
         httpResponseMessage.EnsureSuccessStatusCode();
     }
-
-    #endregion
-
-    #region Update Cat Tests
 
     [Fact]
     public async Task UpdateCat_ShouldReturnUpdatedCat_WhenValidDataIsProvided()
@@ -300,10 +292,6 @@ public class CatEndpointsTests : IAsyncLifetime
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
-    #endregion
-
-    #region Delete Cat Tests
-
     [Fact]
     public async Task DeleteCat_ShouldReturnNoContent_WhenCatExists()
     {
@@ -335,17 +323,13 @@ public class CatEndpointsTests : IAsyncLifetime
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
-    #endregion
-
-    #region Helper Methods
-
     private async Task<PersonResponse> CreateTestPersonAsync()
     {
         CreatePersonRequest request = new(
             IdentityId.New(),
-            $"testuser_{Guid.NewGuid():N}"[..20],
-            $"test_{Guid.NewGuid():N}@example.com"[..30],
-            "+48535143330");
+            _faker.Internet.UserName(),
+            _faker.Internet.Email(),
+            $"+48{new Random().Next(100000000, 999999999)}");
 
         HttpResponseMessage httpResponseMessage = await _httpClient.PostAsJsonAsync("api/v1/persons", request);
         httpResponseMessage.EnsureSuccessStatusCode();
@@ -355,7 +339,7 @@ public class CatEndpointsTests : IAsyncLifetime
             ?? throw new JsonException("Failed to deserialize PersonResponse");
     }
 
-    private async Task<CatResponse> CreateTestCatAsync(PersonId personId, string name = "Mruczek")
+    private async Task<CatResponse> CreateTestCatAsync(PersonId personId, string? name = null)
     {
         CreateCatRequest request = CreateValidCatRequest(personId, name);
 
@@ -367,11 +351,11 @@ public class CatEndpointsTests : IAsyncLifetime
             ?? throw new JsonException("Failed to deserialize CatResponse");
     }
 
-    private static CreateCatRequest CreateValidCatRequest(PersonId personId, string name = "Mruczek")
+    private static CreateCatRequest CreateValidCatRequest(PersonId personId, string? name = null)
     {
         return new CreateCatRequest(
             personId,
-            name,
+            name ?? "Mruczek",
             "Friendly orange cat",
             3,
             CatGenderType.Male,
@@ -392,8 +376,6 @@ public class CatEndpointsTests : IAsyncLifetime
             FelvStatus.Negative,
             DateOnly.FromDateTime(DateTime.UtcNow.AddMonths(-1)));
     }
-
-    #endregion
 
     public Task InitializeAsync() => Task.CompletedTask;
     public Task DisposeAsync() => Task.CompletedTask;

@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
+using Bogus;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -18,10 +19,11 @@ using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
 namespace TheKittySaver.AdoptionSystem.API.Tests.Integration.Tests.Cats;
 
 [Collection("Api")]
-public class CatVaccinationEndpointsTests : IAsyncLifetime
+public sealed class CatVaccinationEndpointsTests : IAsyncLifetime
 {
     private readonly HttpClient _httpClient;
     private readonly JsonSerializerOptions _jsonSerializerOptions;
+    private readonly Faker _faker = new();
 
     public CatVaccinationEndpointsTests(TheKittySaverApiFactory appFactory)
     {
@@ -29,8 +31,6 @@ public class CatVaccinationEndpointsTests : IAsyncLifetime
         _jsonSerializerOptions =
             appFactory.Services.GetRequiredService<IOptions<JsonOptions>>().Value.SerializerOptions;
     }
-
-    #region Create Vaccination Tests
 
     [Fact]
     public async Task CreateCatVaccination_ShouldReturnVaccination_WhenValidDataIsProvided()
@@ -133,10 +133,6 @@ public class CatVaccinationEndpointsTests : IAsyncLifetime
         getResponse.EnsureSuccessStatusCode();
     }
 
-    #endregion
-
-    #region Get Vaccination Tests
-
     [Fact]
     public async Task GetCatVaccination_ShouldReturnVaccination_WhenVaccinationExists()
     {
@@ -194,10 +190,6 @@ public class CatVaccinationEndpointsTests : IAsyncLifetime
         httpResponseMessage.EnsureSuccessStatusCode();
     }
 
-    #endregion
-
-    #region Update Vaccination Tests
-
     [Fact]
     public async Task UpdateCatVaccination_ShouldReturnUpdatedVaccination_WhenValidDataIsProvided()
     {
@@ -247,10 +239,6 @@ public class CatVaccinationEndpointsTests : IAsyncLifetime
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
-    #endregion
-
-    #region Delete Vaccination Tests
-
     [Fact]
     public async Task DeleteCatVaccination_ShouldReturnNoContent_WhenVaccinationExists()
     {
@@ -288,17 +276,13 @@ public class CatVaccinationEndpointsTests : IAsyncLifetime
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
-    #endregion
-
-    #region Helper Methods
-
     private async Task<PersonResponse> CreateTestPersonAsync()
     {
         CreatePersonRequest request = new(
             IdentityId.New(),
-            $"testuser_{Guid.NewGuid():N}"[..20],
-            $"test_{Guid.NewGuid():N}@example.com"[..30],
-            "+48535143330");
+            _faker.Internet.UserName(),
+            _faker.Internet.Email(),
+            $"+48{new Random().Next(100000000, 999999999)}");
 
         HttpResponseMessage httpResponseMessage = await _httpClient.PostAsJsonAsync("api/v1/persons", request);
         httpResponseMessage.EnsureSuccessStatusCode();
@@ -308,26 +292,26 @@ public class CatVaccinationEndpointsTests : IAsyncLifetime
             ?? throw new JsonException("Failed to deserialize PersonResponse");
     }
 
-    private async Task<CatResponse> CreateTestCatAsync(PersonId personId, string name = "Mruczek")
+    private async Task<CatResponse> CreateTestCatAsync(PersonId personId, string? name = null)
     {
         CreateCatRequest request = new(
             personId,
-            name,
-            "Friendly orange cat",
-            3,
-            CatGenderType.Male,
-            ColorType.Orange,
-            4.5m,
+            name ?? _faker.Name.FirstName(),
+            _faker.Lorem.Sentence(),
+            _faker.Random.Int(1, 15),
+            _faker.PickRandom<CatGenderType>(),
+            _faker.PickRandom<ColorType>(),
+            _faker.Random.Decimal(2.0m, 8.0m),
             HealthStatusType.Healthy,
             false,
             null,
             SpecialNeedsSeverityType.None,
-            TemperamentType.Friendly,
+            _faker.PickRandom<TemperamentType>(),
             0,
             null,
             null,
             ListingSourceType.Shelter,
-            "Test Shelter",
+            _faker.Company.CompanyName(),
             true,
             FivStatus.Negative,
             FelvStatus.Negative,
@@ -348,7 +332,7 @@ public class CatVaccinationEndpointsTests : IAsyncLifetime
         CreateCatVaccinationRequest request = new(
             type,
             DateOnly.FromDateTime(DateTime.UtcNow.AddMonths(-1)),
-            "Test vaccination note");
+            _faker.Lorem.Sentence());
 
         HttpResponseMessage httpResponseMessage = await _httpClient.PostAsJsonAsync(
             $"api/v1/cats/{catId.Value}/vaccinations", request);
@@ -358,8 +342,6 @@ public class CatVaccinationEndpointsTests : IAsyncLifetime
         return JsonSerializer.Deserialize<CatVaccinationResponse>(stringResponse, _jsonSerializerOptions)
             ?? throw new JsonException("Failed to deserialize CatVaccinationResponse");
     }
-
-    #endregion
 
     public Task InitializeAsync() => Task.CompletedTask;
     public Task DisposeAsync() => Task.CompletedTask;
