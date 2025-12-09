@@ -1,0 +1,324 @@
+using System.Net;
+using System.Net.Http.Json;
+using System.Text.Json;
+using Microsoft.AspNetCore.Http.Json;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using Shouldly;
+using TheKittySaver.AdoptionSystem.Contracts.Aggregates.AdoptionAnnouncementAggregate.Requests;
+using TheKittySaver.AdoptionSystem.Contracts.Aggregates.AdoptionAnnouncementAggregate.Responses;
+using TheKittySaver.AdoptionSystem.Contracts.Aggregates.CatAggregate.Requests;
+using TheKittySaver.AdoptionSystem.Contracts.Aggregates.CatAggregate.Responses;
+using TheKittySaver.AdoptionSystem.Contracts.Aggregates.PersonAggregate.Requests;
+using TheKittySaver.AdoptionSystem.Contracts.Aggregates.PersonAggregate.Responses;
+using TheKittySaver.AdoptionSystem.Primitives.Aggregates.AdoptionAnnouncementAggregate;
+using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate;
+using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate.Enums;
+using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
+using TheKittySaver.AdoptionSystem.Primitives.Enums;
+
+namespace TheKittySaver.AdoptionSystem.API.Tests.Integration.Tests.Cats;
+
+[Collection("Api")]
+public class CatAssignmentEndpointsTests : IAsyncLifetime
+{
+    private readonly HttpClient _httpClient;
+    private readonly JsonSerializerOptions _jsonSerializerOptions;
+
+    public CatAssignmentEndpointsTests(TheKittySaverApiFactory appFactory)
+    {
+        _httpClient = appFactory.CreateClient();
+        _jsonSerializerOptions =
+            appFactory.Services.GetRequiredService<IOptions<JsonOptions>>().Value.SerializerOptions;
+    }
+
+    #region Assign Cat Tests
+
+    [Fact]
+    public async Task AssignCat_ShouldReturnSuccess_WhenCatAndAnnouncementExist()
+    {
+        // Arrange
+        PersonResponse person = await CreateTestPersonAsync();
+        CatResponse cat = await CreateTestCatAsync(person.Id);
+        AdoptionAnnouncementResponse announcement = await CreateTestAdoptionAnnouncementAsync(cat.Id);
+
+        AssignCatRequest request = new(announcement.Id);
+
+        // Act
+        HttpResponseMessage httpResponseMessage = await _httpClient.PostAsJsonAsync(
+            $"api/v1/cats/{cat.Id.Value}/assign", request);
+
+        // Assert
+        httpResponseMessage.EnsureSuccessStatusCode();
+
+        // Verify cat is assigned
+        CatResponse updatedCat = await GetCatAsync(cat.Id);
+        updatedCat.AdoptionAnnouncementId.ShouldBe(announcement.Id);
+    }
+
+    [Fact]
+    public async Task AssignCat_ShouldReturnNotFound_WhenCatDoesNotExist()
+    {
+        // Arrange
+        PersonResponse person = await CreateTestPersonAsync();
+        CatResponse cat = await CreateTestCatAsync(person.Id);
+        AdoptionAnnouncementResponse announcement = await CreateTestAdoptionAnnouncementAsync(cat.Id);
+
+        Guid nonExistentCatId = Guid.NewGuid();
+        AssignCatRequest request = new(announcement.Id);
+
+        // Act
+        HttpResponseMessage httpResponseMessage = await _httpClient.PostAsJsonAsync(
+            $"api/v1/cats/{nonExistentCatId}/assign", request);
+
+        // Assert
+        httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    public async Task AssignCat_ShouldReturnNotFound_WhenAnnouncementDoesNotExist()
+    {
+        // Arrange
+        PersonResponse person = await CreateTestPersonAsync();
+        CatResponse cat = await CreateTestCatAsync(person.Id);
+
+        AdoptionAnnouncementId nonExistentAnnouncementId = new(Guid.NewGuid());
+        AssignCatRequest request = new(nonExistentAnnouncementId);
+
+        // Act
+        HttpResponseMessage httpResponseMessage = await _httpClient.PostAsJsonAsync(
+            $"api/v1/cats/{cat.Id.Value}/assign", request);
+
+        // Assert
+        httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+    }
+
+    #endregion
+
+    #region Reassign Cat Tests
+
+    [Fact]
+    public async Task ReassignCat_ShouldReturnSuccess_WhenCatIsAlreadyAssigned()
+    {
+        // Arrange
+        PersonResponse person = await CreateTestPersonAsync();
+        CatResponse cat = await CreateTestCatAsync(person.Id);
+        AdoptionAnnouncementResponse announcement1 = await CreateTestAdoptionAnnouncementAsync(cat.Id);
+
+        // Assign cat first
+        AssignCatRequest assignRequest = new(announcement1.Id);
+        HttpResponseMessage assignResponse = await _httpClient.PostAsJsonAsync(
+            $"api/v1/cats/{cat.Id.Value}/assign", assignRequest);
+        assignResponse.EnsureSuccessStatusCode();
+
+        // Create second cat and announcement for reassignment
+        CatResponse cat2 = await CreateTestCatAsync(person.Id, "SecondCat");
+        AdoptionAnnouncementResponse announcement2 = await CreateTestAdoptionAnnouncementAsync(cat2.Id);
+
+        ReassignCatRequest reassignRequest = new(announcement2.Id);
+
+        // Act
+        HttpResponseMessage httpResponseMessage = await _httpClient.PostAsJsonAsync(
+            $"api/v1/cats/{cat.Id.Value}/reassign", reassignRequest);
+
+        // Assert
+        httpResponseMessage.EnsureSuccessStatusCode();
+
+        // Verify cat is reassigned
+        CatResponse updatedCat = await GetCatAsync(cat.Id);
+        updatedCat.AdoptionAnnouncementId.ShouldBe(announcement2.Id);
+    }
+
+    [Fact]
+    public async Task ReassignCat_ShouldReturnNotFound_WhenCatDoesNotExist()
+    {
+        // Arrange
+        PersonResponse person = await CreateTestPersonAsync();
+        CatResponse cat = await CreateTestCatAsync(person.Id);
+        AdoptionAnnouncementResponse announcement = await CreateTestAdoptionAnnouncementAsync(cat.Id);
+
+        Guid nonExistentCatId = Guid.NewGuid();
+        ReassignCatRequest request = new(announcement.Id);
+
+        // Act
+        HttpResponseMessage httpResponseMessage = await _httpClient.PostAsJsonAsync(
+            $"api/v1/cats/{nonExistentCatId}/reassign", request);
+
+        // Assert
+        httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+    }
+
+    #endregion
+
+    #region Unassign Cat Tests
+
+    [Fact]
+    public async Task UnassignCat_ShouldReturnSuccess_WhenCatIsAssigned()
+    {
+        // Arrange
+        PersonResponse person = await CreateTestPersonAsync();
+        CatResponse cat = await CreateTestCatAsync(person.Id);
+        AdoptionAnnouncementResponse announcement = await CreateTestAdoptionAnnouncementAsync(cat.Id);
+
+        // Assign cat first
+        AssignCatRequest assignRequest = new(announcement.Id);
+        HttpResponseMessage assignResponse = await _httpClient.PostAsJsonAsync(
+            $"api/v1/cats/{cat.Id.Value}/assign", assignRequest);
+        assignResponse.EnsureSuccessStatusCode();
+
+        // Act
+        HttpResponseMessage httpResponseMessage = await _httpClient.PostAsync(
+            $"api/v1/cats/{cat.Id.Value}/unassign", null);
+
+        // Assert
+        httpResponseMessage.EnsureSuccessStatusCode();
+
+        // Verify cat is unassigned
+        CatResponse updatedCat = await GetCatAsync(cat.Id);
+        updatedCat.AdoptionAnnouncementId.ShouldBeNull();
+    }
+
+    [Fact]
+    public async Task UnassignCat_ShouldReturnNotFound_WhenCatDoesNotExist()
+    {
+        // Arrange
+        Guid nonExistentCatId = Guid.NewGuid();
+
+        // Act
+        HttpResponseMessage httpResponseMessage = await _httpClient.PostAsync(
+            $"api/v1/cats/{nonExistentCatId}/unassign", null);
+
+        // Assert
+        httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+    }
+
+    #endregion
+
+    #region Claim Cat Tests
+
+    [Fact]
+    public async Task ClaimCat_ShouldReturnSuccess_WhenCatIsAssigned()
+    {
+        // Arrange
+        PersonResponse person = await CreateTestPersonAsync();
+        CatResponse cat = await CreateTestCatAsync(person.Id);
+        AdoptionAnnouncementResponse announcement = await CreateTestAdoptionAnnouncementAsync(cat.Id);
+
+        // Assign cat first
+        AssignCatRequest assignRequest = new(announcement.Id);
+        HttpResponseMessage assignResponse = await _httpClient.PostAsJsonAsync(
+            $"api/v1/cats/{cat.Id.Value}/assign", assignRequest);
+        assignResponse.EnsureSuccessStatusCode();
+
+        // Act
+        HttpResponseMessage httpResponseMessage = await _httpClient.PostAsync(
+            $"api/v1/cats/{cat.Id.Value}/claim", null);
+
+        // Assert
+        httpResponseMessage.EnsureSuccessStatusCode();
+    }
+
+    [Fact]
+    public async Task ClaimCat_ShouldReturnNotFound_WhenCatDoesNotExist()
+    {
+        // Arrange
+        Guid nonExistentCatId = Guid.NewGuid();
+
+        // Act
+        HttpResponseMessage httpResponseMessage = await _httpClient.PostAsync(
+            $"api/v1/cats/{nonExistentCatId}/claim", null);
+
+        // Assert
+        httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+    }
+
+    #endregion
+
+    #region Helper Methods
+
+    private async Task<PersonResponse> CreateTestPersonAsync()
+    {
+        CreatePersonRequest request = new(
+            IdentityId.New(),
+            $"testuser_{Guid.NewGuid():N}"[..20],
+            $"test_{Guid.NewGuid():N}@example.com"[..30],
+            "+48535143330");
+
+        HttpResponseMessage httpResponseMessage = await _httpClient.PostAsJsonAsync("api/v1/persons", request);
+        httpResponseMessage.EnsureSuccessStatusCode();
+
+        string stringResponse = await httpResponseMessage.Content.ReadAsStringAsync();
+        return JsonSerializer.Deserialize<PersonResponse>(stringResponse, _jsonSerializerOptions)
+            ?? throw new JsonException("Failed to deserialize PersonResponse");
+    }
+
+    private async Task<CatResponse> CreateTestCatAsync(PersonId personId, string name = "Mruczek")
+    {
+        CreateCatRequest request = new(
+            personId,
+            name,
+            "Friendly orange cat",
+            3,
+            CatGenderType.Male,
+            ColorType.Orange,
+            4.5m,
+            HealthStatusType.Healthy,
+            false,
+            null,
+            SpecialNeedsSeverityType.None,
+            TemperamentType.Friendly,
+            0,
+            null,
+            null,
+            ListingSourceType.Shelter,
+            "Test Shelter",
+            true,
+            FivStatus.Negative,
+            FelvStatus.Negative,
+            DateOnly.FromDateTime(DateTime.UtcNow.AddMonths(-1)));
+
+        HttpResponseMessage httpResponseMessage = await _httpClient.PostAsJsonAsync("api/v1/cats", request);
+        httpResponseMessage.EnsureSuccessStatusCode();
+
+        string stringResponse = await httpResponseMessage.Content.ReadAsStringAsync();
+        return JsonSerializer.Deserialize<CatResponse>(stringResponse, _jsonSerializerOptions)
+            ?? throw new JsonException("Failed to deserialize CatResponse");
+    }
+
+    private async Task<AdoptionAnnouncementResponse> CreateTestAdoptionAnnouncementAsync(CatId catId)
+    {
+        CreateAdoptionAnnouncementRequest request = new(
+            catId,
+            "Test adoption announcement description",
+            CountryCode.PL,
+            "00-001",
+            "Mazowieckie",
+            "Warszawa",
+            "ul. Testowa 1",
+            "contact@shelter.pl",
+            "+48600700800");
+
+        HttpResponseMessage httpResponseMessage = await _httpClient.PostAsJsonAsync(
+            "api/v1/adoption-announcements", request);
+        httpResponseMessage.EnsureSuccessStatusCode();
+
+        string stringResponse = await httpResponseMessage.Content.ReadAsStringAsync();
+        return JsonSerializer.Deserialize<AdoptionAnnouncementResponse>(stringResponse, _jsonSerializerOptions)
+            ?? throw new JsonException("Failed to deserialize AdoptionAnnouncementResponse");
+    }
+
+    private async Task<CatResponse> GetCatAsync(CatId catId)
+    {
+        HttpResponseMessage httpResponseMessage = await _httpClient.GetAsync($"api/v1/cats/{catId.Value}");
+        httpResponseMessage.EnsureSuccessStatusCode();
+
+        string stringResponse = await httpResponseMessage.Content.ReadAsStringAsync();
+        return JsonSerializer.Deserialize<CatResponse>(stringResponse, _jsonSerializerOptions)
+            ?? throw new JsonException("Failed to deserialize CatResponse");
+    }
+
+    #endregion
+
+    public Task InitializeAsync() => Task.CompletedTask;
+    public Task DisposeAsync() => Task.CompletedTask;
+}
