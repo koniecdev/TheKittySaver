@@ -11,6 +11,16 @@ namespace TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared.Factories;
 
 internal static class AdoptionAnnouncementApiFactory
 {
+    private static readonly List<(string ZipCode, string Voivodeship)> PolishAddressData =
+    [
+        ("89-240", "Kujawsko-Pomorskie"),
+        ("00-001", "Mazowieckie"),
+        ("60-365", "Wielkopolskie"),
+        ("30-001", "Małopolskie"),
+        ("80-001", "Pomorskie"),
+        ("10-001", "Warmińsko-Mazurskie")
+    ];
+
     public static async Task<AdoptionAnnouncementResponse> CreateRandomAsync(
         HttpClient httpClient,
         JsonSerializerOptions jsonSerializerOptions,
@@ -29,12 +39,15 @@ internal static class AdoptionAnnouncementApiFactory
 
     public static CreateAdoptionAnnouncementRequest CreateRandomRequest(Faker faker, CatId catId)
     {
+        int randomIndex = faker.Random.Int(0, PolishAddressData.Count - 1);
+        (string zipCode, string voivodeship) = PolishAddressData[randomIndex];
+
         CreateAdoptionAnnouncementRequest request = new(
             catId,
-            faker.Lorem.Paragraph(),
+            faker.Lorem.Sentence(10),
             CountryCode.PL,
-            faker.Address.ZipCode("##-###"),
-            faker.Address.State(),
+            zipCode,
+            voivodeship,
             faker.Address.City(),
             faker.Address.StreetAddress(),
             faker.Internet.Email(),

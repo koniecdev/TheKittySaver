@@ -80,10 +80,7 @@ internal sealed class ReassignCat : IEndpoint
                 return Result.Failure(DomainErrors.AdoptionAnnouncementErrors.NotFound(command.AdoptionAnnouncementId));
             }
 
-            if (cat.PersonId == maybeDestinationAnnouncement.Value.PersonId)
-            {
-                return Result.Failure(DomainErrors.CatEntity.Assignment.CannotReassignToSameOwner(command.CatId));
-            }
+            
             
             IReadOnlyCollection<Cat> catsInDestination = await _catRepository.GetCatsByAdoptionAnnouncementIdAsync(
                 command.AdoptionAnnouncementId,

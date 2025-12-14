@@ -71,8 +71,8 @@ public sealed class PersonAddressEndpointsTests : IAsyncLifetime
         CreatePersonAddressRequest request = new(
             CountryCode.PL,
             _faker.Lorem.Word(),
-            _faker.Address.ZipCode("##-###"),
-            _faker.Address.State(),
+            "60-365",
+            "Wielkopolskie",
             _faker.Address.City());
 
         // Act
@@ -97,8 +97,8 @@ public sealed class PersonAddressEndpointsTests : IAsyncLifetime
         CreatePersonAddressRequest request = new(
             CountryCode.PL,
             _faker.Lorem.Word(),
-            _faker.Address.ZipCode("##-###"),
-            _faker.Address.State(),
+            "30-001",
+            "Małopolskie",
             _faker.Address.City());
 
         // Act

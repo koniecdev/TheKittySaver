@@ -30,6 +30,16 @@ internal abstract class GenericRepository<TAggregateRoot, TAggregateRootId> : IR
         return Maybe<TAggregateRoot>.From(entity);
     }
 
+    public async Task<bool> ExistsAsync(TAggregateRootId id, CancellationToken cancellationToken)
+    {
+        Ensure.NotEmpty(id);
+        
+        bool result = await DbContext.Set<TAggregateRoot>()
+            .AnyAsync(x => x.Id.Equals(id), cancellationToken);
+        
+        return result;
+    }
+
     public void Insert(TAggregateRoot aggregate)
     {
         ArgumentNullException.ThrowIfNull(aggregate);

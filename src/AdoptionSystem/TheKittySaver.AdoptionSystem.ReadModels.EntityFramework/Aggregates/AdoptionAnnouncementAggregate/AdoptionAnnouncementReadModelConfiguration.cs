@@ -13,6 +13,9 @@ public sealed class AdoptionAnnouncementReadModelConfiguration : IEntityTypeConf
         builder.Property(adoptionAnnouncementReadModel => adoptionAnnouncementReadModel.Id)
             .ValueGeneratedNever();
 
+        builder.Property(adoptionAnnouncementReadModel => adoptionAnnouncementReadModel.Status)
+            .HasConversion<string>();
+
         builder.OwnsMany(adoptionAnnouncementReadModel => adoptionAnnouncementReadModel.MergeLogs, mergeLogBuilder =>
         {
             mergeLogBuilder.ToJson();

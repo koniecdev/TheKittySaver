@@ -18,8 +18,18 @@ internal sealed class CatAdoptionAnnouncementReassignmentService : ICatAdoptionA
         IReadOnlyCollection<Cat> catsInitiallyAssignedToDestinationAdoptionAnnouncement,
         DateTimeOffset dateTimeOfOperation)
     {
-        if (sourceAdoptionAnnouncement.Status is not AnnouncementStatusType.Active
-            || destinationAdoptionAnnouncement.Status is not AnnouncementStatusType.Active)
+        if (cat.PersonId != destinationAdoptionAnnouncement.PersonId)
+        {
+            return Result.Failure(DomainErrors.CatEntity.Assignment.CannotReassignToAnotherOwner(cat.Id));
+        }
+        
+        if (sourceAdoptionAnnouncement.Status is not AnnouncementStatusType.Active)
+        {
+            return Result.Failure(
+                DomainErrors.AdoptionAnnouncementErrors.StatusProperty.CannotReassignCatFromInactiveAnnouncement);
+        }
+        
+        if(destinationAdoptionAnnouncement.Status is not AnnouncementStatusType.Active)
         {
             return Result.Failure(
                 DomainErrors.AdoptionAnnouncementErrors.StatusProperty.CannotReassignCatToInactiveAnnouncement);

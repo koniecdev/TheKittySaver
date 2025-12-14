@@ -41,6 +41,13 @@ public static partial class DomainErrors
                     "Can only update announcement when it is active.",
                     nameof(CanOnlyUpdateWhenActive));
 
+            public static Error CannotReassignCatFromInactiveAnnouncement
+                => InvalidOperation(
+                    nameof(AdoptionAnnouncementErrors),
+                    nameof(AdoptionAnnouncementEntity.Status),
+                    "Cannot reassign cat from an adoption announcement that is not active.",
+                    nameof(CannotReassignCatFromInactiveAnnouncement));
+            
             public static Error CannotReassignCatToInactiveAnnouncement
                 => InvalidOperation(
                     nameof(AdoptionAnnouncementErrors),

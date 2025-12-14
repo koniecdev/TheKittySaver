@@ -218,6 +218,10 @@ public static partial class DomainErrors
 
         public static class ThumbnailProperty
         {
+            public static Error NotUploaded(CatId catId)
+                => HasNotBeenFound(
+                    $"{nameof(CatEntity)}.{nameof(Cat.Thumbnail)}",
+                    catId.Value);
             public static Error RequiredForPublishing(CatId catId)
                 => InvalidOperation(
                     nameof(CatEntity),
@@ -270,12 +274,12 @@ public static partial class DomainErrors
                     $"Cat with ID '{catId.Value}' cannot be reassigned to an adoption announcement with incompatible infectious disease status.",
                     "IncompatibleInfectiousDiseaseStatus");
 
-            public static Error CannotReassignToSameOwner(CatId catId)
+            public static Error CannotReassignToAnotherOwner(CatId catId)
                 => InvalidOperation(
                     nameof(CatEntity),
                     nameof(Cat.PersonId),
-                    $"Cat with ID '{catId.Value}' cannot be reassigned to an adoption announcement belonging to the same owner.",
-                    "CannotReassignToSameOwner");
+                    $"Cat with ID '{catId.Value}' cannot be reassigned to an adoption announcement belonging to another owner.",
+                    "CannotReassignToAnotherOwner");
         }
     }
 

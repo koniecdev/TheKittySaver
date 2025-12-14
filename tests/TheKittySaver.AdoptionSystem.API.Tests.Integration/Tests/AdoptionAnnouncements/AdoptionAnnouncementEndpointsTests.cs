@@ -87,8 +87,8 @@ public sealed class AdoptionAnnouncementEndpointsTests : IAsyncLifetime
             cat.Id,
             null,
             CountryCode.PL,
-            _faker.Address.ZipCode("##-###"),
-            _faker.Address.State(),
+            "60-365",
+            "Wielkopolskie",
             _faker.Address.City(),
             null,
             _faker.Internet.Email(),
@@ -116,10 +116,10 @@ public sealed class AdoptionAnnouncementEndpointsTests : IAsyncLifetime
 
         CreateAdoptionAnnouncementRequest request = new(
             nonExistentCatId,
-            _faker.Lorem.Paragraph(),
+            _faker.Lorem.Sentence(10),
             CountryCode.PL,
-            _faker.Address.ZipCode("##-###"),
-            _faker.Address.State(),
+            "30-001",
+            "Małopolskie",
             _faker.Address.City(),
             null,
             _faker.Internet.Email(),
@@ -142,10 +142,10 @@ public sealed class AdoptionAnnouncementEndpointsTests : IAsyncLifetime
 
         CreateAdoptionAnnouncementRequest request = new(
             cat.Id,
-            _faker.Lorem.Paragraph(),
+            _faker.Lorem.Sentence(10),
             CountryCode.PL,
-            _faker.Address.ZipCode("##-###"),
-            _faker.Address.State(),
+            "80-001",
+            "Pomorskie",
             _faker.Address.City(),
             null,
             "invalid-email",
@@ -168,10 +168,10 @@ public sealed class AdoptionAnnouncementEndpointsTests : IAsyncLifetime
 
         CreateAdoptionAnnouncementRequest request = new(
             cat.Id,
-            _faker.Lorem.Paragraph(),
+            _faker.Lorem.Sentence(10),
             CountryCode.PL,
-            _faker.Address.ZipCode("##-###"),
-            _faker.Address.State(),
+            "10-001",
+            "Warmińsko-Mazurskie",
             _faker.Address.City(),
             null,
             _faker.Internet.Email(),
@@ -281,10 +281,10 @@ public sealed class AdoptionAnnouncementEndpointsTests : IAsyncLifetime
         // Arrange
         Guid nonExistentId = Guid.NewGuid();
         UpdateAdoptionAnnouncementRequest updateRequest = new(
-            _faker.Lorem.Paragraph(),
+            _faker.Lorem.Sentence(10),
             CountryCode.PL,
-            _faker.Address.ZipCode("##-###"),
-            _faker.Address.State(),
+            "89-240",
+            "Kujawsko-Pomorskie",
             _faker.Address.City(),
             null,
             _faker.Internet.Email(),
@@ -307,10 +307,10 @@ public sealed class AdoptionAnnouncementEndpointsTests : IAsyncLifetime
         AdoptionAnnouncementResponse createdAnnouncement = await CreateTestAdoptionAnnouncementAsync(cat.Id);
 
         UpdateAdoptionAnnouncementRequest updateRequest = new(
-            _faker.Lorem.Paragraph(),
+            _faker.Lorem.Sentence(10),
             CountryCode.PL,
-            _faker.Address.ZipCode("##-###"),
-            _faker.Address.State(),
+            "00-001",
+            "Mazowieckie",
             _faker.Address.City(),
             null,
             "invalid-email",
@@ -370,7 +370,7 @@ public sealed class AdoptionAnnouncementEndpointsTests : IAsyncLifetime
         // Assign cat to the announcement first
         AssignCatRequest assignRequest = new(announcement.Id);
         HttpResponseMessage assignResponse = await _httpClient.PostAsJsonAsync(
-            $"api/v1/cats/{cat.Id.Value}/assign", assignRequest);
+            $"api/v1/cats/{cat.Id.Value}/assignment", assignRequest);
         await assignResponse.EnsureSuccessWithDetailsAsync();
 
         // Act
@@ -408,7 +408,7 @@ public sealed class AdoptionAnnouncementEndpointsTests : IAsyncLifetime
         => await PersonApiFactory.CreateRandomAsync(_httpClient, _jsonSerializerOptions, _faker);
 
     private async Task<CatResponse> CreateTestCatAsync(PersonId personId, string? name = null)
-        => await CatApiFactory.CreateRandomAsync(_httpClient, _jsonSerializerOptions, _faker, personId, name);
+        => await CatApiFactory.CreateHealthyCatWithThumbnail(_httpClient, _jsonSerializerOptions, personId, name);
 
     private async Task<AdoptionAnnouncementResponse> CreateTestAdoptionAnnouncementAsync(CatId catId)
         => await AdoptionAnnouncementApiFactory.CreateRandomAsync(_httpClient, _jsonSerializerOptions, _faker, catId);

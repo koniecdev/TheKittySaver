@@ -107,7 +107,10 @@ internal static class CatApiFactory
 
         CatResponse catResponse = JsonSerializer.Deserialize<CatResponse>(stringResponse, jsonSerializerOptions)
                                   ?? throw new JsonException("Failed to deserialize CatResponse");
-        
-        
+
+        await CatGalleryApiFactory.CreateThumbnailAsync(httpClient, jsonSerializerOptions, catResponse.Id);
+
+        CatResponse updatedCatResponse = await GetAsync(httpClient, jsonSerializerOptions, catResponse.Id);
+        return updatedCatResponse;
     }
 }

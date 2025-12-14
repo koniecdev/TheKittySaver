@@ -3,7 +3,7 @@ using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Services;
 
-public interface ICatFileStorage
+public interface ICatFileStorage //todo: I dont think it is domain
 {
     Task<Result> SaveThumbnailAsync(
         CatId catId,

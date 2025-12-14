@@ -167,10 +167,12 @@ public sealed class CatEndpointsTests : IAsyncLifetime
         CatResponse createdCat = await CreateTestCatAsync(person.Id);
 
         // Act
-        HttpResponseMessage httpResponseMessage = await _httpClient.GetAsync($"api/v1/cats/{createdCat.Id.Value}");
+        Uri requestUri = new(
+            _httpClient.BaseAddress!,
+            $"api/v1/cats/{createdCat.Id.Value}"
+        );
+        HttpResponseMessage httpResponseMessage = await _httpClient.GetAsync(requestUri);
 
-        int x = 1;
-        
         // Assert
         string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
 

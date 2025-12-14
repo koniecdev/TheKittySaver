@@ -12,5 +12,8 @@ public sealed class VaccinationReadModelConfiguration : IEntityTypeConfiguration
 
         builder.Property(vaccinationReadModel => vaccinationReadModel.Id)
             .ValueGeneratedNever();
+
+        builder.Property(vaccinationReadModel => vaccinationReadModel.Type)
+            .HasConversion<string>();
     }
 }

@@ -44,7 +44,7 @@ internal sealed class GetCatThumbnail : IEndpoint
             if (response is null)
             {
                 return Result.Failure<CatThumbnailResponse>(
-                    DomainErrors.CatEntity.ThumbnailProperty.RequiredForPublishing(query.CatId));
+                    DomainErrors.CatEntity.ThumbnailProperty.NotUploaded(query.CatId));
             }
 
             return Result.Success(response);

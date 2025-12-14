@@ -14,6 +14,33 @@ public sealed class CatReadModelConfiguration : IEntityTypeConfiguration<CatRead
         builder.Property(catReadModel => catReadModel.Id)
             .ValueGeneratedNever();
 
+        builder.Property(catReadModel => catReadModel.Gender)
+            .HasConversion<string>();
+
+        builder.Property(catReadModel => catReadModel.Color)
+            .HasConversion<string>();
+
+        builder.Property(catReadModel => catReadModel.HealthStatus)
+            .HasConversion<string>();
+
+        builder.Property(catReadModel => catReadModel.SpecialNeedsStatusSeverityType)
+            .HasConversion<string>();
+
+        builder.Property(catReadModel => catReadModel.Temperament)
+            .HasConversion<string>();
+
+        builder.Property(catReadModel => catReadModel.ListingSourceType)
+            .HasConversion<string>();
+
+        builder.Property(catReadModel => catReadModel.InfectiousDiseaseStatusFivStatus)
+            .HasConversion<string>();
+
+        builder.Property(catReadModel => catReadModel.InfectiousDiseaseStatusFelvStatus)
+            .HasConversion<string>();
+
+        builder.Property(catReadModel => catReadModel.Status)
+            .HasConversion<string>();
+
         builder.HasOne(catReadModel => catReadModel.AdoptionAnnouncement)
             .WithMany(adoptionAnnouncementReadModel => adoptionAnnouncementReadModel.Cats)
             .HasForeignKey(catReadModel => catReadModel.AdoptionAnnouncementId)

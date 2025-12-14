@@ -14,10 +14,11 @@ internal static class PersonAddressApiFactory
     private static readonly List<(string ZipCode, string Voivodeship)> PolishAddressData =
     [
         ("89-240", "Kujawsko-Pomorskie"),
-        ("00-001", "Warmińsko-Mazurskie"),
+        ("00-001", "Mazowieckie"),
         ("60-365", "Wielkopolskie"),
         ("30-001", "Małopolskie"),
-        ("80-001", "Pomorskie")
+        ("80-001", "Pomorskie"),
+        ("10-001", "Warmińsko-Mazurskie")
     ];
 
     public static async Task<PersonAddressResponse> CreateRandomAsync(

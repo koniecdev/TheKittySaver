@@ -6,6 +6,8 @@ using TheKittySaver.AdoptionSystem.Contracts.Aggregates.CatAggregate.Responses;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Entities;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Repositories;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.ValueObjects;
+using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.Repositories;
+using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
 using TheKittySaver.AdoptionSystem.Persistence.DbContexts.Abstractions;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate.Enums;
@@ -41,21 +43,29 @@ internal sealed class CreateCat : IEndpoint
     internal sealed class Handler : ICommandHandler<Command, Result<CatResponse>>
     {
         private readonly ICatRepository _catRepository;
+        private readonly IPersonRepository _personRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly TimeProvider _timeProvider;
 
         public Handler(
             ICatRepository catRepository,
+            IPersonRepository personRepository,
             IUnitOfWork unitOfWork,
             TimeProvider timeProvider)
         {
             _catRepository = catRepository;
+            _personRepository = personRepository;
             _unitOfWork = unitOfWork;
             _timeProvider = timeProvider;
         }
 
         public async ValueTask<Result<CatResponse>> Handle(Command command, CancellationToken cancellationToken)
         {
+            if (!await _personRepository.ExistsAsync(command.PersonId, cancellationToken))
+            {
+                return Result.Failure<CatResponse>(DomainErrors.PersonEntity.NotFound(command.PersonId));
+            }
+            
             Result<CatName> createNameResult = CatName.Create(command.Name);
             if (createNameResult.IsFailure)
             {
