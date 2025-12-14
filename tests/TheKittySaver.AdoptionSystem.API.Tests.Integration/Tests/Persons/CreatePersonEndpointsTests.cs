@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Shouldly;
+using TheKittySaver.AdoptionSystem.API.Tests.Integration.Extensions;
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.PersonAggregate.Requests;
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.PersonAggregate.Responses;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
@@ -22,7 +23,7 @@ public sealed class CreatePersonEndpointsTests : IAsyncLifetime
     {
         _httpClient = appFactory.CreateClient();
         _jsonSerializerOptions =
-            appFactory.Services.GetRequiredService<IOptions<JsonOptions>>().Value.SerializerOptions;
+            appFactory.Services.GetRequiredService<IOptionsSnapshot<JsonOptions>>().Value.SerializerOptions;
     }
 
     [Fact]
@@ -31,26 +32,25 @@ public sealed class CreatePersonEndpointsTests : IAsyncLifetime
         // Arrange
         string username = _faker.Internet.UserName();
         string email = _faker.Internet.Email();
-
+        string phoneNumber = _faker.Person.PolishPhoneNumber();
         CreatePersonRequest request = new(
             IdentityId.New(),
             username,
             email,
-            $"+48{new Random().Next(100000000, 999999999)}");
+            phoneNumber);
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.PostAsJsonAsync("api/v1/persons", request);
 
         // Assert
-        httpResponseMessage.EnsureSuccessStatusCode();
-        string stringResponse = await httpResponseMessage.Content.ReadAsStringAsync();
+        string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
 
         PersonResponse personResponse = JsonSerializer.Deserialize<PersonResponse>(stringResponse, _jsonSerializerOptions)
             ?? throw new JsonException("Failed to deserialize PersonResponse");
         personResponse.ShouldNotBeNull();
         personResponse.Username.ShouldBe(username);
         personResponse.Email.ShouldBe(email);
-        personResponse.PhoneNumber.ShouldBe($"+48{new Random().Next(100000000, 999999999)}");
+        personResponse.PhoneNumber.ShouldBe(phoneNumber);
     }
 
     public Task InitializeAsync() => Task.CompletedTask;

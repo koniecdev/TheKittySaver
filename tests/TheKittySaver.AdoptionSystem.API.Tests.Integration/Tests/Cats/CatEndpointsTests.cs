@@ -6,9 +6,10 @@ using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Shouldly;
+using TheKittySaver.AdoptionSystem.API.Tests.Integration.Extensions;
+using TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared.Factories;
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.CatAggregate.Requests;
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.CatAggregate.Responses;
-using TheKittySaver.AdoptionSystem.Contracts.Aggregates.PersonAggregate.Requests;
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.PersonAggregate.Responses;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate.Enums;
@@ -35,16 +36,15 @@ public sealed class CatEndpointsTests : IAsyncLifetime
     {
         // Arrange
         PersonResponse person = await CreateTestPersonAsync();
-        CreateCatRequest request = CreateValidCatRequest(person.Id);
+        CreateCatRequest request = CatApiFactory.CreateFixedRequest(person.Id);
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.PostAsJsonAsync("api/v1/cats", request);
 
         // Assert
-        httpResponseMessage.EnsureSuccessStatusCode();
+        string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.Created);
 
-        string stringResponse = await httpResponseMessage.Content.ReadAsStringAsync();
         CatResponse catResponse = JsonSerializer.Deserialize<CatResponse>(stringResponse, _jsonSerializerOptions)
             ?? throw new JsonException("Failed to deserialize CatResponse");
 
@@ -93,9 +93,8 @@ public sealed class CatEndpointsTests : IAsyncLifetime
         HttpResponseMessage httpResponseMessage = await _httpClient.PostAsJsonAsync("api/v1/cats", request);
 
         // Assert
-        httpResponseMessage.EnsureSuccessStatusCode();
+        string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
 
-        string stringResponse = await httpResponseMessage.Content.ReadAsStringAsync();
         CatResponse catResponse = JsonSerializer.Deserialize<CatResponse>(stringResponse, _jsonSerializerOptions)
             ?? throw new JsonException("Failed to deserialize CatResponse");
 
@@ -137,9 +136,8 @@ public sealed class CatEndpointsTests : IAsyncLifetime
         HttpResponseMessage httpResponseMessage = await _httpClient.PostAsJsonAsync("api/v1/cats", request);
 
         // Assert
-        httpResponseMessage.EnsureSuccessStatusCode();
+        string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
 
-        string stringResponse = await httpResponseMessage.Content.ReadAsStringAsync();
         CatResponse catResponse = JsonSerializer.Deserialize<CatResponse>(stringResponse, _jsonSerializerOptions)
             ?? throw new JsonException("Failed to deserialize CatResponse");
 
@@ -152,7 +150,7 @@ public sealed class CatEndpointsTests : IAsyncLifetime
     {
         // Arrange
         PersonId nonExistentPersonId = new(Guid.NewGuid());
-        CreateCatRequest request = CreateValidCatRequest(nonExistentPersonId);
+        CreateCatRequest request = CatApiFactory.CreateFixedRequest(nonExistentPersonId);
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.PostAsJsonAsync("api/v1/cats", request);
@@ -171,10 +169,11 @@ public sealed class CatEndpointsTests : IAsyncLifetime
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.GetAsync($"api/v1/cats/{createdCat.Id.Value}");
 
+        int x = 1;
+        
         // Assert
-        httpResponseMessage.EnsureSuccessStatusCode();
+        string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
 
-        string stringResponse = await httpResponseMessage.Content.ReadAsStringAsync();
         CatResponse catResponse = JsonSerializer.Deserialize<CatResponse>(stringResponse, _jsonSerializerOptions)
             ?? throw new JsonException("Failed to deserialize CatResponse");
 
@@ -208,7 +207,7 @@ public sealed class CatEndpointsTests : IAsyncLifetime
         HttpResponseMessage httpResponseMessage = await _httpClient.GetAsync("api/v1/cats");
 
         // Assert
-        httpResponseMessage.EnsureSuccessStatusCode();
+        await httpResponseMessage.EnsureSuccessWithDetailsAsync();
     }
 
     [Fact]
@@ -244,9 +243,8 @@ public sealed class CatEndpointsTests : IAsyncLifetime
             $"api/v1/cats/{createdCat.Id.Value}", updateRequest);
 
         // Assert
-        httpResponseMessage.EnsureSuccessStatusCode();
+        string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
 
-        string stringResponse = await httpResponseMessage.Content.ReadAsStringAsync();
         CatResponse catResponse = JsonSerializer.Deserialize<CatResponse>(stringResponse, _jsonSerializerOptions)
             ?? throw new JsonException("Failed to deserialize CatResponse");
 
@@ -324,58 +322,10 @@ public sealed class CatEndpointsTests : IAsyncLifetime
     }
 
     private async Task<PersonResponse> CreateTestPersonAsync()
-    {
-        CreatePersonRequest request = new(
-            IdentityId.New(),
-            _faker.Internet.UserName(),
-            _faker.Internet.Email(),
-            $"+48{new Random().Next(100000000, 999999999)}");
-
-        HttpResponseMessage httpResponseMessage = await _httpClient.PostAsJsonAsync("api/v1/persons", request);
-        httpResponseMessage.EnsureSuccessStatusCode();
-
-        string stringResponse = await httpResponseMessage.Content.ReadAsStringAsync();
-        return JsonSerializer.Deserialize<PersonResponse>(stringResponse, _jsonSerializerOptions)
-            ?? throw new JsonException("Failed to deserialize PersonResponse");
-    }
+        => await PersonApiFactory.CreateRandomAsync(_httpClient, _jsonSerializerOptions, _faker);
 
     private async Task<CatResponse> CreateTestCatAsync(PersonId personId, string? name = null)
-    {
-        CreateCatRequest request = CreateValidCatRequest(personId, name);
-
-        HttpResponseMessage httpResponseMessage = await _httpClient.PostAsJsonAsync("api/v1/cats", request);
-        httpResponseMessage.EnsureSuccessStatusCode();
-
-        string stringResponse = await httpResponseMessage.Content.ReadAsStringAsync();
-        return JsonSerializer.Deserialize<CatResponse>(stringResponse, _jsonSerializerOptions)
-            ?? throw new JsonException("Failed to deserialize CatResponse");
-    }
-
-    private static CreateCatRequest CreateValidCatRequest(PersonId personId, string? name = null)
-    {
-        return new CreateCatRequest(
-            personId,
-            name ?? "Mruczek",
-            "Friendly orange cat",
-            3,
-            CatGenderType.Male,
-            ColorType.Orange,
-            4.5m,
-            HealthStatusType.Healthy,
-            false,
-            null,
-            SpecialNeedsSeverityType.None,
-            TemperamentType.Friendly,
-            0,
-            null,
-            null,
-            ListingSourceType.Shelter,
-            "Test Shelter",
-            true,
-            FivStatus.Negative,
-            FelvStatus.Negative,
-            DateOnly.FromDateTime(DateTime.UtcNow.AddMonths(-1)));
-    }
+        => await CatApiFactory.CreateRandomAsync(_httpClient, _jsonSerializerOptions, _faker, personId, name);
 
     public Task InitializeAsync() => Task.CompletedTask;
     public Task DisposeAsync() => Task.CompletedTask;

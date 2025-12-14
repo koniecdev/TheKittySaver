@@ -25,6 +25,7 @@ internal sealed class ApplicationReadDbContext : DbContext, IApplicationReadDbCo
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
     {
         configurationBuilder.RegisterAllStronglyTypedIdConverters();
+        configurationBuilder.Properties<Enum>().HaveConversion<string>();
         base.ConfigureConventions(configurationBuilder);
     }
     

@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Shouldly;
+using TheKittySaver.AdoptionSystem.API.Tests.Integration.Extensions;
+using TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared.Factories;
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.PersonAggregate.Requests;
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.PersonAggregate.Responses;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
@@ -45,10 +47,9 @@ public sealed class PersonAddressEndpointsTests : IAsyncLifetime
             $"api/v1/persons/{person.Id.Value}/addresses", request);
 
         // Assert
-        httpResponseMessage.EnsureSuccessStatusCode();
+        string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.Created);
 
-        string stringResponse = await httpResponseMessage.Content.ReadAsStringAsync();
         PersonAddressResponse addressResponse = JsonSerializer.Deserialize<PersonAddressResponse>(stringResponse, _jsonSerializerOptions)
             ?? throw new JsonException("Failed to deserialize PersonAddressResponse");
 
@@ -79,9 +80,8 @@ public sealed class PersonAddressEndpointsTests : IAsyncLifetime
             $"api/v1/persons/{person.Id.Value}/addresses", request);
 
         // Assert
-        httpResponseMessage.EnsureSuccessStatusCode();
+        string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
 
-        string stringResponse = await httpResponseMessage.Content.ReadAsStringAsync();
         PersonAddressResponse addressResponse = JsonSerializer.Deserialize<PersonAddressResponse>(stringResponse, _jsonSerializerOptions)
             ?? throw new JsonException("Failed to deserialize PersonAddressResponse");
 
@@ -121,9 +121,8 @@ public sealed class PersonAddressEndpointsTests : IAsyncLifetime
             $"api/v1/persons/{person.Id.Value}/addresses/{createdAddress.Id.Value}");
 
         // Assert
-        httpResponseMessage.EnsureSuccessStatusCode();
+        string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
 
-        string stringResponse = await httpResponseMessage.Content.ReadAsStringAsync();
         PersonAddressResponse addressResponse = JsonSerializer.Deserialize<PersonAddressResponse>(stringResponse, _jsonSerializerOptions)
             ?? throw new JsonException("Failed to deserialize PersonAddressResponse");
 
@@ -160,7 +159,7 @@ public sealed class PersonAddressEndpointsTests : IAsyncLifetime
             $"api/v1/persons/{person.Id.Value}/addresses");
 
         // Assert
-        httpResponseMessage.EnsureSuccessStatusCode();
+        await httpResponseMessage.EnsureSuccessWithDetailsAsync();
     }
 
     [Fact]
@@ -181,9 +180,8 @@ public sealed class PersonAddressEndpointsTests : IAsyncLifetime
             $"api/v1/persons/{person.Id.Value}/addresses/{createdAddress.Id.Value}", updateRequest);
 
         // Assert
-        httpResponseMessage.EnsureSuccessStatusCode();
+        string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
 
-        string stringResponse = await httpResponseMessage.Content.ReadAsStringAsync();
         PersonAddressResponse addressResponse = JsonSerializer.Deserialize<PersonAddressResponse>(stringResponse, _jsonSerializerOptions)
             ?? throw new JsonException("Failed to deserialize PersonAddressResponse");
 
@@ -249,47 +247,10 @@ public sealed class PersonAddressEndpointsTests : IAsyncLifetime
     }
 
     private async Task<PersonResponse> CreateTestPersonAsync()
-    {
-        int number = new Random().Next(100000000, 999999999);
-        CreatePersonRequest request = new(
-            IdentityId.New(),
-            _faker.Internet.UserName(),
-            _faker.Internet.Email(),
-            $"+48{number}");
-
-        HttpResponseMessage httpResponseMessage = await _httpClient.PostAsJsonAsync("api/v1/persons", request);
-        httpResponseMessage.EnsureSuccessStatusCode();
-
-        string stringResponse = await httpResponseMessage.Content.ReadAsStringAsync();
-        return JsonSerializer.Deserialize<PersonResponse>(stringResponse, _jsonSerializerOptions)
-            ?? throw new JsonException("Failed to deserialize PersonResponse");
-    }
+        => await PersonApiFactory.CreateRandomAsync(_httpClient, _jsonSerializerOptions, _faker);
 
     private async Task<PersonAddressResponse> CreateTestAddressAsync(PersonId personId, string? name = null)
-    {
-        List<(string zipCode, string voivodeship)> polishData =
-        [
-            ("89-240", "Kujawsko-Pomorskie"),
-            ("00-001", "Warmińsko-Mazurskie"),
-            ("60-365", "Wielkopolskie")
-        ];
-        int randomIndex = _faker.Random.Int(0, polishData.Count-1);
-        CreatePersonAddressRequest request = new(
-            CountryCode.PL,
-            name ?? _faker.Lorem.Word(),
-            polishData[randomIndex].zipCode,
-            polishData[randomIndex].voivodeship,
-            _faker.Address.City(),
-            _faker.Address.StreetAddress());
-
-        HttpResponseMessage httpResponseMessage = await _httpClient.PostAsJsonAsync(
-            $"api/v1/persons/{personId.Value}/addresses", request);
-        httpResponseMessage.EnsureSuccessStatusCode();
-
-        string stringResponse = await httpResponseMessage.Content.ReadAsStringAsync();
-        return JsonSerializer.Deserialize<PersonAddressResponse>(stringResponse, _jsonSerializerOptions)
-            ?? throw new JsonException("Failed to deserialize PersonAddressResponse");
-    }
+        => await PersonAddressApiFactory.CreateRandomAsync(_httpClient, _jsonSerializerOptions, _faker, personId, name);
 
     public Task InitializeAsync() => Task.CompletedTask;
     public Task DisposeAsync() => Task.CompletedTask;

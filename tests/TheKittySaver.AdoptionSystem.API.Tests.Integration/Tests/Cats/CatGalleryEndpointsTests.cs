@@ -6,14 +6,13 @@ using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Shouldly;
+using TheKittySaver.AdoptionSystem.API.Tests.Integration.Extensions;
+using TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared.Factories;
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.CatAggregate.Gallery.Requests;
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.CatAggregate.Gallery.Responses;
-using TheKittySaver.AdoptionSystem.Contracts.Aggregates.CatAggregate.Requests;
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.CatAggregate.Responses;
-using TheKittySaver.AdoptionSystem.Contracts.Aggregates.PersonAggregate.Requests;
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.PersonAggregate.Responses;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate;
-using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate.Enums;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
 
 namespace TheKittySaver.AdoptionSystem.API.Tests.Integration.Tests.Cats;
@@ -39,17 +38,16 @@ public sealed class CatGalleryEndpointsTests : IAsyncLifetime
         PersonResponse person = await CreateTestPersonAsync();
         CatResponse cat = await CreateTestCatAsync(person.Id);
 
-        using MultipartFormDataContent content = CreateTestImageContent();
+        using MultipartFormDataContent content = ImageContentFactory.CreateTestPngContent();
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.PostAsync(
             $"api/v1/cats/{cat.Id.Value}/gallery", content);
 
         // Assert
-        httpResponseMessage.EnsureSuccessStatusCode();
+        string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.Created);
 
-        string stringResponse = await httpResponseMessage.Content.ReadAsStringAsync();
         CatGalleryItemResponse galleryItemResponse = JsonSerializer.Deserialize<CatGalleryItemResponse>(stringResponse, _jsonSerializerOptions)
             ?? throw new JsonException("Failed to deserialize CatGalleryItemResponse");
 
@@ -63,7 +61,7 @@ public sealed class CatGalleryEndpointsTests : IAsyncLifetime
     {
         // Arrange
         Guid nonExistentCatId = Guid.NewGuid();
-        using MultipartFormDataContent content = CreateTestImageContent();
+        using MultipartFormDataContent content = ImageContentFactory.CreateTestPngContent();
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.PostAsync(
@@ -81,22 +79,19 @@ public sealed class CatGalleryEndpointsTests : IAsyncLifetime
         CatResponse cat = await CreateTestCatAsync(person.Id);
 
         // Act
-        using MultipartFormDataContent content1 = CreateTestImageContent();
+        using MultipartFormDataContent content1 = ImageContentFactory.CreateTestPngContent();
         HttpResponseMessage response1 = await _httpClient.PostAsync(
             $"api/v1/cats/{cat.Id.Value}/gallery", content1);
 
-        using MultipartFormDataContent content2 = CreateTestImageContent();
+        using MultipartFormDataContent content2 = ImageContentFactory.CreateTestPngContent();
         HttpResponseMessage response2 = await _httpClient.PostAsync(
             $"api/v1/cats/{cat.Id.Value}/gallery", content2);
 
         // Assert
-        response1.EnsureSuccessStatusCode();
-        response2.EnsureSuccessStatusCode();
+        string stringResponse1 = await response1.EnsureSuccessWithDetailsAsync();
+        string stringResponse2 = await response2.EnsureSuccessWithDetailsAsync();
 
-        string stringResponse1 = await response1.Content.ReadAsStringAsync();
         CatGalleryItemResponse item1 = JsonSerializer.Deserialize<CatGalleryItemResponse>(stringResponse1, _jsonSerializerOptions)!;
-
-        string stringResponse2 = await response2.Content.ReadAsStringAsync();
         CatGalleryItemResponse item2 = JsonSerializer.Deserialize<CatGalleryItemResponse>(stringResponse2, _jsonSerializerOptions)!;
 
         item1.DisplayOrder.ShouldBe(0);
@@ -116,9 +111,8 @@ public sealed class CatGalleryEndpointsTests : IAsyncLifetime
             $"api/v1/cats/{cat.Id.Value}/gallery/{createdItem.Id.Value}");
 
         // Assert
-        httpResponseMessage.EnsureSuccessStatusCode();
+        string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
 
-        string stringResponse = await httpResponseMessage.Content.ReadAsStringAsync();
         CatGalleryItemResponse galleryItemResponse = JsonSerializer.Deserialize<CatGalleryItemResponse>(stringResponse, _jsonSerializerOptions)
             ?? throw new JsonException("Failed to deserialize CatGalleryItemResponse");
 
@@ -157,7 +151,7 @@ public sealed class CatGalleryEndpointsTests : IAsyncLifetime
             $"api/v1/cats/{cat.Id.Value}/gallery");
 
         // Assert
-        httpResponseMessage.EnsureSuccessStatusCode();
+        await httpResponseMessage.EnsureSuccessWithDetailsAsync();
     }
 
     [Fact]
@@ -173,7 +167,7 @@ public sealed class CatGalleryEndpointsTests : IAsyncLifetime
             $"api/v1/cats/{cat.Id.Value}/gallery/{createdItem.Id.Value}/file");
 
         // Assert
-        httpResponseMessage.EnsureSuccessStatusCode();
+        await httpResponseMessage.EnsureSuccessWithDetailsAsync();
         httpResponseMessage.Content.Headers.ContentType?.MediaType.ShouldBe("image/png");
     }
 
@@ -233,9 +227,8 @@ public sealed class CatGalleryEndpointsTests : IAsyncLifetime
             $"api/v1/cats/{cat.Id.Value}/gallery/reorder", request);
 
         // Assert
-        httpResponseMessage.EnsureSuccessStatusCode();
+        string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
 
-        string stringResponse = await httpResponseMessage.Content.ReadAsStringAsync();
         List<CatGalleryItemResponse>? reorderedItems = JsonSerializer.Deserialize<List<CatGalleryItemResponse>>(stringResponse, _jsonSerializerOptions);
 
         reorderedItems.ShouldNotBeNull();
@@ -267,16 +260,15 @@ public sealed class CatGalleryEndpointsTests : IAsyncLifetime
         PersonResponse person = await CreateTestPersonAsync();
         CatResponse cat = await CreateTestCatAsync(person.Id);
 
-        using MultipartFormDataContent content = CreateTestImageContent();
+        using MultipartFormDataContent content = ImageContentFactory.CreateTestPngContent();
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.PutAsync(
             $"api/v1/cats/{cat.Id.Value}/thumbnail", content);
 
         // Assert
-        httpResponseMessage.EnsureSuccessStatusCode();
+        string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
 
-        string stringResponse = await httpResponseMessage.Content.ReadAsStringAsync();
         CatThumbnailResponse thumbnailResponse = JsonSerializer.Deserialize<CatThumbnailResponse>(stringResponse, _jsonSerializerOptions)
             ?? throw new JsonException("Failed to deserialize CatThumbnailResponse");
 
@@ -292,23 +284,21 @@ public sealed class CatGalleryEndpointsTests : IAsyncLifetime
         CatResponse cat = await CreateTestCatAsync(person.Id);
 
         // Create first thumbnail
-        using MultipartFormDataContent content1 = CreateTestImageContent();
+        using MultipartFormDataContent content1 = ImageContentFactory.CreateTestPngContent();
         HttpResponseMessage response1 = await _httpClient.PutAsync(
             $"api/v1/cats/{cat.Id.Value}/thumbnail", content1);
-        response1.EnsureSuccessStatusCode();
+        string stringResponse1 = await response1.EnsureSuccessWithDetailsAsync();
 
-        string stringResponse1 = await response1.Content.ReadAsStringAsync();
         CatThumbnailResponse thumbnail1 = JsonSerializer.Deserialize<CatThumbnailResponse>(stringResponse1, _jsonSerializerOptions)!;
 
         // Act - Replace thumbnail
-        using MultipartFormDataContent content2 = CreateTestImageContent();
+        using MultipartFormDataContent content2 = ImageContentFactory.CreateTestPngContent();
         HttpResponseMessage response2 = await _httpClient.PutAsync(
             $"api/v1/cats/{cat.Id.Value}/thumbnail", content2);
 
         // Assert
-        response2.EnsureSuccessStatusCode();
+        string stringResponse2 = await response2.EnsureSuccessWithDetailsAsync();
 
-        string stringResponse2 = await response2.Content.ReadAsStringAsync();
         CatThumbnailResponse thumbnail2 = JsonSerializer.Deserialize<CatThumbnailResponse>(stringResponse2, _jsonSerializerOptions)!;
 
         thumbnail2.CatId.ShouldBe(cat.Id);
@@ -319,7 +309,7 @@ public sealed class CatGalleryEndpointsTests : IAsyncLifetime
     {
         // Arrange
         Guid nonExistentCatId = Guid.NewGuid();
-        using MultipartFormDataContent content = CreateTestImageContent();
+        using MultipartFormDataContent content = ImageContentFactory.CreateTestPngContent();
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.PutAsync(
@@ -342,9 +332,8 @@ public sealed class CatGalleryEndpointsTests : IAsyncLifetime
             $"api/v1/cats/{cat.Id.Value}/thumbnail");
 
         // Assert
-        httpResponseMessage.EnsureSuccessStatusCode();
+        string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
 
-        string stringResponse = await httpResponseMessage.Content.ReadAsStringAsync();
         CatThumbnailResponse thumbnailResponse = JsonSerializer.Deserialize<CatThumbnailResponse>(stringResponse, _jsonSerializerOptions)
             ?? throw new JsonException("Failed to deserialize CatThumbnailResponse");
 
@@ -380,110 +369,21 @@ public sealed class CatGalleryEndpointsTests : IAsyncLifetime
             $"api/v1/cats/{cat.Id.Value}/thumbnail/file");
 
         // Assert
-        httpResponseMessage.EnsureSuccessStatusCode();
+        await httpResponseMessage.EnsureSuccessWithDetailsAsync();
         httpResponseMessage.Content.Headers.ContentType?.MediaType.ShouldBe("image/png");
     }
 
     private async Task<PersonResponse> CreateTestPersonAsync()
-    {
-        CreatePersonRequest request = new(
-            IdentityId.New(),
-            _faker.Internet.UserName(),
-            _faker.Internet.Email(),
-            $"+48{new Random().Next(100000000, 999999999)}");
-
-        HttpResponseMessage httpResponseMessage = await _httpClient.PostAsJsonAsync("api/v1/persons", request);
-        httpResponseMessage.EnsureSuccessStatusCode();
-
-        string stringResponse = await httpResponseMessage.Content.ReadAsStringAsync();
-        return JsonSerializer.Deserialize<PersonResponse>(stringResponse, _jsonSerializerOptions)
-            ?? throw new JsonException("Failed to deserialize PersonResponse");
-    }
+        => await PersonApiFactory.CreateRandomAsync(_httpClient, _jsonSerializerOptions, _faker);
 
     private async Task<CatResponse> CreateTestCatAsync(PersonId personId, string? name = null)
-    {
-        CreateCatRequest request = new(
-            personId,
-            name ?? _faker.Name.FirstName(),
-            _faker.Lorem.Sentence(),
-            _faker.Random.Int(1, 15),
-            _faker.PickRandom<CatGenderType>(),
-            _faker.PickRandom<ColorType>(),
-            _faker.Random.Decimal(2.0m, 8.0m),
-            HealthStatusType.Healthy,
-            false,
-            null,
-            SpecialNeedsSeverityType.None,
-            _faker.PickRandom<TemperamentType>(),
-            0,
-            null,
-            null,
-            ListingSourceType.Shelter,
-            _faker.Company.CompanyName(),
-            true,
-            FivStatus.Negative,
-            FelvStatus.Negative,
-            DateOnly.FromDateTime(DateTime.UtcNow.AddMonths(-1)));
-
-        HttpResponseMessage httpResponseMessage = await _httpClient.PostAsJsonAsync("api/v1/cats", request);
-        httpResponseMessage.EnsureSuccessStatusCode();
-
-        string stringResponse = await httpResponseMessage.Content.ReadAsStringAsync();
-        return JsonSerializer.Deserialize<CatResponse>(stringResponse, _jsonSerializerOptions)
-            ?? throw new JsonException("Failed to deserialize CatResponse");
-    }
+        => await CatApiFactory.CreateRandomAsync(_httpClient, _jsonSerializerOptions, _faker, personId, name);
 
     private async Task<CatGalleryItemResponse> CreateTestGalleryItemAsync(CatId catId)
-    {
-        using MultipartFormDataContent content = CreateTestImageContent();
-
-        HttpResponseMessage httpResponseMessage = await _httpClient.PostAsync(
-            $"api/v1/cats/{catId.Value}/gallery", content);
-        httpResponseMessage.EnsureSuccessStatusCode();
-
-        string stringResponse = await httpResponseMessage.Content.ReadAsStringAsync();
-        return JsonSerializer.Deserialize<CatGalleryItemResponse>(stringResponse, _jsonSerializerOptions)
-            ?? throw new JsonException("Failed to deserialize CatGalleryItemResponse");
-    }
+        => await CatGalleryApiFactory.CreateRandomAsync(_httpClient, _jsonSerializerOptions, catId);
 
     private async Task<CatThumbnailResponse> CreateTestThumbnailAsync(CatId catId)
-    {
-        using MultipartFormDataContent content = CreateTestImageContent();
-
-        HttpResponseMessage httpResponseMessage = await _httpClient.PutAsync(
-            $"api/v1/cats/{catId.Value}/thumbnail", content);
-        httpResponseMessage.EnsureSuccessStatusCode();
-
-        string stringResponse = await httpResponseMessage.Content.ReadAsStringAsync();
-        return JsonSerializer.Deserialize<CatThumbnailResponse>(stringResponse, _jsonSerializerOptions)
-            ?? throw new JsonException("Failed to deserialize CatThumbnailResponse");
-    }
-
-    private static MultipartFormDataContent CreateTestImageContent()
-    {
-        byte[] pngBytes =
-        [
-            0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A,
-            0x00, 0x00, 0x00, 0x0D, 0x49, 0x48, 0x44, 0x52,
-            0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01,
-            0x08, 0x06, 0x00, 0x00, 0x00, 0x1F, 0x15, 0xC4,
-            0x89, 0x00, 0x00, 0x00, 0x0A, 0x49, 0x44, 0x41,
-            0x54, 0x78, 0x9C, 0x63, 0x00, 0x01, 0x00, 0x00,
-            0x05, 0x00, 0x01, 0x0D, 0x0A, 0x2D, 0xB4, 0x00,
-            0x00, 0x00, 0x00, 0x49, 0x45, 0x4E, 0x44, 0xAE,
-            0x42, 0x60, 0x82
-        ];
-
-        using ByteArrayContent fileContent = new(pngBytes);
-        fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/png");
-
-        MultipartFormDataContent content = new()
-        {
-            { fileContent, "file", "test.png" }
-        };
-
-        return content;
-    }
+        => await CatGalleryApiFactory.CreateThumbnailAsync(_httpClient, _jsonSerializerOptions, catId);
 
     public Task InitializeAsync() => Task.CompletedTask;
     public Task DisposeAsync() => Task.CompletedTask;

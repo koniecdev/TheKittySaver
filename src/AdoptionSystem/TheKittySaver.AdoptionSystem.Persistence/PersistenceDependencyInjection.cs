@@ -27,7 +27,7 @@ public static class PersistenceDependencyInjection
 
         services.AddDbContextFactory<ApplicationWriteDbContext>((sp, options) =>
         {
-            options.UseSqlServer(sp.GetRequiredService<IOptions<ConnectionStringSettings>>().Value.Database);
+            options.UseSqlServer(sp.GetRequiredService<IOptionsSnapshot<ConnectionStringSettings>>().Value.Database);
 
             if (interceptorsFactory is not null)
             {
@@ -37,7 +37,7 @@ public static class PersistenceDependencyInjection
         });
 
         services.AddDbContextFactory<ApplicationReadDbContext>((sp, options) =>
-            options.UseSqlServer(sp.GetRequiredService<IOptions<ConnectionStringSettings>>().Value.Database)
+            options.UseSqlServer(sp.GetRequiredService<IOptionsSnapshot<ConnectionStringSettings>>().Value.Database)
                 .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking));
 
         services.AddScoped<IApplicationReadDbContext>(serviceProvider =>

@@ -433,7 +433,7 @@ public sealed class UpdateCatTests
         //Arrange
         Cat cat = CatFactory.CreateWithThumbnail(Faker);
         AdoptionAnnouncementId adoptionAnnouncementId = AdoptionAnnouncementId.New();
-        DateTimeOffset dateTimeOfOperation = new DateTimeOffset(2025, 6, 1, 0, 0, 0, TimeSpan.Zero);
+        DateTimeOffset dateTimeOfOperation = new(2025, 6, 1, 0, 0, 0, TimeSpan.Zero);
         cat.AssignToAdoptionAnnouncement(adoptionAnnouncementId, dateTimeOfOperation);
         ClaimedAt claimedAt = CatFactory.CreateDefaultClaimedAt();
         cat.Claim(claimedAt);

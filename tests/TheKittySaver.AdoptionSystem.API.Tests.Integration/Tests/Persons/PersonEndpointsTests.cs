@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Shouldly;
+using TheKittySaver.AdoptionSystem.API.Tests.Integration.Extensions;
+using TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared.Factories;
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.PersonAggregate.Requests;
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.PersonAggregate.Responses;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
@@ -34,16 +36,15 @@ public sealed class PersonEndpointsTests : IAsyncLifetime
             IdentityId.New(),
             "testuser",
             "testuser@example.com",
-            $"+48{new Random().Next(100000000, 999999999)}");
+            _faker.Person.PolishPhoneNumber());
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.PostAsJsonAsync("api/v1/persons", request);
 
         // Assert
-        httpResponseMessage.EnsureSuccessStatusCode();
+        string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.Created);
 
-        string stringResponse = await httpResponseMessage.Content.ReadAsStringAsync();
         PersonResponse personResponse = JsonSerializer.Deserialize<PersonResponse>(stringResponse, _jsonSerializerOptions)
             ?? throw new JsonException("Failed to deserialize PersonResponse");
 
@@ -61,7 +62,7 @@ public sealed class PersonEndpointsTests : IAsyncLifetime
             IdentityId.New(),
             _faker.Internet.UserName(),
             "invalid-email",
-            $"+48{new Random().Next(100000000, 999999999)}");
+            _faker.Person.PolishPhoneNumber());
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.PostAsJsonAsync("api/v1/persons", request);
@@ -97,9 +98,8 @@ public sealed class PersonEndpointsTests : IAsyncLifetime
         HttpResponseMessage httpResponseMessage = await _httpClient.GetAsync($"api/v1/persons/{createdPerson.Id.Value}");
 
         // Assert
-        httpResponseMessage.EnsureSuccessStatusCode();
+        string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
 
-        string stringResponse = await httpResponseMessage.Content.ReadAsStringAsync();
         PersonResponse personResponse = JsonSerializer.Deserialize<PersonResponse>(stringResponse, _jsonSerializerOptions)
             ?? throw new JsonException("Failed to deserialize PersonResponse");
 
@@ -134,7 +134,7 @@ public sealed class PersonEndpointsTests : IAsyncLifetime
         HttpResponseMessage httpResponseMessage = await _httpClient.GetAsync("api/v1/persons");
 
         // Assert
-        httpResponseMessage.EnsureSuccessStatusCode();
+        await httpResponseMessage.EnsureSuccessWithDetailsAsync();
     }
 
     [Fact]
@@ -152,9 +152,8 @@ public sealed class PersonEndpointsTests : IAsyncLifetime
             $"api/v1/persons/{createdPerson.Id.Value}", updateRequest);
 
         // Assert
-        httpResponseMessage.EnsureSuccessStatusCode();
+        string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
 
-        string stringResponse = await httpResponseMessage.Content.ReadAsStringAsync();
         PersonResponse personResponse = JsonSerializer.Deserialize<PersonResponse>(stringResponse, _jsonSerializerOptions)
             ?? throw new JsonException("Failed to deserialize PersonResponse");
 
@@ -232,20 +231,7 @@ public sealed class PersonEndpointsTests : IAsyncLifetime
     }
 
     private async Task<PersonResponse> CreateTestPersonAsync()
-    {
-        CreatePersonRequest request = new(
-            IdentityId.New(),
-            _faker.Internet.UserName(),
-            _faker.Internet.Email(),
-            $"+48{new Random().Next(100000000, 999999999)}");
-
-        HttpResponseMessage httpResponseMessage = await _httpClient.PostAsJsonAsync("api/v1/persons", request);
-        httpResponseMessage.EnsureSuccessStatusCode();
-
-        string stringResponse = await httpResponseMessage.Content.ReadAsStringAsync();
-        return JsonSerializer.Deserialize<PersonResponse>(stringResponse, _jsonSerializerOptions)
-            ?? throw new JsonException("Failed to deserialize PersonResponse");
-    }
+        => await PersonApiFactory.CreateRandomAsync(_httpClient, _jsonSerializerOptions, _faker);
 
     public Task InitializeAsync() => Task.CompletedTask;
     public Task DisposeAsync() => Task.CompletedTask;

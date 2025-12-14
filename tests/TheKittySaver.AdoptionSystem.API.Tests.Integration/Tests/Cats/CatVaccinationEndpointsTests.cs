@@ -6,11 +6,11 @@ using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Shouldly;
-using TheKittySaver.AdoptionSystem.Contracts.Aggregates.CatAggregate.Requests;
+using TheKittySaver.AdoptionSystem.API.Tests.Integration.Extensions;
+using TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared.Factories;
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.CatAggregate.Responses;
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.CatAggregate.Vaccinations.Requests;
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.CatAggregate.Vaccinations.Responses;
-using TheKittySaver.AdoptionSystem.Contracts.Aggregates.PersonAggregate.Requests;
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.PersonAggregate.Responses;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate.Enums;
@@ -48,10 +48,9 @@ public sealed class CatVaccinationEndpointsTests : IAsyncLifetime
             $"api/v1/cats/{cat.Id.Value}/vaccinations", request);
 
         // Assert
-        httpResponseMessage.EnsureSuccessStatusCode();
+        string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.Created);
 
-        string stringResponse = await httpResponseMessage.Content.ReadAsStringAsync();
         CatVaccinationResponse vaccinationResponse = JsonSerializer.Deserialize<CatVaccinationResponse>(stringResponse, _jsonSerializerOptions)
             ?? throw new JsonException("Failed to deserialize CatVaccinationResponse");
 
@@ -76,9 +75,8 @@ public sealed class CatVaccinationEndpointsTests : IAsyncLifetime
             $"api/v1/cats/{cat.Id.Value}/vaccinations", request);
 
         // Assert
-        httpResponseMessage.EnsureSuccessStatusCode();
+        string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
 
-        string stringResponse = await httpResponseMessage.Content.ReadAsStringAsync();
         CatVaccinationResponse vaccinationResponse = JsonSerializer.Deserialize<CatVaccinationResponse>(stringResponse, _jsonSerializerOptions)
             ?? throw new JsonException("Failed to deserialize CatVaccinationResponse");
 
@@ -124,13 +122,13 @@ public sealed class CatVaccinationEndpointsTests : IAsyncLifetime
             $"api/v1/cats/{cat.Id.Value}/vaccinations", fvrcpRequest);
 
         // Assert
-        rabiesResponse.EnsureSuccessStatusCode();
-        fvrcpResponse.EnsureSuccessStatusCode();
+        await rabiesResponse.EnsureSuccessWithDetailsAsync();
+        await fvrcpResponse.EnsureSuccessWithDetailsAsync();
 
         // Get all vaccinations
         HttpResponseMessage getResponse = await _httpClient.GetAsync(
             $"api/v1/cats/{cat.Id.Value}/vaccinations");
-        getResponse.EnsureSuccessStatusCode();
+        await getResponse.EnsureSuccessWithDetailsAsync();
     }
 
     [Fact]
@@ -146,9 +144,8 @@ public sealed class CatVaccinationEndpointsTests : IAsyncLifetime
             $"api/v1/cats/{cat.Id.Value}/vaccinations/{createdVaccination.Id.Value}");
 
         // Assert
-        httpResponseMessage.EnsureSuccessStatusCode();
+        string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
 
-        string stringResponse = await httpResponseMessage.Content.ReadAsStringAsync();
         CatVaccinationResponse vaccinationResponse = JsonSerializer.Deserialize<CatVaccinationResponse>(stringResponse, _jsonSerializerOptions)
             ?? throw new JsonException("Failed to deserialize CatVaccinationResponse");
 
@@ -187,7 +184,7 @@ public sealed class CatVaccinationEndpointsTests : IAsyncLifetime
             $"api/v1/cats/{cat.Id.Value}/vaccinations");
 
         // Assert
-        httpResponseMessage.EnsureSuccessStatusCode();
+        await httpResponseMessage.EnsureSuccessWithDetailsAsync();
     }
 
     [Fact]
@@ -208,9 +205,8 @@ public sealed class CatVaccinationEndpointsTests : IAsyncLifetime
             $"api/v1/cats/{cat.Id.Value}/vaccinations/{createdVaccination.Id.Value}", updateRequest);
 
         // Assert
-        httpResponseMessage.EnsureSuccessStatusCode();
+        string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
 
-        string stringResponse = await httpResponseMessage.Content.ReadAsStringAsync();
         CatVaccinationResponse vaccinationResponse = JsonSerializer.Deserialize<CatVaccinationResponse>(stringResponse, _jsonSerializerOptions)
             ?? throw new JsonException("Failed to deserialize CatVaccinationResponse");
 
@@ -277,71 +273,15 @@ public sealed class CatVaccinationEndpointsTests : IAsyncLifetime
     }
 
     private async Task<PersonResponse> CreateTestPersonAsync()
-    {
-        CreatePersonRequest request = new(
-            IdentityId.New(),
-            _faker.Internet.UserName(),
-            _faker.Internet.Email(),
-            $"+48{new Random().Next(100000000, 999999999)}");
-
-        HttpResponseMessage httpResponseMessage = await _httpClient.PostAsJsonAsync("api/v1/persons", request);
-        httpResponseMessage.EnsureSuccessStatusCode();
-
-        string stringResponse = await httpResponseMessage.Content.ReadAsStringAsync();
-        return JsonSerializer.Deserialize<PersonResponse>(stringResponse, _jsonSerializerOptions)
-            ?? throw new JsonException("Failed to deserialize PersonResponse");
-    }
+        => await PersonApiFactory.CreateRandomAsync(_httpClient, _jsonSerializerOptions, _faker);
 
     private async Task<CatResponse> CreateTestCatAsync(PersonId personId, string? name = null)
-    {
-        CreateCatRequest request = new(
-            personId,
-            name ?? _faker.Name.FirstName(),
-            _faker.Lorem.Sentence(),
-            _faker.Random.Int(1, 15),
-            _faker.PickRandom<CatGenderType>(),
-            _faker.PickRandom<ColorType>(),
-            _faker.Random.Decimal(2.0m, 8.0m),
-            HealthStatusType.Healthy,
-            false,
-            null,
-            SpecialNeedsSeverityType.None,
-            _faker.PickRandom<TemperamentType>(),
-            0,
-            null,
-            null,
-            ListingSourceType.Shelter,
-            _faker.Company.CompanyName(),
-            true,
-            FivStatus.Negative,
-            FelvStatus.Negative,
-            DateOnly.FromDateTime(DateTime.UtcNow.AddMonths(-1)));
-
-        HttpResponseMessage httpResponseMessage = await _httpClient.PostAsJsonAsync("api/v1/cats", request);
-        httpResponseMessage.EnsureSuccessStatusCode();
-
-        string stringResponse = await httpResponseMessage.Content.ReadAsStringAsync();
-        return JsonSerializer.Deserialize<CatResponse>(stringResponse, _jsonSerializerOptions)
-            ?? throw new JsonException("Failed to deserialize CatResponse");
-    }
+        => await CatApiFactory.CreateRandomAsync(_httpClient, _jsonSerializerOptions, _faker, personId, name);
 
     private async Task<CatVaccinationResponse> CreateTestVaccinationAsync(
         CatId catId,
         VaccinationType type = VaccinationType.Rabies)
-    {
-        CreateCatVaccinationRequest request = new(
-            type,
-            DateOnly.FromDateTime(DateTime.UtcNow.AddMonths(-1)),
-            _faker.Lorem.Sentence());
-
-        HttpResponseMessage httpResponseMessage = await _httpClient.PostAsJsonAsync(
-            $"api/v1/cats/{catId.Value}/vaccinations", request);
-        httpResponseMessage.EnsureSuccessStatusCode();
-
-        string stringResponse = await httpResponseMessage.Content.ReadAsStringAsync();
-        return JsonSerializer.Deserialize<CatVaccinationResponse>(stringResponse, _jsonSerializerOptions)
-            ?? throw new JsonException("Failed to deserialize CatVaccinationResponse");
-    }
+        => await CatVaccinationApiFactory.CreateRandomAsync(_httpClient, _jsonSerializerOptions, _faker, catId, type);
 
     public Task InitializeAsync() => Task.CompletedTask;
     public Task DisposeAsync() => Task.CompletedTask;
