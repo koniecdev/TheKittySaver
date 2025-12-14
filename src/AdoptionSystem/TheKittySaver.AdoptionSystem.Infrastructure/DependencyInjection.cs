@@ -14,6 +14,8 @@ public static class DependencyInjection
         this IServiceCollection serviceCollection,
         IConfiguration configuration)
     {
+        serviceCollection.AddSingleton(TimeProvider.System);
+        
         serviceCollection.AddScoped<LibPhoneNumberValidator>();
         serviceCollection.AddScoped<IValidPhoneNumberSpecification>(sp
             => sp.GetRequiredService<LibPhoneNumberValidator>());

@@ -8,14 +8,17 @@ namespace TheKittySaver.AdoptionSystem.Domain;
 
 public static class DomainDependencyInjection
 {
-    public static IServiceCollection AddDomain(this IServiceCollection services)
+    extension(IServiceCollection services)
     {
-        services.AddScoped<IPhoneNumberFactory, PhoneNumberFactory>();
-        services.AddScoped<IPersonCreationService, PersonCreationService>();
-        services.AddScoped<IPersonUpdateService, PersonUpdateService>();
-        services.AddScoped<ICatAdoptionAnnouncementAssignmentService, CatAdoptionAnnouncementAssignmentService>();
-        services.AddScoped<IAdoptionAnnouncementCreationService, AdoptionAnnouncementCreationService>();
+        public IServiceCollection AddDomain()
+        {
+            services.AddScoped<IPhoneNumberFactory, PhoneNumberFactory>();
+            services.AddScoped<IPersonCreationService, PersonCreationService>();
+            services.AddScoped<IPersonUpdateService, PersonUpdateService>();
+            services.AddScoped<ICatAdoptionAnnouncementAssignmentService, CatAdoptionAnnouncementAssignmentService>();
+            services.AddScoped<IAdoptionAnnouncementCreationService, AdoptionAnnouncementCreationService>();
 
-        return services;
+            return services;
+        }
     }
 }

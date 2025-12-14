@@ -10,7 +10,7 @@ internal sealed class CatFileStorage : ICatFileStorage
 {
     private readonly CatFileStorageOptions _options;
 
-    public CatFileStorage(IOptions<CatFileStorageOptions> options)
+    public CatFileStorage(IOptionsSnapshot<CatFileStorageOptions> options)
     {
         _options = options.Value;
     }
