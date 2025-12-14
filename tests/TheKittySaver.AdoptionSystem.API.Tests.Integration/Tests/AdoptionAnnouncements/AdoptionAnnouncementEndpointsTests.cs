@@ -367,12 +367,6 @@ public sealed class AdoptionAnnouncementEndpointsTests : IAsyncLifetime
         CatResponse cat = await CreateTestCatAsync(person.Id);
         AdoptionAnnouncementResponse announcement = await CreateTestAdoptionAnnouncementAsync(cat.Id);
 
-        // Assign cat to the announcement first
-        AssignCatRequest assignRequest = new(announcement.Id);
-        HttpResponseMessage assignResponse = await _httpClient.PostAsJsonAsync(
-            $"api/v1/cats/{cat.Id.Value}/assignment", assignRequest);
-        await assignResponse.EnsureSuccessWithDetailsAsync();
-
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.PostAsync(
             $"api/v1/adoption-announcements/{announcement.Id.Value}/claim", null);

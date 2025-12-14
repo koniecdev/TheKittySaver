@@ -27,17 +27,19 @@ public static class PersistenceDependencyInjection
 
         services.AddDbContextFactory<ApplicationWriteDbContext>((sp, options) =>
         {
-            options.UseSqlServer(sp.GetRequiredService<IOptionsSnapshot<ConnectionStringSettings>>().Value.Database);
+            options.UseSqlServer(sp.GetRequiredService<IOptions<ConnectionStringSettings>>().Value.Database);
 
-            if (interceptorsFactory is not null)
+            if (interceptorsFactory is null)
             {
-                IEnumerable<IInterceptor> interceptors = interceptorsFactory(sp);
-                options.AddInterceptors(interceptors.ToArray());
+                return;
             }
+
+            IEnumerable<IInterceptor> interceptors = interceptorsFactory(sp);
+            options.AddInterceptors(interceptors);
         });
 
         services.AddDbContextFactory<ApplicationReadDbContext>((sp, options) =>
-            options.UseSqlServer(sp.GetRequiredService<IOptionsSnapshot<ConnectionStringSettings>>().Value.Database)
+            options.UseSqlServer(sp.GetRequiredService<IOptions<ConnectionStringSettings>>().Value.Database)
                 .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking));
 
         services.AddScoped<IApplicationReadDbContext>(serviceProvider =>

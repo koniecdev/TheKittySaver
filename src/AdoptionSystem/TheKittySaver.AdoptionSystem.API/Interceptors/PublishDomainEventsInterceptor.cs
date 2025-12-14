@@ -29,15 +29,12 @@ internal sealed class PublishDomainEventsInterceptor : SaveChangesInterceptor
 
     private async Task PublishDomainEventsAsync(DbContext context, CancellationToken cancellationToken)
     {
-        List<IAggregateRoot> aggregateRoots = context.ChangeTracker
+        List<IAggregateRoot> aggregateRoots = [.. context.ChangeTracker
             .Entries<IAggregateRoot>()
             .Where(e => e.Entity.GetDomainEvents().Count != 0)
-            .Select(e => e.Entity)
-            .ToList();
+            .Select(e => e.Entity)];
 
-        List<IDomainEvent> domainEvents = aggregateRoots
-            .SelectMany(a => a.GetDomainEvents())
-            .ToList();
+        List<IDomainEvent> domainEvents = [.. aggregateRoots.SelectMany(a => a.GetDomainEvents())];
 
         foreach (IAggregateRoot aggregateRoot in aggregateRoots)
         {

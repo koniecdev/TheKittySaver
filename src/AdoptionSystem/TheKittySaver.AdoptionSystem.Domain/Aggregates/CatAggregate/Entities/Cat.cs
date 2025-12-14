@@ -350,7 +350,26 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
         Thumbnail = newThumbnail.Value;
         return Result.Success(newThumbnail.Value.Id);
     }
-    
+
+    public Result<CatThumbnailId> RemoveThumbnail()
+    {
+        if (Thumbnail is null)
+        {
+            return Result.Failure<CatThumbnailId>(
+                DomainErrors.CatEntity.ThumbnailProperty.NotUploaded(Id));
+        }
+
+        if (Status is CatStatusType.Published)
+        {
+            return Result.Failure<CatThumbnailId>(
+                DomainErrors.CatEntity.ThumbnailProperty.CannotRemoveFromPublishedCat(Id));
+        }
+
+        CatThumbnailId removedThumbnailId = Thumbnail.Id;
+        Thumbnail = null;
+        return Result.Success(removedThumbnailId);
+    }
+
     public Result<CatGalleryItemId> AddGalleryItem()
     {
         if (_galleryItems.Count >= MaximumGalleryItemsCount)

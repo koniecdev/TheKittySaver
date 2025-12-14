@@ -320,7 +320,7 @@ public sealed class CatGalleryEndpointsTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task GetCatThumbnail_ShouldReturnThumbnail_WhenThumbnailExists()
+    public async Task GetCatThumbnail_ShouldReturnFile_WhenThumbnailExists()
     {
         // Arrange
         PersonResponse person = await CreateTestPersonAsync();
@@ -332,13 +332,8 @@ public sealed class CatGalleryEndpointsTests : IAsyncLifetime
             $"api/v1/cats/{cat.Id.Value}/thumbnail");
 
         // Assert
-        string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
-
-        CatThumbnailResponse thumbnailResponse = JsonSerializer.Deserialize<CatThumbnailResponse>(stringResponse, _jsonSerializerOptions)
-            ?? throw new JsonException("Failed to deserialize CatThumbnailResponse");
-
-        thumbnailResponse.ShouldNotBeNull();
-        thumbnailResponse.CatId.ShouldBe(cat.Id);
+        await httpResponseMessage.EnsureSuccessWithDetailsAsync();
+        httpResponseMessage.Content.Headers.ContentType?.MediaType.ShouldBe("image/png");
     }
 
     [Fact]
@@ -357,7 +352,7 @@ public sealed class CatGalleryEndpointsTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task GetCatThumbnailFile_ShouldReturnFile_WhenThumbnailExists()
+    public async Task DeleteCatThumbnail_ShouldReturnNoContent_WhenThumbnailExists()
     {
         // Arrange
         PersonResponse person = await CreateTestPersonAsync();
@@ -365,12 +360,31 @@ public sealed class CatGalleryEndpointsTests : IAsyncLifetime
         await CreateTestThumbnailAsync(cat.Id);
 
         // Act
-        HttpResponseMessage httpResponseMessage = await _httpClient.GetAsync(
-            $"api/v1/cats/{cat.Id.Value}/thumbnail/file");
+        HttpResponseMessage httpResponseMessage = await _httpClient.DeleteAsync(
+            $"api/v1/cats/{cat.Id.Value}/thumbnail");
 
         // Assert
-        await httpResponseMessage.EnsureSuccessWithDetailsAsync();
-        httpResponseMessage.Content.Headers.ContentType?.MediaType.ShouldBe("image/png");
+        httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NoContent);
+
+        // Verify thumbnail is deleted
+        HttpResponseMessage getResponse = await _httpClient.GetAsync(
+            $"api/v1/cats/{cat.Id.Value}/thumbnail");
+        getResponse.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    public async Task DeleteCatThumbnail_ShouldReturnNotFound_WhenThumbnailDoesNotExist()
+    {
+        // Arrange
+        PersonResponse person = await CreateTestPersonAsync();
+        CatResponse cat = await CreateTestCatAsync(person.Id);
+
+        // Act
+        HttpResponseMessage httpResponseMessage = await _httpClient.DeleteAsync(
+            $"api/v1/cats/{cat.Id.Value}/thumbnail");
+
+        // Assert
+        httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
     private async Task<PersonResponse> CreateTestPersonAsync()

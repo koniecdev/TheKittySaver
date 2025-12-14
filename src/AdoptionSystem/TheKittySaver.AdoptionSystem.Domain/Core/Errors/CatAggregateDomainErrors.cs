@@ -222,6 +222,7 @@ public static partial class DomainErrors
                 => HasNotBeenFound(
                     $"{nameof(CatEntity)}.{nameof(Cat.Thumbnail)}",
                     catId.Value);
+
             public static Error RequiredForPublishing(CatId catId)
                 => InvalidOperation(
                     nameof(CatEntity),
@@ -235,6 +236,13 @@ public static partial class DomainErrors
                     nameof(Cat.Thumbnail),
                     $"Cat with ID '{catId.Value}' must be in draft or published status to modify thumbnail.",
                     "InvalidStatusForThumbnailOperation");
+
+            public static Error CannotRemoveFromPublishedCat(CatId catId)
+                => InvalidOperation(
+                    nameof(CatEntity),
+                    nameof(Cat.Thumbnail),
+                    $"Cannot remove thumbnail from cat with ID '{catId.Value}' because it is published.",
+                    "CannotRemoveFromPublishedCat");
         }
 
         public static class Assignment
