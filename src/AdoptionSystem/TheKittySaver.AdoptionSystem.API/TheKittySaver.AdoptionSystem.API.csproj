@@ -16,6 +16,12 @@
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="Serilog.AspNetCore" />
+        <PackageReference Include="Serilog.Enrichers.Environment" />
+        <PackageReference Include="Serilog.Enrichers.Thread" />
+        <PackageReference Include="Serilog.Formatting.Compact" />
+        <PackageReference Include="Serilog.Sinks.Console" />
+        <PackageReference Include="Serilog.Sinks.File" />
     </ItemGroup>
 
     <ItemGroup>

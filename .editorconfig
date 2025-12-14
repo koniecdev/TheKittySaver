@@ -289,6 +289,8 @@ dotnet_diagnostic.CA2326.severity = none
 # CA2327: Do not use insecure JsonSerializerSettings
 dotnet_diagnostic.CA2327.severity = none
 
+dotnet_diagnostic.CA5394.severity = none
+
 # Visual Studio.Analyzers
 
 dotnet_diagnostic.IDE0290.severity = none

@@ -3,12 +3,17 @@ using TheKittySaver.AdoptionSystem.API;
 using TheKittySaver.AdoptionSystem.API.Extensions;
 using Asp.Versioning;
 using Asp.Versioning.Builder;
+using Serilog;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+
 builder.Services.Register(builder.Configuration);
+
+builder.Host.UseSerilog((context, configuration) =>
+    configuration.ReadFrom.Configuration(context.Configuration));
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();
-
 
 builder.Services.AddApiVersioning(options =>
 {
@@ -23,6 +28,8 @@ builder.Services.AddApiVersioning(options =>
 builder.Services.AddEndpoints(Assembly.GetExecutingAssembly());
 
 WebApplication app = builder.Build();
+
+app.UseSerilogRequestLogging();
 
 if (app.Environment.IsDevelopment())
 {
