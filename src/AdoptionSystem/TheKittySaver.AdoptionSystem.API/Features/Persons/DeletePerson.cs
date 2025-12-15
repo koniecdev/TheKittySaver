@@ -1,4 +1,5 @@
 using Mediator;
+using Microsoft.AspNetCore.Mvc;
 using TheKittySaver.AdoptionSystem.API.Common;
 using TheKittySaver.AdoptionSystem.API.Extensions;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAggregate.Entities;
@@ -83,6 +84,7 @@ internal sealed class DeletePerson : IEndpoint
             return commandResult.IsFailure
                 ? Results.Problem(commandResult.Error.ToProblemDetails())
                 : Results.NoContent();
-        });
+        }).Produces(StatusCodes.Status204NoContent)
+          .Produces<ProblemDetails>(StatusCodes.Status404NotFound);
     }
 }

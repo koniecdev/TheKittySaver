@@ -3,16 +3,14 @@ using Polly;
 
 namespace TheKittySaver.AdoptionSystem.API.Extensions;
 
-public static class HttpClientResilienceExtensions
+internal static class HttpClientResilienceExtensions
 {
     public static IHttpClientBuilder AddStandardResiliencePolicy(this IHttpClientBuilder builder)
     {
         builder.AddResilienceHandler("StandardResilience", pipeline =>
         {
-            // Rate limiter
             pipeline.AddConcurrencyLimiter(100, 50);
 
-            // Retry policy with exponential backoff
             pipeline.AddRetry(new HttpRetryStrategyOptions
             {
                 MaxRetryAttempts = 3,
@@ -24,7 +22,6 @@ public static class HttpClientResilienceExtensions
                     args.Outcome.Exception is not null)
             });
 
-            // Circuit breaker
             pipeline.AddCircuitBreaker(new HttpCircuitBreakerStrategyOptions
             {
                 SamplingDuration = TimeSpan.FromSeconds(30),
@@ -36,7 +33,6 @@ public static class HttpClientResilienceExtensions
                     args.Outcome.Exception is not null)
             });
 
-            // Timeout per attempt
             pipeline.AddTimeout(TimeSpan.FromSeconds(10));
         });
 

@@ -1,16 +1,18 @@
 using Mediator;
 using Microsoft.EntityFrameworkCore;
 using TheKittySaver.AdoptionSystem.API.Common;
+using TheKittySaver.AdoptionSystem.API.Common.Sorting;
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.AdoptionAnnouncementAggregate.Responses;
 using TheKittySaver.AdoptionSystem.Contracts.Common;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
 using TheKittySaver.AdoptionSystem.Persistence.DbContexts.ReadDbContexts;
+using TheKittySaver.AdoptionSystem.ReadModels.Aggregates.AdoptionAnnouncementAggregate;
 
 namespace TheKittySaver.AdoptionSystem.API.Features.AdoptionAnnouncements;
 
 internal sealed class GetAdoptionAnnouncements : IEndpoint
 {
-    internal sealed record Query(int Page, int PageSize) 
+    internal sealed record Query(int Page, int PageSize, string? Sort)
         : IQuery<Result<PaginationResult<AdoptionAnnouncementResponse>>>, IPagedQuery;
 
     internal sealed class Handler : IQueryHandler<Query, Result<PaginationResult<AdoptionAnnouncementResponse>>>
@@ -26,8 +28,14 @@ internal sealed class GetAdoptionAnnouncements : IEndpoint
         {
             int totalCount = await _readDbContext.AdoptionAnnouncements.CountAsync(cancellationToken);
 
-            IReadOnlyList<AdoptionAnnouncementResponse> items = await _readDbContext.AdoptionAnnouncements
-                .OrderBy(a => a.Id)
+            IOrderedQueryable<AdoptionAnnouncementReadModel>? sortedQuery =
+                _readDbContext.AdoptionAnnouncements.ApplySortOrNull(query.Sort);
+
+            IOrderedQueryable<AdoptionAnnouncementReadModel> orderedQuery = sortedQuery is not null
+                ? sortedQuery.ThenBy(a => a.Id)
+                : _readDbContext.AdoptionAnnouncements.OrderBy(a => a.Id);
+
+            IReadOnlyList<AdoptionAnnouncementResponse> items = await orderedQuery
                 .Skip((query.Page - 1) * query.PageSize)
                 .Take(query.PageSize)
                 .Select(a => new AdoptionAnnouncementResponse(
@@ -63,7 +71,7 @@ internal sealed class GetAdoptionAnnouncements : IEndpoint
             ISender sender,
             CancellationToken cancellationToken) =>
         {
-            Query query = new(pagination.Page, pagination.PageSize);
+            Query query = new(pagination.Page, pagination.PageSize, pagination.Sort);
 
             Result<PaginationResult<AdoptionAnnouncementResponse>> queryResult = await sender.Send(query, cancellationToken);
 

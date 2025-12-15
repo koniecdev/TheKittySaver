@@ -4,7 +4,9 @@ using TheKittySaver.AdoptionSystem.API.Extensions;
 using TheKittySaver.AdoptionSystem.API.Middleware;
 using Asp.Versioning;
 using Asp.Versioning.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
+using Scalar.AspNetCore;
 using Serilog;
 using TheKittySaver.AdoptionSystem.Persistence.Settings;
 
@@ -17,15 +19,6 @@ builder.Services.Register(builder.Configuration);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();
-builder.Services.AddSwaggerGen(options =>
-{
-    options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
-    {
-        Title = "TheKittySaver Adoption System API",
-        Version = "v1",
-        Description = "API for managing cat adoptions"
-    });
-});
 
 builder.Services.AddApiVersioning(options =>
 {
@@ -39,7 +32,6 @@ builder.Services.AddApiVersioning(options =>
 
 builder.Services.AddEndpoints(Assembly.GetExecutingAssembly());
 
-// Health Checks
 builder.Services.AddHealthChecks()
     .AddSqlServer(
         connectionStringFactory: sp => sp.GetRequiredService<IOptions<ConnectionStringSettings>>().Value.Database,
@@ -48,43 +40,35 @@ builder.Services.AddHealthChecks()
 
 WebApplication app = builder.Build();
 
-// Correlation ID middleware - should be early in the pipeline
 app.UseMiddleware<CorrelationIdMiddleware>();
 
 app.UseSerilogRequestLogging(options =>
 {
     options.EnrichDiagnosticContext = (diagnosticContext, httpContext) =>
     {
-        if (httpContext.Items.TryGetValue("CorrelationId", out var correlationId))
+        if (httpContext.Items.TryGetValue("CorrelationId", out object? correlationId))
         {
             diagnosticContext.Set("CorrelationId", correlationId);
         }
     };
 });
+
 app.UseExceptionHandler();
 
-// Swagger UI - available in all environments
-app.UseSwagger();
-app.UseSwaggerUI(options =>
-{
-    options.SwaggerEndpoint("/swagger/v1/swagger.json", "TheKittySaver API v1");
-    options.RoutePrefix = "swagger";
-});
-
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsEnvironment("Local"))
 {
     app.MapOpenApi();
+    app.MapScalarApiReference();
 }
 
 app.UseHttpsRedirection();
 
-// Health check endpoints
-app.MapHealthChecks("/health/live", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
+app.MapHealthChecks("/health/live", new HealthCheckOptions
 {
-    Predicate = _ => false // Liveness - just check if app is running
+    Predicate = _ => false
 });
 
-app.MapHealthChecks("/health/ready", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
+app.MapHealthChecks("/health/ready", new HealthCheckOptions
 {
     Predicate = check => check.Tags.Contains("ready")
 });

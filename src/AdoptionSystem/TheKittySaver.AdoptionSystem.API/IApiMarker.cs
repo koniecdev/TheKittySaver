@@ -1,3 +1,3 @@
 ﻿namespace TheKittySaver.AdoptionSystem.API;
 
-public interface IApiMarker;
+internal interface IApiMarker;

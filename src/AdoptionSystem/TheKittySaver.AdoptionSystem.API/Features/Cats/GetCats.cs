@@ -1,16 +1,18 @@
 using Mediator;
 using Microsoft.EntityFrameworkCore;
 using TheKittySaver.AdoptionSystem.API.Common;
+using TheKittySaver.AdoptionSystem.API.Common.Sorting;
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.CatAggregate.Responses;
 using TheKittySaver.AdoptionSystem.Contracts.Common;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
 using TheKittySaver.AdoptionSystem.Persistence.DbContexts.ReadDbContexts;
+using TheKittySaver.AdoptionSystem.ReadModels.Aggregates.CatAggregate;
 
 namespace TheKittySaver.AdoptionSystem.API.Features.Cats;
 
 internal sealed class GetCats : IEndpoint
 {
-    internal sealed record Query(int Page, int PageSize)
+    internal sealed record Query(int Page, int PageSize, string? Sort)
         : IQuery<Result<PaginationResult<CatResponse>>>, IPagedQuery;
 
     internal sealed class Handler : IQueryHandler<Query, Result<PaginationResult<CatResponse>>>
@@ -26,7 +28,13 @@ internal sealed class GetCats : IEndpoint
         {
             int totalCount = await _readDbContext.Cats.CountAsync(cancellationToken);
 
-            IReadOnlyList<CatResponse> items = await _readDbContext.Cats
+            IOrderedQueryable<CatReadModel>? sortedQuery = _readDbContext.Cats.ApplySortOrNull(query.Sort);
+
+            IOrderedQueryable<CatReadModel> orderedQuery = sortedQuery is not null
+                ? sortedQuery.ThenBy(c => c.Id)
+                : _readDbContext.Cats.OrderBy(c => c.Id);
+
+            IReadOnlyList<CatResponse> items = await orderedQuery
                 .Skip((query.Page - 1) * query.PageSize)
                 .Take(query.PageSize)
                 .Select(c => new CatResponse(
@@ -74,7 +82,7 @@ internal sealed class GetCats : IEndpoint
             ISender sender,
             CancellationToken cancellationToken) =>
         {
-            Query query = new(pagination.Page, pagination.PageSize);
+            Query query = new(pagination.Page, pagination.PageSize, pagination.Sort);
 
             Result<PaginationResult<CatResponse>> queryResult = await sender.Send(query, cancellationToken);
 

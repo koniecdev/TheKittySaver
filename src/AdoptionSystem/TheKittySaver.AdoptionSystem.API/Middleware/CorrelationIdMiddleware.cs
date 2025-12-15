@@ -1,8 +1,9 @@
+using Microsoft.Extensions.Primitives;
 using Serilog.Context;
 
 namespace TheKittySaver.AdoptionSystem.API.Middleware;
 
-public sealed class CorrelationIdMiddleware
+internal sealed class CorrelationIdMiddleware
 {
     private const string CorrelationIdHeaderName = "X-Correlation-ID";
     private readonly RequestDelegate _next;
@@ -27,7 +28,7 @@ public sealed class CorrelationIdMiddleware
 
     private static string GetOrCreateCorrelationId(HttpContext context)
     {
-        if (context.Request.Headers.TryGetValue(CorrelationIdHeaderName, out var existingId)
+        if (context.Request.Headers.TryGetValue(CorrelationIdHeaderName, out StringValues existingId)
             && !string.IsNullOrWhiteSpace(existingId))
         {
             return existingId.ToString();
