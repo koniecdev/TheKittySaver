@@ -9,7 +9,7 @@ using TheKittySaver.AdoptionSystem.Persistence.DbContexts.Abstractions;
 namespace TheKittySaver.AdoptionSystem.API.DomainEventHandlers;
 
 internal sealed class CatReassignedToAnotherAnnouncementDomainEventHandler
-    : INotificationHandler<CatReassignedToAnotherAnnouncementNotification>
+    : INotificationHandler<CatReassignedToAnotherAnnouncementDomainEvent>
 {
     private readonly ICatRepository _catRepository;
     private readonly IAdoptionAnnouncementRepository _adoptionAnnouncementRepository;
@@ -29,40 +29,38 @@ internal sealed class CatReassignedToAnotherAnnouncementDomainEventHandler
     }
 
     public async ValueTask Handle(
-        CatReassignedToAnotherAnnouncementNotification notification,
+        CatReassignedToAnotherAnnouncementDomainEvent notification,
         CancellationToken cancellationToken)
     {
-        CatReassignedToAnotherAnnouncementDomainEvent domainEvent = notification.DomainEvent;
-
         _logger.LogInformation(
             "Cat {CatId} was reassigned from announcement {SourceAnnouncementId} to {DestinationAnnouncementId}",
-            domainEvent.CatId.Value,
-            domainEvent.SourceAdoptionAnnouncementId.Value,
-            domainEvent.DestinationAdoptionAnnouncementId.Value);
+            notification.CatId.Value,
+            notification.SourceAdoptionAnnouncementId.Value,
+            notification.DestinationAdoptionAnnouncementId.Value);
 
         int remainingCatsInSource = await _catRepository.CountCatsByAdoptionAnnouncementIdAsync(
-            domainEvent.SourceAdoptionAnnouncementId,
+            notification.SourceAdoptionAnnouncementId,
             cancellationToken);
 
         if (remainingCatsInSource == 0)
         {
             _logger.LogInformation(
                 "Source announcement {SourceAnnouncementId} has no more cats, will be deleted and merge logged in {DestinationAnnouncementId}",
-                domainEvent.SourceAdoptionAnnouncementId.Value,
-                domainEvent.DestinationAdoptionAnnouncementId.Value);
+                notification.SourceAdoptionAnnouncementId.Value,
+                notification.DestinationAdoptionAnnouncementId.Value);
 
             Maybe<AdoptionAnnouncement> maybeDestination = await _adoptionAnnouncementRepository.GetByIdAsync(
-                domainEvent.DestinationAdoptionAnnouncementId,
+                notification.DestinationAdoptionAnnouncementId,
                 cancellationToken);
 
             if (maybeDestination.HasValue)
             {
                 maybeDestination.Value.PersistAdoptionAnnouncementAfterLastCatReassignment(
-                    domainEvent.SourceAdoptionAnnouncementId);
+                    notification.SourceAdoptionAnnouncementId);
             }
 
             Maybe<AdoptionAnnouncement> maybeSource = await _adoptionAnnouncementRepository.GetByIdAsync(
-                domainEvent.SourceAdoptionAnnouncementId,
+                notification.SourceAdoptionAnnouncementId,
                 cancellationToken);
 
             if (maybeSource.HasValue)

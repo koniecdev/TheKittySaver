@@ -1,6 +1,4 @@
-using TheKittySaver.AdoptionSystem.API.DomainEventHandlers;
 using TheKittySaver.AdoptionSystem.API.ExceptionHandlers;
-using TheKittySaver.AdoptionSystem.API.Interceptors;
 using TheKittySaver.AdoptionSystem.API.Pipeline;
 
 namespace TheKittySaver.AdoptionSystem.API;
@@ -18,8 +16,6 @@ internal static class ApiDependencyInjection
             options.PipelineBehaviors = [typeof(FailureLoggingBehaviour<,>)];
         });
 
-        services.AddSingleton<IDomainEventPublisher, MediatorDomainEventPublisher>();
-        services.AddSingleton<PublishDomainEventsInterceptor>();
 
         return services;
     }

@@ -11,7 +11,7 @@ using TheKittySaver.AdoptionSystem.Persistence.DbContexts.Abstractions;
 namespace TheKittySaver.AdoptionSystem.API.DomainEventHandlers;
 
 internal sealed class CatClaimedDomainEventHandler
-    : INotificationHandler<CatClaimedNotification>
+    : INotificationHandler<CatClaimedDomainEvent>
 {
     private readonly ICatRepository _catRepository;
     private readonly IAdoptionAnnouncementRepository _adoptionAnnouncementRepository;
@@ -34,28 +34,26 @@ internal sealed class CatClaimedDomainEventHandler
     }
 
     public async ValueTask Handle(
-        CatClaimedNotification notification,
+        CatClaimedDomainEvent notification,
         CancellationToken cancellationToken)
     {
-        CatClaimedDomainEvent domainEvent = notification.DomainEvent;
-
         _logger.LogInformation(
             "Cat {CatId} was claimed from announcement {AnnouncementId}",
-            domainEvent.CatId.Value,
-            domainEvent.AdoptionAnnouncementId.Value);
+            notification.CatId.Value,
+            notification.AdoptionAnnouncementId.Value);
 
         int unclaimedCatsCount = await _catRepository.CountUnclaimedCatsByAdoptionAnnouncementIdAsync(
-            domainEvent.AdoptionAnnouncementId,
+            notification.AdoptionAnnouncementId,
             cancellationToken);
 
         if (unclaimedCatsCount == 0)
         {
             _logger.LogInformation(
                 "All cats in announcement {AnnouncementId} have been claimed, claiming the announcement",
-                domainEvent.AdoptionAnnouncementId.Value);
+                notification.AdoptionAnnouncementId.Value);
 
             Maybe<AdoptionAnnouncement> maybeAnnouncement = await _adoptionAnnouncementRepository.GetByIdAsync(
-                domainEvent.AdoptionAnnouncementId,
+                notification.AdoptionAnnouncementId,
                 cancellationToken);
 
             if (maybeAnnouncement.HasValue)

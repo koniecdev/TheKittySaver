@@ -1,3 +1,5 @@
-﻿namespace TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
+﻿using Mediator;
 
-public interface IDomainEvent;
+namespace TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
+
+public interface IDomainEvent : INotification;

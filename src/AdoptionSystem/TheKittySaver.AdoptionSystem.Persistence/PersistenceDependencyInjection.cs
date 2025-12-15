@@ -19,8 +19,7 @@ namespace TheKittySaver.AdoptionSystem.Persistence;
 public static class PersistenceDependencyInjection
 {
     public static IServiceCollection AddPersistence(
-        this IServiceCollection services,
-        Func<IServiceProvider, IEnumerable<IInterceptor>>? interceptorsFactory = null)
+        this IServiceCollection services)
     {
         services.AddSingleton<IValidator<ConnectionStringSettings>, ConnectionStringSettingsValidator>();
         services.AddOptionsWithFluentValidation<ConnectionStringSettings>(ConnectionStringSettings.ConfigurationSection);
@@ -28,14 +27,6 @@ public static class PersistenceDependencyInjection
         services.AddDbContextFactory<ApplicationWriteDbContext>((sp, options) =>
         {
             options.UseSqlServer(sp.GetRequiredService<IOptions<ConnectionStringSettings>>().Value.Database);
-
-            if (interceptorsFactory is null)
-            {
-                return;
-            }
-
-            IEnumerable<IInterceptor> interceptors = interceptorsFactory(sp);
-            options.AddInterceptors(interceptors);
         });
 
         services.AddDbContextFactory<ApplicationReadDbContext>((sp, options) =>
