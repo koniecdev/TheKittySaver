@@ -26,11 +26,29 @@ public static class PersistenceDependencyInjection
 
         services.AddDbContextFactory<ApplicationWriteDbContext>((sp, options) =>
         {
-            options.UseSqlServer(sp.GetRequiredService<IOptions<ConnectionStringSettings>>().Value.Database);
+            options.UseSqlServer(
+                sp.GetRequiredService<IOptions<ConnectionStringSettings>>().Value.Database,
+                sqlOptions =>
+                {
+                    sqlOptions.EnableRetryOnFailure(
+                        maxRetryCount: 3,
+                        maxRetryDelay: TimeSpan.FromSeconds(10),
+                        errorNumbersToAdd: null);
+                    sqlOptions.CommandTimeout(30);
+                });
         });
 
         services.AddDbContextFactory<ApplicationReadDbContext>((sp, options) =>
-            options.UseSqlServer(sp.GetRequiredService<IOptions<ConnectionStringSettings>>().Value.Database)
+            options.UseSqlServer(
+                    sp.GetRequiredService<IOptions<ConnectionStringSettings>>().Value.Database,
+                    sqlOptions =>
+                    {
+                        sqlOptions.EnableRetryOnFailure(
+                            maxRetryCount: 3,
+                            maxRetryDelay: TimeSpan.FromSeconds(10),
+                            errorNumbersToAdd: null);
+                        sqlOptions.CommandTimeout(30);
+                    })
                 .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking));
 
         services.AddScoped<IApplicationReadDbContext>(serviceProvider =>
