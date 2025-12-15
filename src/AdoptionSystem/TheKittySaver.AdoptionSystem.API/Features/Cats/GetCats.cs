@@ -2,17 +2,17 @@ using Mediator;
 using Microsoft.EntityFrameworkCore;
 using TheKittySaver.AdoptionSystem.API.Common;
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.CatAggregate.Responses;
+using TheKittySaver.AdoptionSystem.Contracts.Common;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
 using TheKittySaver.AdoptionSystem.Persistence.DbContexts.ReadDbContexts;
-using TheKittySaver.AdoptionSystem.ReadModels.Aggregates.CatAggregate;
 
 namespace TheKittySaver.AdoptionSystem.API.Features.Cats;
 
 internal sealed class GetCats : IEndpoint
 {
-    internal sealed record Query : IQuery<Result<IReadOnlyList<CatResponse>>>;
+    internal sealed record Query(int Page, int PageSize) : IQuery<Result<PaginationResult<CatResponse>>>;
 
-    internal sealed class Handler : IQueryHandler<Query, Result<IReadOnlyList<CatResponse>>>
+    internal sealed class Handler : IQueryHandler<Query, Result<PaginationResult<CatResponse>>>
     {
         private readonly IApplicationReadDbContext _readDbContext;
 
@@ -21,9 +21,14 @@ internal sealed class GetCats : IEndpoint
             _readDbContext = readDbContext;
         }
 
-        public async ValueTask<Result<IReadOnlyList<CatResponse>>> Handle(Query query, CancellationToken cancellationToken)
+        public async ValueTask<Result<PaginationResult<CatResponse>>> Handle(Query query, CancellationToken cancellationToken)
         {
-            IReadOnlyList<CatResponse> response = await _readDbContext.Cats
+            int totalCount = await _readDbContext.Cats.CountAsync(cancellationToken);
+
+            IReadOnlyList<CatResponse> items = await _readDbContext.Cats
+                .OrderBy(c => c.Id)
+                .Skip((query.Page - 1) * query.PageSize)
+                .Take(query.PageSize)
                 .Select(c => new CatResponse(
                     Id: c.Id,
                     PersonId: c.PersonId,
@@ -49,7 +54,15 @@ internal sealed class GetCats : IEndpoint
                     InfectiousDiseaseStatusFelvStatus: c.InfectiousDiseaseStatusFelvStatus,
                     InfectiousDiseaseStatusLastTestedAt: c.InfectiousDiseaseStatusLastTestedAt))
                 .ToListAsync(cancellationToken);
-            
+
+            PaginationResult<CatResponse> response = new()
+            {
+                Items = items,
+                Page = query.Page,
+                PageSize = query.PageSize,
+                TotalCount = totalCount
+            };
+
             return Result.Success(response);
         }
     }
@@ -57,12 +70,13 @@ internal sealed class GetCats : IEndpoint
     public void MapEndpoint(IEndpointRouteBuilder endpointRouteBuilder)
     {
         endpointRouteBuilder.MapGet("cats", async (
+            [AsParameters] PaginationRequest pagination,
             ISender sender,
             CancellationToken cancellationToken) =>
         {
-            Query query = new();
+            Query query = new(pagination.Page, pagination.PageSize);
 
-            Result<IReadOnlyList<CatResponse>> queryResult = await sender.Send(query, cancellationToken);
+            Result<PaginationResult<CatResponse>> queryResult = await sender.Send(query, cancellationToken);
 
             return Results.Ok(queryResult.Value);
         });
