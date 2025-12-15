@@ -1,4 +1,5 @@
-﻿using DotNet.Testcontainers.Builders;
+﻿using System.Diagnostics.CodeAnalysis;
+using DotNet.Testcontainers.Builders;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -13,24 +14,27 @@ using TheKittySaver.AdoptionSystem.Persistence.DbContexts.WriteDbContexts;
 
 namespace TheKittySaver.AdoptionSystem.API.Tests.Integration;
 
-public class TheKittySaverApiFactory : WebApplicationFactory<IApiMarker>, IAsyncLifetime
+#pragma warning disable CA1515
+// ReSharper disable once ClassNeverInstantiated.Global
+public class TheKittySaverApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
+#pragma warning restore CA1515
 {
     private readonly MsSqlContainer _msSqlContainer
         = new MsSqlBuilder().Build();
-    
-    public string ConnectionString { get; private set; } = string.Empty;
+
+    private string _connectionString = string.Empty;
     
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.UseEnvironment("Testing");
 
-        builder.ConfigureAppConfiguration((context, configBuilder) =>
+        builder.ConfigureAppConfiguration((_, configBuilder) =>
         {
             configBuilder.AddJsonFile("appsettings.json", optional: false)
                 .AddJsonFile("appsettings.Test.json", optional: true)
                 .AddInMemoryCollection(new Dictionary<string, string?>
                 {
-                    { "ConnectionStringSettings:Database", ConnectionString },
+                    { "ConnectionStringSettings:Database", _connectionString },
                 });
         });
 
@@ -48,7 +52,7 @@ public class TheKittySaverApiFactory : WebApplicationFactory<IApiMarker>, IAsync
     public async Task InitializeAsync()
     {
         await _msSqlContainer.StartAsync();
-        ConnectionString = _msSqlContainer.GetConnectionString();
+        _connectionString = _msSqlContainer.GetConnectionString();
 
         using IServiceScope scope = Services.CreateScope();
         ApplicationWriteDbContext dbContext = scope.ServiceProvider.GetRequiredService<ApplicationWriteDbContext>();
