@@ -15,7 +15,7 @@ using TheKittySaver.AdoptionSystem.Persistence.DbContexts.Abstractions;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
 using TheKittySaver.AdoptionSystem.Primitives.Enums;
 
-namespace TheKittySaver.AdoptionSystem.API.Features.Addresses;
+namespace TheKittySaver.AdoptionSystem.API.Features.PersonsAddresses;
 
 internal sealed class CreatePersonAddress : IEndpoint
 {

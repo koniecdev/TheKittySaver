@@ -14,7 +14,7 @@ using TheKittySaver.AdoptionSystem.Persistence.DbContexts.ReadDbContexts;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate;
 using TheKittySaver.AdoptionSystem.ReadModels.Aggregates.CatAggregate;
 
-namespace TheKittySaver.AdoptionSystem.API.Features.Gallery;
+namespace TheKittySaver.AdoptionSystem.API.Features.CatsGallery;
 
 internal sealed class GetCatThumbnail : IEndpoint
 {

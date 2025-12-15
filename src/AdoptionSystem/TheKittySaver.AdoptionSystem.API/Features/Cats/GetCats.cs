@@ -10,7 +10,8 @@ namespace TheKittySaver.AdoptionSystem.API.Features.Cats;
 
 internal sealed class GetCats : IEndpoint
 {
-    internal sealed record Query(int Page, int PageSize) : IQuery<Result<PaginationResult<CatResponse>>>;
+    internal sealed record Query(int Page, int PageSize)
+        : IQuery<Result<PaginationResult<CatResponse>>>, IPagedQuery;
 
     internal sealed class Handler : IQueryHandler<Query, Result<PaginationResult<CatResponse>>>
     {
@@ -26,7 +27,6 @@ internal sealed class GetCats : IEndpoint
             int totalCount = await _readDbContext.Cats.CountAsync(cancellationToken);
 
             IReadOnlyList<CatResponse> items = await _readDbContext.Cats
-                .OrderBy(c => c.Id)
                 .Skip((query.Page - 1) * query.PageSize)
                 .Take(query.PageSize)
                 .Select(c => new CatResponse(

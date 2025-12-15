@@ -10,7 +10,8 @@ namespace TheKittySaver.AdoptionSystem.API.Features.AdoptionAnnouncements;
 
 internal sealed class GetAdoptionAnnouncements : IEndpoint
 {
-    internal sealed record Query(int Page, int PageSize) : IQuery<Result<PaginationResult<AdoptionAnnouncementResponse>>>;
+    internal sealed record Query(int Page, int PageSize) 
+        : IQuery<Result<PaginationResult<AdoptionAnnouncementResponse>>>, IPagedQuery;
 
     internal sealed class Handler : IQueryHandler<Query, Result<PaginationResult<AdoptionAnnouncementResponse>>>
     {

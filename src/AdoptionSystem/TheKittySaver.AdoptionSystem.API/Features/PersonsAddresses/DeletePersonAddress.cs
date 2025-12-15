@@ -9,7 +9,7 @@ using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
 using TheKittySaver.AdoptionSystem.Persistence.DbContexts.Abstractions;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
 
-namespace TheKittySaver.AdoptionSystem.API.Features.Addresses;
+namespace TheKittySaver.AdoptionSystem.API.Features.PersonsAddresses;
 
 internal sealed class DeletePersonAddress : IEndpoint
 {
