@@ -18,6 +18,13 @@ namespace TheKittySaver.AdoptionSystem.Persistence;
 
 public static class PersistenceDependencyInjection
 {
+    public static async Task MigrateDatabaseAsync(this IServiceProvider serviceProvider)
+    {
+        await using var scope = serviceProvider.CreateAsyncScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationWriteDbContext>();
+        await dbContext.Database.MigrateAsync();
+    }
+
     public static IServiceCollection AddPersistence(
         this IServiceCollection services)
     {

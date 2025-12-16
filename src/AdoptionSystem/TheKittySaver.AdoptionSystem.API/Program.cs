@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
 using Scalar.AspNetCore;
 using Serilog;
+using TheKittySaver.AdoptionSystem.Persistence;
 using TheKittySaver.AdoptionSystem.Persistence.Settings;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -39,6 +40,8 @@ builder.Services.AddHealthChecks()
         tags: ["db", "sql", "ready"]);
 
 WebApplication app = builder.Build();
+
+await app.Services.MigrateDatabaseAsync();
 
 app.UseMiddleware<CorrelationIdMiddleware>();
 
