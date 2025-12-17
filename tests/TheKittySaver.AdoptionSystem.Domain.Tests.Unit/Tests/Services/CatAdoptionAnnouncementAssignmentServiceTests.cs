@@ -9,7 +9,6 @@ using TheKittySaver.AdoptionSystem.Domain.Services.CatAdoptionAnnouncementServic
 using TheKittySaver.AdoptionSystem.Domain.Tests.Unit.Shared.Extensions;
 using TheKittySaver.AdoptionSystem.Domain.Tests.Unit.Shared.Factories;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.AdoptionAnnouncementAggregate;
-using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate.Enums;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
 

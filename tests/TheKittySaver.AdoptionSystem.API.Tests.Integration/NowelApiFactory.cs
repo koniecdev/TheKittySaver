@@ -1,13 +1,9 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using DotNet.Testcontainers.Builders;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Testcontainers.MsSql;
 using TheKittySaver.AdoptionSystem.Persistence.DbContexts.WriteDbContexts;
@@ -19,8 +15,7 @@ namespace TheKittySaver.AdoptionSystem.API.Tests.Integration;
 public class TheKittySaverApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
 #pragma warning restore CA1515
 {
-    private readonly MsSqlContainer _msSqlContainer
-        = new MsSqlBuilder().Build();
+    private readonly MsSqlContainer _msSqlContainer = new MsSqlBuilder().Build();
 
     private string _connectionString = string.Empty;
     
@@ -54,9 +49,9 @@ public class TheKittySaverApiFactory : WebApplicationFactory<Program>, IAsyncLif
         await _msSqlContainer.StartAsync();
         _connectionString = _msSqlContainer.GetConnectionString();
 
-        using IServiceScope scope = Services.CreateScope();
+        await using AsyncServiceScope scope = Services.CreateAsyncScope();
         ApplicationWriteDbContext dbContext = scope.ServiceProvider.GetRequiredService<ApplicationWriteDbContext>();
-        
+
         await dbContext.Database.MigrateAsync();
     }
 

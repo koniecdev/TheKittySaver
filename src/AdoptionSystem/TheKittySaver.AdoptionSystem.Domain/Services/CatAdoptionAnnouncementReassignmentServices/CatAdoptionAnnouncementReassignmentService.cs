@@ -1,11 +1,8 @@
 ﻿using TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAggregate.Entities;
-using TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAggregate.Repositories;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Entities;
-using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Repositories;
 using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.AdoptionAnnouncementAggregate.Enums;
-using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate.Enums;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Services.CatAdoptionAnnouncementReassignmentServices;
 

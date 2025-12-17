@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Entities;
-using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.ValueObjects;
 
 namespace TheKittySaver.AdoptionSystem.Domain.EntityFramework.Aggregates.CatAggregate;
 

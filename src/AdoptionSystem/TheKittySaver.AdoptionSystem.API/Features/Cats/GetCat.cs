@@ -7,7 +7,6 @@ using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
 using TheKittySaver.AdoptionSystem.Persistence.DbContexts.ReadDbContexts;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate;
-using TheKittySaver.AdoptionSystem.ReadModels.Aggregates.CatAggregate;
 
 namespace TheKittySaver.AdoptionSystem.API.Features.Cats;
 

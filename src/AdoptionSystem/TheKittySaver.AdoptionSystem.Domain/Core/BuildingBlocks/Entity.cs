@@ -1,7 +1,4 @@
-﻿using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects;
-using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.Timestamps;
-
-namespace TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
+﻿namespace TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
 
 public abstract class Entity<TId> : IEquatable<Entity<TId>> where TId : struct
 {

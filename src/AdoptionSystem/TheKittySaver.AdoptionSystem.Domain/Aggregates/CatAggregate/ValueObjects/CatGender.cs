@@ -1,6 +1,4 @@
 ﻿using TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
-using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
-using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate.Enums;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.ValueObjects;

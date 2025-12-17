@@ -1,6 +1,5 @@
 using TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.OptionMonad;
-using TheKittySaver.AdoptionSystem.Primitives.Common;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Core.Extensions;
 

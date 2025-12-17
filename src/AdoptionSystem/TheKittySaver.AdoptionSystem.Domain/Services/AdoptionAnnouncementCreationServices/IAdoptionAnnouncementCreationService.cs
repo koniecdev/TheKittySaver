@@ -5,7 +5,6 @@ using TheKittySaver.AdoptionSystem.Domain.Core.Monads.OptionMonad;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.PhoneNumbers;
-using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.Timestamps;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Services.AdoptionAnnouncementCreationServices;
 

@@ -9,7 +9,6 @@ using TheKittySaver.AdoptionSystem.Domain.Services.AdoptionAnnouncementCreationS
 using TheKittySaver.AdoptionSystem.Domain.Services.CatAdoptionAnnouncementServices;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.PhoneNumbers;
-using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.Timestamps;
 using TheKittySaver.AdoptionSystem.Domain.Tests.Unit.Shared.Extensions;
 using TheKittySaver.AdoptionSystem.Domain.Tests.Unit.Shared.Factories;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate.Enums;

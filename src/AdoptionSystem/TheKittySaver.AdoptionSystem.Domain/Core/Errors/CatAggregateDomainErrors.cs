@@ -1,6 +1,4 @@
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Entities;
-using CatEntity = TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Entities.Cat;
-using VaccinationEntity = TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Entities.Vaccination;
 using AdoptionHistoryValueObject =
     TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.ValueObjects.AdoptionHistory;
 using ListingSourceValueObject = TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.ValueObjects.ListingSource;

@@ -7,7 +7,6 @@ using TheKittySaver.AdoptionSystem.Domain.Core.Monads.OptionMonad;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.AddressCompounds;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.AddressCompounds.Specifications;
-using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.Timestamps;
 using TheKittySaver.AdoptionSystem.Domain.Tests.Unit.Shared.Extensions;
 using TheKittySaver.AdoptionSystem.Domain.Tests.Unit.Shared.Factories;
 using TheKittySaver.AdoptionSystem.Infrastructure.Specifications;

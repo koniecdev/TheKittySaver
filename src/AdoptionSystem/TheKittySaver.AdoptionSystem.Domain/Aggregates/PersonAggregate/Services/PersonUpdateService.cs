@@ -3,7 +3,6 @@ using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.Repositorie
 using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.OptionMonad;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
-using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.PhoneNumbers;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
 using Email = TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.Email;

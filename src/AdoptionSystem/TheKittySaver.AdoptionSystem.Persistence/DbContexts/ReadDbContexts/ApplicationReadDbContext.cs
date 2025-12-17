@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using TheKittySaver.AdoptionSystem.Persistence.Converters;
 using TheKittySaver.AdoptionSystem.ReadModels.Aggregates.AdoptionAnnouncementAggregate;
 using TheKittySaver.AdoptionSystem.ReadModels.Aggregates.CatAggregate;
