@@ -115,7 +115,7 @@ public sealed class CatAdoptionAnnouncementReassignmentServiceTests
         //Assert
         result.IsFailure.ShouldBeTrue();
         result.Error.ShouldBe(DomainErrors.AdoptionAnnouncementErrors.StatusProperty
-            .CannotReassignCatToInactiveAnnouncement);
+            .CannotReassignCatFromInactiveAnnouncement);
     }
 
     [Fact]
