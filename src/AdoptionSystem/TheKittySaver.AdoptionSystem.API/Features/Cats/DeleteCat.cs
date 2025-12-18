@@ -41,10 +41,10 @@ internal sealed class DeleteCat : IEndpoint
             {
                 case {AdoptionAnnouncementId: not null, Status: CatStatusType.Claimed}:
                     return Result.Failure(DomainErrors.CatEntity.ClaimedCatRemoval);
-                case {AdoptionAnnouncementId: not null, Status: CatStatusType.Published}
+                case {AdoptionAnnouncementId: not null, Status: not CatStatusType.Claimed}
                     when (await _catRepository.GetCatsByAdoptionAnnouncementIdAsync(
                         maybeCat.Value.AdoptionAnnouncementId.Value,
-                        cancellationToken)).Count > 1:
+                        cancellationToken)).Count <= 1:
                     return Result.Failure(DomainErrors.CatEntity.TheOnlyAdoptionAnnouncementCatRemoval);
             }
             

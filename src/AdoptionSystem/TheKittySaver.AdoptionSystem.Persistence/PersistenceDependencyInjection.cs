@@ -11,6 +11,7 @@ using TheKittySaver.AdoptionSystem.Persistence.DbContexts.ReadDbContexts;
 using TheKittySaver.AdoptionSystem.Persistence.DbContexts.WriteDbContexts;
 using TheKittySaver.AdoptionSystem.Persistence.DomainRepositories;
 using TheKittySaver.AdoptionSystem.Persistence.DomainServices;
+using TheKittySaver.AdoptionSystem.Persistence.Interceptors;
 using TheKittySaver.AdoptionSystem.Persistence.Settings;
 
 namespace TheKittySaver.AdoptionSystem.Persistence;
@@ -30,8 +31,12 @@ public static class PersistenceDependencyInjection
         services.AddSingleton<IValidator<ConnectionStringSettings>, ConnectionStringSettingsValidator>();
         services.AddOptionsWithFluentValidation<ConnectionStringSettings>(ConnectionStringSettings.ConfigurationSection);
 
+        services.AddScoped<DomainEventsPublishingInterceptor>();
+
         services.AddDbContextFactory<ApplicationWriteDbContext>((sp, options) =>
         {
+            DomainEventsPublishingInterceptor interceptor = sp.GetRequiredService<DomainEventsPublishingInterceptor>();
+
             options.UseSqlServer(
                 sp.GetRequiredService<IOptions<ConnectionStringSettings>>().Value.Database,
                 sqlOptions =>
@@ -41,7 +46,8 @@ public static class PersistenceDependencyInjection
                         maxRetryDelay: TimeSpan.FromSeconds(10),
                         errorNumbersToAdd: null);
                     sqlOptions.CommandTimeout(30);
-                });
+                })
+                .AddInterceptors(interceptor);
         });
 
         services.AddDbContextFactory<ApplicationReadDbContext>((sp, options) =>
