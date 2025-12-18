@@ -1,4 +1,5 @@
 using Mediator;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TheKittySaver.AdoptionSystem.API.Common;
 using TheKittySaver.AdoptionSystem.API.Extensions;
@@ -9,6 +10,7 @@ using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Services;
 using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.OptionMonad;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
+using TheKittySaver.AdoptionSystem.Infrastructure.FileUpload;
 using TheKittySaver.AdoptionSystem.Persistence.DbContexts.Abstractions;
 using TheKittySaver.AdoptionSystem.Persistence.DbContexts.ReadDbContexts;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate;
@@ -119,9 +121,20 @@ internal sealed class UpsertCatThumbnail : IEndpoint
         endpointRouteBuilder.MapPut("cats/{catId:guid}/thumbnail", async (
             Guid catId,
             IFormFile file,
+            IFileUploadValidator fileUploadValidator,
             ISender sender,
             CancellationToken cancellationToken) =>
         {
+            Result validationResult = fileUploadValidator.ValidateThumbnailFile(
+                file.Length,
+                file.ContentType,
+                file.FileName);
+
+            if (validationResult.IsFailure)
+            {
+                return Results.Problem(validationResult.Error.ToProblemDetails());
+            }
+
             await using Stream fileStream = file.OpenReadStream();
             Command command = new(new CatId(catId), fileStream, file.ContentType);
 
@@ -130,7 +143,9 @@ internal sealed class UpsertCatThumbnail : IEndpoint
             return commandResult.IsFailure
                 ? Results.Problem(commandResult.Error.ToProblemDetails())
                 : Results.Ok(commandResult.Value);
-        }).DisableAntiforgery();
+        })
+        .DisableAntiforgery()
+        .WithMetadata(new RequestSizeLimitAttribute(2 * 1024 * 1024)); // 2MB
     }
 }
 

@@ -4,6 +4,7 @@ using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Services;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.AddressCompounds.Specifications;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.PhoneNumbers;
 using TheKittySaver.AdoptionSystem.Infrastructure.FileStorage;
+using TheKittySaver.AdoptionSystem.Infrastructure.FileUpload;
 using TheKittySaver.AdoptionSystem.Infrastructure.Specifications;
 
 namespace TheKittySaver.AdoptionSystem.Infrastructure;
@@ -31,6 +32,10 @@ public static class DependencyInjection
         serviceCollection.Configure<CatFileStorageOptions>(
             configuration.GetSection(CatFileStorageOptions.SectionName));
         serviceCollection.AddScoped<ICatFileStorage, CatFileStorage>();
+
+        serviceCollection.Configure<FileUploadOptions>(
+            configuration.GetSection(FileUploadOptions.SectionName));
+        serviceCollection.AddScoped<IFileUploadValidator, FileUploadValidator>();
 
         return serviceCollection;
     }

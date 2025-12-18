@@ -1,4 +1,5 @@
 using Mediator;
+using Microsoft.AspNetCore.Mvc;
 using TheKittySaver.AdoptionSystem.API.Common;
 using TheKittySaver.AdoptionSystem.API.Extensions;
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.CatAggregate.Gallery.Responses;
@@ -8,6 +9,7 @@ using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Services;
 using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.OptionMonad;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
+using TheKittySaver.AdoptionSystem.Infrastructure.FileUpload;
 using TheKittySaver.AdoptionSystem.Persistence.DbContexts.Abstractions;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate;
 
@@ -82,9 +84,20 @@ internal sealed class CreateCatGalleryItem : IEndpoint
         endpointRouteBuilder.MapPost("cats/{catId:guid}/gallery", async (
             Guid catId,
             IFormFile file,
+            IFileUploadValidator fileUploadValidator,
             ISender sender,
             CancellationToken cancellationToken) =>
         {
+            Result validationResult = fileUploadValidator.ValidateGalleryFile(
+                file.Length,
+                file.ContentType,
+                file.FileName);
+
+            if (validationResult.IsFailure)
+            {
+                return Results.Problem(validationResult.Error.ToProblemDetails());
+            }
+
             await using Stream fileStream = file.OpenReadStream();
             Command command = new(new CatId(catId), fileStream, file.ContentType);
 
@@ -93,6 +106,9 @@ internal sealed class CreateCatGalleryItem : IEndpoint
             return commandResult.IsFailure
                 ? Results.Problem(commandResult.Error.ToProblemDetails())
                 : Results.Created($"/api/v1/cats/{catId}/gallery/{commandResult.Value.Id}", commandResult.Value);
-        }).DisableAntiforgery();
+        })
+        .DisableAntiforgery()
+        .WithRequestTimeout(TimeSpan.FromMinutes(2))
+        .WithMetadata(new RequestSizeLimitAttribute(25 * 1024 * 1024)); // 25MB
     }
 }
