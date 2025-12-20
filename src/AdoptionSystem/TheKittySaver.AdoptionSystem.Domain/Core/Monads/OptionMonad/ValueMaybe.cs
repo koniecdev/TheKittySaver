@@ -17,8 +17,6 @@ public readonly struct ValueMaybe<T> where T : struct
     
     public TOut Match<TOut>(Func<T, TOut> from, Func<TOut> none)
         => _value.HasValue ? from(_value.Value) : none();
-
-    public T ValueOr(Func<T> valueProvider) => _value ?? valueProvider();
     
     public static implicit operator ValueMaybe<T>(T value) => From(value);
 }
