@@ -13,7 +13,7 @@ using TheKittySaver.AdoptionSystem.Persistence.DbContexts.Abstractions;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate.Enums;
 
-namespace TheKittySaver.AdoptionSystem.API.Features.Vaccinations;
+namespace TheKittySaver.AdoptionSystem.API.Features.CatsVaccinations;
 
 internal sealed class UpdateCatVaccination : IEndpoint
 {

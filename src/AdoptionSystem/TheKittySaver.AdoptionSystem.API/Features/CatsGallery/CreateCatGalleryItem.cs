@@ -13,7 +13,7 @@ using TheKittySaver.AdoptionSystem.Infrastructure.FileUpload;
 using TheKittySaver.AdoptionSystem.Persistence.DbContexts.Abstractions;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate;
 
-namespace TheKittySaver.AdoptionSystem.API.Features.Gallery;
+namespace TheKittySaver.AdoptionSystem.API.Features.CatsGallery;
 
 internal sealed class CreateCatGalleryItem : IEndpoint
 {

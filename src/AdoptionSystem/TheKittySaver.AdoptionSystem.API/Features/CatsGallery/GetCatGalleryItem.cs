@@ -8,7 +8,7 @@ using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
 using TheKittySaver.AdoptionSystem.Persistence.DbContexts.ReadDbContexts;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate;
 
-namespace TheKittySaver.AdoptionSystem.API.Features.Gallery;
+namespace TheKittySaver.AdoptionSystem.API.Features.CatsGallery;
 
 internal sealed class GetCatGalleryItem : IEndpoint
 {

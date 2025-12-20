@@ -9,7 +9,7 @@ using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
 using TheKittySaver.AdoptionSystem.Persistence.DbContexts.Abstractions;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate;
 
-namespace TheKittySaver.AdoptionSystem.API.Features.Vaccinations;
+namespace TheKittySaver.AdoptionSystem.API.Features.CatsVaccinations;
 
 internal sealed class DeleteCatVaccination : IEndpoint
 {
