@@ -48,15 +48,17 @@ internal sealed class CreateCatGalleryItem : IEndpoint
 
             Cat cat = maybeCat.Value;
 
-            Result<CatGalleryItemId> addGalleryItemResult = cat.AddGalleryItem();
+            Result<CatGalleryItem> addGalleryItemResult = cat.AddGalleryItem();
             if (addGalleryItemResult.IsFailure)
             {
                 return Result.Failure<CatGalleryItemResponse>(addGalleryItemResult.Error);
             }
 
+            CatGalleryItem catGalleryItem = addGalleryItemResult.Value;
+
             Result saveFileResult = await _catFileStorage.SaveGalleryItemAsync(
                 command.CatId,
-                addGalleryItemResult.Value,
+                catGalleryItem.Id,
                 command.FileStream,
                 command.ContentType,
                 cancellationToken);
@@ -67,15 +69,13 @@ internal sealed class CreateCatGalleryItem : IEndpoint
             }
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-            CatGalleryItem galleryItem = cat.GalleryItems.First(g => g.Id == addGalleryItemResult.Value);
-
+            
             CatGalleryItemResponse response = new(
-                Id: galleryItem.Id,
+                Id: catGalleryItem.Id,
                 CatId: cat.Id,
-                DisplayOrder: galleryItem.DisplayOrder.Value);
+                DisplayOrder: catGalleryItem.DisplayOrder.Value);
 
-            return response;
+            return Result.Success(response);
         }
     }
 

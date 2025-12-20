@@ -3,5 +3,5 @@
     image: thekittysaver.adoptionsystem.slices
     build:
       context: .
-      dockerfile: src/BoundedContexts/AdoptionSystem/TheKittySaver.AdoptionSystem.Slices/Dockerfile
+      dockerfile: src/AdoptionSystem/TheKittySaver.AdoptionSystem.Slices/Dockerfile
 

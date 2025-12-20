@@ -285,24 +285,6 @@ analizuja i raport.
   RAPORT GOTOWOŚCI PRODUKCYJNEJ - TheKittySaver
 
   ---
-  3. BRAK WALIDACJI ROZMIARU/TYPU PLIKÓW
-
-  Lokalizacja: Features/CatsGallery/CreateCatGalleryItem.cs, Features/CatsGallery/CatThumbnail.cs
-  Problem: Brak walidacji:
-  - Maksymalnego rozmiaru pliku (można uploadować gigabajty)
-  - Typu pliku (tylko sprawdzane ContentType - łatwo do sfałszowania)
-  - Limit requestów body size
-
-  Napraw: Dodaj walidację w endpointach i ustaw RequestSizeLimit.
-
-  ---
-  4. BRAK LIMITÓW PAGINACJI
-
-  Lokalizacja: Contracts/Common/PaginationRequest.cs
-  public sealed record PaginationRequest(int Page = 1, int PageSize = 10, string? Sort = null);
-  Problem: Brak walidacji PageSize. Można ustawić PageSize=1000000 i wyciągnąć całą bazę jednym requestem.
-
-  Napraw: Dodaj walidację PageSize (np. max 100).
 
   ---
   5. BRAK UNIQUE CONSTRAINTS W BAZIE
@@ -327,12 +309,6 @@ analizuja i raport.
   Problem: Żaden agregat nie ma RowVersion/ConcurrencyToken. Równoczesne edycje mogą powodować lost updates.
 
   ---
-  8. compose.yaml WSKAZUJE NA NIEISTNIEJĄCĄ ŚCIEŻKĘ
-
-  Lokalizacja: compose.yaml:5
-  dockerfile: src/BoundedContexts/AdoptionSystem/TheKittySaver.AdoptionSystem.Slices/Dockerfile
-  Problem: Ta ścieżka nie istnieje. Dockerfile też nie istnieje.
-
   ---
   9. BRAK WALIDACJI FluentValidation DLA COMMANDS
 
@@ -363,24 +339,8 @@ analizuja i raport.
   - AdoptionAnnouncements.Status
 
   ---
-  12. GetCats - NIE SPRAWDZA IsFailure
-
-  Lokalizacja: Features/Cats/GetCats.cs:89
-  return Results.Ok(queryResult.Value);
-  Problem: Nie sprawdza queryResult.IsFailure przed dostępem do .Value.
 
   ---
-  13. SORTOWANIE - POTENCJALNA INFORMACJA O STRUKTURZE
-
-  Lokalizacja: Common/Sorting/QueryableSortingExtensions.cs
-  Problem: Sortowanie przez reflection ujawnia nazwy właściwości modelu. Przy nieistniejącej właściwości zwraca null (cicha porażka).
-
-  ---
-  14. C# EXTENSIONS (PREVIEW FEATURE)
-
-  Lokalizacja: DomainDependencyInjection.cs, ErrorExtensions.cs, mappingi
-  Problem: Kod używa extension(...) - to jest C# 13/14 preview feature. Upewnij się że .NET 10 wspiera to stabilnie.
-
   ---
   15. TODO W KODZIE
 

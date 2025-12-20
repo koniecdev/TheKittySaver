@@ -370,11 +370,11 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
         return Result.Success(removedThumbnailId);
     }
 
-    public Result<CatGalleryItemId> AddGalleryItem()
+    public Result<CatGalleryItem> AddGalleryItem()
     {
         if (_galleryItems.Count >= MaximumGalleryItemsCount)
         {
-            return Result.Failure<CatGalleryItemId>(DomainErrors.CatEntity.GalleryIsFull);
+            return Result.Failure<CatGalleryItem>(DomainErrors.CatEntity.GalleryIsFull);
         }
 
         int nextDisplayOrder = _galleryItems.Count;
@@ -383,7 +383,7 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
 
         if (displayOrderResult.IsFailure)
         {
-            return Result.Failure<CatGalleryItemId>(displayOrderResult.Error);
+            return Result.Failure<CatGalleryItem>(displayOrderResult.Error);
         }
 
         Result<CatGalleryItem> galleryItemCreationResult =
@@ -391,11 +391,11 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
 
         if (galleryItemCreationResult.IsFailure)
         {
-            return Result.Failure<CatGalleryItemId>(galleryItemCreationResult.Error);
+            return Result.Failure<CatGalleryItem>(galleryItemCreationResult.Error);
         }
 
         _galleryItems.Add(galleryItemCreationResult.Value);
-        return Result.Success(galleryItemCreationResult.Value.Id);
+        return Result.Success(galleryItemCreationResult.Value);
     }
 
     public Result ReorderGalleryItems(Dictionary<CatGalleryItemId, CatGalleryItemDisplayOrder> newOrders)
