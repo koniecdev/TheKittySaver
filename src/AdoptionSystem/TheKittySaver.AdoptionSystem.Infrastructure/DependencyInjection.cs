@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using TheKittySaver.AdoptionSystem.Calculators.CatPriorityScore;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Services;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.AddressCompounds.Specifications;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.PhoneNumbers;
@@ -16,7 +17,8 @@ public static class DependencyInjection
         IConfiguration configuration)
     {
         serviceCollection.AddSingleton(TimeProvider.System);
-        
+        serviceCollection.AddSingleton<IAdoptionPriorityScoreCalculator, DefaultAdoptionPriorityScoreCalculator>();
+
         serviceCollection.AddScoped<LibPhoneNumberValidator>();
         serviceCollection.AddScoped<IValidPhoneNumberSpecification>(sp
             => sp.GetRequiredService<LibPhoneNumberValidator>());

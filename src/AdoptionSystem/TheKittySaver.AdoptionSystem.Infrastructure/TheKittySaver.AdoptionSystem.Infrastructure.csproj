@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <ItemGroup>
+      <ProjectReference Include="..\TheKittySaver.AdoptionSystem.Calculators\TheKittySaver.AdoptionSystem.Calculators.csproj" />
       <ProjectReference Include="..\TheKittySaver.AdoptionSystem.Domain\TheKittySaver.AdoptionSystem.Domain.csproj" />
     </ItemGroup>
 
