@@ -21,7 +21,7 @@ public sealed class CatGalleryManagementTests
         Cat cat = CatFactory.CreateRandom(Faker);
 
         //Act
-        Result<CatGalleryItemId> result = cat.AddGalleryItem();
+        Result<CatGalleryItem> result = cat.AddGalleryItem();
 
         //Assert
         result.IsSuccess.ShouldBeTrue();
@@ -58,7 +58,7 @@ public sealed class CatGalleryManagementTests
         }
 
         //Act
-        Result<CatGalleryItemId> result = cat.AddGalleryItem();
+        Result<CatGalleryItem> result = cat.AddGalleryItem();
 
         //Assert
         result.IsSuccess.ShouldBeTrue();
@@ -76,7 +76,7 @@ public sealed class CatGalleryManagementTests
         }
 
         //Act
-        Result<CatGalleryItemId> result = cat.AddGalleryItem();
+        Result<CatGalleryItem> result = cat.AddGalleryItem();
 
         //Assert
         result.IsFailure.ShouldBeTrue();
@@ -88,8 +88,8 @@ public sealed class CatGalleryManagementTests
     {
         //Arrange
         Cat cat = CatFactory.CreateRandom(Faker);
-        Result<CatGalleryItemId> addResult = cat.AddGalleryItem();
-        CatGalleryItemId galleryItemId = addResult.Value;
+        Result<CatGalleryItem> addResult = cat.AddGalleryItem();
+        CatGalleryItemId galleryItemId = addResult.Value.Id;
 
         //Act
         Result result = cat.RemoveGalleryItem(galleryItemId);
@@ -105,9 +105,9 @@ public sealed class CatGalleryManagementTests
         //Arrange
         Cat cat = CatFactory.CreateRandom(Faker);
         cat.AddGalleryItem();
-        Result<CatGalleryItemId> secondItemResult = cat.AddGalleryItem();
+        Result<CatGalleryItem> secondItemResult = cat.AddGalleryItem();
         cat.AddGalleryItem();
-        CatGalleryItemId secondItemId = secondItemResult.Value;
+        CatGalleryItemId secondItemId = secondItemResult.Value.Id;
 
         //Act
         Result result = cat.RemoveGalleryItem(secondItemId);
@@ -124,10 +124,10 @@ public sealed class CatGalleryManagementTests
     {
         //Arrange
         Cat cat = CatFactory.CreateRandom(Faker);
-        Result<CatGalleryItemId> firstItemResult = cat.AddGalleryItem();
+        Result<CatGalleryItem> firstItemResult = cat.AddGalleryItem();
         cat.AddGalleryItem();
         cat.AddGalleryItem();
-        CatGalleryItemId firstItemId = firstItemResult.Value;
+        CatGalleryItemId firstItemId = firstItemResult.Value.Id;
 
         //Act
         Result result = cat.RemoveGalleryItem(firstItemId);
@@ -146,8 +146,8 @@ public sealed class CatGalleryManagementTests
         Cat cat = CatFactory.CreateRandom(Faker);
         cat.AddGalleryItem();
         cat.AddGalleryItem();
-        Result<CatGalleryItemId> lastItemResult = cat.AddGalleryItem();
-        CatGalleryItemId lastItemId = lastItemResult.Value;
+        Result<CatGalleryItem> lastItemResult = cat.AddGalleryItem();
+        CatGalleryItemId lastItemId = lastItemResult.Value.Id;
 
         //Act
         Result result = cat.RemoveGalleryItem(lastItemId);
@@ -193,10 +193,10 @@ public sealed class CatGalleryManagementTests
     {
         //Arrange
         Cat cat = CatFactory.CreateRandom(Faker);
-        Result<CatGalleryItemId> firstItemResult = cat.AddGalleryItem();
-        Result<CatGalleryItemId> secondItemResult = cat.AddGalleryItem();
-        CatGalleryItemId firstItemId = firstItemResult.Value;
-        CatGalleryItemId secondItemId = secondItemResult.Value;
+        Result<CatGalleryItem> firstItemResult = cat.AddGalleryItem();
+        Result<CatGalleryItem> secondItemResult = cat.AddGalleryItem();
+        CatGalleryItemId firstItemId = firstItemResult.Value.Id;
+        CatGalleryItemId secondItemId = secondItemResult.Value.Id;
 
         Result<CatGalleryItemDisplayOrder> order0Result = CatGalleryItemDisplayOrder.Create(0, Cat.MaximumGalleryItemsCount);
         Result<CatGalleryItemDisplayOrder> order1Result = CatGalleryItemDisplayOrder.Create(1, Cat.MaximumGalleryItemsCount);
@@ -239,10 +239,10 @@ public sealed class CatGalleryManagementTests
     {
         //Arrange
         Cat cat = CatFactory.CreateRandom(Faker);
-        Result<CatGalleryItemId> firstItemResult = cat.AddGalleryItem();
-        Result<CatGalleryItemId> secondItemResult = cat.AddGalleryItem();
-        CatGalleryItemId firstItemId = firstItemResult.Value;
-        CatGalleryItemId secondItemId = secondItemResult.Value;
+        Result<CatGalleryItem> firstItemResult = cat.AddGalleryItem();
+        Result<CatGalleryItem> secondItemResult = cat.AddGalleryItem();
+        CatGalleryItemId firstItemId = firstItemResult.Value.Id;
+        CatGalleryItemId secondItemId = secondItemResult.Value.Id;
 
         Result<CatGalleryItemDisplayOrder> order0Result = CatGalleryItemDisplayOrder.Create(0, Cat.MaximumGalleryItemsCount);
         order0Result.EnsureSuccess();
@@ -266,10 +266,10 @@ public sealed class CatGalleryManagementTests
     {
         //Arrange
         Cat cat = CatFactory.CreateRandom(Faker);
-        Result<CatGalleryItemId> firstItemResult = cat.AddGalleryItem();
-        Result<CatGalleryItemId> secondItemResult = cat.AddGalleryItem();
-        CatGalleryItemId firstItemId = firstItemResult.Value;
-        CatGalleryItemId secondItemId = secondItemResult.Value;
+        Result<CatGalleryItem> firstItemResult = cat.AddGalleryItem();
+        Result<CatGalleryItem> secondItemResult = cat.AddGalleryItem();
+        CatGalleryItemId firstItemId = firstItemResult.Value.Id;
+        CatGalleryItemId secondItemId = secondItemResult.Value.Id;
 
         Result<CatGalleryItemDisplayOrder> order0Result = CatGalleryItemDisplayOrder.Create(0, Cat.MaximumGalleryItemsCount);
         Result<CatGalleryItemDisplayOrder> order5Result = CatGalleryItemDisplayOrder.Create(5, Cat.MaximumGalleryItemsCount);

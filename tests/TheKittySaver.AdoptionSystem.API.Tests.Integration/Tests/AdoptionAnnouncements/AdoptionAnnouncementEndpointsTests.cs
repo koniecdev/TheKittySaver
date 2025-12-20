@@ -59,20 +59,20 @@ public sealed class AdoptionAnnouncementEndpointsTests : IAsyncLifetime
         string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.Created);
 
-        AdoptionAnnouncementResponse announcementResponse = JsonSerializer.Deserialize<AdoptionAnnouncementResponse>(stringResponse, _jsonSerializerOptions)
+        AdoptionAnnouncementListItemResponse announcementListItemResponse = JsonSerializer.Deserialize<AdoptionAnnouncementListItemResponse>(stringResponse, _jsonSerializerOptions)
             ?? throw new JsonException("Failed to deserialize AdoptionAnnouncementResponse");
 
-        announcementResponse.ShouldNotBeNull();
-        announcementResponse.PersonId.ShouldBe(person.Id);
-        announcementResponse.Description.ShouldBe("Looking for a loving home for this adorable cat!");
-        announcementResponse.AddressCountryCode.ShouldBe(CountryCode.PL);
-        announcementResponse.AddressPostalCode.ShouldBe("00-001");
-        announcementResponse.AddressRegion.ShouldBe("Mazowieckie");
-        announcementResponse.AddressCity.ShouldBe("Warszawa");
-        announcementResponse.AddressLine.ShouldBe("ul. Testowa 1");
-        announcementResponse.Email.ShouldBe("contact@shelter.pl");
-        announcementResponse.PhoneNumber.ShouldBe("+48600700800");
-        announcementResponse.Status.ShouldBe(AnnouncementStatusType.Active);
+        announcementListItemResponse.ShouldNotBeNull();
+        announcementListItemResponse.PersonId.ShouldBe(person.Id);
+        announcementListItemResponse.Description.ShouldBe("Looking for a loving home for this adorable cat!");
+        announcementListItemResponse.AddressCountryCode.ShouldBe(CountryCode.PL);
+        announcementListItemResponse.AddressPostalCode.ShouldBe("00-001");
+        announcementListItemResponse.AddressRegion.ShouldBe("Mazowieckie");
+        announcementListItemResponse.AddressCity.ShouldBe("Warszawa");
+        announcementListItemResponse.AddressLine.ShouldBe("ul. Testowa 1");
+        announcementListItemResponse.Email.ShouldBe("contact@shelter.pl");
+        announcementListItemResponse.PhoneNumber.ShouldBe("+48600700800");
+        announcementListItemResponse.Status.ShouldBe(AnnouncementStatusType.Active);
     }
 
     [Fact]
@@ -100,11 +100,11 @@ public sealed class AdoptionAnnouncementEndpointsTests : IAsyncLifetime
         // Assert
         string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
 
-        AdoptionAnnouncementResponse announcementResponse = JsonSerializer.Deserialize<AdoptionAnnouncementResponse>(stringResponse, _jsonSerializerOptions)
+        AdoptionAnnouncementListItemResponse announcementListItemResponse = JsonSerializer.Deserialize<AdoptionAnnouncementListItemResponse>(stringResponse, _jsonSerializerOptions)
             ?? throw new JsonException("Failed to deserialize AdoptionAnnouncementResponse");
 
-        announcementResponse.Description.ShouldBeNull();
-        announcementResponse.AddressLine.ShouldBeNull();
+        announcementListItemResponse.Description.ShouldBeNull();
+        announcementListItemResponse.AddressLine.ShouldBeNull();
     }
 
     [Fact]
@@ -190,20 +190,20 @@ public sealed class AdoptionAnnouncementEndpointsTests : IAsyncLifetime
         // Arrange
         PersonResponse person = await CreateTestPersonAsync();
         CatResponse cat = await CreateTestCatAsync(person.Id);
-        AdoptionAnnouncementResponse createdAnnouncement = await CreateTestAdoptionAnnouncementAsync(cat.Id);
+        AdoptionAnnouncementListItemResponse createdAnnouncementListItem = await CreateTestAdoptionAnnouncementAsync(cat.Id);
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.GetAsync(
-            $"api/v1/adoption-announcements/{createdAnnouncement.Id.Value}");
+            $"api/v1/adoption-announcements/{createdAnnouncementListItem.Id.Value}");
 
         // Assert
         string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
 
-        AdoptionAnnouncementResponse announcementResponse = JsonSerializer.Deserialize<AdoptionAnnouncementResponse>(stringResponse, _jsonSerializerOptions)
+        AdoptionAnnouncementListItemResponse announcementListItemResponse = JsonSerializer.Deserialize<AdoptionAnnouncementListItemResponse>(stringResponse, _jsonSerializerOptions)
             ?? throw new JsonException("Failed to deserialize AdoptionAnnouncementResponse");
 
-        announcementResponse.ShouldNotBeNull();
-        announcementResponse.Id.ShouldBe(createdAnnouncement.Id);
+        announcementListItemResponse.ShouldNotBeNull();
+        announcementListItemResponse.Id.ShouldBe(createdAnnouncementListItem.Id);
     }
 
     [Fact]
@@ -243,7 +243,7 @@ public sealed class AdoptionAnnouncementEndpointsTests : IAsyncLifetime
         // Arrange
         PersonResponse person = await CreateTestPersonAsync();
         CatResponse cat = await CreateTestCatAsync(person.Id);
-        AdoptionAnnouncementResponse createdAnnouncement = await CreateTestAdoptionAnnouncementAsync(cat.Id);
+        AdoptionAnnouncementListItemResponse createdAnnouncementListItem = await CreateTestAdoptionAnnouncementAsync(cat.Id);
 
         UpdateAdoptionAnnouncementRequest updateRequest = new(
             "Updated description",
@@ -257,21 +257,21 @@ public sealed class AdoptionAnnouncementEndpointsTests : IAsyncLifetime
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.PutAsJsonAsync(
-            $"api/v1/adoption-announcements/{createdAnnouncement.Id.Value}", updateRequest);
+            $"api/v1/adoption-announcements/{createdAnnouncementListItem.Id.Value}", updateRequest);
 
         // Assert
         string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
 
-        AdoptionAnnouncementResponse announcementResponse = JsonSerializer.Deserialize<AdoptionAnnouncementResponse>(stringResponse, _jsonSerializerOptions)
+        AdoptionAnnouncementListItemResponse announcementListItemResponse = JsonSerializer.Deserialize<AdoptionAnnouncementListItemResponse>(stringResponse, _jsonSerializerOptions)
             ?? throw new JsonException("Failed to deserialize AdoptionAnnouncementResponse");
 
-        announcementResponse.ShouldNotBeNull();
-        announcementResponse.Description.ShouldBe("Updated description");
-        announcementResponse.AddressCountryCode.ShouldBe(CountryCode.DE);
-        announcementResponse.AddressPostalCode.ShouldBe("10115");
-        announcementResponse.AddressCity.ShouldBe("Berlin");
-        announcementResponse.Email.ShouldBe("updated@shelter.pl");
-        announcementResponse.PhoneNumber.ShouldBe("+49301234567");
+        announcementListItemResponse.ShouldNotBeNull();
+        announcementListItemResponse.Description.ShouldBe("Updated description");
+        announcementListItemResponse.AddressCountryCode.ShouldBe(CountryCode.DE);
+        announcementListItemResponse.AddressPostalCode.ShouldBe("10115");
+        announcementListItemResponse.AddressCity.ShouldBe("Berlin");
+        announcementListItemResponse.Email.ShouldBe("updated@shelter.pl");
+        announcementListItemResponse.PhoneNumber.ShouldBe("+49301234567");
     }
 
     [Fact]
@@ -303,7 +303,7 @@ public sealed class AdoptionAnnouncementEndpointsTests : IAsyncLifetime
         // Arrange
         PersonResponse person = await CreateTestPersonAsync();
         CatResponse cat = await CreateTestCatAsync(person.Id);
-        AdoptionAnnouncementResponse createdAnnouncement = await CreateTestAdoptionAnnouncementAsync(cat.Id);
+        AdoptionAnnouncementListItemResponse createdAnnouncementListItem = await CreateTestAdoptionAnnouncementAsync(cat.Id);
 
         UpdateAdoptionAnnouncementRequest updateRequest = new(
             _faker.Lorem.Sentence(10),
@@ -317,7 +317,7 @@ public sealed class AdoptionAnnouncementEndpointsTests : IAsyncLifetime
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.PutAsJsonAsync(
-            $"api/v1/adoption-announcements/{createdAnnouncement.Id.Value}", updateRequest);
+            $"api/v1/adoption-announcements/{createdAnnouncementListItem.Id.Value}", updateRequest);
 
         // Assert
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
@@ -329,18 +329,18 @@ public sealed class AdoptionAnnouncementEndpointsTests : IAsyncLifetime
         // Arrange
         PersonResponse person = await CreateTestPersonAsync();
         CatResponse cat = await CreateTestCatAsync(person.Id);
-        AdoptionAnnouncementResponse createdAnnouncement = await CreateTestAdoptionAnnouncementAsync(cat.Id);
+        AdoptionAnnouncementListItemResponse createdAnnouncementListItem = await CreateTestAdoptionAnnouncementAsync(cat.Id);
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.DeleteAsync(
-            $"api/v1/adoption-announcements/{createdAnnouncement.Id.Value}");
+            $"api/v1/adoption-announcements/{createdAnnouncementListItem.Id.Value}");
 
         // Assert
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NoContent);
 
         // Verify announcement is deleted
         HttpResponseMessage getResponse = await _httpClient.GetAsync(
-            $"api/v1/adoption-announcements/{createdAnnouncement.Id.Value}");
+            $"api/v1/adoption-announcements/{createdAnnouncementListItem.Id.Value}");
         getResponse.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
@@ -364,23 +364,23 @@ public sealed class AdoptionAnnouncementEndpointsTests : IAsyncLifetime
         // Arrange
         PersonResponse person = await CreateTestPersonAsync();
         CatResponse cat = await CreateTestCatAsync(person.Id);
-        AdoptionAnnouncementResponse announcement = await CreateTestAdoptionAnnouncementAsync(cat.Id);
+        AdoptionAnnouncementListItemResponse announcementListItem = await CreateTestAdoptionAnnouncementAsync(cat.Id);
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.PostAsync(
-            $"api/v1/adoption-announcements/{announcement.Id.Value}/claim", null);
+            $"api/v1/adoption-announcements/{announcementListItem.Id.Value}/claim", null);
 
         // Assert
         await httpResponseMessage.EnsureSuccessWithDetailsAsync();
 
         // Verify announcement is claimed
         HttpResponseMessage getResponse = await _httpClient.GetAsync(
-            $"api/v1/adoption-announcements/{announcement.Id.Value}");
+            $"api/v1/adoption-announcements/{announcementListItem.Id.Value}");
         await getResponse.EnsureSuccessWithDetailsAsync();
 
         string stringResponse = await getResponse.Content.ReadAsStringAsync();
-        AdoptionAnnouncementResponse claimedAnnouncement = JsonSerializer.Deserialize<AdoptionAnnouncementResponse>(stringResponse, _jsonSerializerOptions)!;
-        claimedAnnouncement.Status.ShouldBe(AnnouncementStatusType.Claimed);
+        AdoptionAnnouncementListItemResponse claimedAnnouncementListItem = JsonSerializer.Deserialize<AdoptionAnnouncementListItemResponse>(stringResponse, _jsonSerializerOptions)!;
+        claimedAnnouncementListItem.Status.ShouldBe(AnnouncementStatusType.Claimed);
     }
 
     [Fact]
@@ -403,7 +403,7 @@ public sealed class AdoptionAnnouncementEndpointsTests : IAsyncLifetime
     private async Task<CatResponse> CreateTestCatAsync(PersonId personId, string? name = null)
         => await CatApiFactory.CreateHealthyCatWithThumbnail(_httpClient, _jsonSerializerOptions, personId, name);
 
-    private async Task<AdoptionAnnouncementResponse> CreateTestAdoptionAnnouncementAsync(CatId catId)
+    private async Task<AdoptionAnnouncementListItemResponse> CreateTestAdoptionAnnouncementAsync(CatId catId)
         => await AdoptionAnnouncementApiFactory.CreateRandomAsync(_httpClient, _jsonSerializerOptions, _faker, catId);
 
     public Task InitializeAsync() => Task.CompletedTask;

@@ -12,9 +12,9 @@ namespace TheKittySaver.AdoptionSystem.API.Features.AdoptionAnnouncements;
 
 internal sealed class GetAdoptionAnnouncement : IEndpoint
 {
-    internal sealed record Query(AdoptionAnnouncementId AdoptionAnnouncementId) : IQuery<Result<AdoptionAnnouncementResponse>>;
+    internal sealed record Query(AdoptionAnnouncementId AdoptionAnnouncementId) : IQuery<Result<AdoptionAnnouncementDetailsResponse>>;
 
-    internal sealed class Handler : IQueryHandler<Query, Result<AdoptionAnnouncementResponse>>
+    internal sealed class Handler : IQueryHandler<Query, Result<AdoptionAnnouncementDetailsResponse>>
     {
         private readonly IApplicationReadDbContext _readDbContext;
 
@@ -23,31 +23,32 @@ internal sealed class GetAdoptionAnnouncement : IEndpoint
             _readDbContext = readDbContext;
         }
 
-        public async ValueTask<Result<AdoptionAnnouncementResponse>> Handle(Query query, CancellationToken cancellationToken)
+        public async ValueTask<Result<AdoptionAnnouncementDetailsResponse>> Handle(Query query, CancellationToken cancellationToken)
         {
-            AdoptionAnnouncementResponse? response = await _readDbContext.AdoptionAnnouncements
-                .Where(announcement => announcement.Id == query.AdoptionAnnouncementId)
-                .Select(announcement => new AdoptionAnnouncementResponse(
-                    Id: announcement.Id,
-                    PersonId: announcement.PersonId,
-                    Description: announcement.Description,
-                    AddressCountryCode: announcement.AddressCountryCode,
-                    AddressPostalCode: announcement.AddressPostalCode,
-                    AddressRegion: announcement.AddressRegion,
-                    AddressCity: announcement.AddressCity,
-                    AddressLine: announcement.AddressLine,
-                    Email: announcement.Email,
-                    PhoneNumber: announcement.PhoneNumber,
-                    Status: announcement.Status))
+            AdoptionAnnouncementDetailsResponse? response = await _readDbContext.AdoptionAnnouncements
+                .Where(aa => aa.Id == query.AdoptionAnnouncementId)
+                .Select(aa => new AdoptionAnnouncementDetailsResponse(
+                    Id: aa.Id,
+                    PersonId: aa.PersonId,
+                    Username: aa.Person.Username,
+                    Description: aa.Description,
+                    AddressCountryCode: aa.AddressCountryCode,
+                    AddressPostalCode: aa.AddressPostalCode,
+                    AddressRegion: aa.AddressRegion,
+                    AddressCity: aa.AddressCity,
+                    AddressLine: aa.AddressLine,
+                    Email: aa.Email,
+                    PhoneNumber: aa.PhoneNumber,
+                    Status: aa.Status))
                 .FirstOrDefaultAsync(cancellationToken);
 
             if (response is null)
             {
-                return Result.Failure<AdoptionAnnouncementResponse>(
+                return Result.Failure<AdoptionAnnouncementDetailsResponse>(
                     DomainErrors.AdoptionAnnouncementErrors.NotFound(query.AdoptionAnnouncementId));
             }
             
-            return response;
+            return Result.Success(response);
         }
     }
 
@@ -60,7 +61,7 @@ internal sealed class GetAdoptionAnnouncement : IEndpoint
         {
             Query query = new(new AdoptionAnnouncementId(adoptionAnnouncementId));
 
-            Result<AdoptionAnnouncementResponse> queryResult = await sender.Send(query, cancellationToken);
+            Result<AdoptionAnnouncementDetailsResponse> queryResult = await sender.Send(query, cancellationToken);
 
             return queryResult.IsFailure
                 ? Results.Problem(queryResult.Error.ToProblemDetails())

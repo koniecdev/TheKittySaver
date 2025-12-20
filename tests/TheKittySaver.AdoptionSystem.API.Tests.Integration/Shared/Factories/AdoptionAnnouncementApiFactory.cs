@@ -21,7 +21,7 @@ internal static class AdoptionAnnouncementApiFactory
         ("10-001", "Warmińsko-Mazurskie")
     ];
 
-    public static async Task<AdoptionAnnouncementResponse> CreateRandomAsync(
+    public static async Task<AdoptionAnnouncementListItemResponse> CreateRandomAsync(
         HttpClient httpClient,
         JsonSerializerOptions jsonSerializerOptions,
         Faker faker,
@@ -32,9 +32,9 @@ internal static class AdoptionAnnouncementApiFactory
         HttpResponseMessage httpResponseMessage = await httpClient.PostAsJsonAsync(
             "api/v1/adoption-announcements", request);
         string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
-        AdoptionAnnouncementResponse announcementResponse = JsonSerializer.Deserialize<AdoptionAnnouncementResponse>(stringResponse, jsonSerializerOptions)
+        AdoptionAnnouncementListItemResponse announcementListItemResponse = JsonSerializer.Deserialize<AdoptionAnnouncementListItemResponse>(stringResponse, jsonSerializerOptions)
             ?? throw new JsonException("Failed to deserialize AdoptionAnnouncementResponse");
-        return announcementResponse;
+        return announcementListItemResponse;
     }
 
     public static CreateAdoptionAnnouncementRequest CreateRandomRequest(Faker faker, CatId catId)

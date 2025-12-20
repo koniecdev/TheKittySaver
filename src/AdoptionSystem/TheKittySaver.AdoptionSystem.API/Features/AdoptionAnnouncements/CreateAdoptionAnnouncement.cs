@@ -2,7 +2,6 @@ using Mediator;
 using TheKittySaver.AdoptionSystem.API.Common;
 using TheKittySaver.AdoptionSystem.API.Extensions;
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.AdoptionAnnouncementAggregate.Requests;
-using TheKittySaver.AdoptionSystem.Contracts.Aggregates.AdoptionAnnouncementAggregate.Responses;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAggregate.Entities;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAggregate.Repositories;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAggregate.ValueObjects;
@@ -17,6 +16,7 @@ using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.AddressCompounds;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.AddressCompounds.Specifications;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.PhoneNumbers;
 using TheKittySaver.AdoptionSystem.Persistence.DbContexts.Abstractions;
+using TheKittySaver.AdoptionSystem.Primitives.Aggregates.AdoptionAnnouncementAggregate;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate;
 using TheKittySaver.AdoptionSystem.Primitives.Enums;
 
@@ -33,9 +33,9 @@ internal sealed class CreateAdoptionAnnouncement : IEndpoint
         string AddressCity,
         string? AddressLine,
         string Email,
-        string PhoneNumber) : ICommand<Result<AdoptionAnnouncementResponse>>;
+        string PhoneNumber) : ICommand<Result<AdoptionAnnouncementId>>;
 
-    internal sealed class Handler : ICommandHandler<Command, Result<AdoptionAnnouncementResponse>>
+    internal sealed class Handler : ICommandHandler<Command, Result<AdoptionAnnouncementId>>
     {
         private readonly ICatRepository _catRepository;
         private readonly IAdoptionAnnouncementRepository _adoptionAnnouncementRepository;
@@ -63,12 +63,12 @@ internal sealed class CreateAdoptionAnnouncement : IEndpoint
             _timeProvider = timeProvider;
         }
 
-        public async ValueTask<Result<AdoptionAnnouncementResponse>> Handle(Command command, CancellationToken cancellationToken)
+        public async ValueTask<Result<AdoptionAnnouncementId>> Handle(Command command, CancellationToken cancellationToken)
         {
             Maybe<Cat> maybeCat = await _catRepository.GetByIdAsync(command.CatId, cancellationToken);
             if (maybeCat.HasNoValue)
             {
-                return Result.Failure<AdoptionAnnouncementResponse>(DomainErrors.CatEntity.NotFound(command.CatId));
+                return Result.Failure<AdoptionAnnouncementId>(DomainErrors.CatEntity.NotFound(command.CatId));
             }
 
             Cat cat = maybeCat.Value;
@@ -80,7 +80,7 @@ internal sealed class CreateAdoptionAnnouncement : IEndpoint
                     AdoptionAnnouncementDescription.Create(command.Description);
                 if (createDescriptionResult.IsFailure)
                 {
-                    return Result.Failure<AdoptionAnnouncementResponse>(createDescriptionResult.Error);
+                    return Result.Failure<AdoptionAnnouncementId>(createDescriptionResult.Error);
                 }
                 maybeDescription = Maybe<AdoptionAnnouncementDescription>.From(createDescriptionResult.Value);
             }
@@ -88,19 +88,19 @@ internal sealed class CreateAdoptionAnnouncement : IEndpoint
             Result<AddressPostalCode> createPostalCodeResult = AddressPostalCode.Create(command.AddressPostalCode);
             if (createPostalCodeResult.IsFailure)
             {
-                return Result.Failure<AdoptionAnnouncementResponse>(createPostalCodeResult.Error);
+                return Result.Failure<AdoptionAnnouncementId>(createPostalCodeResult.Error);
             }
 
             Result<AddressRegion> createRegionResult = AddressRegion.Create(command.AddressRegion);
             if (createRegionResult.IsFailure)
             {
-                return Result.Failure<AdoptionAnnouncementResponse>(createRegionResult.Error);
+                return Result.Failure<AdoptionAnnouncementId>(createRegionResult.Error);
             }
 
             Result<AddressCity> createCityResult = AddressCity.Create(command.AddressCity);
             if (createCityResult.IsFailure)
             {
-                return Result.Failure<AdoptionAnnouncementResponse>(createCityResult.Error);
+                return Result.Failure<AdoptionAnnouncementId>(createCityResult.Error);
             }
 
             Maybe<AddressLine> maybeLine = Maybe<AddressLine>.None;
@@ -109,7 +109,7 @@ internal sealed class CreateAdoptionAnnouncement : IEndpoint
                 Result<AddressLine> createLineResult = AddressLine.Create(command.AddressLine);
                 if (createLineResult.IsFailure)
                 {
-                    return Result.Failure<AdoptionAnnouncementResponse>(createLineResult.Error);
+                    return Result.Failure<AdoptionAnnouncementId>(createLineResult.Error);
                 }
                 maybeLine = Maybe<AddressLine>.From(createLineResult.Value);
             }
@@ -123,19 +123,19 @@ internal sealed class CreateAdoptionAnnouncement : IEndpoint
                 maybeLine);
             if (createAddressResult.IsFailure)
             {
-                return Result.Failure<AdoptionAnnouncementResponse>(createAddressResult.Error);
+                return Result.Failure<AdoptionAnnouncementId>(createAddressResult.Error);
             }
 
             Result<Email> createEmailResult = Email.Create(command.Email);
             if (createEmailResult.IsFailure)
             {
-                return Result.Failure<AdoptionAnnouncementResponse>(createEmailResult.Error);
+                return Result.Failure<AdoptionAnnouncementId>(createEmailResult.Error);
             }
 
             Result<PhoneNumber> createPhoneNumberResult = _phoneNumberFactory.Create(command.PhoneNumber);
             if (createPhoneNumberResult.IsFailure)
             {
-                return Result.Failure<AdoptionAnnouncementResponse>(createPhoneNumberResult.Error);
+                return Result.Failure<AdoptionAnnouncementId>(createPhoneNumberResult.Error);
             }
 
             Result<AdoptionAnnouncement> createAnnouncementResult = _adoptionAnnouncementCreationService.Create(
@@ -148,7 +148,7 @@ internal sealed class CreateAdoptionAnnouncement : IEndpoint
 
             if (createAnnouncementResult.IsFailure)
             {
-                return Result.Failure<AdoptionAnnouncementResponse>(createAnnouncementResult.Error);
+                return Result.Failure<AdoptionAnnouncementId>(createAnnouncementResult.Error);
             }
 
             AdoptionAnnouncement announcement = createAnnouncementResult.Value;
@@ -156,20 +156,7 @@ internal sealed class CreateAdoptionAnnouncement : IEndpoint
             _adoptionAnnouncementRepository.Insert(announcement);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            AdoptionAnnouncementResponse response = new(
-                Id: announcement.Id,
-                PersonId: announcement.PersonId,
-                Description: announcement.Description?.Value,
-                AddressCountryCode: announcement.Address.CountryCode,
-                AddressPostalCode: announcement.Address.PostalCode.Value,
-                AddressRegion: announcement.Address.Region.Value,
-                AddressCity: announcement.Address.City.Value,
-                AddressLine: announcement.Address.Line?.Value,
-                Email: announcement.Email.Value,
-                PhoneNumber: announcement.PhoneNumber.Value,
-                Status: announcement.Status);
-
-            return response;
+            return announcement.Id;
         }
     }
 
@@ -182,11 +169,11 @@ internal sealed class CreateAdoptionAnnouncement : IEndpoint
         {
             Command command = request.MapToCommand();
 
-            Result<AdoptionAnnouncementResponse> commandResult = await sender.Send(command, cancellationToken);
+            Result<AdoptionAnnouncementId> commandResult = await sender.Send(command, cancellationToken);
 
             return commandResult.IsFailure
                 ? Results.Problem(commandResult.Error.ToProblemDetails())
-                : Results.Created($"/api/v1/adoption-announcements/{commandResult.Value.Id}", commandResult.Value);
+                : Results.Created($"/api/v1/adoption-announcements/{commandResult.Value}", commandResult.Value);
         });
     }
 }

@@ -39,9 +39,9 @@ public sealed class CatAssignmentEndpointsTests : IAsyncLifetime
         PersonResponse person = await CreateTestPersonAsync();
         CatResponse catForAnnouncement = await CreateTestCatWithThumbnailAsync(person.Id, "AnnouncementCat");
         CatResponse catToAssign = await CreateTestCatWithThumbnailAsync(person.Id, "CatToAssign");
-        AdoptionAnnouncementResponse announcement = await CreateTestAdoptionAnnouncementAsync(catForAnnouncement.Id);
+        AdoptionAnnouncementListItemResponse announcementListItem = await CreateTestAdoptionAnnouncementAsync(catForAnnouncement.Id);
 
-        AssignCatRequest request = new(announcement.Id);
+        AssignCatRequest request = new(announcementListItem.Id);
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.PostAsJsonAsync(
@@ -52,7 +52,7 @@ public sealed class CatAssignmentEndpointsTests : IAsyncLifetime
 
         // Verify cat is assigned
         CatResponse updatedCat = await GetCatAsync(catToAssign.Id);
-        updatedCat.AdoptionAnnouncementId.ShouldBe(announcement.Id);
+        updatedCat.AdoptionAnnouncementId.ShouldBe(announcementListItem.Id);
     }
 
     [Fact]
@@ -61,10 +61,10 @@ public sealed class CatAssignmentEndpointsTests : IAsyncLifetime
         // Arrange
         PersonResponse person = await CreateTestPersonAsync();
         CatResponse catForAnnouncement = await CreateTestCatWithThumbnailAsync(person.Id);
-        AdoptionAnnouncementResponse announcement = await CreateTestAdoptionAnnouncementAsync(catForAnnouncement.Id);
+        AdoptionAnnouncementListItemResponse announcementListItem = await CreateTestAdoptionAnnouncementAsync(catForAnnouncement.Id);
 
         Guid nonExistentCatId = Guid.NewGuid();
-        AssignCatRequest request = new(announcement.Id);
+        AssignCatRequest request = new(announcementListItem.Id);
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.PostAsJsonAsync(
@@ -99,7 +99,7 @@ public sealed class CatAssignmentEndpointsTests : IAsyncLifetime
         PersonResponse person = await CreateTestPersonAsync();
         CatResponse catNamedKrowka = await CreateTestCatWithThumbnailAsync(person.Id, "Krówka");
         CatResponse catNamedFiga = await CreateTestCatWithThumbnailAsync(person.Id, "Figa");
-        AdoptionAnnouncementResponse aaWithKrowkaInitially = await CreateTestAdoptionAnnouncementAsync(catNamedKrowka.Id);
+        AdoptionAnnouncementListItemResponse aaWithKrowkaInitially = await CreateTestAdoptionAnnouncementAsync(catNamedKrowka.Id);
 
         AssignCatRequest assignRequestForKrowkaAa = new(aaWithKrowkaInitially.Id);
         HttpResponseMessage assignFigaToKrowkaAaResponse = await _httpClient.PostAsJsonAsync(
@@ -108,7 +108,7 @@ public sealed class CatAssignmentEndpointsTests : IAsyncLifetime
 
         // Create second announcement for reassignment
         CatResponse catNamedKlementynka = await CreateTestCatWithThumbnailAsync(person.Id, "Klementynka");
-        AdoptionAnnouncementResponse aaWithKlementynkaInitially = await CreateTestAdoptionAnnouncementAsync(catNamedKlementynka.Id);
+        AdoptionAnnouncementListItemResponse aaWithKlementynkaInitially = await CreateTestAdoptionAnnouncementAsync(catNamedKlementynka.Id);
 
         ReassignCatRequest reassignFigaToAaWithKlementynkaRequest = new(aaWithKlementynkaInitially.Id);
 
@@ -130,10 +130,10 @@ public sealed class CatAssignmentEndpointsTests : IAsyncLifetime
         // Arrange
         PersonResponse person = await CreateTestPersonAsync();
         CatResponse catForAnnouncement = await CreateTestCatWithThumbnailAsync(person.Id);
-        AdoptionAnnouncementResponse announcement = await CreateTestAdoptionAnnouncementAsync(catForAnnouncement.Id);
+        AdoptionAnnouncementListItemResponse announcementListItem = await CreateTestAdoptionAnnouncementAsync(catForAnnouncement.Id);
 
         Guid nonExistentCatId = Guid.NewGuid();
-        ReassignCatRequest request = new(announcement.Id);
+        ReassignCatRequest request = new(announcementListItem.Id);
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.PutAsJsonAsync(
@@ -150,10 +150,10 @@ public sealed class CatAssignmentEndpointsTests : IAsyncLifetime
         PersonResponse person = await CreateTestPersonAsync();
         CatResponse catForAnnouncement = await CreateTestCatWithThumbnailAsync(person.Id, "AnnCat");
         CatResponse catToAssign = await CreateTestCatWithThumbnailAsync(person.Id, "CatToAssign");
-        AdoptionAnnouncementResponse announcement = await CreateTestAdoptionAnnouncementAsync(catForAnnouncement.Id);
+        AdoptionAnnouncementListItemResponse announcementListItem = await CreateTestAdoptionAnnouncementAsync(catForAnnouncement.Id);
 
         // Assign cat first
-        AssignCatRequest assignRequest = new(announcement.Id);
+        AssignCatRequest assignRequest = new(announcementListItem.Id);
         HttpResponseMessage assignResponse = await _httpClient.PostAsJsonAsync(
             $"api/v1/cats/{catToAssign.Id.Value}/assignment", assignRequest);
         await assignResponse.EnsureSuccessWithDetailsAsync();
@@ -191,10 +191,10 @@ public sealed class CatAssignmentEndpointsTests : IAsyncLifetime
         PersonResponse person = await CreateTestPersonAsync();
         CatResponse catForAnnouncement = await CreateTestCatWithThumbnailAsync(person.Id, "AnnCat");
         CatResponse catToAssign = await CreateTestCatWithThumbnailAsync(person.Id, "CatToAssign");
-        AdoptionAnnouncementResponse announcement = await CreateTestAdoptionAnnouncementAsync(catForAnnouncement.Id);
+        AdoptionAnnouncementListItemResponse announcementListItem = await CreateTestAdoptionAnnouncementAsync(catForAnnouncement.Id);
 
         // Assign cat first
-        AssignCatRequest assignRequest = new(announcement.Id);
+        AssignCatRequest assignRequest = new(announcementListItem.Id);
         HttpResponseMessage assignResponse = await _httpClient.PostAsJsonAsync(
             $"api/v1/cats/{catToAssign.Id.Value}/assignment", assignRequest);
         await assignResponse.EnsureSuccessWithDetailsAsync();
@@ -230,7 +230,7 @@ public sealed class CatAssignmentEndpointsTests : IAsyncLifetime
     private async Task<CatResponse> CreateTestCatWithThumbnailAsync(PersonId personId, string? name = null)
         => await CatApiFactory.CreateHealthyCatWithThumbnail(_httpClient, _jsonSerializerOptions, personId, name);
 
-    private async Task<AdoptionAnnouncementResponse> CreateTestAdoptionAnnouncementAsync(CatId catId)
+    private async Task<AdoptionAnnouncementListItemResponse> CreateTestAdoptionAnnouncementAsync(CatId catId)
         => await AdoptionAnnouncementApiFactory.CreateRandomAsync(_httpClient, _jsonSerializerOptions, _faker, catId);
 
     private async Task<CatResponse> GetCatAsync(CatId catId)

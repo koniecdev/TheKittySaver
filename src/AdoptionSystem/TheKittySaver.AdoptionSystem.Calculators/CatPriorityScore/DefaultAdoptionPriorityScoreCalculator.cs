@@ -1,3 +1,4 @@
+using TheKittySaver.AdoptionSystem.Calculators.Abstractions;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate.Enums;
 
 namespace TheKittySaver.AdoptionSystem.Calculators.CatPriorityScore;

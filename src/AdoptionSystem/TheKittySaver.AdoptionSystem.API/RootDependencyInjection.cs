@@ -1,3 +1,4 @@
+using TheKittySaver.AdoptionSystem.Calculators;
 using TheKittySaver.AdoptionSystem.Domain;
 using TheKittySaver.AdoptionSystem.Infrastructure;
 using TheKittySaver.AdoptionSystem.Persistence;
@@ -8,10 +9,11 @@ internal static class RootDependencyInjection
 {
     public static IServiceCollection Register(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddInfrastructure(configuration);
+        services.AddCalculators(configuration);
         services.AddDomain();
-        services.AddApi();
+        services.AddInfrastructure(configuration);
         services.AddPersistence();
+        services.AddApi();
 
         return services;
     }

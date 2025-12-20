@@ -4,18 +4,18 @@ using Mediator;
 using Microsoft.EntityFrameworkCore;
 using TheKittySaver.AdoptionSystem.API.Common;
 using TheKittySaver.AdoptionSystem.API.Extensions;
+using TheKittySaver.AdoptionSystem.Calculators.Abstractions;
 using TheKittySaver.AdoptionSystem.Calculators.CatPriorityScore;
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.AdoptionAnnouncementAggregate.Responses;
 using TheKittySaver.AdoptionSystem.Contracts.Common;
 using TheKittySaver.AdoptionSystem.Domain.Core.Extensions;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.OptionMonad;
 using TheKittySaver.AdoptionSystem.Persistence.DbContexts.ReadDbContexts;
-using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate.Enums;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
 using TheKittySaver.AdoptionSystem.ReadModels.Aggregates.AdoptionAnnouncementAggregate;
-
+ 
 namespace TheKittySaver.AdoptionSystem.API.Features.AdoptionAnnouncements;
-
+ 
 internal sealed class GetAdoptionAnnouncements : IEndpoint
 {
     internal sealed record Query(
@@ -23,9 +23,9 @@ internal sealed class GetAdoptionAnnouncements : IEndpoint
         int Page = 1,
         int PageSize = 50,
         string? Sort = null)
-        : IQuery<PaginationResponse<AdoptionAnnouncementResponse>>, IPaginationable, ISortable;
+        : IQuery<PaginationResponse<AdoptionAnnouncementListItemResponse>>, IPaginationable, ISortable;
 
-    internal sealed class Handler : IQueryHandler<Query, PaginationResponse<AdoptionAnnouncementResponse>>
+    internal sealed class Handler : IQueryHandler<Query, PaginationResponse<AdoptionAnnouncementListItemResponse>>
     {
         private readonly IApplicationReadDbContext _readDbContext;
         private readonly IAdoptionPriorityScoreCalculator _calculator;
@@ -38,25 +38,26 @@ internal sealed class GetAdoptionAnnouncements : IEndpoint
             _calculator = calculator;
         }
 
-        public async ValueTask<PaginationResponse<AdoptionAnnouncementResponse>> Handle(Query query,
+        public async ValueTask<PaginationResponse<AdoptionAnnouncementListItemResponse>> Handle(Query query,
             CancellationToken cancellationToken)
         {
-            IQueryable<AdoptionAnnouncementReadModel> sortedQuery = _readDbContext.AdoptionAnnouncements
+            IQueryable<AdoptionAnnouncementReadModel> baseQuery = _readDbContext.AdoptionAnnouncements
                 .WhereIf(query.MaybePersonId.HasValue,
                     aa => aa.PersonId == query.MaybePersonId.Value);
-
-            int totalCount = await sortedQuery.CountAsync(cancellationToken);
-
+ 
+            int totalCount = await baseQuery.CountAsync(cancellationToken);
+ 
             if (!string.IsNullOrWhiteSpace(query.Sort))
             {
-                sortedQuery = sortedQuery.ApplyMultipleSorting(query.Sort, GetSortProperty);
+                baseQuery = baseQuery.ApplyMultipleSorting(query.Sort, GetSortProperty);
             }
-            
-            var rawItems = await sortedQuery
+ 
+            var rawItems = await baseQuery
                 .Select(aa => new
                 {
                     aa.Id,
                     aa.PersonId,
+                    aa.Person.Username,
                     aa.Description,
                     aa.AddressCountryCode,
                     aa.AddressPostalCode,
@@ -84,9 +85,8 @@ internal sealed class GetAdoptionAnnouncements : IEndpoint
                     })
                 })
                 .ToListAsync(cancellationToken);
-
-            List<AdoptionAnnouncementResponse> items = [];
-            foreach (var rawAa in rawItems)
+ 
+            IEnumerable<AdoptionAnnouncementListItemResponse> items = rawItems.Select(rawAa =>
             {
                 string aaTitle = string.Join(", ", rawAa.Cats.Select(c => c.Name));
                 decimal aaPriorityScore = rawAa.Cats
@@ -104,58 +104,56 @@ internal sealed class GetAdoptionAnnouncements : IEndpoint
                         isNeutered: cat.NeuteringStatusIsNeutered))
                     .DefaultIfEmpty()
                     .Max();
-
-                AdoptionAnnouncementResponse aaResponse = new(
-                    Id: rawAa.Id, 
-                    PersonId: rawAa.PersonId, 
-                    PriorityScore: aaPriorityScore, 
-                    Title: aaTitle, 
-                    Description: rawAa.Description, 
-                    AddressCountryCode: rawAa.AddressCountryCode, 
-                    AddressPostalCode: rawAa.AddressPostalCode, 
-                    AddressRegion: rawAa.AddressRegion, 
-                    AddressCity: rawAa.AddressCity, 
-                    AddressLine: rawAa.AddressLine, 
-                    Email: rawAa.Email, 
-                    PhoneNumber: rawAa.PhoneNumber, 
+ 
+                return new AdoptionAnnouncementListItemResponse(
+                    Id: rawAa.Id,
+                    PersonId: rawAa.PersonId,
+                    Username: rawAa.Username,
+                    PriorityScore: aaPriorityScore,
+                    Title: aaTitle,
+                    Description: rawAa.Description,
+                    AddressCountryCode: rawAa.AddressCountryCode,
+                    AddressPostalCode: rawAa.AddressPostalCode,
+                    AddressRegion: rawAa.AddressRegion,
+                    AddressCity: rawAa.AddressCity,
+                    AddressLine: rawAa.AddressLine,
+                    Email: rawAa.Email,
+                    PhoneNumber: rawAa.PhoneNumber,
                     Status: rawAa.Status);
-                
-                items.Add(aaResponse);
-            }
-
+            });
+ 
             if (string.IsNullOrWhiteSpace(query.Sort))
             {
-                items = items
-                    .OrderByDescending(x=>x.PriorityScore)
-                    .ToList();
+                items = items.OrderByDescending(x => x.PriorityScore);
             }
-            
-            items = items
-                .ApplyInMemoryPagination(query.Page, query.PageSize)
+ 
+            List<AdoptionAnnouncementListItemResponse> paginatedItems = items
+                .Skip(query.Page * query.PageSize)
+                .Take(query.PageSize)
                 .ToList();
-            
-            PaginationResponse<AdoptionAnnouncementResponse> response = new()
+ 
+            PaginationResponse<AdoptionAnnouncementListItemResponse> paginationResponse = new()
             {
-                Items = items,
+                Items = paginatedItems,
                 Page = query.Page,
                 PageSize = query.PageSize,
                 TotalCount = totalCount
             };
 
-            return response;
+            return paginationResponse;
         }
-        
+ 
         private static Expression<Func<AdoptionAnnouncementReadModel, object>> GetSortProperty(string propertyName)
             => propertyName.ToLower(CultureInfo.InvariantCulture) switch
             {
                 "catscount" => aa => aa.Cats.Count,
                 "addresscity" => aa => aa.AddressCity,
-                _ => aa => aa.AddressCity
+                _ => aa => aa
             };
     }
-
+ 
     private sealed record Filters(Guid? PersonId);
-    
+ 
     public void MapEndpoint(IEndpointRouteBuilder endpointRouteBuilder)
     {
         endpointRouteBuilder.MapGet("adoption-announcements", async (
@@ -169,9 +167,9 @@ internal sealed class GetAdoptionAnnouncements : IEndpoint
                 Page: paginationAndMultipleSorting.Page,
                 PageSize: paginationAndMultipleSorting.PageSize,
                 Sort: paginationAndMultipleSorting.Sort);
-
-            PaginationResponse<AdoptionAnnouncementResponse> response = await sender.Send(query, cancellationToken);
-
+ 
+            PaginationResponse<AdoptionAnnouncementListItemResponse> response = await sender.Send(query, cancellationToken);
+ 
             return Results.Ok(response);
         });
     }
