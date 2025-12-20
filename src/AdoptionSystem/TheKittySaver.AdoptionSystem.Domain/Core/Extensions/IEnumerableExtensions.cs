@@ -11,7 +11,7 @@ public static class IEnumerableExtensions
         where TEntityId : struct
         where TEntity : Entity<TEntityId>
     {
-        TEntity? entity = entityEnumerable.FirstOrDefault(x => x.Id.Equals(entityId));
+        TEntity? entity = entityEnumerable.FirstOrDefault(entity => entity.Id.Equals(entityId));
         return Maybe<TEntity>.From(entity);
     }
 }

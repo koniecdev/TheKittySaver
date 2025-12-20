@@ -1,6 +1,6 @@
 ﻿namespace TheKittySaver.AdoptionSystem.Contracts.Common;
 
-public sealed record PaginationResult<T> : ILinksResponse
+public sealed record PaginationResponse<T> : ILinksResponse
 {
     public required IReadOnlyCollection<T> Items { get; init; }
     public required int Page { get; init; }

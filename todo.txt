@@ -284,30 +284,6 @@ analizuja i raport.
   ---
   RAPORT GOTOWOŚCI PRODUKCYJNEJ - TheKittySaver
 
-  KRYTYCZNE PROBLEMY (BLOKERY)
-
-  1. DOMAIN EVENTS NIE SĄ PUBLIKOWANE
-
-  Lokalizacja: Cała aplikacja
-  Opis: Domain events są zbierane w agregatach (AggregateRoot.RaiseDomainEvent()), ale nigdzie nie są publikowane. Handlery istnieją (CatClaimedDomainEventHandler, CatReassignedToAnotherAnnouncementDomainEventHandler, CatUnassignedFromAnnouncementDomainEventHandler), ale nigdy nie zostaną wywołane.
-
-  Konsekwencje:
-  - Gdy kot zostanie "claimed", AdoptionAnnouncement NIE zostanie automatycznie zamknięte nawet gdy wszystkie koty są claimed
-  - Logika biznesowa jest zepsuta
-
-  Napraw: Dodaj interceptor lub middleware który publikuje domain events po SaveChangesAsync().
-
-  ---
-  2. BUG W LOGICE DeleteCat
-
-  Lokalizacja: Features/Cats/DeleteCat.cs:44-48
-  case {AdoptionAnnouncementId: not null, Status: CatStatusType.Published}
-      when (await _catRepository.GetCatsByAdoptionAnnouncementIdAsync(...)).Count > 1:
-      return Result.Failure(DomainErrors.CatEntity.TheOnlyAdoptionAnnouncementCatRemoval);
-  Problem: Warunek > 1 jest odwrotny. Error message mówi "Cannot remove cat from an adoption announcement that has no other cats" - ale kod zwraca błąd gdy kotów jest WIĘCEJ niż 1.
-
-  Napraw: Zmień > 1 na == 1 lub <= 1.
-
   ---
   3. BRAK WALIDACJI ROZMIARU/TYPU PLIKÓW
 

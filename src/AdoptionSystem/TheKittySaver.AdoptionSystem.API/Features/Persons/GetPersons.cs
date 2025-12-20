@@ -1,10 +1,11 @@
+using System.Globalization;
+using System.Linq.Expressions;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
 using TheKittySaver.AdoptionSystem.API.Common;
-using TheKittySaver.AdoptionSystem.API.Common.Sorting;
+using TheKittySaver.AdoptionSystem.API.Extensions;
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.PersonAggregate.Responses;
 using TheKittySaver.AdoptionSystem.Contracts.Common;
-using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
 using TheKittySaver.AdoptionSystem.Persistence.DbContexts.ReadDbContexts;
 using TheKittySaver.AdoptionSystem.ReadModels.Aggregates.PersonAggregate;
 
@@ -12,10 +13,10 @@ namespace TheKittySaver.AdoptionSystem.API.Features.Persons;
 
 internal sealed class GetPersons : IEndpoint
 {
-    internal sealed record Query(int Page, int PageSize, string? Sort)
-        : IQuery<Result<PaginationResult<PersonResponse>>>, IPagedQuery;
+    internal sealed record Query(int Page = 0, int PageSize = 50, string? Sort = null)
+        : IQuery<PaginationResponse<PersonResponse>>, IPaginationable, ISortable;
 
-    internal sealed class Handler : IQueryHandler<Query, Result<PaginationResult<PersonResponse>>>
+    internal sealed class Handler : IQueryHandler<Query, PaginationResponse<PersonResponse>>
     {
         private readonly IApplicationReadDbContext _readDbContext;
 
@@ -24,21 +25,21 @@ internal sealed class GetPersons : IEndpoint
             _readDbContext = readDbContext;
         }
 
-        public async ValueTask<Result<PaginationResult<PersonResponse>>> Handle(
+        public async ValueTask<PaginationResponse<PersonResponse>> Handle(
             Query query,
             CancellationToken cancellationToken)
         {
-            int totalCount = await _readDbContext.Persons.CountAsync(cancellationToken);
+            IQueryable<PersonReadModel> sortedQuery = _readDbContext.Persons;
 
-            IOrderedQueryable<PersonReadModel>? sortedQuery = _readDbContext.Persons.ApplySortOrNull(query.Sort);
+            int totalCount = await sortedQuery.CountAsync(cancellationToken);
 
-            IOrderedQueryable<PersonReadModel> orderedQuery = sortedQuery is not null
-                ? sortedQuery.ThenBy(p => p.Id)
-                : _readDbContext.Persons.OrderBy(p => p.Id);
+            if (!string.IsNullOrWhiteSpace(query.Sort))
+            {
+                sortedQuery = sortedQuery.ApplyMultipleSorting(query.Sort, GetSortProperty);
+            }
 
-            IReadOnlyList<PersonResponse> items = await orderedQuery
-                .Skip((query.Page - 1) * query.PageSize)
-                .Take(query.PageSize)
+            IReadOnlyList<PersonResponse> items = await sortedQuery
+                .ApplyPagination(page: query.Page, pageSize: query.PageSize)
                 .Select(p => new PersonResponse(
                     Id: p.Id,
                     Username: p.Username,
@@ -46,30 +47,39 @@ internal sealed class GetPersons : IEndpoint
                     PhoneNumber: p.PhoneNumber))
                 .ToListAsync(cancellationToken);
 
-            PaginationResult<PersonResponse> response = new()
+            return new PaginationResponse<PersonResponse>
             {
                 Items = items,
                 Page = query.Page,
                 PageSize = query.PageSize,
                 TotalCount = totalCount
             };
-
-            return Result.Success(response);
         }
+
+        private static Expression<Func<PersonReadModel, object>> GetSortProperty(string propertyName)
+            => propertyName.ToLower(CultureInfo.InvariantCulture) switch
+            {
+                "username" => p => p.Username,
+                "email" => p => p.Email,
+                _ => p => p.Username
+            };
     }
 
     public void MapEndpoint(IEndpointRouteBuilder endpointRouteBuilder)
     {
         endpointRouteBuilder.MapGet("persons", async (
-            [AsParameters] PaginationRequest pagination,
+            [AsParameters] PaginationAndMultipleSorting paginationAndMultipleSorting,
             ISender sender,
             CancellationToken cancellationToken) =>
         {
-            Query query = new(pagination.Page, pagination.PageSize, pagination.Sort);
+            Query query = new(
+                Page: paginationAndMultipleSorting.Page,
+                PageSize: paginationAndMultipleSorting.PageSize,
+                Sort: paginationAndMultipleSorting.Sort);
 
-            Result<PaginationResult<PersonResponse>> queryResult = await sender.Send(query, cancellationToken);
+            PaginationResponse<PersonResponse> response = await sender.Send(query, cancellationToken);
 
-            return Results.Ok(queryResult.Value);
+            return Results.Ok(response);
         });
     }
 }
