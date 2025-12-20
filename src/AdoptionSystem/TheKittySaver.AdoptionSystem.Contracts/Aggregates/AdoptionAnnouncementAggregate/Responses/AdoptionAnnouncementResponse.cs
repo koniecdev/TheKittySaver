@@ -9,6 +9,8 @@ namespace TheKittySaver.AdoptionSystem.Contracts.Aggregates.AdoptionAnnouncement
 public sealed record AdoptionAnnouncementResponse(
     AdoptionAnnouncementId Id,
     PersonId PersonId,
+    decimal PriorityScore,
+    string Title,
     string? Description,
     CountryCode AddressCountryCode,
     string AddressPostalCode,
@@ -17,7 +19,8 @@ public sealed record AdoptionAnnouncementResponse(
     string? AddressLine,
     string Email,
     string PhoneNumber,
-    AnnouncementStatusType Status) : ILinksResponse
+    AnnouncementStatusType Status
+    ) : ILinksResponse
 {
     public IReadOnlyCollection<LinkDto> Links { get; set; } = [];
 }

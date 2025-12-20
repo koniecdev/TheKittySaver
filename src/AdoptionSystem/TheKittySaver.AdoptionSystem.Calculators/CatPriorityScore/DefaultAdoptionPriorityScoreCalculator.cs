@@ -10,8 +10,8 @@ internal sealed class DefaultAdoptionPriorityScoreCalculator : IAdoptionPriority
         ColorType color,
         CatGenderType gender,
         HealthStatusType healthStatus,
-        ListingSourceType listingSource,
-        SpecialNeedsSeverityType specialNeedsSeverity,
+        ListingSourceType listingSourceType,
+        SpecialNeedsSeverityType specialNeedsSeverityType,
         TemperamentType temperament,
         FivStatus fivStatus,
         FelvStatus felvStatus,
@@ -22,8 +22,8 @@ internal sealed class DefaultAdoptionPriorityScoreCalculator : IAdoptionPriority
         decimal colorPoints = CalculateColorPoints(color);
         decimal genderPoints = CalculateGenderPoints(gender);
         decimal healthPoints = CalculateHealthPoints(healthStatus);
-        decimal listingSourcePoints = CalculateListingSourcePoints(listingSource);
-        decimal specialNeedsPoints = CalculateSpecialNeedsPoints(specialNeedsSeverity);
+        decimal listingSourcePoints = CalculateListingSourcePoints(listingSourceType);
+        decimal specialNeedsPoints = CalculateSpecialNeedsPoints(specialNeedsSeverityType);
         decimal temperamentPoints = CalculateTemperamentPoints(temperament);
         decimal infectiousDiseasePoints = CalculateInfectiousDiseasePoints(fivStatus, felvStatus);
         decimal neuteringPoints = CalculateNeuteringPoints(isNeutered);

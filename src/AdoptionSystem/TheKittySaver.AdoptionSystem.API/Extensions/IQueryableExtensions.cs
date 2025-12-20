@@ -3,6 +3,21 @@ using TheKittySaver.AdoptionSystem.API.QueriesSorting;
 
 namespace TheKittySaver.AdoptionSystem.API.Extensions;
 
+internal static class IEnumerableExtensions
+{
+    extension<TAggregate>(IEnumerable<TAggregate> query)
+    {
+        public IEnumerable<TAggregate> ApplyInMemoryPagination(int page, int pageSize)
+        {
+            query = query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize);
+            
+            return query;
+        }
+    }
+}
+
 internal static class IQueryableExtensions
 {
     extension<TAggregate>(IQueryable<TAggregate> query)
