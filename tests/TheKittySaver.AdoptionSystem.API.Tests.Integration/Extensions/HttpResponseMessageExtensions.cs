@@ -1,7 +1,10 @@
 ﻿using System.Net;
+using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Shouldly;
 
 namespace TheKittySaver.AdoptionSystem.API.Tests.Integration.Extensions;
 
@@ -58,6 +61,13 @@ internal static class HttpResponseMessageExtensions
             throw new HttpRequestException(
                 $"Response status code does not indicate success: {(int)response.StatusCode} ({response.StatusCode}).\n" +
                 $"Content: {content}");
+        }
+
+        public async Task<ProblemDetails> ToProblemDetailsAsync()
+        {
+            ProblemDetails problemDetails = await response.Content.ReadFromJsonAsync<ProblemDetails>()
+                ?? throw new JsonException("Could not deserialize to problem details");
+            return problemDetails;
         }
     }
 }

@@ -10,22 +10,7 @@ namespace TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared.Factories;
 
 internal static class PersonApiFactory
 {
-    public static async Task<PersonResponse> CreateRandomAsync(
-        HttpClient httpClient,
-        JsonSerializerOptions jsonSerializerOptions,
-        Faker faker)
-    {
-        CreatePersonRequest request = CreateRandomRequest(faker);
-
-        HttpResponseMessage httpResponseMessage = await httpClient.PostAsJsonAsync("api/v1/persons", request);
-        string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
-
-        PersonResponse personResponse = JsonSerializer.Deserialize<PersonResponse>(stringResponse, jsonSerializerOptions)
-            ?? throw new JsonException("Failed to deserialize PersonResponse");
-        return personResponse;
-    }
-
-    public static CreatePersonRequest CreateRandomRequest(Faker faker)
+    public static CreatePersonRequest GenerateRandomCreateRequest(Faker faker)
     {
         CreatePersonRequest request = new(
             IdentityId.New(),
@@ -33,5 +18,51 @@ internal static class PersonApiFactory
             faker.Internet.Email(),
             faker.Person.PolishPhoneNumber());
         return request;
+    }
+    
+    public static UpdatePersonRequest GenerateRandomUpdateRequest(Faker faker)
+    {
+        UpdatePersonRequest request = new(
+            faker.Internet.UserName(),
+            faker.Internet.Email(),
+            faker.Person.PolishPhoneNumber());
+        return request;
+    }
+    
+    public static async Task<PersonId> CreateRandomAndGetIdAsync(
+        HttpClient httpClient,
+        JsonSerializerOptions jsonSerializerOptions,
+        Faker faker)
+    {
+        CreatePersonRequest request = GenerateRandomCreateRequest(faker);
+
+        HttpResponseMessage httpResponseMessage = await httpClient.PostAsJsonAsync(new Uri("api/v1/persons", UriKind.Relative), request);
+        string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
+
+        PersonId personId = JsonSerializer.Deserialize<PersonId>(stringResponse, jsonSerializerOptions);
+        return personId;
+    }
+    
+    public static async Task<PersonDetailsResponse> CreateRandomAsync(
+        HttpClient httpClient,
+        JsonSerializerOptions jsonSerializerOptions,
+        Faker faker)
+    {
+        PersonId personId = await CreateRandomAndGetIdAsync(httpClient, jsonSerializerOptions, faker);
+
+        PersonDetailsResponse personResponse = await GetAsync(httpClient, jsonSerializerOptions, personId);
+        return personResponse;
+    }
+
+    public static async Task<PersonDetailsResponse> GetAsync(
+        HttpClient httpClient,
+        JsonSerializerOptions jsonSerializerOptions,
+        PersonId personId)
+    {
+        HttpResponseMessage httpResponseMessage = await httpClient.GetAsync(new Uri($"api/v1/persons/{personId.Value}", UriKind.Relative));
+        string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
+        PersonDetailsResponse personResponse = JsonSerializer.Deserialize<PersonDetailsResponse>(stringResponse, jsonSerializerOptions)
+            ?? throw new JsonException("Failed to deserialize PersonDetailsResponse");
+        return personResponse;
     }
 }

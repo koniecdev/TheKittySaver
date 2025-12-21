@@ -1,8 +1,7 @@
-﻿using Mediator;
+using Mediator;
 using TheKittySaver.AdoptionSystem.API.Common;
 using TheKittySaver.AdoptionSystem.API.Extensions;
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.PersonAggregate.Requests;
-using TheKittySaver.AdoptionSystem.Contracts.Aggregates.PersonAggregate.Responses;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.Entities;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.Repositories;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.Services;
@@ -21,9 +20,9 @@ internal sealed class CreatePerson : IEndpoint
         IdentityId IdentityId,
         string Username,
         string Email,
-        string PhoneNumber) : ICommand<Result<PersonResponse>>;
-    
-    internal sealed class Handler : ICommandHandler<Command, Result<PersonResponse>>
+        string PhoneNumber) : ICommand<Result<PersonId>>;
+
+    internal sealed class Handler : ICommandHandler<Command, Result<PersonId>>
     {
         private readonly IPersonCreationService _personCreationService;
         private readonly IPhoneNumberFactory _phoneNumberFactory;
@@ -42,26 +41,26 @@ internal sealed class CreatePerson : IEndpoint
             _unitOfWork = unitOfWork;
         }
 
-        public async ValueTask<Result<PersonResponse>> Handle(Command command, CancellationToken cancellationToken)
+        public async ValueTask<Result<PersonId>> Handle(Command command, CancellationToken cancellationToken)
         {
             Result<Email> createEmailResult = Email.Create(command.Email);
             if (createEmailResult.IsFailure)
             {
-                return Result.Failure<PersonResponse>(createEmailResult.Error);
+                return Result.Failure<PersonId>(createEmailResult.Error);
             }
-            
+
             Result<Username> createUsernameResult = Username.Create(command.Username);
             if (createUsernameResult.IsFailure)
             {
-                return Result.Failure<PersonResponse>(createUsernameResult.Error);
+                return Result.Failure<PersonId>(createUsernameResult.Error);
             }
-            
+
             Result<PhoneNumber> createPhoneNumberResult = _phoneNumberFactory.Create(command.PhoneNumber);
             if (createPhoneNumberResult.IsFailure)
             {
-                return Result.Failure<PersonResponse>(createPhoneNumberResult.Error);
+                return Result.Failure<PersonId>(createPhoneNumberResult.Error);
             }
-            
+
             Result<Person> personCreationResult = await _personCreationService.CreateAsync(
                 createUsernameResult.Value,
                 createEmailResult.Value,
@@ -70,22 +69,18 @@ internal sealed class CreatePerson : IEndpoint
                 cancellationToken);
             if (personCreationResult.IsFailure)
             {
-                return Result.Failure<PersonResponse>(personCreationResult.Error);
+                return Result.Failure<PersonId>(personCreationResult.Error);
             }
 
-            _personRepository.Insert(personCreationResult.Value);
+            Person person = personCreationResult.Value;
+
+            _personRepository.Insert(person);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
-            
-            PersonResponse response = new(
-                Id: personCreationResult.Value.Id,
-                Username: personCreationResult.Value.Username.Value,
-                Email: personCreationResult.Value.Email.Value,
-                PhoneNumber: personCreationResult.Value.PhoneNumber.Value);
-            
-            return response;
+
+            return person.Id;
         }
     }
-    
+
     public void MapEndpoint(IEndpointRouteBuilder endpointRouteBuilder)
     {
         endpointRouteBuilder.MapPost("persons", async (
@@ -95,11 +90,11 @@ internal sealed class CreatePerson : IEndpoint
         {
             Command command = request.MapToCommand();
 
-            Result<PersonResponse> commandResult = await sender.Send(command, cancellationToken);
+            Result<PersonId> commandResult = await sender.Send(command, cancellationToken);
 
             return commandResult.IsFailure
                 ? Results.Problem(commandResult.Error.ToProblemDetails())
-                : Results.Created($"/api/v1/persons/{commandResult.Value.Id}", commandResult.Value);
+                : Results.Created($"/api/v1/persons/{commandResult.Value}", commandResult.Value);
         });
     }
 }

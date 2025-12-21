@@ -1,4 +1,4 @@
-﻿using TheKittySaver.AdoptionSystem.Contracts.Common;
+using TheKittySaver.AdoptionSystem.Contracts.Common;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.AdoptionAnnouncementAggregate;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate.Enums;
@@ -6,7 +6,7 @@ using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
 
 namespace TheKittySaver.AdoptionSystem.Contracts.Aggregates.CatAggregate.Responses;
 
-public sealed record CatResponse(
+public sealed record CatListItemResponse(
     CatId Id,
     PersonId PersonId,
     AdoptionAnnouncementId? AdoptionAnnouncementId,
@@ -33,4 +33,3 @@ public sealed record CatResponse(
 {
     public IReadOnlyCollection<LinkDto> Links { get; set; } = [];
 }
-;

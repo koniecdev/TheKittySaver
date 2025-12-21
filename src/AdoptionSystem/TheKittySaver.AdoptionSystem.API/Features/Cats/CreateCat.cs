@@ -2,7 +2,6 @@ using Mediator;
 using TheKittySaver.AdoptionSystem.API.Common;
 using TheKittySaver.AdoptionSystem.API.Extensions;
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.CatAggregate.Requests;
-using TheKittySaver.AdoptionSystem.Contracts.Aggregates.CatAggregate.Responses;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Entities;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Repositories;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.ValueObjects;
@@ -10,6 +9,7 @@ using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.Repositorie
 using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
 using TheKittySaver.AdoptionSystem.Persistence.DbContexts.Abstractions;
+using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate.Enums;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
 
@@ -38,9 +38,9 @@ internal sealed class CreateCat : IEndpoint
         bool IsNeutered,
         FivStatus InfectiousDiseaseStatusFivStatus,
         FelvStatus InfectiousDiseaseStatusFelvStatus,
-        DateOnly InfectiousDiseaseStatusLastTestedAt) : ICommand<Result<CatResponse>>;
+        DateOnly InfectiousDiseaseStatusLastTestedAt) : ICommand<Result<CatId>>;
 
-    internal sealed class Handler : ICommandHandler<Command, Result<CatResponse>>
+    internal sealed class Handler : ICommandHandler<Command, Result<CatId>>
     {
         private readonly ICatRepository _catRepository;
         private readonly IPersonRepository _personRepository;
@@ -59,29 +59,29 @@ internal sealed class CreateCat : IEndpoint
             _timeProvider = timeProvider;
         }
 
-        public async ValueTask<Result<CatResponse>> Handle(Command command, CancellationToken cancellationToken)
+        public async ValueTask<Result<CatId>> Handle(Command command, CancellationToken cancellationToken)
         {
             if (!await _personRepository.ExistsAsync(command.PersonId, cancellationToken))
             {
-                return Result.Failure<CatResponse>(DomainErrors.PersonEntity.NotFound(command.PersonId));
+                return Result.Failure<CatId>(DomainErrors.PersonEntity.NotFound(command.PersonId));
             }
             
             Result<CatName> createNameResult = CatName.Create(command.Name);
             if (createNameResult.IsFailure)
             {
-                return Result.Failure<CatResponse>(createNameResult.Error);
+                return Result.Failure<CatId>(createNameResult.Error);
             }
 
             Result<CatDescription> createDescriptionResult = CatDescription.Create(command.Description);
             if (createDescriptionResult.IsFailure)
             {
-                return Result.Failure<CatResponse>(createDescriptionResult.Error);
+                return Result.Failure<CatId>(createDescriptionResult.Error);
             }
 
             Result<CatAge> createAgeResult = CatAge.Create(command.Age);
             if (createAgeResult.IsFailure)
             {
-                return Result.Failure<CatResponse>(createAgeResult.Error);
+                return Result.Failure<CatId>(createAgeResult.Error);
             }
 
             CatGender gender = command.Gender is CatGenderType.Male
@@ -104,7 +104,7 @@ internal sealed class CreateCat : IEndpoint
             Result<CatWeight> createWeightResult = CatWeight.Create(command.WeightValueInKilograms);
             if (createWeightResult.IsFailure)
             {
-                return Result.Failure<CatResponse>(createWeightResult.Error);
+                return Result.Failure<CatId>(createWeightResult.Error);
             }
 
             HealthStatus healthStatus = command.HealthStatus switch
@@ -124,7 +124,7 @@ internal sealed class CreateCat : IEndpoint
                     command.SpecialNeedsStatusSeverityType);
                 if (createSpecialNeedsResult.IsFailure)
                 {
-                    return Result.Failure<CatResponse>(createSpecialNeedsResult.Error);
+                    return Result.Failure<CatId>(createSpecialNeedsResult.Error);
                 }
                 specialNeeds = createSpecialNeedsResult.Value;
             }
@@ -153,7 +153,7 @@ internal sealed class CreateCat : IEndpoint
                     command.AdoptionHistoryLastReturnReason);
                 if (createAdoptionHistoryResult.IsFailure)
                 {
-                    return Result.Failure<CatResponse>(createAdoptionHistoryResult.Error);
+                    return Result.Failure<CatId>(createAdoptionHistoryResult.Error);
                 }
                 adoptionHistory = createAdoptionHistoryResult.Value;
             }
@@ -172,7 +172,7 @@ internal sealed class CreateCat : IEndpoint
             };
             if (createListingSourceResult.IsFailure)
             {
-                return Result.Failure<CatResponse>(createListingSourceResult.Error);
+                return Result.Failure<CatId>(createListingSourceResult.Error);
             }
 
             NeuteringStatus neuteringStatus = command.IsNeutered
@@ -187,7 +187,7 @@ internal sealed class CreateCat : IEndpoint
                 currentDate);
             if (createInfectiousDiseaseStatusResult.IsFailure)
             {
-                return Result.Failure<CatResponse>(createInfectiousDiseaseStatusResult.Error);
+                return Result.Failure<CatId>(createInfectiousDiseaseStatusResult.Error);
             }
 
             Result<Cat> createCatResult = Cat.Create(
@@ -208,7 +208,7 @@ internal sealed class CreateCat : IEndpoint
 
             if (createCatResult.IsFailure)
             {
-                return Result.Failure<CatResponse>(createCatResult.Error);
+                return Result.Failure<CatId>(createCatResult.Error);
             }
 
             Cat cat = createCatResult.Value;
@@ -216,32 +216,7 @@ internal sealed class CreateCat : IEndpoint
             _catRepository.Insert(cat);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            CatResponse response = new(
-                Id: cat.Id,
-                PersonId: cat.PersonId,
-                AdoptionAnnouncementId: cat.AdoptionAnnouncementId,
-                Name: cat.Name.Value,
-                Description: cat.Description.Value,
-                Age: cat.Age.Value,
-                Gender: cat.Gender.Value,
-                Color: cat.Color.Value,
-                WeightValueInKilograms: cat.Weight.ValueInKilograms,
-                HealthStatus: cat.HealthStatus.Value,
-                SpecialNeedsStatusHasSpecialNeeds: cat.SpecialNeeds.HasSpecialNeeds,
-                SpecialNeedsStatusDescription: cat.SpecialNeeds.Description,
-                SpecialNeedsStatusSeverityType: cat.SpecialNeeds.SeverityType,
-                Temperament: cat.Temperament.Value,
-                AdoptionHistoryReturnCount: cat.AdoptionHistory.ReturnCount,
-                AdoptionHistoryLastReturnDate: cat.AdoptionHistory.LastReturnDate,
-                AdoptionHistoryLastReturnReason: cat.AdoptionHistory.LastReturnReason,
-                ListingSourceType: cat.ListingSource.Type,
-                ListingSourceSourceName: cat.ListingSource.SourceName,
-                IsNeutered: cat.NeuteringStatus.IsNeutered,
-                InfectiousDiseaseStatusFivStatus: cat.InfectiousDiseaseStatus.FivStatus,
-                InfectiousDiseaseStatusFelvStatus: cat.InfectiousDiseaseStatus.FelvStatus,
-                InfectiousDiseaseStatusLastTestedAt: cat.InfectiousDiseaseStatus.LastTestedAt);
-
-            return response;
+            return cat.Id;
         }
     }
 
@@ -254,11 +229,11 @@ internal sealed class CreateCat : IEndpoint
         {
             Command command = request.MapToCommand();
 
-            Result<CatResponse> commandResult = await sender.Send(command, cancellationToken);
+            Result<CatId> commandResult = await sender.Send(command, cancellationToken);
 
             return commandResult.IsFailure
                 ? Results.Problem(commandResult.Error.ToProblemDetails())
-                : Results.Created($"/api/v1/cats/{commandResult.Value.Id}", commandResult.Value);
+                : Results.Created($"/api/v1/cats/{commandResult.Value}", commandResult.Value);
         });
     }
 }

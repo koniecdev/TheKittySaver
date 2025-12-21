@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using TheKittySaver.AdoptionSystem.API.Common;
 using TheKittySaver.AdoptionSystem.API.Extensions;
 using TheKittySaver.AdoptionSystem.Calculators.Abstractions;
-using TheKittySaver.AdoptionSystem.Calculators.CatPriorityScore;
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.AdoptionAnnouncementAggregate.Responses;
 using TheKittySaver.AdoptionSystem.Contracts.Common;
 using TheKittySaver.AdoptionSystem.Domain.Core.Extensions;

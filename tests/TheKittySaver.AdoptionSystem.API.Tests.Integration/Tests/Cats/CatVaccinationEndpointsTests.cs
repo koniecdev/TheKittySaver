@@ -36,8 +36,8 @@ public sealed class CatVaccinationEndpointsTests : IAsyncLifetime
     public async Task CreateCatVaccination_ShouldReturnVaccination_WhenValidDataIsProvided()
     {
         // Arrange
-        PersonResponse person = await CreateTestPersonAsync();
-        CatResponse cat = await CreateTestCatAsync(person.Id);
+        PersonDetailsResponse person = await CreateTestPersonAsync();
+        CatDetailsResponse cat = await CreateTestCatAsync(person.Id);
         CreateCatVaccinationRequest request = new(
             VaccinationType.Rabies,
             DateOnly.FromDateTime(DateTime.UtcNow.AddMonths(-1)),
@@ -45,7 +45,7 @@ public sealed class CatVaccinationEndpointsTests : IAsyncLifetime
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.PostAsJsonAsync(
-            $"api/v1/cats/{cat.Id.Value}/vaccinations", request);
+            new Uri($"api/v1/cats/{cat.Id.Value}/vaccinations", UriKind.Relative), request);
 
         // Assert
         string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
@@ -64,15 +64,15 @@ public sealed class CatVaccinationEndpointsTests : IAsyncLifetime
     public async Task CreateCatVaccination_ShouldReturnVaccination_WhenNoteIsNull()
     {
         // Arrange
-        PersonResponse person = await CreateTestPersonAsync();
-        CatResponse cat = await CreateTestCatAsync(person.Id);
+        PersonDetailsResponse person = await CreateTestPersonAsync();
+        CatDetailsResponse cat = await CreateTestCatAsync(person.Id);
         CreateCatVaccinationRequest request = new(
             VaccinationType.FvrcpPanleukopenia,
             DateOnly.FromDateTime(DateTime.UtcNow.AddMonths(-2)));
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.PostAsJsonAsync(
-            $"api/v1/cats/{cat.Id.Value}/vaccinations", request);
+            new Uri($"api/v1/cats/{cat.Id.Value}/vaccinations", UriKind.Relative), request);
 
         // Assert
         string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
@@ -94,7 +94,7 @@ public sealed class CatVaccinationEndpointsTests : IAsyncLifetime
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.PostAsJsonAsync(
-            $"api/v1/cats/{nonExistentCatId}/vaccinations", request);
+            new Uri($"api/v1/cats/{nonExistentCatId}/vaccinations", UriKind.Relative), request);
 
         // Assert
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NotFound);
@@ -104,8 +104,8 @@ public sealed class CatVaccinationEndpointsTests : IAsyncLifetime
     public async Task CreateCatVaccination_ShouldReturnMultipleVaccinations_WhenMultipleTypesAdded()
     {
         // Arrange
-        PersonResponse person = await CreateTestPersonAsync();
-        CatResponse cat = await CreateTestCatAsync(person.Id);
+        PersonDetailsResponse person = await CreateTestPersonAsync();
+        CatDetailsResponse cat = await CreateTestCatAsync(person.Id);
 
         CreateCatVaccinationRequest rabiesRequest = new(
             VaccinationType.Rabies,
@@ -117,31 +117,38 @@ public sealed class CatVaccinationEndpointsTests : IAsyncLifetime
 
         // Act
         HttpResponseMessage rabiesResponse = await _httpClient.PostAsJsonAsync(
-            $"api/v1/cats/{cat.Id.Value}/vaccinations", rabiesRequest);
+            new Uri($"api/v1/cats/{cat.Id.Value}/vaccinations", UriKind.Relative), rabiesRequest);
         HttpResponseMessage fvrcpResponse = await _httpClient.PostAsJsonAsync(
-            $"api/v1/cats/{cat.Id.Value}/vaccinations", fvrcpRequest);
+            new Uri($"api/v1/cats/{cat.Id.Value}/vaccinations", UriKind.Relative), fvrcpRequest);
 
         // Assert
         await rabiesResponse.EnsureSuccessWithDetailsAsync();
         await fvrcpResponse.EnsureSuccessWithDetailsAsync();
 
-        // Get all vaccinations
-        HttpResponseMessage getResponse = await _httpClient.GetAsync(
-            $"api/v1/cats/{cat.Id.Value}/vaccinations");
-        await getResponse.EnsureSuccessWithDetailsAsync();
+        // Get cat details with embedded vaccinations
+        HttpResponseMessage httpResponseMessage = await _httpClient.GetAsync(
+            new Uri($"api/v1/cats/{cat.Id.Value}", UriKind.Relative));
+        string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
+
+        CatDetailsResponse catResponse = JsonSerializer.Deserialize<CatDetailsResponse>(stringResponse, _jsonSerializerOptions)
+            ?? throw new JsonException("Failed to deserialize CatDetailsResponse");
+
+        catResponse.Vaccinations.Count.ShouldBe(2);
+        catResponse.Vaccinations.ShouldContain(v => v.Type == VaccinationType.Rabies);
+        catResponse.Vaccinations.ShouldContain(v => v.Type == VaccinationType.FvrcpCalicivirus);
     }
 
     [Fact]
     public async Task GetCatVaccination_ShouldReturnVaccination_WhenVaccinationExists()
     {
         // Arrange
-        PersonResponse person = await CreateTestPersonAsync();
-        CatResponse cat = await CreateTestCatAsync(person.Id);
+        PersonDetailsResponse person = await CreateTestPersonAsync();
+        CatDetailsResponse cat = await CreateTestCatAsync(person.Id);
         CatVaccinationResponse createdVaccination = await CreateTestVaccinationAsync(cat.Id);
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.GetAsync(
-            $"api/v1/cats/{cat.Id.Value}/vaccinations/{createdVaccination.Id.Value}");
+            new Uri($"api/v1/cats/{cat.Id.Value}/vaccinations/{createdVaccination.Id.Value}", UriKind.Relative));
 
         // Assert
         string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
@@ -158,41 +165,48 @@ public sealed class CatVaccinationEndpointsTests : IAsyncLifetime
     public async Task GetCatVaccination_ShouldReturnNotFound_WhenVaccinationDoesNotExist()
     {
         // Arrange
-        PersonResponse person = await CreateTestPersonAsync();
-        CatResponse cat = await CreateTestCatAsync(person.Id);
+        PersonDetailsResponse person = await CreateTestPersonAsync();
+        CatDetailsResponse cat = await CreateTestCatAsync(person.Id);
         Guid nonExistentVaccinationId = Guid.NewGuid();
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.GetAsync(
-            $"api/v1/cats/{cat.Id.Value}/vaccinations/{nonExistentVaccinationId}");
+            new Uri($"api/v1/cats/{cat.Id.Value}/vaccinations/{nonExistentVaccinationId}", UriKind.Relative));
 
         // Assert
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
     [Fact]
-    public async Task GetCatVaccinations_ShouldReturnVaccinationsList()
+    public async Task GetCat_ShouldReturnEmbeddedVaccinations_WhenCatHasVaccinations()
     {
         // Arrange
-        PersonResponse person = await CreateTestPersonAsync();
-        CatResponse cat = await CreateTestCatAsync(person.Id);
+        PersonDetailsResponse person = await CreateTestPersonAsync();
+        CatDetailsResponse cat = await CreateTestCatAsync(person.Id);
         await CreateTestVaccinationAsync(cat.Id, VaccinationType.Rabies);
         await CreateTestVaccinationAsync(cat.Id, VaccinationType.Felv);
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.GetAsync(
-            $"api/v1/cats/{cat.Id.Value}/vaccinations");
+            new Uri($"api/v1/cats/{cat.Id.Value}", UriKind.Relative));
 
         // Assert
-        await httpResponseMessage.EnsureSuccessWithDetailsAsync();
+        string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
+
+        CatDetailsResponse catResponse = JsonSerializer.Deserialize<CatDetailsResponse>(stringResponse, _jsonSerializerOptions)
+            ?? throw new JsonException("Failed to deserialize CatDetailsResponse");
+
+        catResponse.Vaccinations.Count.ShouldBe(2);
+        catResponse.Vaccinations.ShouldContain(v => v.Type == VaccinationType.Rabies);
+        catResponse.Vaccinations.ShouldContain(v => v.Type == VaccinationType.Felv);
     }
 
     [Fact]
     public async Task UpdateCatVaccination_ShouldReturnUpdatedVaccination_WhenValidDataIsProvided()
     {
         // Arrange
-        PersonResponse person = await CreateTestPersonAsync();
-        CatResponse cat = await CreateTestCatAsync(person.Id);
+        PersonDetailsResponse person = await CreateTestPersonAsync();
+        CatDetailsResponse cat = await CreateTestCatAsync(person.Id);
         CatVaccinationResponse createdVaccination = await CreateTestVaccinationAsync(cat.Id);
 
         UpdateCatVaccinationRequest updateRequest = new(
@@ -202,7 +216,7 @@ public sealed class CatVaccinationEndpointsTests : IAsyncLifetime
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.PutAsJsonAsync(
-            $"api/v1/cats/{cat.Id.Value}/vaccinations/{createdVaccination.Id.Value}", updateRequest);
+            new Uri($"api/v1/cats/{cat.Id.Value}/vaccinations/{createdVaccination.Id.Value}", UriKind.Relative), updateRequest);
 
         // Assert
         string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
@@ -219,8 +233,8 @@ public sealed class CatVaccinationEndpointsTests : IAsyncLifetime
     public async Task UpdateCatVaccination_ShouldReturnNotFound_WhenVaccinationDoesNotExist()
     {
         // Arrange
-        PersonResponse person = await CreateTestPersonAsync();
-        CatResponse cat = await CreateTestCatAsync(person.Id);
+        PersonDetailsResponse person = await CreateTestPersonAsync();
+        CatDetailsResponse cat = await CreateTestCatAsync(person.Id);
         Guid nonExistentVaccinationId = Guid.NewGuid();
 
         UpdateCatVaccinationRequest updateRequest = new(
@@ -229,7 +243,7 @@ public sealed class CatVaccinationEndpointsTests : IAsyncLifetime
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.PutAsJsonAsync(
-            $"api/v1/cats/{cat.Id.Value}/vaccinations/{nonExistentVaccinationId}", updateRequest);
+            new Uri($"api/v1/cats/{cat.Id.Value}/vaccinations/{nonExistentVaccinationId}", UriKind.Relative), updateRequest);
 
         // Assert
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NotFound);
@@ -239,20 +253,20 @@ public sealed class CatVaccinationEndpointsTests : IAsyncLifetime
     public async Task DeleteCatVaccination_ShouldReturnNoContent_WhenVaccinationExists()
     {
         // Arrange
-        PersonResponse person = await CreateTestPersonAsync();
-        CatResponse cat = await CreateTestCatAsync(person.Id);
+        PersonDetailsResponse person = await CreateTestPersonAsync();
+        CatDetailsResponse cat = await CreateTestCatAsync(person.Id);
         CatVaccinationResponse createdVaccination = await CreateTestVaccinationAsync(cat.Id);
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.DeleteAsync(
-            $"api/v1/cats/{cat.Id.Value}/vaccinations/{createdVaccination.Id.Value}");
+            new Uri($"api/v1/cats/{cat.Id.Value}/vaccinations/{createdVaccination.Id.Value}", UriKind.Relative));
 
         // Assert
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NoContent);
 
         // Verify vaccination is deleted
         HttpResponseMessage getResponse = await _httpClient.GetAsync(
-            $"api/v1/cats/{cat.Id.Value}/vaccinations/{createdVaccination.Id.Value}");
+            new Uri($"api/v1/cats/{cat.Id.Value}/vaccinations/{createdVaccination.Id.Value}", UriKind.Relative));
         getResponse.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
@@ -260,22 +274,22 @@ public sealed class CatVaccinationEndpointsTests : IAsyncLifetime
     public async Task DeleteCatVaccination_ShouldReturnNotFound_WhenVaccinationDoesNotExist()
     {
         // Arrange
-        PersonResponse person = await CreateTestPersonAsync();
-        CatResponse cat = await CreateTestCatAsync(person.Id);
+        PersonDetailsResponse person = await CreateTestPersonAsync();
+        CatDetailsResponse cat = await CreateTestCatAsync(person.Id);
         Guid nonExistentVaccinationId = Guid.NewGuid();
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.DeleteAsync(
-            $"api/v1/cats/{cat.Id.Value}/vaccinations/{nonExistentVaccinationId}");
+            new Uri($"api/v1/cats/{cat.Id.Value}/vaccinations/{nonExistentVaccinationId}", UriKind.Relative));
 
         // Assert
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
-    private async Task<PersonResponse> CreateTestPersonAsync()
+    private async Task<PersonDetailsResponse> CreateTestPersonAsync()
         => await PersonApiFactory.CreateRandomAsync(_httpClient, _jsonSerializerOptions, _faker);
 
-    private async Task<CatResponse> CreateTestCatAsync(PersonId personId, string? name = null)
+    private async Task<CatDetailsResponse> CreateTestCatAsync(PersonId personId, string? name = null)
         => await CatApiFactory.CreateRandomAsync(_httpClient, _jsonSerializerOptions, _faker, personId, name);
 
     private async Task<CatVaccinationResponse> CreateTestVaccinationAsync(

@@ -12,9 +12,9 @@ namespace TheKittySaver.AdoptionSystem.API.Features.Persons;
 
 internal sealed class GetPerson : IEndpoint
 {
-    internal sealed record Query(PersonId PersonId) : IQuery<Result<PersonResponse>>;
+    internal sealed record Query(PersonId PersonId) : IQuery<Result<PersonDetailsResponse>>;
 
-    internal sealed class Handler : IQueryHandler<Query, Result<PersonResponse>>
+    internal sealed class Handler : IQueryHandler<Query, Result<PersonDetailsResponse>>
     {
         private readonly IApplicationReadDbContext _readDbContext;
 
@@ -23,19 +23,34 @@ internal sealed class GetPerson : IEndpoint
             _readDbContext = readDbContext;
         }
 
-        public async ValueTask<Result<PersonResponse>> Handle(Query query, CancellationToken cancellationToken)
+        public async ValueTask<Result<PersonDetailsResponse>> Handle(Query query, CancellationToken cancellationToken)
         {
-            PersonResponse? response = await _readDbContext.Persons
+            PersonDetailsResponse? response = await _readDbContext.Persons
                 .Where(p => p.Id == query.PersonId)
-                .Select(person => new PersonResponse(
+                .Select(person => new PersonDetailsResponse(
                     Id: person.Id,
                     Username: person.Username,
                     Email: person.Email,
-                    PhoneNumber: person.PhoneNumber))
+                    PhoneNumber: person.PhoneNumber,
+                    Addresses: person.Addresses
+                        .Select(a => new PersonAddressEmbeddedDto(
+                            Id: a.Id,
+                            CountryCode: a.CountryCode,
+                            Name: a.Name,
+                            PostalCode: a.PostalCode,
+                            Region: a.Region,
+                            City: a.City,
+                            Line: a.Line))
+                        .ToList()))
                 .FirstOrDefaultAsync(cancellationToken);
 
-            return response ?? Result.Failure<PersonResponse>(
-                DomainErrors.PersonEntity.NotFound(query.PersonId));
+            if (response is null)
+            {
+                return Result.Failure<PersonDetailsResponse>(
+                    DomainErrors.PersonEntity.NotFound(query.PersonId));
+            }
+
+            return Result.Success(response);
         }
     }
 
@@ -48,7 +63,7 @@ internal sealed class GetPerson : IEndpoint
         {
             Query query = new(new PersonId(personId));
 
-            Result<PersonResponse> queryResult = await sender.Send(query, cancellationToken);
+            Result<PersonDetailsResponse> queryResult = await sender.Send(query, cancellationToken);
 
             return queryResult.IsFailure
                 ? Results.Problem(queryResult.Error.ToProblemDetails())

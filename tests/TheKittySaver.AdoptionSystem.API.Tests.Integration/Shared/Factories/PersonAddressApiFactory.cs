@@ -31,7 +31,7 @@ internal static class PersonAddressApiFactory
         CreatePersonAddressRequest request = CreateRandomRequest(faker, name);
 
         HttpResponseMessage httpResponseMessage = await httpClient.PostAsJsonAsync(
-            $"api/v1/persons/{personId.Value}/addresses", request);
+            new Uri($"api/v1/persons/{personId.Value}/addresses", UriKind.Relative), request);
         string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
         PersonAddressResponse addressResponse = JsonSerializer.Deserialize<PersonAddressResponse>(stringResponse, jsonSerializerOptions)
             ?? throw new JsonException("Failed to deserialize PersonAddressResponse");

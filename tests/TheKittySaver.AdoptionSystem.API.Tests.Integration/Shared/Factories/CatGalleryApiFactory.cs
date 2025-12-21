@@ -15,7 +15,7 @@ internal static class CatGalleryApiFactory
         using MultipartFormDataContent content = ImageContentFactory.CreateTestPngContent();
 
         HttpResponseMessage httpResponseMessage = await httpClient.PostAsync(
-            $"api/v1/cats/{catId.Value}/gallery", content);
+            new Uri($"api/v1/cats/{catId.Value}/gallery", UriKind.Relative), content);
         string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
         CatGalleryItemResponse galleryItemResponse = JsonSerializer.Deserialize<CatGalleryItemResponse>(stringResponse, jsonSerializerOptions)
             ?? throw new JsonException("Failed to deserialize CatGalleryItemResponse");
@@ -30,7 +30,7 @@ internal static class CatGalleryApiFactory
         using MultipartFormDataContent content = ImageContentFactory.CreateTestPngContent();
 
         HttpResponseMessage httpResponseMessage = await httpClient.PutAsync(
-            $"api/v1/cats/{catId.Value}/thumbnail", content);
+            new Uri($"api/v1/cats/{catId.Value}/thumbnail", UriKind.Relative), content);
         string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
         CatThumbnailResponse thumbnailResponse = JsonSerializer.Deserialize<CatThumbnailResponse>(stringResponse, jsonSerializerOptions)
             ?? throw new JsonException("Failed to deserialize CatThumbnailResponse");

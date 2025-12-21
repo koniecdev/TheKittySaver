@@ -2,7 +2,6 @@ using Mediator;
 using TheKittySaver.AdoptionSystem.API.Common;
 using TheKittySaver.AdoptionSystem.API.Extensions;
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.PersonAggregate.Requests;
-using TheKittySaver.AdoptionSystem.Contracts.Aggregates.PersonAggregate.Responses;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.Entities;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.Repositories;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.Services;
@@ -23,9 +22,9 @@ internal sealed class UpdatePerson : IEndpoint
         PersonId PersonId,
         string Username,
         string Email,
-        string PhoneNumber) : ICommand<Result<PersonResponse>>;
+        string PhoneNumber) : ICommand<Result>;
 
-    internal sealed class Handler : ICommandHandler<Command, Result<PersonResponse>>
+    internal sealed class Handler : ICommandHandler<Command, Result>
     {
         private readonly IPersonRepository _personRepository;
         private readonly IPersonUpdateService _personUpdateService;
@@ -44,12 +43,12 @@ internal sealed class UpdatePerson : IEndpoint
             _unitOfWork = unitOfWork;
         }
 
-        public async ValueTask<Result<PersonResponse>> Handle(Command command, CancellationToken cancellationToken)
+        public async ValueTask<Result> Handle(Command command, CancellationToken cancellationToken)
         {
             Maybe<Person> maybePerson = await _personRepository.GetByIdAsync(command.PersonId, cancellationToken);
             if (maybePerson.HasNoValue)
             {
-                return Result.Failure<PersonResponse>(DomainErrors.PersonEntity.NotFound(command.PersonId));
+                return Result.Failure(DomainErrors.PersonEntity.NotFound(command.PersonId));
             }
 
             Person person = maybePerson.Value;
@@ -57,25 +56,25 @@ internal sealed class UpdatePerson : IEndpoint
             Result<Email> createEmailResult = Email.Create(command.Email);
             if (createEmailResult.IsFailure)
             {
-                return Result.Failure<PersonResponse>(createEmailResult.Error);
+                return Result.Failure(createEmailResult.Error);
             }
 
             Result<Username> createUsernameResult = Username.Create(command.Username);
             if (createUsernameResult.IsFailure)
             {
-                return Result.Failure<PersonResponse>(createUsernameResult.Error);
+                return Result.Failure(createUsernameResult.Error);
             }
 
             Result<PhoneNumber> createPhoneNumberResult = _phoneNumberFactory.Create(command.PhoneNumber);
             if (createPhoneNumberResult.IsFailure)
             {
-                return Result.Failure<PersonResponse>(createPhoneNumberResult.Error);
+                return Result.Failure(createPhoneNumberResult.Error);
             }
 
             Result updateUsernameResult = person.UpdateUsername(createUsernameResult.Value);
             if (updateUsernameResult.IsFailure)
             {
-                return Result.Failure<PersonResponse>(updateUsernameResult.Error);
+                return updateUsernameResult;
             }
 
             Result updateEmailResult = await _personUpdateService.UpdateEmailAsync(
@@ -84,7 +83,7 @@ internal sealed class UpdatePerson : IEndpoint
                 cancellationToken);
             if (updateEmailResult.IsFailure)
             {
-                return Result.Failure<PersonResponse>(updateEmailResult.Error);
+                return updateEmailResult;
             }
 
             Result updatePhoneNumberResult = await _personUpdateService.UpdatePhoneNumberAsync(
@@ -93,18 +92,12 @@ internal sealed class UpdatePerson : IEndpoint
                 cancellationToken);
             if (updatePhoneNumberResult.IsFailure)
             {
-                return Result.Failure<PersonResponse>(updatePhoneNumberResult.Error);
+                return updatePhoneNumberResult;
             }
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            PersonResponse response = new(
-                Id: person.Id,
-                Username: person.Username.Value,
-                Email: person.Email.Value,
-                PhoneNumber: person.PhoneNumber.Value);
-
-            return response;
+            return Result.Success();
         }
     }
 
@@ -118,11 +111,11 @@ internal sealed class UpdatePerson : IEndpoint
         {
             Command command = request.MapToCommand(new PersonId(personId));
 
-            Result<PersonResponse> commandResult = await sender.Send(command, cancellationToken);
+            Result commandResult = await sender.Send(command, cancellationToken);
 
             return commandResult.IsFailure
                 ? Results.Problem(commandResult.Error.ToProblemDetails())
-                : Results.Ok(commandResult.Value);
+                : Results.NoContent();
         });
     }
 }

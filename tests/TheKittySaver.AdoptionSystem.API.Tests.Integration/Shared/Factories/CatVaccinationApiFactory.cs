@@ -21,7 +21,7 @@ internal static class CatVaccinationApiFactory
         CreateCatVaccinationRequest request = CreateRandomRequest(faker, type);
 
         HttpResponseMessage httpResponseMessage = await httpClient.PostAsJsonAsync(
-            $"api/v1/cats/{catId.Value}/vaccinations", request);
+            new Uri($"api/v1/cats/{catId.Value}/vaccinations", UriKind.Relative), request);
         string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
         CatVaccinationResponse vaccinationResponse = JsonSerializer.Deserialize<CatVaccinationResponse>(stringResponse, jsonSerializerOptions)
             ?? throw new JsonException("Failed to deserialize CatVaccinationResponse");

@@ -19,7 +19,7 @@ internal static class ImageContentFactory
 
     public static MultipartFormDataContent CreateTestPngContent(string fileName = "test.png")
     {
-        ByteArrayContent fileContent = new(MinimalPngBytes);
+        using ByteArrayContent fileContent = new(MinimalPngBytes);
         fileContent.Headers.ContentType = new MediaTypeHeaderValue("image/png");
 
         MultipartFormDataContent content = new()

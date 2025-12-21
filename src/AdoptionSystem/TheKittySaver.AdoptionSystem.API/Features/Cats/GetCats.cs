@@ -23,9 +23,9 @@ internal sealed class GetCats : IEndpoint
         int Page = 0,
         int PageSize = 50,
         string? Sort = null)
-        : IQuery<PaginationResponse<CatResponse>>, IPaginationable, ISortable;
+        : IQuery<PaginationResponse<CatListItemResponse>>, IPaginationable, ISortable;
 
-    internal sealed class Handler : IQueryHandler<Query, PaginationResponse<CatResponse>>
+    internal sealed class Handler : IQueryHandler<Query, PaginationResponse<CatListItemResponse>>
     {
         private readonly IApplicationReadDbContext _readDbContext;
 
@@ -34,7 +34,7 @@ internal sealed class GetCats : IEndpoint
             _readDbContext = readDbContext;
         }
 
-        public async ValueTask<PaginationResponse<CatResponse>> Handle(Query query,
+        public async ValueTask<PaginationResponse<CatListItemResponse>> Handle(Query query,
             CancellationToken cancellationToken)
         {
             IQueryable<CatReadModel> sortedQuery = _readDbContext.Cats
@@ -42,17 +42,17 @@ internal sealed class GetCats : IEndpoint
                     cat => cat.PersonId == query.MaybePersonId.Value)
                 .WhereIf(query.MaybeAdoptionAnnouncementId.HasValue,
                     cat => cat.AdoptionAnnouncementId == query.MaybeAdoptionAnnouncementId.Value);
-            
+
             int totalCount = await sortedQuery.CountAsync(cancellationToken);
 
             if (!string.IsNullOrWhiteSpace(query.Sort))
             {
                 sortedQuery = sortedQuery.ApplyMultipleSorting(query.Sort, GetSortProperty);
             }
-            
-            IReadOnlyList<CatResponse> items = await sortedQuery
+
+            IReadOnlyList<CatListItemResponse> items = await sortedQuery
                 .ApplyPagination(page: query.Page, pageSize: query.PageSize)
-                .Select(c => new CatResponse(
+                .Select(c => new CatListItemResponse(
                     Id: c.Id,
                     PersonId: c.PersonId,
                     AdoptionAnnouncementId: c.AdoptionAnnouncementId,
@@ -78,7 +78,7 @@ internal sealed class GetCats : IEndpoint
                     InfectiousDiseaseStatusLastTestedAt: c.InfectiousDiseaseStatusLastTestedAt))
                 .ToListAsync(cancellationToken);
 
-            PaginationResponse<CatResponse> response = new()
+            PaginationResponse<CatListItemResponse> response = new()
             {
                 Items = items,
                 Page = query.Page,
@@ -88,7 +88,7 @@ internal sealed class GetCats : IEndpoint
 
             return response;
         }
-        
+
         private static Expression<Func<CatReadModel, object>> GetSortProperty(string propertyName)
             => propertyName.ToLower(CultureInfo.InvariantCulture) switch
             {
@@ -97,8 +97,9 @@ internal sealed class GetCats : IEndpoint
                 _ => cat => cat.Name
             };
     }
-    
+
     private sealed record Filters(Guid? PersonId, Guid? AdoptionAnnouncementId);
+
     public void MapEndpoint(IEndpointRouteBuilder endpointRouteBuilder)
     {
         endpointRouteBuilder.MapGet("cats", async (
@@ -114,7 +115,7 @@ internal sealed class GetCats : IEndpoint
                 PageSize: paginationAndMultipleSorting.PageSize,
                 Sort: paginationAndMultipleSorting.Sort);
 
-            PaginationResponse<CatResponse> response = await sender.Send(query, cancellationToken);
+            PaginationResponse<CatListItemResponse> response = await sender.Send(query, cancellationToken);
 
             return Results.Ok(response);
         });

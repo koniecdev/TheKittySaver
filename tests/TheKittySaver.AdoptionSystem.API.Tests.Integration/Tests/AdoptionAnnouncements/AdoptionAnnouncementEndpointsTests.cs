@@ -12,6 +12,7 @@ using TheKittySaver.AdoptionSystem.Contracts.Aggregates.AdoptionAnnouncementAggr
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.AdoptionAnnouncementAggregate.Responses;
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.CatAggregate.Responses;
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.PersonAggregate.Responses;
+using TheKittySaver.AdoptionSystem.Contracts.Common;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.AdoptionAnnouncementAggregate.Enums;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
@@ -37,8 +38,8 @@ public sealed class AdoptionAnnouncementEndpointsTests : IAsyncLifetime
     public async Task CreateAdoptionAnnouncement_ShouldReturnAnnouncement_WhenValidDataIsProvided()
     {
         // Arrange
-        PersonResponse person = await CreateTestPersonAsync();
-        CatResponse cat = await CreateTestCatAsync(person.Id);
+        PersonDetailsResponse person = await CreateTestPersonAsync();
+        CatDetailsResponse cat = await CreateTestCatAsync(person.Id);
 
         CreateAdoptionAnnouncementRequest request = new(
             cat.Id,
@@ -53,7 +54,7 @@ public sealed class AdoptionAnnouncementEndpointsTests : IAsyncLifetime
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.PostAsJsonAsync(
-            "api/v1/adoption-announcements", request);
+            new Uri("api/v1/adoption-announcements", UriKind.Relative), request);
         
         // Assert
         string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
@@ -79,8 +80,8 @@ public sealed class AdoptionAnnouncementEndpointsTests : IAsyncLifetime
     public async Task CreateAdoptionAnnouncement_ShouldReturnAnnouncement_WhenDescriptionIsNull()
     {
         // Arrange
-        PersonResponse person = await CreateTestPersonAsync();
-        CatResponse cat = await CreateTestCatAsync(person.Id);
+        PersonDetailsResponse person = await CreateTestPersonAsync();
+        CatDetailsResponse cat = await CreateTestCatAsync(person.Id);
 
         CreateAdoptionAnnouncementRequest request = new(
             cat.Id,
@@ -95,7 +96,7 @@ public sealed class AdoptionAnnouncementEndpointsTests : IAsyncLifetime
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.PostAsJsonAsync(
-            "api/v1/adoption-announcements", request);
+            new Uri("api/v1/adoption-announcements", UriKind.Relative), request);
 
         // Assert
         string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
@@ -126,7 +127,7 @@ public sealed class AdoptionAnnouncementEndpointsTests : IAsyncLifetime
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.PostAsJsonAsync(
-            "api/v1/adoption-announcements", request);
+            new Uri("api/v1/adoption-announcements", UriKind.Relative), request);
 
         // Assert
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NotFound);
@@ -136,8 +137,8 @@ public sealed class AdoptionAnnouncementEndpointsTests : IAsyncLifetime
     public async Task CreateAdoptionAnnouncement_ShouldReturnBadRequest_WhenInvalidEmailIsProvided()
     {
         // Arrange
-        PersonResponse person = await CreateTestPersonAsync();
-        CatResponse cat = await CreateTestCatAsync(person.Id);
+        PersonDetailsResponse person = await CreateTestPersonAsync();
+        CatDetailsResponse cat = await CreateTestCatAsync(person.Id);
 
         CreateAdoptionAnnouncementRequest request = new(
             cat.Id,
@@ -152,7 +153,7 @@ public sealed class AdoptionAnnouncementEndpointsTests : IAsyncLifetime
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.PostAsJsonAsync(
-            "api/v1/adoption-announcements", request);
+            new Uri("api/v1/adoption-announcements", UriKind.Relative), request);
 
         // Assert
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
@@ -162,8 +163,8 @@ public sealed class AdoptionAnnouncementEndpointsTests : IAsyncLifetime
     public async Task CreateAdoptionAnnouncement_ShouldReturnBadRequest_WhenInvalidPhoneNumberIsProvided()
     {
         // Arrange
-        PersonResponse person = await CreateTestPersonAsync();
-        CatResponse cat = await CreateTestCatAsync(person.Id);
+        PersonDetailsResponse person = await CreateTestPersonAsync();
+        CatDetailsResponse cat = await CreateTestCatAsync(person.Id);
 
         CreateAdoptionAnnouncementRequest request = new(
             cat.Id,
@@ -178,7 +179,7 @@ public sealed class AdoptionAnnouncementEndpointsTests : IAsyncLifetime
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.PostAsJsonAsync(
-            "api/v1/adoption-announcements", request);
+            new Uri("api/v1/adoption-announcements", UriKind.Relative), request);
 
         // Assert
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
@@ -188,13 +189,13 @@ public sealed class AdoptionAnnouncementEndpointsTests : IAsyncLifetime
     public async Task GetAdoptionAnnouncement_ShouldReturnAnnouncement_WhenAnnouncementExists()
     {
         // Arrange
-        PersonResponse person = await CreateTestPersonAsync();
-        CatResponse cat = await CreateTestCatAsync(person.Id);
+        PersonDetailsResponse person = await CreateTestPersonAsync();
+        CatDetailsResponse cat = await CreateTestCatAsync(person.Id);
         AdoptionAnnouncementListItemResponse createdAnnouncementListItem = await CreateTestAdoptionAnnouncementAsync(cat.Id);
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.GetAsync(
-            $"api/v1/adoption-announcements/{createdAnnouncementListItem.Id.Value}");
+            new Uri($"api/v1/adoption-announcements/{createdAnnouncementListItem.Id.Value}", UriKind.Relative));
 
         // Assert
         string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
@@ -214,7 +215,7 @@ public sealed class AdoptionAnnouncementEndpointsTests : IAsyncLifetime
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.GetAsync(
-            $"api/v1/adoption-announcements/{nonExistentId}");
+            new Uri($"api/v1/adoption-announcements/{nonExistentId}", UriKind.Relative));
 
         // Assert
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NotFound);
@@ -224,25 +225,30 @@ public sealed class AdoptionAnnouncementEndpointsTests : IAsyncLifetime
     public async Task GetAdoptionAnnouncements_ShouldReturnAnnouncementsList()
     {
         // Arrange
-        PersonResponse person = await CreateTestPersonAsync();
-        CatResponse cat1 = await CreateTestCatAsync(person.Id);
-        CatResponse cat2 = await CreateTestCatAsync(person.Id);
+        PersonDetailsResponse person = await CreateTestPersonAsync();
+        CatDetailsResponse cat1 = await CreateTestCatAsync(person.Id);
+        CatDetailsResponse cat2 = await CreateTestCatAsync(person.Id);
         await CreateTestAdoptionAnnouncementAsync(cat1.Id);
         await CreateTestAdoptionAnnouncementAsync(cat2.Id);
 
         // Act
-        HttpResponseMessage httpResponseMessage = await _httpClient.GetAsync("api/v1/adoption-announcements");
+        HttpResponseMessage httpResponseMessage = await _httpClient.GetAsync(new Uri("api/v1/adoption-announcements", UriKind.Relative));
 
         // Assert
-        await httpResponseMessage.EnsureSuccessWithDetailsAsync();
+        string content = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
+        PaginationResponse<AdoptionAnnouncementListItemResponse>? aaList =
+            JsonSerializer.Deserialize<PaginationResponse<AdoptionAnnouncementListItemResponse>>(
+                content, _jsonSerializerOptions);
+        aaList.ShouldNotBeNull();
+        aaList.Items.Count.ShouldBe(2);
     }
 
     [Fact]
     public async Task UpdateAdoptionAnnouncement_ShouldReturnUpdatedAnnouncement_WhenValidDataIsProvided()
     {
         // Arrange
-        PersonResponse person = await CreateTestPersonAsync();
-        CatResponse cat = await CreateTestCatAsync(person.Id);
+        PersonDetailsResponse person = await CreateTestPersonAsync();
+        CatDetailsResponse cat = await CreateTestCatAsync(person.Id);
         AdoptionAnnouncementListItemResponse createdAnnouncementListItem = await CreateTestAdoptionAnnouncementAsync(cat.Id);
 
         UpdateAdoptionAnnouncementRequest updateRequest = new(
@@ -257,7 +263,7 @@ public sealed class AdoptionAnnouncementEndpointsTests : IAsyncLifetime
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.PutAsJsonAsync(
-            $"api/v1/adoption-announcements/{createdAnnouncementListItem.Id.Value}", updateRequest);
+            new Uri($"api/v1/adoption-announcements/{createdAnnouncementListItem.Id.Value}", UriKind.Relative), updateRequest);
 
         // Assert
         string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
@@ -291,7 +297,7 @@ public sealed class AdoptionAnnouncementEndpointsTests : IAsyncLifetime
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.PutAsJsonAsync(
-            $"api/v1/adoption-announcements/{nonExistentId}", updateRequest);
+            new Uri($"api/v1/adoption-announcements/{nonExistentId}", UriKind.Relative), updateRequest);
 
         // Assert
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NotFound);
@@ -301,8 +307,8 @@ public sealed class AdoptionAnnouncementEndpointsTests : IAsyncLifetime
     public async Task UpdateAdoptionAnnouncement_ShouldReturnBadRequest_WhenInvalidEmailIsProvided()
     {
         // Arrange
-        PersonResponse person = await CreateTestPersonAsync();
-        CatResponse cat = await CreateTestCatAsync(person.Id);
+        PersonDetailsResponse person = await CreateTestPersonAsync();
+        CatDetailsResponse cat = await CreateTestCatAsync(person.Id);
         AdoptionAnnouncementListItemResponse createdAnnouncementListItem = await CreateTestAdoptionAnnouncementAsync(cat.Id);
 
         UpdateAdoptionAnnouncementRequest updateRequest = new(
@@ -317,7 +323,7 @@ public sealed class AdoptionAnnouncementEndpointsTests : IAsyncLifetime
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.PutAsJsonAsync(
-            $"api/v1/adoption-announcements/{createdAnnouncementListItem.Id.Value}", updateRequest);
+            new Uri($"api/v1/adoption-announcements/{createdAnnouncementListItem.Id.Value}", UriKind.Relative), updateRequest);
 
         // Assert
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
@@ -327,20 +333,20 @@ public sealed class AdoptionAnnouncementEndpointsTests : IAsyncLifetime
     public async Task DeleteAdoptionAnnouncement_ShouldReturnNoContent_WhenAnnouncementExists()
     {
         // Arrange
-        PersonResponse person = await CreateTestPersonAsync();
-        CatResponse cat = await CreateTestCatAsync(person.Id);
+        PersonDetailsResponse person = await CreateTestPersonAsync();
+        CatDetailsResponse cat = await CreateTestCatAsync(person.Id);
         AdoptionAnnouncementListItemResponse createdAnnouncementListItem = await CreateTestAdoptionAnnouncementAsync(cat.Id);
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.DeleteAsync(
-            $"api/v1/adoption-announcements/{createdAnnouncementListItem.Id.Value}");
+            new Uri($"api/v1/adoption-announcements/{createdAnnouncementListItem.Id.Value}", UriKind.Relative));
 
         // Assert
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NoContent);
 
         // Verify announcement is deleted
         HttpResponseMessage getResponse = await _httpClient.GetAsync(
-            $"api/v1/adoption-announcements/{createdAnnouncementListItem.Id.Value}");
+            new Uri($"api/v1/adoption-announcements/{createdAnnouncementListItem.Id.Value}", UriKind.Relative));
         getResponse.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
@@ -352,7 +358,7 @@ public sealed class AdoptionAnnouncementEndpointsTests : IAsyncLifetime
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.DeleteAsync(
-            $"api/v1/adoption-announcements/{nonExistentId}");
+            new Uri($"api/v1/adoption-announcements/{nonExistentId}", UriKind.Relative));
 
         // Assert
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NotFound);
@@ -362,20 +368,20 @@ public sealed class AdoptionAnnouncementEndpointsTests : IAsyncLifetime
     public async Task ClaimAdoptionAnnouncement_ShouldReturnSuccess_WhenAnnouncementIsActive()
     {
         // Arrange
-        PersonResponse person = await CreateTestPersonAsync();
-        CatResponse cat = await CreateTestCatAsync(person.Id);
+        PersonDetailsResponse person = await CreateTestPersonAsync();
+        CatDetailsResponse cat = await CreateTestCatAsync(person.Id);
         AdoptionAnnouncementListItemResponse announcementListItem = await CreateTestAdoptionAnnouncementAsync(cat.Id);
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.PostAsync(
-            $"api/v1/adoption-announcements/{announcementListItem.Id.Value}/claim", null);
+            new Uri($"api/v1/adoption-announcements/{announcementListItem.Id.Value}/claim", UriKind.Relative), null);
 
         // Assert
         await httpResponseMessage.EnsureSuccessWithDetailsAsync();
 
         // Verify announcement is claimed
         HttpResponseMessage getResponse = await _httpClient.GetAsync(
-            $"api/v1/adoption-announcements/{announcementListItem.Id.Value}");
+            new Uri($"api/v1/adoption-announcements/{announcementListItem.Id.Value}", UriKind.Relative));
         await getResponse.EnsureSuccessWithDetailsAsync();
 
         string stringResponse = await getResponse.Content.ReadAsStringAsync();
@@ -391,16 +397,16 @@ public sealed class AdoptionAnnouncementEndpointsTests : IAsyncLifetime
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.PostAsync(
-            $"api/v1/adoption-announcements/{nonExistentId}/claim", null);
+            new Uri($"api/v1/adoption-announcements/{nonExistentId}/claim", UriKind.Relative), null);
 
         // Assert
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
-    private async Task<PersonResponse> CreateTestPersonAsync()
+    private async Task<PersonDetailsResponse> CreateTestPersonAsync()
         => await PersonApiFactory.CreateRandomAsync(_httpClient, _jsonSerializerOptions, _faker);
 
-    private async Task<CatResponse> CreateTestCatAsync(PersonId personId, string? name = null)
+    private async Task<CatDetailsResponse> CreateTestCatAsync(PersonId personId, string? name = null)
         => await CatApiFactory.CreateHealthyCatWithThumbnail(_httpClient, _jsonSerializerOptions, personId, name);
 
     private async Task<AdoptionAnnouncementListItemResponse> CreateTestAdoptionAnnouncementAsync(CatId catId)

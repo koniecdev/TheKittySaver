@@ -7,6 +7,7 @@ internal static class ApiDependencyInjection
 {
     public static IServiceCollection AddApi(this IServiceCollection services)
     {
+        services.AddExceptionHandler<ArgumentExceptionHandler>();
         services.AddExceptionHandler<GlobalExceptionHandler>();
         services.AddProblemDetails();
         

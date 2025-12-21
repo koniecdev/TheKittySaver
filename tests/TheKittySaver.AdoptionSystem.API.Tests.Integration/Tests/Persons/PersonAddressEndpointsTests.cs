@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Shouldly;
 using TheKittySaver.AdoptionSystem.API.Tests.Integration.Extensions;
+using TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared;
 using TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared.Factories;
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.PersonAggregate.Requests;
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.PersonAggregate.Responses;
@@ -33,7 +34,7 @@ public sealed class PersonAddressEndpointsTests : IAsyncLifetime
     public async Task CreatePersonAddress_ShouldReturnAddress_WhenValidDataIsProvided()
     {
         // Arrange
-        PersonResponse person = await CreateTestPersonAsync();
+        PersonDetailsResponse person = await CreateTestPersonAsync();
         CreatePersonAddressRequest request = new(
             CountryCode.PL,
             "Home",
@@ -44,7 +45,7 @@ public sealed class PersonAddressEndpointsTests : IAsyncLifetime
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.PostAsJsonAsync(
-            $"api/v1/persons/{person.Id.Value}/addresses", request);
+            new Uri($"api/v1/persons/{person.Id.Value}/addresses", UriKind.Relative), request);
 
         // Assert
         string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
@@ -67,7 +68,7 @@ public sealed class PersonAddressEndpointsTests : IAsyncLifetime
     public async Task CreatePersonAddress_ShouldReturnAddress_WhenLineIsNull()
     {
         // Arrange
-        PersonResponse person = await CreateTestPersonAsync();
+        PersonDetailsResponse person = await CreateTestPersonAsync();
         CreatePersonAddressRequest request = new(
             CountryCode.PL,
             _faker.Lorem.Word(),
@@ -77,7 +78,7 @@ public sealed class PersonAddressEndpointsTests : IAsyncLifetime
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.PostAsJsonAsync(
-            $"api/v1/persons/{person.Id.Value}/addresses", request);
+            new Uri($"api/v1/persons/{person.Id.Value}/addresses", UriKind.Relative), request);
 
         // Assert
         string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
@@ -103,7 +104,7 @@ public sealed class PersonAddressEndpointsTests : IAsyncLifetime
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.PostAsJsonAsync(
-            $"api/v1/persons/{nonExistentPersonId}/addresses", request);
+            new Uri($"api/v1/persons/{nonExistentPersonId}/addresses", UriKind.Relative), request);
 
         // Assert
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NotFound);
@@ -113,12 +114,12 @@ public sealed class PersonAddressEndpointsTests : IAsyncLifetime
     public async Task GetPersonAddress_ShouldReturnAddress_WhenAddressExists()
     {
         // Arrange
-        PersonResponse person = await CreateTestPersonAsync();
+        PersonDetailsResponse person = await CreateTestPersonAsync();
         PersonAddressResponse createdAddress = await CreateTestAddressAsync(person.Id);
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.GetAsync(
-            $"api/v1/persons/{person.Id.Value}/addresses/{createdAddress.Id.Value}");
+            new Uri($"api/v1/persons/{person.Id.Value}/addresses/{createdAddress.Id.Value}", UriKind.Relative));
 
         // Assert
         string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
@@ -135,38 +136,45 @@ public sealed class PersonAddressEndpointsTests : IAsyncLifetime
     public async Task GetPersonAddress_ShouldReturnNotFound_WhenAddressDoesNotExist()
     {
         // Arrange
-        PersonResponse person = await CreateTestPersonAsync();
+        PersonDetailsResponse person = await CreateTestPersonAsync();
         Guid nonExistentAddressId = Guid.NewGuid();
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.GetAsync(
-            $"api/v1/persons/{person.Id.Value}/addresses/{nonExistentAddressId}");
+            new Uri($"api/v1/persons/{person.Id.Value}/addresses/{nonExistentAddressId}", UriKind.Relative));
 
         // Assert
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
     [Fact]
-    public async Task GetPersonAddresses_ShouldReturnAddressesList()
+    public async Task GetPerson_ShouldReturnEmbeddedAddresses_WhenPersonHasAddresses()
     {
         // Arrange
-        PersonResponse person = await CreateTestPersonAsync();
-        await CreateTestAddressAsync(person.Id);
-        await CreateTestAddressAsync(person.Id);
+        PersonDetailsResponse person = await CreateTestPersonAsync();
+        PersonAddressResponse address1 = await CreateTestAddressAsync(person.Id, "Home");
+        PersonAddressResponse address2 = await CreateTestAddressAsync(person.Id, "Work");
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.GetAsync(
-            $"api/v1/persons/{person.Id.Value}/addresses");
+            new Uri($"api/v1/persons/{person.Id.Value}", UriKind.Relative));
 
         // Assert
-        await httpResponseMessage.EnsureSuccessWithDetailsAsync();
+        string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
+
+        PersonDetailsResponse personResponse = JsonSerializer.Deserialize<PersonDetailsResponse>(stringResponse, _jsonSerializerOptions)
+            ?? throw new JsonException("Failed to deserialize PersonDetailsResponse");
+
+        personResponse.Addresses.Count.ShouldBe(2);
+        personResponse.Addresses.ShouldContain(a => a.Id == address1.Id);
+        personResponse.Addresses.ShouldContain(a => a.Id == address2.Id);
     }
 
     [Fact]
     public async Task UpdatePersonAddress_ShouldReturnUpdatedAddress_WhenValidDataIsProvided()
     {
         // Arrange
-        PersonResponse person = await CreateTestPersonAsync();
+        PersonDetailsResponse person = await CreateTestPersonAsync();
         PersonAddressResponse createdAddress = await CreateTestAddressAsync(person.Id);
         UpdatePersonAddressRequest updateRequest = new(
             "Updated Home",
@@ -177,7 +185,7 @@ public sealed class PersonAddressEndpointsTests : IAsyncLifetime
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.PutAsJsonAsync(
-            $"api/v1/persons/{person.Id.Value}/addresses/{createdAddress.Id.Value}", updateRequest);
+            new Uri($"api/v1/persons/{person.Id.Value}/addresses/{createdAddress.Id.Value}", UriKind.Relative), updateRequest);
 
         // Assert
         string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
@@ -195,7 +203,7 @@ public sealed class PersonAddressEndpointsTests : IAsyncLifetime
     public async Task UpdatePersonAddress_ShouldReturnNotFound_WhenAddressDoesNotExist()
     {
         // Arrange
-        PersonResponse person = await CreateTestPersonAsync();
+        PersonDetailsResponse person = await CreateTestPersonAsync();
         Guid nonExistentAddressId = Guid.NewGuid();
         UpdatePersonAddressRequest updateRequest = new(
             "Updated Home",
@@ -205,7 +213,7 @@ public sealed class PersonAddressEndpointsTests : IAsyncLifetime
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.PutAsJsonAsync(
-            $"api/v1/persons/{person.Id.Value}/addresses/{nonExistentAddressId}", updateRequest);
+            new Uri($"api/v1/persons/{person.Id.Value}/addresses/{nonExistentAddressId}", UriKind.Relative), updateRequest);
 
         // Assert
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NotFound);
@@ -215,19 +223,19 @@ public sealed class PersonAddressEndpointsTests : IAsyncLifetime
     public async Task DeletePersonAddress_ShouldReturnNoContent_WhenAddressExists()
     {
         // Arrange
-        PersonResponse person = await CreateTestPersonAsync();
+        PersonDetailsResponse person = await CreateTestPersonAsync();
         PersonAddressResponse createdAddress = await CreateTestAddressAsync(person.Id);
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.DeleteAsync(
-            $"api/v1/persons/{person.Id.Value}/addresses/{createdAddress.Id.Value}");
+            new Uri($"api/v1/persons/{person.Id.Value}/addresses/{createdAddress.Id.Value}", UriKind.Relative));
 
         // Assert
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NoContent);
 
         // Verify address is deleted
         HttpResponseMessage getResponse = await _httpClient.GetAsync(
-            $"api/v1/persons/{person.Id.Value}/addresses/{createdAddress.Id.Value}");
+            new Uri($"api/v1/persons/{person.Id.Value}/addresses/{createdAddress.Id.Value}", UriKind.Relative));
         getResponse.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
@@ -235,23 +243,23 @@ public sealed class PersonAddressEndpointsTests : IAsyncLifetime
     public async Task DeletePersonAddress_ShouldReturnNotFound_WhenAddressDoesNotExist()
     {
         // Arrange
-        PersonResponse person = await CreateTestPersonAsync();
+        PersonDetailsResponse person = await CreateTestPersonAsync();
         Guid nonExistentAddressId = Guid.NewGuid();
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.DeleteAsync(
-            $"api/v1/persons/{person.Id.Value}/addresses/{nonExistentAddressId}");
+            new Uri($"api/v1/persons/{person.Id.Value}/addresses/{nonExistentAddressId}", UriKind.Relative));
 
         // Assert
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
-    private async Task<PersonResponse> CreateTestPersonAsync()
+    private async Task<PersonDetailsResponse> CreateTestPersonAsync()
         => await PersonApiFactory.CreateRandomAsync(_httpClient, _jsonSerializerOptions, _faker);
 
     private async Task<PersonAddressResponse> CreateTestAddressAsync(PersonId personId, string? name = null)
         => await PersonAddressApiFactory.CreateRandomAsync(_httpClient, _jsonSerializerOptions, _faker, personId, name);
 
     public Task InitializeAsync() => Task.CompletedTask;
-    public Task DisposeAsync() => Task.CompletedTask;
+    public async Task DisposeAsync() => await CleanerService.CleanDatabaseAsync(_httpClient, _jsonSerializerOptions);
 }

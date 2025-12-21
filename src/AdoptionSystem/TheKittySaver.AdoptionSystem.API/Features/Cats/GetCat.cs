@@ -2,7 +2,9 @@ using Mediator;
 using Microsoft.EntityFrameworkCore;
 using TheKittySaver.AdoptionSystem.API.Common;
 using TheKittySaver.AdoptionSystem.API.Extensions;
+using TheKittySaver.AdoptionSystem.Contracts.Aggregates.CatAggregate.Gallery.Responses;
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.CatAggregate.Responses;
+using TheKittySaver.AdoptionSystem.Contracts.Aggregates.CatAggregate.Vaccinations.Responses;
 using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
 using TheKittySaver.AdoptionSystem.Persistence.DbContexts.ReadDbContexts;
@@ -12,9 +14,9 @@ namespace TheKittySaver.AdoptionSystem.API.Features.Cats;
 
 internal sealed class GetCat : IEndpoint
 {
-    internal sealed record Query(CatId CatId) : IQuery<Result<CatResponse>>;
+    internal sealed record Query(CatId CatId) : IQuery<Result<CatDetailsResponse>>;
 
-    internal sealed class Handler : IQueryHandler<Query, Result<CatResponse>>
+    internal sealed class Handler : IQueryHandler<Query, Result<CatDetailsResponse>>
     {
         private readonly IApplicationReadDbContext _readDbContext;
 
@@ -23,11 +25,11 @@ internal sealed class GetCat : IEndpoint
             _readDbContext = readDbContext;
         }
 
-        public async ValueTask<Result<CatResponse>> Handle(Query query, CancellationToken cancellationToken)
+        public async ValueTask<Result<CatDetailsResponse>> Handle(Query query, CancellationToken cancellationToken)
         {
-            CatResponse? response = await _readDbContext.Cats
+            CatDetailsResponse? response = await _readDbContext.Cats
                 .Where(c => c.Id == query.CatId)
-                .Select(cat => new CatResponse(
+                .Select(cat => new CatDetailsResponse(
                     Id: cat.Id,
                     PersonId: cat.PersonId,
                     AdoptionAnnouncementId: cat.AdoptionAnnouncementId,
@@ -50,10 +52,29 @@ internal sealed class GetCat : IEndpoint
                     IsNeutered: cat.NeuteringStatusIsNeutered,
                     InfectiousDiseaseStatusFivStatus: cat.InfectiousDiseaseStatusFivStatus,
                     InfectiousDiseaseStatusFelvStatus: cat.InfectiousDiseaseStatusFelvStatus,
-                    InfectiousDiseaseStatusLastTestedAt: cat.InfectiousDiseaseStatusLastTestedAt))
+                    InfectiousDiseaseStatusLastTestedAt: cat.InfectiousDiseaseStatusLastTestedAt,
+                    Vaccinations: cat.Vaccinations
+                        .OrderByDescending(v => v.VaccinationDate)
+                        .Select(v => new CatVaccinationEmbeddedDto(
+                            Id: v.Id,
+                            Type: v.Type,
+                            VaccinationDate: v.VaccinationDate,
+                            VeterinarianNote: v.VeterinarianNote))
+                        .ToList(),
+                    GalleryItems: cat.GalleryItems
+                        .OrderBy(g => g.DisplayOrder)
+                        .Select(g => new CatGalleryItemEmbeddedDto(
+                            Id: g.Id,
+                            DisplayOrder: g.DisplayOrder))
+                        .ToList()))
                 .FirstOrDefaultAsync(cancellationToken);
 
-            return response ?? Result.Failure<CatResponse>(DomainErrors.CatEntity.NotFound(query.CatId));
+            if (response is null)
+            {
+                return Result.Failure<CatDetailsResponse>(DomainErrors.CatEntity.NotFound(query.CatId));
+            }
+
+            return Result.Success(response);
         }
     }
 
@@ -66,7 +87,7 @@ internal sealed class GetCat : IEndpoint
         {
             Query query = new(new CatId(catId));
 
-            Result<CatResponse> queryResult = await sender.Send(query, cancellationToken);
+            Result<CatDetailsResponse> queryResult = await sender.Send(query, cancellationToken);
 
             return queryResult.IsFailure
                 ? Results.Problem(queryResult.Error.ToProblemDetails())

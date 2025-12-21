@@ -35,14 +35,14 @@ public sealed class CatGalleryEndpointsTests : IAsyncLifetime
     public async Task CreateCatGalleryItem_ShouldReturnGalleryItem_WhenValidFileIsProvided()
     {
         // Arrange
-        PersonResponse person = await CreateTestPersonAsync();
-        CatResponse cat = await CreateTestCatAsync(person.Id);
+        PersonDetailsResponse person = await CreateTestPersonAsync();
+        CatDetailsResponse cat = await CreateTestCatAsync(person.Id);
 
         using MultipartFormDataContent content = ImageContentFactory.CreateTestPngContent();
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.PostAsync(
-            $"api/v1/cats/{cat.Id.Value}/gallery", content);
+            new Uri($"api/v1/cats/{cat.Id.Value}/gallery", UriKind.Relative), content);
 
         // Assert
         string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
@@ -65,7 +65,7 @@ public sealed class CatGalleryEndpointsTests : IAsyncLifetime
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.PostAsync(
-            $"api/v1/cats/{nonExistentCatId}/gallery", content);
+            new Uri($"api/v1/cats/{nonExistentCatId}/gallery", UriKind.Relative), content);
 
         // Assert
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NotFound);
@@ -75,17 +75,17 @@ public sealed class CatGalleryEndpointsTests : IAsyncLifetime
     public async Task CreateCatGalleryItem_ShouldCreateMultipleItems_WhenMultipleFilesAdded()
     {
         // Arrange
-        PersonResponse person = await CreateTestPersonAsync();
-        CatResponse cat = await CreateTestCatAsync(person.Id);
+        PersonDetailsResponse person = await CreateTestPersonAsync();
+        CatDetailsResponse cat = await CreateTestCatAsync(person.Id);
 
         // Act
         using MultipartFormDataContent content1 = ImageContentFactory.CreateTestPngContent();
         HttpResponseMessage response1 = await _httpClient.PostAsync(
-            $"api/v1/cats/{cat.Id.Value}/gallery", content1);
+            new Uri($"api/v1/cats/{cat.Id.Value}/gallery", UriKind.Relative), content1);
 
         using MultipartFormDataContent content2 = ImageContentFactory.CreateTestPngContent();
         HttpResponseMessage response2 = await _httpClient.PostAsync(
-            $"api/v1/cats/{cat.Id.Value}/gallery", content2);
+            new Uri($"api/v1/cats/{cat.Id.Value}/gallery", UriKind.Relative), content2);
 
         // Assert
         string stringResponse1 = await response1.EnsureSuccessWithDetailsAsync();
@@ -102,13 +102,13 @@ public sealed class CatGalleryEndpointsTests : IAsyncLifetime
     public async Task GetCatGalleryItem_ShouldReturnGalleryItem_WhenItemExists()
     {
         // Arrange
-        PersonResponse person = await CreateTestPersonAsync();
-        CatResponse cat = await CreateTestCatAsync(person.Id);
+        PersonDetailsResponse person = await CreateTestPersonAsync();
+        CatDetailsResponse cat = await CreateTestCatAsync(person.Id);
         CatGalleryItemResponse createdItem = await CreateTestGalleryItemAsync(cat.Id);
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.GetAsync(
-            $"api/v1/cats/{cat.Id.Value}/gallery/{createdItem.Id.Value}");
+            new Uri($"api/v1/cats/{cat.Id.Value}/gallery/{createdItem.Id.Value}", UriKind.Relative));
 
         // Assert
         string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
@@ -125,46 +125,53 @@ public sealed class CatGalleryEndpointsTests : IAsyncLifetime
     public async Task GetCatGalleryItem_ShouldReturnNotFound_WhenItemDoesNotExist()
     {
         // Arrange
-        PersonResponse person = await CreateTestPersonAsync();
-        CatResponse cat = await CreateTestCatAsync(person.Id);
+        PersonDetailsResponse person = await CreateTestPersonAsync();
+        CatDetailsResponse cat = await CreateTestCatAsync(person.Id);
         Guid nonExistentItemId = Guid.NewGuid();
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.GetAsync(
-            $"api/v1/cats/{cat.Id.Value}/gallery/{nonExistentItemId}");
+            new Uri($"api/v1/cats/{cat.Id.Value}/gallery/{nonExistentItemId}", UriKind.Relative));
 
         // Assert
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
     [Fact]
-    public async Task GetCatGalleryItems_ShouldReturnGalleryItemsList()
+    public async Task GetCat_ShouldReturnEmbeddedGalleryItems_WhenCatHasGalleryItems()
     {
         // Arrange
-        PersonResponse person = await CreateTestPersonAsync();
-        CatResponse cat = await CreateTestCatAsync(person.Id);
-        await CreateTestGalleryItemAsync(cat.Id);
-        await CreateTestGalleryItemAsync(cat.Id);
+        PersonDetailsResponse person = await CreateTestPersonAsync();
+        CatDetailsResponse cat = await CreateTestCatAsync(person.Id);
+        CatGalleryItemResponse item1 = await CreateTestGalleryItemAsync(cat.Id);
+        CatGalleryItemResponse item2 = await CreateTestGalleryItemAsync(cat.Id);
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.GetAsync(
-            $"api/v1/cats/{cat.Id.Value}/gallery");
+            new Uri($"api/v1/cats/{cat.Id.Value}", UriKind.Relative));
 
         // Assert
-        await httpResponseMessage.EnsureSuccessWithDetailsAsync();
+        string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
+
+        CatDetailsResponse catResponse = JsonSerializer.Deserialize<CatDetailsResponse>(stringResponse, _jsonSerializerOptions)
+            ?? throw new JsonException("Failed to deserialize CatDetailsResponse");
+
+        catResponse.GalleryItems.Count.ShouldBe(2);
+        catResponse.GalleryItems.ShouldContain(g => g.Id == item1.Id);
+        catResponse.GalleryItems.ShouldContain(g => g.Id == item2.Id);
     }
 
     [Fact]
     public async Task GetCatGalleryItemFile_ShouldReturnFile_WhenItemExists()
     {
         // Arrange
-        PersonResponse person = await CreateTestPersonAsync();
-        CatResponse cat = await CreateTestCatAsync(person.Id);
+        PersonDetailsResponse person = await CreateTestPersonAsync();
+        CatDetailsResponse cat = await CreateTestCatAsync(person.Id);
         CatGalleryItemResponse createdItem = await CreateTestGalleryItemAsync(cat.Id);
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.GetAsync(
-            $"api/v1/cats/{cat.Id.Value}/gallery/{createdItem.Id.Value}/file");
+            new Uri($"api/v1/cats/{cat.Id.Value}/gallery/{createdItem.Id.Value}/file", UriKind.Relative));
 
         // Assert
         await httpResponseMessage.EnsureSuccessWithDetailsAsync();
@@ -175,20 +182,20 @@ public sealed class CatGalleryEndpointsTests : IAsyncLifetime
     public async Task DeleteCatGalleryItem_ShouldReturnNoContent_WhenItemExists()
     {
         // Arrange
-        PersonResponse person = await CreateTestPersonAsync();
-        CatResponse cat = await CreateTestCatAsync(person.Id);
+        PersonDetailsResponse person = await CreateTestPersonAsync();
+        CatDetailsResponse cat = await CreateTestCatAsync(person.Id);
         CatGalleryItemResponse createdItem = await CreateTestGalleryItemAsync(cat.Id);
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.DeleteAsync(
-            $"api/v1/cats/{cat.Id.Value}/gallery/{createdItem.Id.Value}");
+            new Uri($"api/v1/cats/{cat.Id.Value}/gallery/{createdItem.Id.Value}", UriKind.Relative));
 
         // Assert
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NoContent);
 
         // Verify item is deleted
         HttpResponseMessage getResponse = await _httpClient.GetAsync(
-            $"api/v1/cats/{cat.Id.Value}/gallery/{createdItem.Id.Value}");
+            new Uri($"api/v1/cats/{cat.Id.Value}/gallery/{createdItem.Id.Value}", UriKind.Relative));
         getResponse.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
@@ -196,13 +203,13 @@ public sealed class CatGalleryEndpointsTests : IAsyncLifetime
     public async Task DeleteCatGalleryItem_ShouldReturnNotFound_WhenItemDoesNotExist()
     {
         // Arrange
-        PersonResponse person = await CreateTestPersonAsync();
-        CatResponse cat = await CreateTestCatAsync(person.Id);
+        PersonDetailsResponse person = await CreateTestPersonAsync();
+        CatDetailsResponse cat = await CreateTestCatAsync(person.Id);
         Guid nonExistentItemId = Guid.NewGuid();
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.DeleteAsync(
-            $"api/v1/cats/{cat.Id.Value}/gallery/{nonExistentItemId}");
+            new Uri($"api/v1/cats/{cat.Id.Value}/gallery/{nonExistentItemId}", UriKind.Relative));
 
         // Assert
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NotFound);
@@ -212,8 +219,8 @@ public sealed class CatGalleryEndpointsTests : IAsyncLifetime
     public async Task ReorderCatGallery_ShouldReorderItems_WhenValidOrderIsProvided()
     {
         // Arrange
-        PersonResponse person = await CreateTestPersonAsync();
-        CatResponse cat = await CreateTestCatAsync(person.Id);
+        PersonDetailsResponse person = await CreateTestPersonAsync();
+        CatDetailsResponse cat = await CreateTestCatAsync(person.Id);
         CatGalleryItemResponse item1 = await CreateTestGalleryItemAsync(cat.Id);
         CatGalleryItemResponse item2 = await CreateTestGalleryItemAsync(cat.Id);
 
@@ -224,7 +231,7 @@ public sealed class CatGalleryEndpointsTests : IAsyncLifetime
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.PutAsJsonAsync(
-            $"api/v1/cats/{cat.Id.Value}/gallery/reorder", request);
+            new Uri($"api/v1/cats/{cat.Id.Value}/gallery/reorder", UriKind.Relative), request);
 
         // Assert
         string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
@@ -247,7 +254,7 @@ public sealed class CatGalleryEndpointsTests : IAsyncLifetime
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.PutAsJsonAsync(
-            $"api/v1/cats/{nonExistentCatId}/gallery/reorder", request);
+            new Uri($"api/v1/cats/{nonExistentCatId}/gallery/reorder", UriKind.Relative), request);
 
         // Assert
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NotFound);
@@ -257,14 +264,14 @@ public sealed class CatGalleryEndpointsTests : IAsyncLifetime
     public async Task UpsertCatThumbnail_ShouldReturnThumbnail_WhenValidFileIsProvided()
     {
         // Arrange
-        PersonResponse person = await CreateTestPersonAsync();
-        CatResponse cat = await CreateTestCatAsync(person.Id);
+        PersonDetailsResponse person = await CreateTestPersonAsync();
+        CatDetailsResponse cat = await CreateTestCatAsync(person.Id);
 
         using MultipartFormDataContent content = ImageContentFactory.CreateTestPngContent();
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.PutAsync(
-            $"api/v1/cats/{cat.Id.Value}/thumbnail", content);
+            new Uri($"api/v1/cats/{cat.Id.Value}/thumbnail", UriKind.Relative), content);
 
         // Assert
         string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
@@ -280,27 +287,23 @@ public sealed class CatGalleryEndpointsTests : IAsyncLifetime
     public async Task UpsertCatThumbnail_ShouldReplaceThumbnail_WhenThumbnailAlreadyExists()
     {
         // Arrange
-        PersonResponse person = await CreateTestPersonAsync();
-        CatResponse cat = await CreateTestCatAsync(person.Id);
+        PersonDetailsResponse person = await CreateTestPersonAsync();
+        CatDetailsResponse cat = await CreateTestCatAsync(person.Id);
 
-        // Create first thumbnail
         using MultipartFormDataContent content1 = ImageContentFactory.CreateTestPngContent();
         HttpResponseMessage response1 = await _httpClient.PutAsync(
-            $"api/v1/cats/{cat.Id.Value}/thumbnail", content1);
-        string stringResponse1 = await response1.EnsureSuccessWithDetailsAsync();
-
-        CatThumbnailResponse thumbnail1 = JsonSerializer.Deserialize<CatThumbnailResponse>(stringResponse1, _jsonSerializerOptions)!;
-
-        // Act - Replace thumbnail
+            new Uri($"api/v1/cats/{cat.Id.Value}/thumbnail", UriKind.Relative), content1);
+        await response1.EnsureSuccessWithDetailsAsync();
+        
+        // Act
         using MultipartFormDataContent content2 = ImageContentFactory.CreateTestPngContent();
         HttpResponseMessage response2 = await _httpClient.PutAsync(
-            $"api/v1/cats/{cat.Id.Value}/thumbnail", content2);
+            new Uri($"api/v1/cats/{cat.Id.Value}/thumbnail", UriKind.Relative), content2);
 
         // Assert
         string stringResponse2 = await response2.EnsureSuccessWithDetailsAsync();
 
         CatThumbnailResponse thumbnail2 = JsonSerializer.Deserialize<CatThumbnailResponse>(stringResponse2, _jsonSerializerOptions)!;
-
         thumbnail2.CatId.ShouldBe(cat.Id);
     }
 
@@ -313,7 +316,7 @@ public sealed class CatGalleryEndpointsTests : IAsyncLifetime
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.PutAsync(
-            $"api/v1/cats/{nonExistentCatId}/thumbnail", content);
+            new Uri($"api/v1/cats/{nonExistentCatId}/thumbnail", UriKind.Relative), content);
 
         // Assert
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NotFound);
@@ -323,13 +326,13 @@ public sealed class CatGalleryEndpointsTests : IAsyncLifetime
     public async Task GetCatThumbnail_ShouldReturnFile_WhenThumbnailExists()
     {
         // Arrange
-        PersonResponse person = await CreateTestPersonAsync();
-        CatResponse cat = await CreateTestCatAsync(person.Id);
+        PersonDetailsResponse person = await CreateTestPersonAsync();
+        CatDetailsResponse cat = await CreateTestCatAsync(person.Id);
         await CreateTestThumbnailAsync(cat.Id);
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.GetAsync(
-            $"api/v1/cats/{cat.Id.Value}/thumbnail");
+            new Uri($"api/v1/cats/{cat.Id.Value}/thumbnail", UriKind.Relative));
 
         // Assert
         await httpResponseMessage.EnsureSuccessWithDetailsAsync();
@@ -340,12 +343,12 @@ public sealed class CatGalleryEndpointsTests : IAsyncLifetime
     public async Task GetCatThumbnail_ShouldReturnNotFound_WhenThumbnailDoesNotExist()
     {
         // Arrange
-        PersonResponse person = await CreateTestPersonAsync();
-        CatResponse cat = await CreateTestCatAsync(person.Id);
+        PersonDetailsResponse person = await CreateTestPersonAsync();
+        CatDetailsResponse cat = await CreateTestCatAsync(person.Id);
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.GetAsync(
-            $"api/v1/cats/{cat.Id.Value}/thumbnail");
+            new Uri($"api/v1/cats/{cat.Id.Value}/thumbnail", UriKind.Relative));
 
         // Assert
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NotFound);
@@ -355,20 +358,20 @@ public sealed class CatGalleryEndpointsTests : IAsyncLifetime
     public async Task DeleteCatThumbnail_ShouldReturnNoContent_WhenThumbnailExists()
     {
         // Arrange
-        PersonResponse person = await CreateTestPersonAsync();
-        CatResponse cat = await CreateTestCatAsync(person.Id);
+        PersonDetailsResponse person = await CreateTestPersonAsync();
+        CatDetailsResponse cat = await CreateTestCatAsync(person.Id);
         await CreateTestThumbnailAsync(cat.Id);
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.DeleteAsync(
-            $"api/v1/cats/{cat.Id.Value}/thumbnail");
+            new Uri($"api/v1/cats/{cat.Id.Value}/thumbnail", UriKind.Relative));
 
         // Assert
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NoContent);
 
         // Verify thumbnail is deleted
         HttpResponseMessage getResponse = await _httpClient.GetAsync(
-            $"api/v1/cats/{cat.Id.Value}/thumbnail");
+            new Uri($"api/v1/cats/{cat.Id.Value}/thumbnail", UriKind.Relative));
         getResponse.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
@@ -376,21 +379,21 @@ public sealed class CatGalleryEndpointsTests : IAsyncLifetime
     public async Task DeleteCatThumbnail_ShouldReturnNotFound_WhenThumbnailDoesNotExist()
     {
         // Arrange
-        PersonResponse person = await CreateTestPersonAsync();
-        CatResponse cat = await CreateTestCatAsync(person.Id);
+        PersonDetailsResponse person = await CreateTestPersonAsync();
+        CatDetailsResponse cat = await CreateTestCatAsync(person.Id);
 
         // Act
         HttpResponseMessage httpResponseMessage = await _httpClient.DeleteAsync(
-            $"api/v1/cats/{cat.Id.Value}/thumbnail");
+            new Uri($"api/v1/cats/{cat.Id.Value}/thumbnail", UriKind.Relative));
 
         // Assert
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
-    private async Task<PersonResponse> CreateTestPersonAsync()
+    private async Task<PersonDetailsResponse> CreateTestPersonAsync()
         => await PersonApiFactory.CreateRandomAsync(_httpClient, _jsonSerializerOptions, _faker);
 
-    private async Task<CatResponse> CreateTestCatAsync(PersonId personId, string? name = null)
+    private async Task<CatDetailsResponse> CreateTestCatAsync(PersonId personId, string? name = null)
         => await CatApiFactory.CreateRandomAsync(_httpClient, _jsonSerializerOptions, _faker, personId, name);
 
     private async Task<CatGalleryItemResponse> CreateTestGalleryItemAsync(CatId catId)

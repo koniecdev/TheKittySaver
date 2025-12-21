@@ -12,7 +12,7 @@ namespace TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared.Factories;
 
 internal static class CatApiFactory
 {
-    public static async Task<CatResponse> CreateRandomAsync(
+    public static async Task<CatDetailsResponse> CreateRandomAsync(
         HttpClient httpClient,
         JsonSerializerOptions jsonSerializerOptions,
         Faker faker,
@@ -21,23 +21,24 @@ internal static class CatApiFactory
     {
         CreateCatRequest request = CreateRandomRequest(faker, personId, name);
 
-        HttpResponseMessage httpResponseMessage = await httpClient.PostAsJsonAsync("api/v1/cats", request);
+        HttpResponseMessage httpResponseMessage = await httpClient.PostAsJsonAsync(new Uri("api/v1/cats", UriKind.Relative), request);
         string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
 
-        CatResponse catResponse = JsonSerializer.Deserialize<CatResponse>(stringResponse, jsonSerializerOptions)
-            ?? throw new JsonException("Failed to deserialize CatResponse");
+        CatId catId = JsonSerializer.Deserialize<CatId>(stringResponse, jsonSerializerOptions);
+
+        CatDetailsResponse catResponse = await GetAsync(httpClient, jsonSerializerOptions, catId);
         return catResponse;
     }
 
-    public static async Task<CatResponse> GetAsync(
+    public static async Task<CatDetailsResponse> GetAsync(
         HttpClient httpClient,
         JsonSerializerOptions jsonSerializerOptions,
         CatId catId)
     {
-        HttpResponseMessage httpResponseMessage = await httpClient.GetAsync($"api/v1/cats/{catId.Value}");
+        HttpResponseMessage httpResponseMessage = await httpClient.GetAsync(new Uri($"api/v1/cats/{catId.Value}", UriKind.Relative));
         string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
-        CatResponse catResponse = JsonSerializer.Deserialize<CatResponse>(stringResponse, jsonSerializerOptions)
-            ?? throw new JsonException("Failed to deserialize CatResponse");
+        CatDetailsResponse catResponse = JsonSerializer.Deserialize<CatDetailsResponse>(stringResponse, jsonSerializerOptions)
+            ?? throw new JsonException("Failed to deserialize CatDetailsResponse");
         return catResponse;
     }
 
@@ -95,22 +96,21 @@ internal static class CatApiFactory
         return request;
     }
 
-    public static async Task<CatResponse> CreateHealthyCatWithThumbnail(
+    public static async Task<CatDetailsResponse> CreateHealthyCatWithThumbnail(
         HttpClient httpClient,
         JsonSerializerOptions jsonSerializerOptions,
         PersonId personId,
         string? name = null)
     {
         CreateCatRequest request = CreateFixedRequest(personId, name);
-        HttpResponseMessage httpResponseMessage = await httpClient.PostAsJsonAsync("api/v1/cats", request);
+        HttpResponseMessage httpResponseMessage = await httpClient.PostAsJsonAsync(new Uri("api/v1/cats", UriKind.Relative), request);
         string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
 
-        CatResponse catResponse = JsonSerializer.Deserialize<CatResponse>(stringResponse, jsonSerializerOptions)
-                                  ?? throw new JsonException("Failed to deserialize CatResponse");
+        CatId catId = JsonSerializer.Deserialize<CatId>(stringResponse, jsonSerializerOptions);
 
-        await CatGalleryApiFactory.CreateThumbnailAsync(httpClient, jsonSerializerOptions, catResponse.Id);
+        await CatGalleryApiFactory.CreateThumbnailAsync(httpClient, jsonSerializerOptions, catId);
 
-        CatResponse updatedCatResponse = await GetAsync(httpClient, jsonSerializerOptions, catResponse.Id);
+        CatDetailsResponse updatedCatResponse = await GetAsync(httpClient, jsonSerializerOptions, catId);
         return updatedCatResponse;
     }
 }

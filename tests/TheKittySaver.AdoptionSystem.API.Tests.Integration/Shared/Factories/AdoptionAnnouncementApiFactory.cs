@@ -30,7 +30,7 @@ internal static class AdoptionAnnouncementApiFactory
         CreateAdoptionAnnouncementRequest request = CreateRandomRequest(faker, catId);
 
         HttpResponseMessage httpResponseMessage = await httpClient.PostAsJsonAsync(
-            "api/v1/adoption-announcements", request);
+            new Uri("api/v1/adoption-announcements", UriKind.Relative), request);
         string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
         AdoptionAnnouncementListItemResponse announcementListItemResponse = JsonSerializer.Deserialize<AdoptionAnnouncementListItemResponse>(stringResponse, jsonSerializerOptions)
             ?? throw new JsonException("Failed to deserialize AdoptionAnnouncementResponse");

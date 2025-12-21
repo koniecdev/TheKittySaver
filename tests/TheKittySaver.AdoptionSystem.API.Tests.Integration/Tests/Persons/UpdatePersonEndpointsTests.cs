@@ -18,12 +18,12 @@ using JsonOptions = Microsoft.AspNetCore.Http.Json.JsonOptions;
 namespace TheKittySaver.AdoptionSystem.API.Tests.Integration.Tests.Persons;
 
 [Collection("Api")]
-public sealed class CreatePersonEndpointsTests : AsyncLifetimeTestBase
+public sealed class UpdatePersonEndpointsTests : AsyncLifetimeTestBase
 {
     protected override HttpClient HttpClient { get; }
     protected override JsonSerializerOptions JsonSerializerOptions { get; }
 
-    public CreatePersonEndpointsTests(TheKittySaverApiFactory appFactory)
+    public UpdatePersonEndpointsTests(TheKittySaverApiFactory appFactory)
     {
         HttpClient = appFactory.CreateClient();
         JsonSerializerOptions =
@@ -31,24 +31,25 @@ public sealed class CreatePersonEndpointsTests : AsyncLifetimeTestBase
     }
 
     [Fact]
-    public async Task CreatePerson_ShouldReturnPersonId_WhenValidDataIsProvided()
+    public async Task UpdatePerson_ShouldMapEveryRequestProperty_WhenValidDataIsProvided()
     {
         // Arrange
-        CreatePersonRequest request = PersonApiFactory.GenerateRandomCreateRequest(Faker);
+        PersonDetailsResponse person = 
+            await PersonApiFactory.CreateRandomAsync(HttpClient, JsonSerializerOptions, Faker);
 
+        UpdatePersonRequest request = PersonApiFactory.GenerateRandomUpdateRequest(Faker);
+        
         // Act
-        HttpResponseMessage httpResponseMessage = 
-            await HttpClient.PostAsJsonAsync(new Uri("api/v1/persons", UriKind.Relative), request);
+        HttpResponseMessage httpResponseMessage =
+            await HttpClient.PutAsJsonAsync(
+                new Uri($"api/v1/persons/{person.Id}", UriKind.Relative), request, JsonSerializerOptions);
 
         // Assert
-        string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
-        httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.Created);
-
-        PersonId personId = JsonSerializer.Deserialize<PersonId>(stringResponse, JsonSerializerOptions);
-        personId.Value.ShouldNotBe(Guid.Empty);
-
+        _ = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
+        httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NoContent);
+        
         PersonDetailsResponse personResponse = 
-            await PersonApiFactory.GetAsync(HttpClient, JsonSerializerOptions, personId);
+            await PersonApiFactory.GetAsync(HttpClient, JsonSerializerOptions, person.Id);
         personResponse.ShouldNotBeNull();
         personResponse.Username.ShouldBe(request.Username);
         personResponse.Email.ShouldBe(request.Email);
@@ -58,33 +59,48 @@ public sealed class CreatePersonEndpointsTests : AsyncLifetimeTestBase
     }
     
     [Theory]
-    [InlineData(true, false, false, false)]
-    [InlineData(false, true, false, false)]
-    [InlineData(false, false, true, false)]
-    [InlineData(false, false, false, true)]
-    public async Task CreatePerson_ShouldReturnBadRequest_WhenAtLeastOneRequiredPropertyIsMissing(
-        bool replaceIdentityIdWithEmpty,
+    [InlineData(true, false, false)]
+    [InlineData(false, true, false)]
+    [InlineData(false, false, true)]
+    public async Task UpdatePerson_ShouldReturnBadRequest_WhenAtLeastOneRequiredPropertyIsMissing(
         bool replaceUsernameWithNull,
         bool replaceEmailWithNull,
         bool replacePhoneNumberWithNull)
     {
         // Arrange
-        CreatePersonRequest request = new(
-            replaceIdentityIdWithEmpty ? IdentityId.Empty : IdentityId.New(),
+        PersonDetailsResponse person = 
+            await PersonApiFactory.CreateRandomAsync(HttpClient, JsonSerializerOptions, Faker);
+        
+        UpdatePersonRequest request = new(
             replaceUsernameWithNull ? null! : Faker.Internet.UserName(),
             replaceEmailWithNull ? null! : Faker.Internet.Email(),
             replacePhoneNumberWithNull ? null! : Faker.Person.PolishPhoneNumber());
 
         // Act
         HttpResponseMessage httpResponseMessage = 
-            await HttpClient.PostAsJsonAsync(
-                new Uri("api/v1/persons", UriKind.Relative), request, JsonSerializerOptions);
+            await HttpClient.PutAsJsonAsync(
+                new Uri($"api/v1/persons/{person.Id}", UriKind.Relative), request, JsonSerializerOptions);
 
         // Assert
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
-        ProblemDetails? problemDetails = 
+        ProblemDetails? problemDetails =
             await httpResponseMessage.Content.ReadFromJsonAsync<ProblemDetails>(JsonSerializerOptions);
         problemDetails.ShouldNotBeNull();
         problemDetails.Status.ShouldBe(StatusCodes.Status400BadRequest);
+    }
+    
+    [Fact]
+    public async Task UpdatePerson_ShouldReturnNotFound_WhenNotExistingPersonIdIsProvided()
+    {
+        // Arrange
+        UpdatePersonRequest request = PersonApiFactory.GenerateRandomUpdateRequest(Faker);
+        
+        // Act
+        HttpResponseMessage httpResponseMessage =
+            await HttpClient.PutAsJsonAsync(
+                new Uri($"api/v1/persons/{Guid.NewGuid()}", UriKind.Relative), request, JsonSerializerOptions);
+
+        // Assert
+        httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 }
