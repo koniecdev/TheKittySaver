@@ -1,11 +1,13 @@
 using System.Globalization;
 using System.Reflection;
+using System.Threading.RateLimiting;
 using TheKittySaver.AdoptionSystem.API;
 using TheKittySaver.AdoptionSystem.API.Extensions;
 using TheKittySaver.AdoptionSystem.API.Middleware;
 using Asp.Versioning;
 using Asp.Versioning.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Options;
 using Scalar.AspNetCore;
 using Serilog;
@@ -60,6 +62,31 @@ builder.Services
         name: "sqlserver",
         tags: ["db", "sql", "ready"]);
 
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+    options.AddTokenBucketLimiter("token", bucketOptions =>
+    {
+        bucketOptions.TokenLimit = 1000;
+        bucketOptions.ReplenishmentPeriod = TimeSpan.FromHours(1);
+        bucketOptions.TokensPerPeriod = 700;
+        bucketOptions.AutoReplenishment = true;
+    });
+});
+
+builder.Services.AddRateLimiter(options =>
+{
+    options.AddPolicy("fixed-by-ip", httpContext =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: httpContext.Connection.RemoteIpAddress?.ToString(),
+            factory: _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 10,
+                Window = TimeSpan.FromMinutes(1)
+            }));
+});
+
 WebApplication app = builder.Build();
 
 const string localEnvironment = "local";
@@ -94,12 +121,13 @@ string corsPolicy = app.Environment.EnvironmentName.ToLower(CultureInfo.Invarian
 };
 app.UseCors(corsPolicy);
 
+app.UseRateLimiter();
+
 if (app.Environment.IsEnvironment(localEnvironment))
 {
     app.MapOpenApi();
     app.MapScalarApiReference();
 }
-
 
 app.MapHealthChecks("/health/live", new HealthCheckOptions
 {
