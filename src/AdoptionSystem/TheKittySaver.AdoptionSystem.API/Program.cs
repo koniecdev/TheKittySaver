@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Reflection;
 using TheKittySaver.AdoptionSystem.API;
 using TheKittySaver.AdoptionSystem.API.Extensions;
@@ -31,9 +32,29 @@ builder.Services.AddApiVersioning(options =>
     options.SubstituteApiVersionInUrl = true;
 });
 
+const string localCorsPolicy = "DevelopmentPolicy";
+const string productionCorsPolicy = "ProductionPolicy";
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(localCorsPolicy, corsBuilder =>
+    {
+        corsBuilder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+    });
+    options.AddPolicy(productionCorsPolicy, corsBuilder =>
+    {
+        corsBuilder.WithOrigins(
+            "https://uratujkota.koniec.dev",
+            "https://uratujkota.pl",
+            "https://auth.uratujkota.pl"
+        ).AllowAnyHeader().AllowAnyMethod();
+    });
+});
+
 builder.Services.AddEndpoints(Assembly.GetExecutingAssembly());
 
-builder.Services.AddHealthChecks()
+builder.Services
+    .AddHealthChecks()
     .AddSqlServer(
         connectionStringFactory: sp => sp.GetRequiredService<IOptions<ConnectionStringSettings>>().Value.Database,
         name: "sqlserver",
@@ -41,7 +62,13 @@ builder.Services.AddHealthChecks()
 
 WebApplication app = builder.Build();
 
-await app.Services.MigrateDatabaseAsync();
+const string localEnvironment = "local";
+const string productionEnvironment = "production";
+
+if (app.Environment.IsEnvironment(localEnvironment))
+{
+    await app.Services.MigrateDatabaseAsync();
+}
 
 app.UseMiddleware<CorrelationIdMiddleware>();
 
@@ -57,14 +84,22 @@ app.UseSerilogRequestLogging(options =>
 });
 
 app.UseExceptionHandler();
+app.UseHsts();
+app.UseHttpsRedirection();
+app.UseRouting();
+string corsPolicy = app.Environment.EnvironmentName.ToLower(CultureInfo.InvariantCulture) switch
+{
+    productionEnvironment => productionCorsPolicy, 
+    _ => localCorsPolicy
+};
+app.UseCors(corsPolicy);
 
-if (app.Environment.IsEnvironment("Local"))
+if (app.Environment.IsEnvironment(localEnvironment))
 {
     app.MapOpenApi();
     app.MapScalarApiReference();
 }
 
-app.UseHttpsRedirection();
 
 app.MapHealthChecks("/health/live", new HealthCheckOptions
 {
