@@ -1,11 +1,8 @@
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
-using Bogus;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using Shouldly;
 using TheKittySaver.AdoptionSystem.API.Tests.Integration.Extensions;
 using TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared;
@@ -13,23 +10,12 @@ using TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared.Factories;
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.PersonAggregate.Requests;
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.PersonAggregate.Responses;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
-using JsonOptions = Microsoft.AspNetCore.Http.Json.JsonOptions;
 
 namespace TheKittySaver.AdoptionSystem.API.Tests.Integration.Tests.Persons;
 
-[Collection("Api")]
-public sealed class CreatePersonEndpointsTests : AsyncLifetimeTestBase
+public sealed class CreatePersonEndpointsTests(TheKittySaverApiFactory appFactory)
+    : PersonEndpointsTestBase(appFactory)
 {
-    protected override HttpClient HttpClient { get; }
-    protected override JsonSerializerOptions JsonSerializerOptions { get; }
-
-    public CreatePersonEndpointsTests(TheKittySaverApiFactory appFactory)
-    {
-        HttpClient = appFactory.CreateClient();
-        JsonSerializerOptions =
-            appFactory.Services.GetRequiredService<IOptionsSnapshot<JsonOptions>>().Value.SerializerOptions;
-    }
-
     [Fact]
     public async Task CreatePerson_ShouldReturnPersonId_WhenValidDataIsProvided()
     {
@@ -37,18 +23,17 @@ public sealed class CreatePersonEndpointsTests : AsyncLifetimeTestBase
         CreatePersonRequest request = PersonApiFactory.GenerateRandomCreateRequest(Faker);
 
         // Act
-        HttpResponseMessage httpResponseMessage = 
-            await HttpClient.PostAsJsonAsync(new Uri("api/v1/persons", UriKind.Relative), request);
+        HttpResponseMessage httpResponseMessage =
+            await ApiClient.Http.PostAsJsonAsync(new Uri("api/v1/persons", UriKind.Relative), request);
 
         // Assert
         string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.Created);
 
-        PersonId personId = JsonSerializer.Deserialize<PersonId>(stringResponse, JsonSerializerOptions);
+        PersonId personId = JsonSerializer.Deserialize<PersonId>(stringResponse, ApiClient.JsonOptions);
         personId.Value.ShouldNotBe(Guid.Empty);
 
-        PersonDetailsResponse personResponse = 
-            await PersonApiFactory.GetAsync(HttpClient, JsonSerializerOptions, personId);
+        PersonDetailsResponse personResponse = await PersonApiQueryService.GetByIdAsync(ApiClient, personId);
         personResponse.ShouldNotBeNull();
         personResponse.Username.ShouldBe(request.Username);
         personResponse.Email.ShouldBe(request.Email);
@@ -56,7 +41,7 @@ public sealed class CreatePersonEndpointsTests : AsyncLifetimeTestBase
         personResponse.Addresses.ShouldNotBeNull();
         personResponse.Addresses.Count.ShouldBe(0);
     }
-    
+
     [Theory]
     [InlineData(true, false, false, false)]
     [InlineData(false, true, false, false)]
@@ -76,14 +61,13 @@ public sealed class CreatePersonEndpointsTests : AsyncLifetimeTestBase
             replacePhoneNumberWithNull ? null! : Faker.Person.PolishPhoneNumber());
 
         // Act
-        HttpResponseMessage httpResponseMessage = 
-            await HttpClient.PostAsJsonAsync(
-                new Uri("api/v1/persons", UriKind.Relative), request, JsonSerializerOptions);
+        HttpResponseMessage httpResponseMessage =
+            await ApiClient.Http.PostAsJsonAsync(new Uri("api/v1/persons", UriKind.Relative), request);
 
         // Assert
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
-        ProblemDetails? problemDetails = 
-            await httpResponseMessage.Content.ReadFromJsonAsync<ProblemDetails>(JsonSerializerOptions);
+        ProblemDetails? problemDetails =
+            await httpResponseMessage.Content.ReadFromJsonAsync<ProblemDetails>(ApiClient.JsonOptions);
         problemDetails.ShouldNotBeNull();
         problemDetails.Status.ShouldBe(StatusCodes.Status400BadRequest);
     }
