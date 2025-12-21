@@ -7,7 +7,6 @@ using TheKittySaver.AdoptionSystem.API.Middleware;
 using Asp.Versioning;
 using Asp.Versioning.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Options;
 using Scalar.AspNetCore;
 using Serilog;
@@ -62,27 +61,18 @@ builder.Services
         name: "sqlserver",
         tags: ["db", "sql", "ready"]);
 
+const string rateLimitPolicy = "fixed-by-ip";
+
 builder.Services.AddRateLimiter(options =>
 {
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
 
-    options.AddTokenBucketLimiter("token", bucketOptions =>
-    {
-        bucketOptions.TokenLimit = 1000;
-        bucketOptions.ReplenishmentPeriod = TimeSpan.FromHours(1);
-        bucketOptions.TokensPerPeriod = 700;
-        bucketOptions.AutoReplenishment = true;
-    });
-});
-
-builder.Services.AddRateLimiter(options =>
-{
-    options.AddPolicy("fixed-by-ip", httpContext =>
+    options.AddPolicy(rateLimitPolicy, httpContext =>
         RateLimitPartition.GetFixedWindowLimiter(
-            partitionKey: httpContext.Connection.RemoteIpAddress?.ToString(),
+            partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
             factory: _ => new FixedWindowRateLimiterOptions
             {
-                PermitLimit = 10,
+                PermitLimit = 100,
                 Window = TimeSpan.FromMinutes(1)
             }));
 });
@@ -145,7 +135,8 @@ ApiVersionSet apiVersionSet = app.NewApiVersionSet()
     .Build();
 RouteGroupBuilder versionedGroup = app
     .MapGroup("api/v{apiVersion:apiVersion}")
-    .WithApiVersionSet(apiVersionSet);
+    .WithApiVersionSet(apiVersionSet)
+    .RequireRateLimiting(rateLimitPolicy);
 
 app.MapEndpoints(versionedGroup);
 
