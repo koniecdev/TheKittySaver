@@ -127,7 +127,7 @@ internal sealed class GetAdoptionAnnouncements : IEndpoint
             }
  
             List<AdoptionAnnouncementListItemResponse> paginatedItems = items
-                .Skip(query.Page * query.PageSize)
+                .Skip((query.Page - 1) * query.PageSize)
                 .Take(query.PageSize)
                 .ToList();
  

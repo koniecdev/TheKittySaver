@@ -7,6 +7,6 @@ public abstract class AsyncLifetimeTestBase : IAsyncLifetime
     protected Faker Faker { get; } = new();
     protected abstract TestApiClient ApiClient { get; }
 
-    public Task InitializeAsync() => Task.CompletedTask;
+    public virtual Task InitializeAsync() => Task.CompletedTask;
     public async Task DisposeAsync() => await CleanerService.CleanDatabaseAsync(ApiClient);
 }
