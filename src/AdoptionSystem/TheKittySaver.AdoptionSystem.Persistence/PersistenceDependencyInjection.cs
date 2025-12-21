@@ -31,7 +31,7 @@ public static class PersistenceDependencyInjection
         services.AddSingleton<IValidator<ConnectionStringSettings>, ConnectionStringSettingsValidator>();
         services.AddOptionsWithFluentValidation<ConnectionStringSettings>(ConnectionStringSettings.ConfigurationSection);
 
-        services.AddScoped<DomainEventsPublishingInterceptor>();
+        services.AddSingleton<DomainEventsPublishingInterceptor>();
 
         services.AddDbContextFactory<ApplicationWriteDbContext>((sp, options) =>
         {

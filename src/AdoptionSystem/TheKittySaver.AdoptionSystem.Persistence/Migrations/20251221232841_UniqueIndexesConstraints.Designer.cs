@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TheKittySaver.AdoptionSystem.Persistence.DbContexts.WriteDbContexts;
 
@@ -12,9 +13,11 @@ using TheKittySaver.AdoptionSystem.Persistence.DbContexts.WriteDbContexts;
 namespace TheKittySaver.AdoptionSystem.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationWriteDbContext))]
-    partial class ApplicationWriteDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251221232841_UniqueIndexesConstraints")]
+    partial class UniqueIndexesConstraints
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

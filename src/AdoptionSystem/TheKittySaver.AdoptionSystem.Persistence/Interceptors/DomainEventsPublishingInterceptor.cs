@@ -1,17 +1,18 @@
 using Mediator;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.Extensions.DependencyInjection;
 using TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
+using TheKittySaver.AdoptionSystem.Persistence.DbContexts.WriteDbContexts;
 
 namespace TheKittySaver.AdoptionSystem.Persistence.Interceptors;
 
 internal sealed class DomainEventsPublishingInterceptor : SaveChangesInterceptor
 {
-    private readonly IPublisher _publisher;
-
-    public DomainEventsPublishingInterceptor(IPublisher publisher)
+    private readonly IServiceScopeFactory _serviceScopeFactory;
+    public DomainEventsPublishingInterceptor(IServiceScopeFactory serviceScopeFactory)
     {
-        _publisher = publisher;
+        _serviceScopeFactory = serviceScopeFactory;
     }
 
     public override async ValueTask<int> SavedChangesAsync(
@@ -19,17 +20,12 @@ internal sealed class DomainEventsPublishingInterceptor : SaveChangesInterceptor
         int result,
         CancellationToken cancellationToken = default)
     {
-        if (eventData.Context is not null)
+        if (eventData.Context is null)
         {
-            await PublishDomainEventsAsync(eventData.Context, cancellationToken);
+            return result;
         }
 
-        return result;
-    }
-
-    private async Task PublishDomainEventsAsync(DbContext context, CancellationToken cancellationToken)
-    {
-        List<IAggregateRoot> aggregatesWithEvents = context.ChangeTracker
+        List<IAggregateRoot> aggregatesWithEvents = eventData.Context.ChangeTracker
             .Entries<IAggregateRoot>()
             .Where(entry => entry.Entity.GetDomainEvents().Count > 0)
             .Select(entry => entry.Entity)
@@ -43,10 +39,14 @@ internal sealed class DomainEventsPublishingInterceptor : SaveChangesInterceptor
         {
             aggregate.ClearDomainEvents();
         }
-
+        
+        await using AsyncServiceScope scope = _serviceScopeFactory.CreateAsyncScope();
+        IPublisher publisher = scope.ServiceProvider.GetRequiredService<IPublisher>();
         foreach (IDomainEvent domainEvent in domainEvents)
         {
-            await _publisher.Publish(domainEvent, cancellationToken);
+            await publisher.Publish(domainEvent, cancellationToken);
         }
+
+        return result;
     }
 }

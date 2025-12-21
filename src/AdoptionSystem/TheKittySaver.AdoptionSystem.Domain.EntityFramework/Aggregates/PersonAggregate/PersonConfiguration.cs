@@ -19,6 +19,7 @@ public sealed class PersonConfiguration : IEntityTypeConfiguration<Person>
             .ValueGeneratedNever();
 
         builder.Property(x => x.IdentityId);
+        builder.HasIndex(x => x.IdentityId).IsUnique();
         
         builder.ComplexProperty(x => x.Username, complexBuilder =>
         {
@@ -35,7 +36,7 @@ public sealed class PersonConfiguration : IEntityTypeConfiguration<Person>
                 .HasColumnName(nameof(Person.Email))
                 .HasMaxLength(Email.MaxLength);
         });
-        
+
         builder.ComplexProperty(x => x.PhoneNumber, complexBuilder =>
         {
             complexBuilder.IsRequired();
