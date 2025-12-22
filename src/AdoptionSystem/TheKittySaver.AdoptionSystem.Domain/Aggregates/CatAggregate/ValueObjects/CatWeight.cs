@@ -6,7 +6,7 @@ namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.ValueObjec
 
 public sealed class CatWeight : ValueObject
 {
-    public const decimal MinWeightKg = 0.5m;
+    public const decimal MinWeightKg = 0.1m;
     public const decimal MaxWeightKg = 20m;
     
     public decimal ValueInKilograms { get; }

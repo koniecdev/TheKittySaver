@@ -88,18 +88,38 @@ internal sealed class CreateCatGalleryItem : IEndpoint
             ISender sender,
             CancellationToken cancellationToken) =>
         {
-            Result validationResult = fileUploadValidator.ValidateGalleryFile(
+            Result metadataValidation = fileUploadValidator.ValidateGalleryFile(
                 file.Length,
                 file.ContentType,
                 file.FileName);
 
-            if (validationResult.IsFailure)
+            if (metadataValidation.IsFailure)
             {
-                return Results.Problem(validationResult.Error.ToProblemDetails());
+                return Results.Problem(metadataValidation.Error.ToProblemDetails());
             }
 
-            await using Stream fileStream = file.OpenReadStream();
-            Command command = new(new CatId(catId), fileStream, file.ContentType);
+            await using MemoryStream memoryStream = new();
+            await using (Stream uploadStream = file.OpenReadStream())
+            {
+                await uploadStream.CopyToAsync(memoryStream, cancellationToken);
+            }
+
+            memoryStream.Position = 0;
+
+            Result contentValidation = await fileUploadValidator.ValidateGalleryFileWithContentAsync(
+                memoryStream,
+                file.Length,
+                file.ContentType,
+                file.FileName,
+                cancellationToken);
+
+            if (contentValidation.IsFailure)
+            {
+                return Results.Problem(contentValidation.Error.ToProblemDetails());
+            }
+
+            memoryStream.Position = 0;
+            Command command = new(new CatId(catId), memoryStream, file.ContentType);
 
             Result<CatGalleryItemResponse> commandResult = await sender.Send(command, cancellationToken);
 

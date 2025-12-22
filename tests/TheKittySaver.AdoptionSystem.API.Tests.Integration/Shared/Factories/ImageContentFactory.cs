@@ -17,4 +17,91 @@ internal static class ImageContentFactory
             0x44, 0xAE, 0x42, 0x60, 0x82                    // IEND CRC
         ];
     }
+
+    public static byte[] CreatePngWithDimensions(int width, int height)
+    {
+        byte[] widthBytes =
+        [
+            (byte)((width >> 24) & 0xFF),
+            (byte)((width >> 16) & 0xFF),
+            (byte)((width >> 8) & 0xFF),
+            (byte)(width & 0xFF)
+        ];
+
+        byte[] heightBytes =
+        [
+            (byte)((height >> 24) & 0xFF),
+            (byte)((height >> 16) & 0xFF),
+            (byte)((height >> 8) & 0xFF),
+            (byte)(height & 0xFF)
+        ];
+
+        byte[] header =
+        [
+            0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, // PNG signature
+            0x00, 0x00, 0x00, 0x0D, 0x49, 0x48, 0x44, 0x52, // IHDR chunk length and type
+            widthBytes[0], widthBytes[1], widthBytes[2], widthBytes[3],
+            heightBytes[0], heightBytes[1], heightBytes[2], heightBytes[3],
+            0x08, 0x02, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00, // CRC placeholder (invalid but sufficient for dimension reading)
+            0x00, 0x00, 0x00, 0x0C, 0x49, 0x44, 0x41, 0x54,
+            0x08, 0xD7, 0x63, 0xF8, 0xFF, 0xFF, 0x3F,
+            0x00, 0x05, 0xFE, 0x02, 0xFE, 0xDC, 0xCC, 0x59,
+            0xE7, 0x00, 0x00, 0x00, 0x00, 0x49, 0x45, 0x4E,
+            0x44, 0xAE, 0x42, 0x60, 0x82
+        ];
+
+        return header;
+    }
+
+    public static byte[] CreateMinimalJpeg()
+    {
+        return
+        [
+            0xFF, 0xD8, 0xFF, 0xE0, 0x00, 0x10, 0x4A, 0x46, // SOI + APP0 JFIF marker
+            0x49, 0x46, 0x00, 0x01, 0x01, 0x00, 0x00, 0x01,
+            0x00, 0x01, 0x00, 0x00,
+            0xFF, 0xC0, 0x00, 0x0B, 0x08, // SOF0 marker - Start of Frame
+            0x00, 0x01, // Height = 1
+            0x00, 0x01, // Width = 1
+            0x01, 0x01, 0x11, 0x00, // Component info
+            0xFF, 0xD9 // EOI marker
+        ];
+    }
+
+    public static byte[] CreateMinimalGif()
+    {
+        return
+        [
+            0x47, 0x49, 0x46, 0x38, 0x39, 0x61, // GIF89a header
+            0x01, 0x00, // Width = 1 (little endian)
+            0x01, 0x00, // Height = 1 (little endian)
+            0x00, 0x00, 0x00, // Global color table flags
+            0x2C, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x01, 0x00, 0x00, // Image descriptor
+            0x02, 0x02, 0x44, 0x01, 0x00, // Image data
+            0x3B // Trailer
+        ];
+    }
+
+    public static byte[] CreateInvalidFileWithFakeExtension()
+    {
+        return "This is not an image file - just plain text content"u8.ToArray();
+    }
+
+    public static byte[] CreateEmptyFile()
+    {
+        return [];
+    }
+
+    public static byte[] CreateMaliciousPngWithPhpContent()
+    {
+        byte[] pngHeader = CreateMinimalPng();
+        byte[] phpContent = "<?php echo 'malicious'; ?>"u8.ToArray();
+
+        byte[] result = new byte[pngHeader.Length + phpContent.Length];
+        pngHeader.CopyTo(result, 0);
+        phpContent.CopyTo(result, pngHeader.Length);
+
+        return result;
+    }
 }

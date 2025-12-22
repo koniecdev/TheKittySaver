@@ -28,4 +28,25 @@ public sealed class FileUploadOptions
     [
         ".jpg", ".jpeg", ".png", ".gif", ".webp"
     ];
+
+    public ImageDimensionLimits GalleryImageDimensions { get; init; } = new();
+    public ImageDimensionLimits ThumbnailImageDimensions { get; init; } = new()
+    {
+        MinWidth = 100,
+        MinHeight = 100,
+        MaxWidth = 2000,
+        MaxHeight = 2000
+    };
+
+    public bool ValidateMagicBytes { get; init; } = true;
+    public bool ValidateFileName { get; init; } = true;
+    public bool ValidateImageDimensions { get; init; } = true;
+}
+
+public sealed class ImageDimensionLimits
+{
+    public int MinWidth { get; init; } = 1;
+    public int MinHeight { get; init; } = 1;
+    public int MaxWidth { get; init; } = 8192;
+    public int MaxHeight { get; init; } = 8192;
 }

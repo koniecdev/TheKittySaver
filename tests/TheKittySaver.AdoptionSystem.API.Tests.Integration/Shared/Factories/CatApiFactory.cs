@@ -4,6 +4,7 @@ using Bogus;
 using TheKittySaver.AdoptionSystem.API.Tests.Integration.Extensions;
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.CatAggregate.Requests;
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.CatAggregate.Responses;
+using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.ValueObjects;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate.Enums;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
@@ -16,10 +17,10 @@ internal static class CatApiFactory
         PersonId: personId,
         Name: faker.Name.FirstName(),
         Description: faker.Lorem.Sentence(),
-        Age: faker.Random.Int(1, 20),
+        Age: faker.Random.Int(CatAge.MinimumAllowedValue, CatAge.MaximumAllowedValue),
         Gender: faker.PickRandom<CatGenderType>(),
         Color: faker.PickRandom<ColorType>(),
-        WeightValueInKilograms: faker.Random.Decimal(2, 10),
+        WeightValueInKilograms: faker.Random.Decimal(CatWeight.MinWeightKg, 10),
         HealthStatus: faker.PickRandom<HealthStatusType>(),
         SpecialNeedsStatusHasSpecialNeeds: false,
         SpecialNeedsStatusDescription: null,
