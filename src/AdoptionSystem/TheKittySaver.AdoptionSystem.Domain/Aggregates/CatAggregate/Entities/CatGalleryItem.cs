@@ -24,7 +24,7 @@ public sealed class CatGalleryItem : Entity<CatGalleryItemId>
     {
         Ensure.NotEmpty(catId);
         ArgumentNullException.ThrowIfNull(order);
-        CatGalleryItemId id = CatGalleryItemId.New();
+        CatGalleryItemId id = CatGalleryItemId.Create();
         CatGalleryItem instance = new(catId, id, order);
         return Result.Success(instance);
     }

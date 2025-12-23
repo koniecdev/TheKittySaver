@@ -60,7 +60,7 @@ public sealed class CatVaccinationManagementTests
     {
         //Arrange
         Cat cat = CatFactory.CreateRandom(Faker);
-        VaccinationId nonExistentVaccinationId = VaccinationId.New();
+        VaccinationId nonExistentVaccinationId = VaccinationId.Create();
 
         //Act
         Result result = cat.RemoveVaccination(nonExistentVaccinationId);
@@ -106,7 +106,7 @@ public sealed class CatVaccinationManagementTests
     {
         //Arrange
         Cat cat = CatFactory.CreateRandom(Faker);
-        VaccinationId nonExistentVaccinationId = VaccinationId.New();
+        VaccinationId nonExistentVaccinationId = VaccinationId.Create();
 
         //Act
         Result result = cat.UpdateVaccinationType(nonExistentVaccinationId, VaccinationType.Rabies);
@@ -140,7 +140,7 @@ public sealed class CatVaccinationManagementTests
     {
         //Arrange
         Cat cat = CatFactory.CreateRandom(Faker);
-        VaccinationId nonExistentVaccinationId = VaccinationId.New();
+        VaccinationId nonExistentVaccinationId = VaccinationId.Create();
 
         //Act
         Result<VaccinationDate> dateResult = VaccinationDate.Create(TheVaccinationDate, TestCurrentDate);
@@ -211,7 +211,7 @@ public sealed class CatVaccinationManagementTests
     {
         //Arrange
         Cat cat = CatFactory.CreateRandom(Faker);
-        VaccinationId nonExistentVaccinationId = VaccinationId.New();
+        VaccinationId nonExistentVaccinationId = VaccinationId.Create();
 
         //Act
         Result result = cat.UpdateVaccinationVeterinarianNote(nonExistentVaccinationId, null);

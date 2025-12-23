@@ -22,7 +22,7 @@ public sealed class CatClaimTests
     {
         //Arrange
         Cat cat = CatFactory.CreateWithThumbnail(Faker);
-        AdoptionAnnouncementId announcementId = AdoptionAnnouncementId.New();
+        AdoptionAnnouncementId announcementId = AdoptionAnnouncementId.Create();
         cat.AssignToAdoptionAnnouncement(announcementId, ValidOperationDate);
         ClaimedAt claimedAt = CatFactory.CreateDefaultClaimedAt();
 
@@ -55,7 +55,7 @@ public sealed class CatClaimTests
     {
         //Arrange
         Cat cat = CatFactory.CreateWithThumbnail(Faker);
-        AdoptionAnnouncementId announcementId = AdoptionAnnouncementId.New();
+        AdoptionAnnouncementId announcementId = AdoptionAnnouncementId.Create();
         cat.AssignToAdoptionAnnouncement(announcementId, ValidOperationDate);
         ClaimedAt claimedAt = CatFactory.CreateDefaultClaimedAt();
         cat.Claim(claimedAt);
@@ -75,7 +75,7 @@ public sealed class CatClaimTests
     {
         //Arrange
         Cat cat = CatFactory.CreateWithThumbnail(Faker);
-        AdoptionAnnouncementId announcementId = AdoptionAnnouncementId.New();
+        AdoptionAnnouncementId announcementId = AdoptionAnnouncementId.Create();
         cat.AssignToAdoptionAnnouncement(announcementId, ValidOperationDate);
 
         //Act
@@ -91,7 +91,7 @@ public sealed class CatClaimTests
     {
         //Arrange
         Cat cat = CatFactory.CreateWithThumbnail(Faker);
-        AdoptionAnnouncementId announcementId = AdoptionAnnouncementId.New();
+        AdoptionAnnouncementId announcementId = AdoptionAnnouncementId.Create();
         cat.AssignToAdoptionAnnouncement(announcementId, ValidOperationDate);
         ClaimedAt claimedAt = CatFactory.CreateDefaultClaimedAt();
 
@@ -100,7 +100,7 @@ public sealed class CatClaimTests
 
         //Assert
         result.IsSuccess.ShouldBeTrue();
-        IReadOnlyCollection<IDomainEvent> events = cat.GetDomainEvents();
+        IReadOnlyCollection<IDomainEvent> events = cat.DomainEvents;
         events.ShouldNotBeEmpty();
         events.ShouldContain(e => e is CatClaimedDomainEvent);
 
@@ -121,7 +121,7 @@ public sealed class CatClaimTests
 
         //Assert
         result.IsFailure.ShouldBeTrue();
-        IReadOnlyCollection<IDomainEvent> events = cat.GetDomainEvents();
+        IReadOnlyCollection<IDomainEvent> events = cat.DomainEvents;
         events.ShouldNotContain(e => e is CatClaimedDomainEvent);
     }
 
@@ -130,7 +130,7 @@ public sealed class CatClaimTests
     {
         //Arrange
         Cat cat = CatFactory.CreateWithThumbnail(Faker);
-        AdoptionAnnouncementId announcementId = AdoptionAnnouncementId.New();
+        AdoptionAnnouncementId announcementId = AdoptionAnnouncementId.Create();
         cat.AssignToAdoptionAnnouncement(announcementId, ValidOperationDate);
         cat.UnassignFromAdoptionAnnouncement();
 

@@ -4,5 +4,6 @@ public interface IStronglyTypedId<out TSelf> where TSelf : IStronglyTypedId<TSel
 {
     public Guid Value { get; }
 
+    public static abstract TSelf Create();
     public static abstract TSelf Create(Guid id);
 }

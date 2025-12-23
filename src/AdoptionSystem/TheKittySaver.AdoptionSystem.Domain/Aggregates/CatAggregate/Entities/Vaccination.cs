@@ -53,7 +53,7 @@ public sealed class Vaccination : Entity<VaccinationId>
             return Result.Failure<Vaccination>(dateResult.Error);
         }
 
-        VaccinationId id = VaccinationId.New();
+        VaccinationId id = VaccinationId.Create();
         Vaccination instance = new(catId, id, type, dateResult.Value, veterinarianNote);
         return Result.Success(instance);
     }

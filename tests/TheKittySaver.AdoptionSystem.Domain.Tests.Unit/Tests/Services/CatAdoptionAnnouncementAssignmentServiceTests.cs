@@ -25,7 +25,7 @@ public sealed class CatAdoptionAnnouncementAssignmentServiceTests
     public void AssignCatToAdoptionAnnouncement_ShouldSucceed_WhenAllConditionsAreMet()
     {
         //Arrange
-        PersonId personId = PersonId.New();
+        PersonId personId = PersonId.Create();
         Cat cat = CreateDraftCatWithThumbnail(personId);
         AdoptionAnnouncement announcement = CreateActiveAnnouncement(personId);
         IReadOnlyCollection<Cat> emptyCatList = [];
@@ -48,7 +48,7 @@ public sealed class CatAdoptionAnnouncementAssignmentServiceTests
     public void AssignCatToAdoptionAnnouncement_ShouldSucceed_WhenCatHasCompatibleDiseaseStatus()
     {
         //Arrange
-        PersonId personId = PersonId.New();
+        PersonId personId = PersonId.Create();
         InfectiousDiseaseStatus fivPositive = CreateDiseaseStatus(FivStatus.Positive, FelvStatus.Negative);
 
         Cat existingCat = CreateDraftCatWithThumbnail(personId, fivPositive);
@@ -74,7 +74,7 @@ public sealed class CatAdoptionAnnouncementAssignmentServiceTests
     public void AssignCatToAdoptionAnnouncement_ShouldSucceed_WhenNotTestedCatMixesWithPositiveCat()
     {
         //Arrange - NotTested should be compatible with any status
-        PersonId personId = PersonId.New();
+        PersonId personId = PersonId.Create();
         InfectiousDiseaseStatus fivPositive = CreateDiseaseStatus(FivStatus.Positive, FelvStatus.Negative);
         InfectiousDiseaseStatus notTested = CreateDiseaseStatus(FivStatus.NotTested, FelvStatus.NotTested);
 
@@ -100,8 +100,8 @@ public sealed class CatAdoptionAnnouncementAssignmentServiceTests
     public void AssignCatToAdoptionAnnouncement_ShouldFail_WhenPersonIdMismatch()
     {
         //Arrange
-        PersonId catPersonId = PersonId.New();
-        PersonId announcementPersonId = PersonId.New();
+        PersonId catPersonId = PersonId.Create();
+        PersonId announcementPersonId = PersonId.Create();
 
         Cat cat = CreateDraftCatWithThumbnail(catPersonId);
         AdoptionAnnouncement announcement = CreateActiveAnnouncement(announcementPersonId);
@@ -126,7 +126,7 @@ public sealed class CatAdoptionAnnouncementAssignmentServiceTests
     public void AssignCatToAdoptionAnnouncement_ShouldFail_WhenCatIsAlreadyPublished()
     {
         //Arrange
-        PersonId personId = PersonId.New();
+        PersonId personId = PersonId.Create();
         Cat cat = CreateDraftCatWithThumbnail(personId);
         cat.AssignToAdoptionAnnouncement(AdoptionAnnouncementId.New(), OperationDate.AddDays(-1))
             .EnsureSuccess(); // Cat is now Published
@@ -149,7 +149,7 @@ public sealed class CatAdoptionAnnouncementAssignmentServiceTests
     public void AssignCatToAdoptionAnnouncement_ShouldFail_WhenCatIsClaimed()
     {
         //Arrange
-        PersonId personId = PersonId.New();
+        PersonId personId = PersonId.Create();
         Cat cat = CreateDraftCatWithThumbnail(personId);
         cat.AssignToAdoptionAnnouncement(AdoptionAnnouncementId.New(), OperationDate.AddDays(-2))
             .EnsureSuccess();
@@ -173,7 +173,7 @@ public sealed class CatAdoptionAnnouncementAssignmentServiceTests
     public void AssignCatToAdoptionAnnouncement_ShouldFail_WhenAnnouncementIsClaimed()
     {
         //Arrange
-        PersonId personId = PersonId.New();
+        PersonId personId = PersonId.Create();
         Cat cat = CreateDraftCatWithThumbnail(personId);
         AdoptionAnnouncement announcement = CreateActiveAnnouncement(personId);
         announcement.Claim(AdoptionAnnouncementFactory.CreateDefaultClaimedAt()).EnsureSuccess();
@@ -194,7 +194,7 @@ public sealed class CatAdoptionAnnouncementAssignmentServiceTests
     public void AssignCatToAdoptionAnnouncement_ShouldFail_WhenCatIsAlreadyInTheList()
     {
         //Arrange
-        PersonId personId = PersonId.New();
+        PersonId personId = PersonId.Create();
         Cat cat = CreateDraftCatWithThumbnail(personId);
 
         // Create another cat that's already published to simulate cats in announcement
@@ -223,7 +223,7 @@ public sealed class CatAdoptionAnnouncementAssignmentServiceTests
     public void AssignCatToAdoptionAnnouncement_ShouldFail_WhenFivPositiveMixesWithFivNegative()
     {
         //Arrange - FIV+ cat cannot mix with FIV- cat
-        PersonId personId = PersonId.New();
+        PersonId personId = PersonId.Create();
         InfectiousDiseaseStatus fivPositive = CreateDiseaseStatus(FivStatus.Positive, FelvStatus.Negative);
         InfectiousDiseaseStatus fivNegative = CreateDiseaseStatus(FivStatus.Negative, FelvStatus.Negative);
 
@@ -251,7 +251,7 @@ public sealed class CatAdoptionAnnouncementAssignmentServiceTests
     public void AssignCatToAdoptionAnnouncement_ShouldFail_WhenFelvPositiveMixesWithFelvNegative()
     {
         //Arrange - FeLV+ cat cannot mix with FeLV- cat
-        PersonId personId = PersonId.New();
+        PersonId personId = PersonId.Create();
         InfectiousDiseaseStatus felvPositive = CreateDiseaseStatus(FivStatus.Negative, FelvStatus.Positive);
         InfectiousDiseaseStatus felvNegative = CreateDiseaseStatus(FivStatus.Negative, FelvStatus.Negative);
 
@@ -279,7 +279,7 @@ public sealed class CatAdoptionAnnouncementAssignmentServiceTests
     public void AssignCatToAdoptionAnnouncement_ShouldFail_WhenBothDiseasesAreIncompatible()
     {
         //Arrange - FIV+/FeLV+ cat cannot mix with FIV-/FeLV- cat
-        PersonId personId = PersonId.New();
+        PersonId personId = PersonId.Create();
         InfectiousDiseaseStatus bothPositive = CreateDiseaseStatus(FivStatus.Positive, FelvStatus.Positive);
         InfectiousDiseaseStatus bothNegative = CreateDiseaseStatus(FivStatus.Negative, FelvStatus.Negative);
 
@@ -305,7 +305,7 @@ public sealed class CatAdoptionAnnouncementAssignmentServiceTests
     public void AssignCatToAdoptionAnnouncement_ShouldFail_WhenOneOfTwoDiseasesIsIncompatible()
     {
         //Arrange - FIV compatible but FeLV incompatible
-        PersonId personId = PersonId.New();
+        PersonId personId = PersonId.Create();
         InfectiousDiseaseStatus status1 = CreateDiseaseStatus(FivStatus.Positive, FelvStatus.Positive);
         InfectiousDiseaseStatus status2 = CreateDiseaseStatus(FivStatus.Positive, FelvStatus.Negative);
 
@@ -331,7 +331,7 @@ public sealed class CatAdoptionAnnouncementAssignmentServiceTests
     public void AssignCatToAdoptionAnnouncement_ShouldSucceed_WhenAllCatsHaveSameDiseaseStatus()
     {
         //Arrange
-        PersonId personId = PersonId.New();
+        PersonId personId = PersonId.Create();
         InfectiousDiseaseStatus sameStatus = CreateDiseaseStatus(FivStatus.Positive, FelvStatus.Negative);
 
         Cat existingCat1 = CreateDraftCatWithThumbnail(personId, sameStatus);
@@ -360,7 +360,7 @@ public sealed class CatAdoptionAnnouncementAssignmentServiceTests
     public void AssignCatToAdoptionAnnouncement_ShouldFail_WhenNewCatIncompatibleWithMultipleCats()
     {
         //Arrange - Testing with multiple existing cats
-        PersonId personId = PersonId.New();
+        PersonId personId = PersonId.Create();
         InfectiousDiseaseStatus fivPositive = CreateDiseaseStatus(FivStatus.Positive, FelvStatus.Negative);
         InfectiousDiseaseStatus fivNegative = CreateDiseaseStatus(FivStatus.Negative, FelvStatus.Negative);
 
@@ -392,7 +392,7 @@ public sealed class CatAdoptionAnnouncementAssignmentServiceTests
     public void AssignCatToAdoptionAnnouncement_ShouldSucceed_WhenNotTestedMixesWithNegativeCats()
     {
         //Arrange - NotTested is compatible with Negative
-        PersonId personId = PersonId.New();
+        PersonId personId = PersonId.Create();
         InfectiousDiseaseStatus negative = CreateDiseaseStatus(FivStatus.Negative, FelvStatus.Negative);
         InfectiousDiseaseStatus notTested = CreateDiseaseStatus(FivStatus.NotTested, FelvStatus.NotTested);
 
@@ -418,7 +418,7 @@ public sealed class CatAdoptionAnnouncementAssignmentServiceTests
     public void AssignCatToAdoptionAnnouncement_ShouldSucceed_WhenAllCatsAreNotTested()
     {
         //Arrange - All NotTested cats are compatible
-        PersonId personId = PersonId.New();
+        PersonId personId = PersonId.Create();
         InfectiousDiseaseStatus notTested = CreateDiseaseStatus(FivStatus.NotTested, FelvStatus.NotTested);
 
         Cat existingCat1 = CreateDraftCatWithThumbnail(personId, notTested);

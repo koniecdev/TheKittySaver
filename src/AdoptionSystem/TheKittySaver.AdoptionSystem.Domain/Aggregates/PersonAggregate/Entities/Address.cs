@@ -77,7 +77,7 @@ public sealed class Address : Entity<AddressId>
             return Result.Failure<Address>(error!);
         }
 
-        AddressId id = AddressId.New();
+        AddressId id = AddressId.Create();
         Address instance = new(
             id,
             personId,

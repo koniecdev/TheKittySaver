@@ -90,11 +90,13 @@ internal static partial class FileNameValidator
         for (int i = 1; i < parts.Length - 1; i++)
         {
             string potentialExtension = "." + parts[i];
-            if (DangerousExtensions.Contains(potentialExtension))
+            if (!DangerousExtensions.Contains(potentialExtension))
             {
-                hiddenExtension = potentialExtension;
-                return true;
+                continue;
             }
+
+            hiddenExtension = potentialExtension;
+            return true;
         }
 
         return false;

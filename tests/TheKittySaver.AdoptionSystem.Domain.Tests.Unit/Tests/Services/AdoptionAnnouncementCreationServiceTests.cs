@@ -140,7 +140,7 @@ public sealed class AdoptionAnnouncementCreationServiceTests
     public void Create_ShouldFail_WhenCatIsNotInDraftStatus()
     {
         //Arrange - Cat already published
-        PersonId personId = PersonId.New();
+        PersonId personId = PersonId.Create();
         Cat cat = CatFactory.CreateWithThumbnail(Faker, personId: personId);
         Result assignToAdoptionAnnouncementResult = cat.AssignToAdoptionAnnouncement(
             AdoptionAnnouncementFactory.CreateRandom(Faker, personId: personId).Id,

@@ -164,7 +164,7 @@ public sealed class CatGalleryManagementTests
     {
         //Arrange
         Cat cat = CatFactory.CreateRandom(Faker);
-        CatGalleryItemId nonExistentItemId = CatGalleryItemId.New();
+        CatGalleryItemId nonExistentItemId = CatGalleryItemId.Create();
 
         //Act
         Result result = cat.RemoveGalleryItem(nonExistentItemId);
@@ -296,7 +296,7 @@ public sealed class CatGalleryManagementTests
         //Arrange
         Cat cat = CatFactory.CreateRandom(Faker);
         cat.AddGalleryItem();
-        CatGalleryItemId nonExistentItemId = CatGalleryItemId.New();
+        CatGalleryItemId nonExistentItemId = CatGalleryItemId.Create();
 
         Result<CatGalleryItemDisplayOrder> order0Result = CatGalleryItemDisplayOrder.Create(0, Cat.MaximumGalleryItemsCount);
         order0Result.EnsureSuccess();

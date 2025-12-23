@@ -179,7 +179,7 @@ public sealed class PersonAddressManagementTests
     {
         //Arrange
         Person person = PersonFactory.CreateRandom(Faker);
-        AddressId nonExistentAddressId = AddressId.New();
+        AddressId nonExistentAddressId = AddressId.Create();
         AddressName newName = AddressFactory.CreateRandomName(Faker);
 
         //Act
@@ -310,7 +310,7 @@ public sealed class PersonAddressManagementTests
         //Arrange
         Person person = PersonFactory.CreateRandom(Faker);
         IAddressConsistencySpecification specification = new PolandAddressConsistencySpecification();
-        AddressId nonExistentAddressId = AddressId.New();
+        AddressId nonExistentAddressId = AddressId.Create();
         AddressPostalCode postalCode = AddressFactory.CreateFixedPostalCode();
         AddressRegion region = AddressFactory.CreateFixedRegion();
         AddressCity city = AddressFactory.CreateRandomCity(Faker);
@@ -364,7 +364,7 @@ public sealed class PersonAddressManagementTests
     {
         //Arrange
         Person person = PersonFactory.CreateRandom(Faker);
-        AddressId nonExistentAddressId = AddressId.New();
+        AddressId nonExistentAddressId = AddressId.Create();
 
         //Act
         Result result = person.DeleteAddress(nonExistentAddressId);

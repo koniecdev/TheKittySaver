@@ -1,9 +1,7 @@
 using Mediator;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 using TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
-using TheKittySaver.AdoptionSystem.Persistence.DbContexts.WriteDbContexts;
 
 namespace TheKittySaver.AdoptionSystem.Persistence.Interceptors;
 
@@ -27,12 +25,12 @@ internal sealed class DomainEventsPublishingInterceptor : SaveChangesInterceptor
 
         List<IAggregateRoot> aggregatesWithEvents = eventData.Context.ChangeTracker
             .Entries<IAggregateRoot>()
-            .Where(entry => entry.Entity.GetDomainEvents().Count > 0)
+            .Where(entry => entry.Entity.DomainEvents.Count > 0)
             .Select(entry => entry.Entity)
             .ToList();
 
         List<IDomainEvent> domainEvents = aggregatesWithEvents
-            .SelectMany(aggregate => aggregate.GetDomainEvents())
+            .SelectMany(aggregate => aggregate.DomainEvents)
             .ToList();
 
         foreach (IAggregateRoot aggregate in aggregatesWithEvents)

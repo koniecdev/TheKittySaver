@@ -24,7 +24,7 @@ public sealed class CatAdoptionAnnouncementReassignmentServiceTests
     public void ReassignCatToAnotherAdoptionAnnouncement_ShouldSucceed_WhenAllConditionsAreMet()
     {
         //Arrange
-        PersonId personId = PersonId.New();
+        PersonId personId = PersonId.Create();
         AdoptionAnnouncement sourceAnnouncement = CreateActiveAnnouncement(personId);
         AdoptionAnnouncement destinationAnnouncement = CreateActiveAnnouncement(personId);
 
@@ -49,7 +49,7 @@ public sealed class CatAdoptionAnnouncementReassignmentServiceTests
     public void ReassignCatToAnotherAdoptionAnnouncement_ShouldSucceed_WhenDiseaseStatusesAreCompatible()
     {
         //Arrange
-        PersonId personId = PersonId.New();
+        PersonId personId = PersonId.Create();
         InfectiousDiseaseStatus fivPositive = CreateDiseaseStatus(FivStatus.Positive, FelvStatus.Negative);
 
         AdoptionAnnouncement sourceAnnouncement = CreateActiveAnnouncement(personId);
@@ -75,7 +75,7 @@ public sealed class CatAdoptionAnnouncementReassignmentServiceTests
     public void ReassignCatToAnotherAdoptionAnnouncement_ShouldSucceed_WhenDestinationIsEmpty()
     {
         //Arrange
-        PersonId personId = PersonId.New();
+        PersonId personId = PersonId.Create();
         AdoptionAnnouncement sourceAnnouncement = CreateActiveAnnouncement(personId);
         AdoptionAnnouncement destinationAnnouncement = CreateActiveAnnouncement(personId);
 
@@ -97,7 +97,7 @@ public sealed class CatAdoptionAnnouncementReassignmentServiceTests
     public void ReassignCatToAnotherAdoptionAnnouncement_ShouldFail_WhenSourceAnnouncementIsClaimed()
     {
         //Arrange
-        PersonId personId = PersonId.New();
+        PersonId personId = PersonId.Create();
         AdoptionAnnouncement sourceAnnouncement = CreateActiveAnnouncement(personId);
         sourceAnnouncement.Claim(AdoptionAnnouncementFactory.CreateDefaultClaimedAt()).EnsureSuccess();
 
@@ -122,7 +122,7 @@ public sealed class CatAdoptionAnnouncementReassignmentServiceTests
     public void ReassignCatToAnotherAdoptionAnnouncement_ShouldFail_WhenDestinationAnnouncementIsClaimed()
     {
         //Arrange
-        PersonId personId = PersonId.New();
+        PersonId personId = PersonId.Create();
         AdoptionAnnouncement sourceAnnouncement = CreateActiveAnnouncement(personId);
         AdoptionAnnouncement destinationAnnouncement = CreateActiveAnnouncement(personId);
         destinationAnnouncement.Claim(AdoptionAnnouncementFactory.CreateDefaultClaimedAt()).EnsureSuccess();
@@ -147,7 +147,7 @@ public sealed class CatAdoptionAnnouncementReassignmentServiceTests
     public void ReassignCatToAnotherAdoptionAnnouncement_ShouldFail_WhenBothAnnouncementsAreClaimed()
     {
         //Arrange
-        PersonId personId = PersonId.New();
+        PersonId personId = PersonId.Create();
         AdoptionAnnouncement sourceAnnouncement = CreateActiveAnnouncement(personId);
         sourceAnnouncement.Claim(AdoptionAnnouncementFactory.CreateDefaultClaimedAt()).EnsureSuccess();
 
@@ -172,7 +172,7 @@ public sealed class CatAdoptionAnnouncementReassignmentServiceTests
     public void ReassignCatToAnotherAdoptionAnnouncement_ShouldFail_WhenCatAlreadyInDestination()
     {
         //Arrange
-        PersonId personId = PersonId.New();
+        PersonId personId = PersonId.Create();
         AdoptionAnnouncement sourceAnnouncement = CreateActiveAnnouncement(personId);
         AdoptionAnnouncement destinationAnnouncement = CreateActiveAnnouncement(personId);
 
@@ -198,7 +198,7 @@ public sealed class CatAdoptionAnnouncementReassignmentServiceTests
     public void ReassignCatToAnotherAdoptionAnnouncement_ShouldFail_WhenFivPositiveMixesWithFivNegative()
     {
         //Arrange
-        PersonId personId = PersonId.New();
+        PersonId personId = PersonId.Create();
         InfectiousDiseaseStatus fivPositive = CreateDiseaseStatus(FivStatus.Positive, FelvStatus.Negative);
         InfectiousDiseaseStatus fivNegative = CreateDiseaseStatus(FivStatus.Negative, FelvStatus.Negative);
 
@@ -226,7 +226,7 @@ public sealed class CatAdoptionAnnouncementReassignmentServiceTests
     public void ReassignCatToAnotherAdoptionAnnouncement_ShouldFail_WhenFelvPositiveMixesWithFelvNegative()
     {
         //Arrange
-        PersonId personId = PersonId.New();
+        PersonId personId = PersonId.Create();
         InfectiousDiseaseStatus felvPositive = CreateDiseaseStatus(FivStatus.Negative, FelvStatus.Positive);
         InfectiousDiseaseStatus felvNegative = CreateDiseaseStatus(FivStatus.Negative, FelvStatus.Negative);
 
@@ -254,7 +254,7 @@ public sealed class CatAdoptionAnnouncementReassignmentServiceTests
     public void ReassignCatToAnotherAdoptionAnnouncement_ShouldSucceed_WhenNotTestedMixesWithPositive()
     {
         //Arrange - NotTested should be compatible with any status
-        PersonId personId = PersonId.New();
+        PersonId personId = PersonId.Create();
         InfectiousDiseaseStatus notTested = CreateDiseaseStatus(FivStatus.NotTested, FelvStatus.NotTested);
         InfectiousDiseaseStatus fivPositive = CreateDiseaseStatus(FivStatus.Positive, FelvStatus.Negative);
 
@@ -280,7 +280,7 @@ public sealed class CatAdoptionAnnouncementReassignmentServiceTests
     public void ReassignCatToAnotherAdoptionAnnouncement_ShouldFail_WhenIncompatibleWithMultipleCatsInDestination()
     {
         //Arrange
-        PersonId personId = PersonId.New();
+        PersonId personId = PersonId.Create();
         InfectiousDiseaseStatus fivPositive = CreateDiseaseStatus(FivStatus.Positive, FelvStatus.Negative);
         InfectiousDiseaseStatus fivNegative = CreateDiseaseStatus(FivStatus.Negative, FelvStatus.Negative);
 
@@ -308,7 +308,7 @@ public sealed class CatAdoptionAnnouncementReassignmentServiceTests
     public void ReassignCatToAnotherAdoptionAnnouncement_ShouldSucceed_WhenCompatibleWithMultipleCatsInDestination()
     {
         //Arrange
-        PersonId personId = PersonId.New();
+        PersonId personId = PersonId.Create();
         InfectiousDiseaseStatus sameStatus = CreateDiseaseStatus(FivStatus.Positive, FelvStatus.Negative);
 
         AdoptionAnnouncement sourceAnnouncement = CreateActiveAnnouncement(personId);

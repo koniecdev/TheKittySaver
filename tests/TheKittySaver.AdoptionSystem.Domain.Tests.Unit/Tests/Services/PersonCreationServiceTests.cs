@@ -32,7 +32,7 @@ public sealed class PersonCreationServiceTests
         Username username = CreateRandomUsername();
         Email email = CreateRandomEmail();
         PhoneNumber phoneNumber = CreateRandomPhoneNumber();
-        IdentityId identityId = IdentityId.New();
+        IdentityId identityId = IdentityId.Create();
 
         _uniquenessChecker.IsEmailTakenAsync(email, Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(false));
@@ -62,7 +62,7 @@ public sealed class PersonCreationServiceTests
         Username username = CreateRandomUsername();
         Email email = CreateRandomEmail();
         PhoneNumber phoneNumber = CreateRandomPhoneNumber();
-        IdentityId identityId = IdentityId.New();
+        IdentityId identityId = IdentityId.Create();
 
         _uniquenessChecker.IsEmailTakenAsync(email, Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(false));
@@ -84,7 +84,7 @@ public sealed class PersonCreationServiceTests
         Username username = CreateRandomUsername();
         Email email = CreateRandomEmail();
         PhoneNumber phoneNumber = CreateRandomPhoneNumber();
-        IdentityId identityId = IdentityId.New();
+        IdentityId identityId = IdentityId.Create();
 
         _uniquenessChecker.IsEmailTakenAsync(email, Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(true)); // Email is taken
@@ -108,7 +108,7 @@ public sealed class PersonCreationServiceTests
         Username username = CreateRandomUsername();
         Email email = CreateRandomEmail();
         PhoneNumber phoneNumber = CreateRandomPhoneNumber();
-        IdentityId identityId = IdentityId.New();
+        IdentityId identityId = IdentityId.Create();
 
         _uniquenessChecker.IsEmailTakenAsync(email, Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(true));
@@ -128,7 +128,7 @@ public sealed class PersonCreationServiceTests
         Username username = CreateRandomUsername();
         Email email = CreateRandomEmail();
         PhoneNumber phoneNumber = CreateRandomPhoneNumber();
-        IdentityId identityId = IdentityId.New();
+        IdentityId identityId = IdentityId.Create();
 
         _uniquenessChecker.IsEmailTakenAsync(email, Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(false)); // Email is unique
@@ -154,7 +154,7 @@ public sealed class PersonCreationServiceTests
         Username username = CreateRandomUsername();
         Email email = CreateRandomEmail();
         PhoneNumber phoneNumber = CreateRandomPhoneNumber();
-        IdentityId identityId = IdentityId.New();
+        IdentityId identityId = IdentityId.Create();
 
         _uniquenessChecker.IsEmailTakenAsync(email, Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(true));
@@ -180,7 +180,7 @@ public sealed class PersonCreationServiceTests
         Username username = CreateRandomUsername();
         Email email = CreateRandomEmail();
         PhoneNumber phoneNumber = CreateRandomPhoneNumber();
-        IdentityId identityId = IdentityId.New();
+        IdentityId identityId = IdentityId.Create();
         CancellationToken cancellationToken = CancellationToken.None;
 
         _uniquenessChecker.IsEmailTakenAsync(email, cancellationToken)
@@ -203,7 +203,7 @@ public sealed class PersonCreationServiceTests
         Username username = CreateRandomUsername();
         Email email = CreateRandomEmail();
         PhoneNumber phoneNumber = CreateRandomPhoneNumber();
-        IdentityId identityId = IdentityId.New();
+        IdentityId identityId = IdentityId.Create();
 
         _uniquenessChecker.IsEmailTakenAsync(email, Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(false));

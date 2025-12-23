@@ -3,5 +3,6 @@
 [StronglyTypedId(jsonConverter: StronglyTypedIdJsonConverter.SystemTextJson)]
 public partial struct CatId : IStronglyTypedId<CatId>
 {
+    public static CatId Create() => new(Guid.CreateVersion7());
     public static CatId Create(Guid id) => new(id);
 }

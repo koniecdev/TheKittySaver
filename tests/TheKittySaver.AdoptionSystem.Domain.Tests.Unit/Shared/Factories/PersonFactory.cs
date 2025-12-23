@@ -26,7 +26,7 @@ internal static class PersonFactory
         
         PhoneNumber thePhoneNumber = PhoneNumber.CreateUnsafe(faker.Person.Phone);
         
-        IdentityId theIdentityId = IdentityId.New();
+        IdentityId theIdentityId = IdentityId.Create();
         
         Result<Person> personCreationResult = Person.Create(
             username: replaceUsernameWithNull ? null! : usernameCreationResult.Value,

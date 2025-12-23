@@ -17,6 +17,8 @@ public sealed class PersonConfiguration : IEntityTypeConfiguration<Person>
 
         builder.Property(x => x.Id)
             .ValueGeneratedNever();
+        
+        EntityConfiguration.ConfigureCreatedAt(builder);
 
         builder.Property(x => x.IdentityId);
         builder.HasIndex(x => x.IdentityId).IsUnique();

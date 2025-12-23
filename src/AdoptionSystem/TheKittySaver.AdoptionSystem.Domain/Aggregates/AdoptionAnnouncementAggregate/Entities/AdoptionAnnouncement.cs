@@ -120,7 +120,7 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
         ArgumentNullException.ThrowIfNull(email);
         ArgumentNullException.ThrowIfNull(phoneNumber);
         
-        AdoptionAnnouncementId id = AdoptionAnnouncementId.New();
+        AdoptionAnnouncementId id = AdoptionAnnouncementId.Create();
         AdoptionAnnouncement instance = new(
             id,
             personId,

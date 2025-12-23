@@ -71,7 +71,7 @@ public sealed class PersonUpdateServiceTests
     public async Task UpdateEmailAsync_ShouldFail_WhenPersonNotFound()
     {
         //Arrange
-        PersonId nonExistentPersonId = PersonId.New();
+        PersonId nonExistentPersonId = PersonId.Create();
         Email newEmail = CreateRandomEmail();
 
         _personRepository.GetByIdAsync(nonExistentPersonId, Arg.Any<CancellationToken>())
@@ -165,7 +165,7 @@ public sealed class PersonUpdateServiceTests
     public async Task UpdatePhoneNumberAsync_ShouldFail_WhenPersonNotFound()
     {
         //Arrange
-        PersonId nonExistentPersonId = PersonId.New();
+        PersonId nonExistentPersonId = PersonId.Create();
         PhoneNumber newPhoneNumber = CreateRandomPhoneNumber();
 
         _personRepository.GetByIdAsync(nonExistentPersonId, Arg.Any<CancellationToken>())

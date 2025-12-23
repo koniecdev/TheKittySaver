@@ -22,11 +22,11 @@ public sealed class CatWeightTests
     public void Create_ShouldReturnFailure_WhenValueBelowMinimum()
     {
         //Arrange & Act
-        Result<CatWeight> result = CatWeight.Create(0.3m);
+        Result<CatWeight> result = CatWeight.Create(0.05m);
 
         //Assert
         result.IsFailure.ShouldBeTrue();
-        result.Error.ShouldBe(DomainErrors.CatEntity.WeightProperty.BelowMinimum(0.3m, CatWeight.MinWeightKg));
+        result.Error.ShouldBe(DomainErrors.CatEntity.WeightProperty.BelowMinimum(0.05m, CatWeight.MinWeightKg));
     }
 
     [Fact]

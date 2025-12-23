@@ -22,7 +22,7 @@ public sealed class CatAssignmentTests
     {
         //Arrange
         Cat cat = CatFactory.CreateWithThumbnail(Faker);
-        AdoptionAnnouncementId announcementId = AdoptionAnnouncementId.New();
+        AdoptionAnnouncementId announcementId = AdoptionAnnouncementId.Create();
 
         //Act
         Result result = cat.AssignToAdoptionAnnouncement(announcementId, ValidOperationDate);
@@ -39,7 +39,7 @@ public sealed class CatAssignmentTests
     {
         //Arrange
         Cat cat = CatFactory.CreateRandom(Faker);
-        AdoptionAnnouncementId announcementId = AdoptionAnnouncementId.New();
+        AdoptionAnnouncementId announcementId = AdoptionAnnouncementId.Create();
 
         //Act
         Result result = cat.AssignToAdoptionAnnouncement(announcementId, ValidOperationDate);
@@ -54,10 +54,10 @@ public sealed class CatAssignmentTests
     {
         //Arrange
         Cat cat = CatFactory.CreateWithThumbnail(Faker);
-        AdoptionAnnouncementId firstAnnouncementId = AdoptionAnnouncementId.New();
+        AdoptionAnnouncementId firstAnnouncementId = AdoptionAnnouncementId.Create();
         cat.AssignToAdoptionAnnouncement(firstAnnouncementId, ValidOperationDate);
 
-        AdoptionAnnouncementId secondAnnouncementId = AdoptionAnnouncementId.New();
+        AdoptionAnnouncementId secondAnnouncementId = AdoptionAnnouncementId.Create();
 
         //Act
         Result result = cat.AssignToAdoptionAnnouncement(secondAnnouncementId, ValidOperationDate);
@@ -86,7 +86,7 @@ public sealed class CatAssignmentTests
     {
         //Arrange
         Cat cat = CatFactory.CreateWithThumbnail(Faker);
-        AdoptionAnnouncementId announcementId = AdoptionAnnouncementId.New();
+        AdoptionAnnouncementId announcementId = AdoptionAnnouncementId.Create();
         DateTimeOffset invalidDate = new(2024, 12, 31, 23, 59, 59, TimeSpan.Zero);
 
         //Act
@@ -104,13 +104,13 @@ public sealed class CatAssignmentTests
     {
         //Arrange
         Cat cat = CatFactory.CreateWithThumbnail(Faker);
-        AdoptionAnnouncementId existingAnnouncementId = AdoptionAnnouncementId.New();
+        AdoptionAnnouncementId existingAnnouncementId = AdoptionAnnouncementId.Create();
 
         typeof(Cat)
             .GetProperty(nameof(Cat.AdoptionAnnouncementId))!
             .SetValue(cat, existingAnnouncementId);
 
-        AdoptionAnnouncementId newAnnouncementId = AdoptionAnnouncementId.New();
+        AdoptionAnnouncementId newAnnouncementId = AdoptionAnnouncementId.Create();
 
         //Act
         Result result = cat.AssignToAdoptionAnnouncement(newAnnouncementId, ValidOperationDate);
@@ -127,10 +127,10 @@ public sealed class CatAssignmentTests
     {
         //Arrange
         Cat cat = CatFactory.CreateWithThumbnail(Faker);
-        AdoptionAnnouncementId firstAnnouncementId = AdoptionAnnouncementId.New();
+        AdoptionAnnouncementId firstAnnouncementId = AdoptionAnnouncementId.Create();
         cat.AssignToAdoptionAnnouncement(firstAnnouncementId, ValidOperationDate);
 
-        AdoptionAnnouncementId secondAnnouncementId = AdoptionAnnouncementId.New();
+        AdoptionAnnouncementId secondAnnouncementId = AdoptionAnnouncementId.Create();
         DateTimeOffset reassignDate = ValidOperationDate.AddDays(1);
 
         //Act
@@ -147,7 +147,7 @@ public sealed class CatAssignmentTests
     {
         //Arrange
         Cat cat = CatFactory.CreateWithThumbnail(Faker);
-        AdoptionAnnouncementId announcementId = AdoptionAnnouncementId.New();
+        AdoptionAnnouncementId announcementId = AdoptionAnnouncementId.Create();
 
         //Act
         Result result = cat.ReassignToAnotherAdoptionAnnouncement(announcementId, ValidOperationDate);
@@ -162,7 +162,7 @@ public sealed class CatAssignmentTests
     {
         //Arrange
         Cat cat = CatFactory.CreateWithThumbnail(Faker);
-        AdoptionAnnouncementId firstAnnouncementId = AdoptionAnnouncementId.New();
+        AdoptionAnnouncementId firstAnnouncementId = AdoptionAnnouncementId.Create();
         cat.AssignToAdoptionAnnouncement(firstAnnouncementId, ValidOperationDate);
 
         //Act
@@ -179,10 +179,10 @@ public sealed class CatAssignmentTests
     {
         //Arrange
         Cat cat = CatFactory.CreateWithThumbnail(Faker);
-        AdoptionAnnouncementId firstAnnouncementId = AdoptionAnnouncementId.New();
+        AdoptionAnnouncementId firstAnnouncementId = AdoptionAnnouncementId.Create();
         cat.AssignToAdoptionAnnouncement(firstAnnouncementId, ValidOperationDate);
 
-        AdoptionAnnouncementId secondAnnouncementId = AdoptionAnnouncementId.New();
+        AdoptionAnnouncementId secondAnnouncementId = AdoptionAnnouncementId.Create();
         DateTimeOffset invalidDate = new(2024, 12, 31, 23, 59, 59, TimeSpan.Zero);
 
         //Act
@@ -199,7 +199,7 @@ public sealed class CatAssignmentTests
     {
         //Arrange
         Cat cat = CatFactory.CreateWithThumbnail(Faker);
-        AdoptionAnnouncementId announcementId = AdoptionAnnouncementId.New();
+        AdoptionAnnouncementId announcementId = AdoptionAnnouncementId.Create();
         cat.AssignToAdoptionAnnouncement(announcementId, ValidOperationDate);
 
         //Act
@@ -251,10 +251,10 @@ public sealed class CatAssignmentTests
     {
         //Arrange
         Cat cat = CatFactory.CreateWithThumbnail(Faker);
-        AdoptionAnnouncementId firstAnnouncementId = AdoptionAnnouncementId.New();
+        AdoptionAnnouncementId firstAnnouncementId = AdoptionAnnouncementId.Create();
         cat.AssignToAdoptionAnnouncement(firstAnnouncementId, ValidOperationDate);
 
-        AdoptionAnnouncementId secondAnnouncementId = AdoptionAnnouncementId.New();
+        AdoptionAnnouncementId secondAnnouncementId = AdoptionAnnouncementId.Create();
         DateTimeOffset reassignDate = ValidOperationDate.AddDays(1);
 
         //Act
@@ -262,7 +262,7 @@ public sealed class CatAssignmentTests
 
         //Assert
         result.IsSuccess.ShouldBeTrue();
-        IReadOnlyCollection<IDomainEvent> events = cat.GetDomainEvents();
+        IReadOnlyCollection<IDomainEvent> events = cat.DomainEvents;
         events.ShouldContain(e => e is CatReassignedToAnotherAnnouncementDomainEvent);
 
         CatReassignedToAnotherAnnouncementDomainEvent reassignEvent =
@@ -277,14 +277,14 @@ public sealed class CatAssignmentTests
     {
         //Arrange
         Cat cat = CatFactory.CreateWithThumbnail(Faker);
-        AdoptionAnnouncementId announcementId = AdoptionAnnouncementId.New();
+        AdoptionAnnouncementId announcementId = AdoptionAnnouncementId.Create();
 
         //Act
         Result result = cat.ReassignToAnotherAdoptionAnnouncement(announcementId, ValidOperationDate);
 
         //Assert
         result.IsFailure.ShouldBeTrue();
-        IReadOnlyCollection<IDomainEvent> events = cat.GetDomainEvents();
+        IReadOnlyCollection<IDomainEvent> events = cat.DomainEvents;
         events.ShouldNotContain(e => e is CatReassignedToAnotherAnnouncementDomainEvent);
     }
 
@@ -293,7 +293,7 @@ public sealed class CatAssignmentTests
     {
         //Arrange
         Cat cat = CatFactory.CreateWithThumbnail(Faker);
-        AdoptionAnnouncementId announcementId = AdoptionAnnouncementId.New();
+        AdoptionAnnouncementId announcementId = AdoptionAnnouncementId.Create();
         cat.AssignToAdoptionAnnouncement(announcementId, ValidOperationDate);
 
         //Act
@@ -301,7 +301,7 @@ public sealed class CatAssignmentTests
 
         //Assert
         result.IsSuccess.ShouldBeTrue();
-        IReadOnlyCollection<IDomainEvent> events = cat.GetDomainEvents();
+        IReadOnlyCollection<IDomainEvent> events = cat.DomainEvents;
         events.ShouldContain(e => e is CatUnassignedFromAnnouncementDomainEvent);
 
         CatUnassignedFromAnnouncementDomainEvent unassignEvent =
@@ -321,7 +321,7 @@ public sealed class CatAssignmentTests
 
         //Assert
         result.IsFailure.ShouldBeTrue();
-        IReadOnlyCollection<IDomainEvent> events = cat.GetDomainEvents();
+        IReadOnlyCollection<IDomainEvent> events = cat.DomainEvents;
         events.ShouldNotContain(e => e is CatUnassignedFromAnnouncementDomainEvent);
     }
 }

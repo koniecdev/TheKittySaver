@@ -1,13 +1,14 @@
 ﻿namespace TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
 
-public abstract class Entity<TId> : IEquatable<Entity<TId>> where TId : struct
+public interface IEntity;
+
+public interface IEntity<TId> : IEntity, IEquatable<Entity<TId>> where TId : struct
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Entity"/> class.
-    /// </summary>
-    /// <remarks>
-    /// Required by EF Core.
-    /// </remarks>
+    TId Id { get; }
+}
+
+public abstract class Entity<TId> : IEntity<TId> where TId : struct
+{
     protected Entity()
     {
         Id = default;
@@ -18,9 +19,6 @@ public abstract class Entity<TId> : IEquatable<Entity<TId>> where TId : struct
         Id = id;
     }
 
-    /// <summary>
-    /// Gets or sets the entity identifier.
-    /// </summary>
     public TId Id { get; }
     
     public static bool operator ==(Entity<TId>? a, Entity<TId>? b)

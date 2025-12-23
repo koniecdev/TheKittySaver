@@ -31,23 +31,24 @@ public static class PersistenceDependencyInjection
         services.AddSingleton<IValidator<ConnectionStringSettings>, ConnectionStringSettingsValidator>();
         services.AddOptionsWithFluentValidation<ConnectionStringSettings>(ConnectionStringSettings.ConfigurationSection);
 
+        services.AddSingleton<EntitiesCreatedAtSetterInterceptor>();
         services.AddSingleton<DomainEventsPublishingInterceptor>();
 
         services.AddDbContextFactory<ApplicationWriteDbContext>((sp, options) =>
         {
-            DomainEventsPublishingInterceptor interceptor = sp.GetRequiredService<DomainEventsPublishingInterceptor>();
-
             options.UseSqlServer(
-                sp.GetRequiredService<IOptions<ConnectionStringSettings>>().Value.Database,
-                sqlOptions =>
-                {
-                    sqlOptions.EnableRetryOnFailure(
-                        maxRetryCount: 3,
-                        maxRetryDelay: TimeSpan.FromSeconds(10),
-                        errorNumbersToAdd: null);
-                    sqlOptions.CommandTimeout(30);
-                })
-                .AddInterceptors(interceptor);
+                    sp.GetRequiredService<IOptions<ConnectionStringSettings>>().Value.Database,
+                    sqlOptions =>
+                    {
+                        sqlOptions.EnableRetryOnFailure(
+                            maxRetryCount: 3,
+                            maxRetryDelay: TimeSpan.FromSeconds(10),
+                            errorNumbersToAdd: null);
+                        sqlOptions.CommandTimeout(30);
+                    })
+                .AddInterceptors(
+                    sp.GetRequiredService<EntitiesCreatedAtSetterInterceptor>(),
+                    sp.GetRequiredService<DomainEventsPublishingInterceptor>());
         });
 
         services.AddDbContextFactory<ApplicationReadDbContext>((sp, options) =>

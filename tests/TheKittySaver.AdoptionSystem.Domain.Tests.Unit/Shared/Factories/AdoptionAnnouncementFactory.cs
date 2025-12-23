@@ -26,7 +26,7 @@ internal static class AdoptionAnnouncementFactory
         bool replaceEmailWithNull = false,
         bool replacePhoneNumberWithNull = false)
     {
-        PersonId thePersonId = personId ?? PersonId.New();
+        PersonId thePersonId = personId ?? PersonId.Create();
 
         AdoptionAnnouncementDescription description = CreateRandomDescription(faker);
         Maybe<AdoptionAnnouncementDescription> maybeDescription 

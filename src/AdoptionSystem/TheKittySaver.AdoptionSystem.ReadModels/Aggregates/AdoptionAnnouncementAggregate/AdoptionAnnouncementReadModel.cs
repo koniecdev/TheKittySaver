@@ -4,6 +4,7 @@ using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
 using TheKittySaver.AdoptionSystem.Primitives.Enums;
 using TheKittySaver.AdoptionSystem.ReadModels.Aggregates.CatAggregate;
 using TheKittySaver.AdoptionSystem.ReadModels.Aggregates.PersonAggregate;
+using TheKittySaver.AdoptionSystem.ReadModels.Core.BuildingBlocks;
 
 namespace TheKittySaver.AdoptionSystem.ReadModels.Aggregates.AdoptionAnnouncementAggregate;
 
@@ -19,7 +20,8 @@ public sealed record AdoptionAnnouncementReadModel(
     string? AddressLine,
     string Email,
     string PhoneNumber,
-    AnnouncementStatusType Status)
+    AnnouncementStatusType Status,
+    DateTimeOffset CreatedAt) : IReadOnlyEntity<AdoptionAnnouncementId>
 {
     public IReadOnlyList<AdoptionAnnouncementMergeLogReadModel> MergeLogs { get; init; } = [];
     public PersonReadModel Person { get; init; } = null!;

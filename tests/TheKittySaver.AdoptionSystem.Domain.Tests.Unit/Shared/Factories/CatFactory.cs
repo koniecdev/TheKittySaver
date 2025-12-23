@@ -29,7 +29,7 @@ internal static class CatFactory
         bool replaceNeuteringStatusWithNull = false,
         bool replaceInfectiousDiseaseStatusWithNull = false)
     {
-        PersonId thePersonId = personId ?? PersonId.New();
+        PersonId thePersonId = personId ?? PersonId.Create();
 
         CatName name = CreateRandomName(faker);
         CatDescription description = CreateRandomDescription(faker);

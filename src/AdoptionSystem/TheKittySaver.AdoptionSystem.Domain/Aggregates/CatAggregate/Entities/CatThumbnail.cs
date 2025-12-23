@@ -13,7 +13,7 @@ public sealed class CatThumbnail : Entity<CatThumbnailId>
     {
         Ensure.NotEmpty(catId);
         
-        CatThumbnailId id = CatThumbnailId.New();
+        CatThumbnailId id = CatThumbnailId.Create();
         CatThumbnail instance = new(catId, id);
         return Result.Success(instance);
     }

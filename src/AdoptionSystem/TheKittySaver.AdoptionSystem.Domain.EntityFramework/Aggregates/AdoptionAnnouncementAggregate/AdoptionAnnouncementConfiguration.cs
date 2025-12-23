@@ -19,6 +19,8 @@ public sealed class AdoptionAnnouncementConfiguration : IEntityTypeConfiguration
         builder.Property(x => x.Id)
             .ValueGeneratedNever();
         
+        EntityConfiguration.ConfigureCreatedAt(builder);
+        
         builder.ComplexProperty(x => x.ClaimedAt, complexBuilder =>
         {
             complexBuilder.IsRequired(false);

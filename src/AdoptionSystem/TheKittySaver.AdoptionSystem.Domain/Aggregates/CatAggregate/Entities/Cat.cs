@@ -502,7 +502,7 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
         ArgumentNullException.ThrowIfNull(neuteringStatus);
         ArgumentNullException.ThrowIfNull(infectiousDiseaseStatus);
 
-        CatId id = CatId.New();
+        CatId id = CatId.Create();
         Cat instance = new(
             id,
             personId,

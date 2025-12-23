@@ -53,6 +53,8 @@ public sealed class GetPersonEndpointsTests(TheKittySaverApiFactory appFactory)
         response.Email.ShouldBe(personRequest.Email);
         response.PhoneNumber.ShouldBe(personRequest.PhoneNumber);
         response.Addresses.ShouldNotBeNull();
+        response.CreatedAt.ShouldNotBe(new DateTimeOffset());
+        response.CreatedAt.ShouldBeGreaterThan(new DateTimeOffset(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));
         response.Addresses.Count.ShouldBe(0);
     }
 

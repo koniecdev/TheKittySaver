@@ -163,7 +163,7 @@ public sealed class Person : AggregateRoot<PersonId>
         ArgumentNullException.ThrowIfNull(email);
         ArgumentNullException.ThrowIfNull(phoneNumber);
 
-        PersonId id = PersonId.New();
+        PersonId id = PersonId.Create();
         Person instance = new(id, username, email, phoneNumber, identityId);
 
         return Result.Success(instance);

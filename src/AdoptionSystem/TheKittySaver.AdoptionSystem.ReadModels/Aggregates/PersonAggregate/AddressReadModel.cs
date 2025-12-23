@@ -12,7 +12,8 @@ public sealed record AddressReadModel(
     string PostalCode,
     string Region,
     string City,
-    string? Line) : IReadOnlyEntity<AddressId>
+    string? Line,
+    DateTimeOffset CreatedAt) : IReadOnlyEntity<AddressId>
 {
     public PersonReadModel Person { get; init; } = null!;
 }

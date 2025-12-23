@@ -15,6 +15,8 @@ public sealed class AddressConfiguration : IEntityTypeConfiguration<Address>
         builder.Property(x => x.Id)
             .ValueGeneratedNever();
         
+        EntityConfiguration.ConfigureCreatedAt(builder);
+        
         builder.Property(x => x.CountryCode);
 
         builder.ComplexProperty(x => x.Name, complexBuilder =>

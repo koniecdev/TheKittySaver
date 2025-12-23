@@ -32,6 +32,7 @@ internal sealed class GetPerson : IEndpoint
                     Username: person.Username,
                     Email: person.Email,
                     PhoneNumber: person.PhoneNumber,
+                    CreatedAt: person.CreatedAt,
                     Addresses: person.Addresses
                         .Select(a => new PersonAddressEmbeddedDto(
                             Id: a.Id,

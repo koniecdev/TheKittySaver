@@ -24,7 +24,7 @@ internal static class AddressFactory
         bool replaceCityWithNull = false,
         bool includeLine = true)
     {
-        PersonId thePersonId = personId ?? PersonId.New();
+        PersonId thePersonId = personId ?? PersonId.Create();
 
         Result<AddressName> nameResult = AddressName.Create(faker.Address.StreetName());
         nameResult.EnsureSuccess();

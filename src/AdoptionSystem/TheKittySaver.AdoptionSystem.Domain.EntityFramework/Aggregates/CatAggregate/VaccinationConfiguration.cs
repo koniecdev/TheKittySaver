@@ -15,6 +15,8 @@ public sealed class VaccinationConfiguration : IEntityTypeConfiguration<Vaccinat
         builder.Property(x => x.Id)
             .ValueGeneratedNever();
         
+        EntityConfiguration.ConfigureCreatedAt(builder);
+        
         builder.Property(x => x.Type)
             .HasConversion<string>()
             .HasMaxLength(EnumConsts.MaxLength);

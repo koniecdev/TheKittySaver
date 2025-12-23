@@ -103,7 +103,7 @@ public sealed class CreateAddressTests
     public void Create_ShouldThrow_WhenNullSpecificationIsProvided()
     {
         //Arrange
-        PersonId personId = PersonId.New();
+        PersonId personId = PersonId.Create();
         AddressName name = AddressFactory.CreateRandomName(Faker);
         AddressPostalCode postalCode = AddressFactory.CreateFixedPostalCode();
         AddressRegion region = AddressFactory.CreateFixedRegion();
@@ -130,7 +130,7 @@ public sealed class CreateAddressTests
     {
         //Arrange
         IAddressConsistencySpecification specification = new PolandAddressConsistencySpecification();
-        PersonId personId = PersonId.New();
+        PersonId personId = PersonId.Create();
         AddressName name = AddressFactory.CreateRandomName(Faker);
         AddressRegion region = AddressFactory.CreateFixedRegion();
         AddressCity city = AddressFactory.CreateRandomCity(Faker);
@@ -156,7 +156,7 @@ public sealed class CreateAddressTests
     {
         //Arrange
         IAddressConsistencySpecification specification = new PolandAddressConsistencySpecification();
-        PersonId personId = PersonId.New();
+        PersonId personId = PersonId.Create();
         AddressName name = AddressFactory.CreateRandomName(Faker);
         AddressPostalCode postalCode = AddressFactory.CreateFixedPostalCode();
         AddressRegion region = AddressFactory.CreateFixedRegion();

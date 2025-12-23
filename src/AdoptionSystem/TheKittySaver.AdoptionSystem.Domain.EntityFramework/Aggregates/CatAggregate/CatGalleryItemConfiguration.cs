@@ -13,6 +13,8 @@ public sealed class CatGalleryItemConfiguration : IEntityTypeConfiguration<CatGa
         builder.Property(x => x.Id)
             .ValueGeneratedNever();
         
+        EntityConfiguration.ConfigureCreatedAt(builder);
+        
         builder.ComplexProperty(x => x.DisplayOrder, complexBuilder =>
         {
             complexBuilder.IsRequired();

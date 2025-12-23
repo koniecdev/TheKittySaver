@@ -17,7 +17,7 @@ public sealed class AdoptionAnnouncementMergeLogTests
     {
         //Arrange
         AdoptionAnnouncement announcement = AdoptionAnnouncementFactory.CreateRandom(Faker);
-        AdoptionAnnouncementId deletedAnnouncementId = AdoptionAnnouncementId.New();
+        AdoptionAnnouncementId deletedAnnouncementId = AdoptionAnnouncementId.Create();
 
         //Act
         Result result = announcement.PersistAdoptionAnnouncementAfterLastCatReassignment(deletedAnnouncementId);
@@ -33,8 +33,8 @@ public sealed class AdoptionAnnouncementMergeLogTests
     {
         //Arrange
         AdoptionAnnouncement announcement = AdoptionAnnouncementFactory.CreateRandom(Faker);
-        AdoptionAnnouncementId firstDeletedAnnouncementId = AdoptionAnnouncementId.New();
-        AdoptionAnnouncementId secondDeletedAnnouncementId = AdoptionAnnouncementId.New();
+        AdoptionAnnouncementId firstDeletedAnnouncementId = AdoptionAnnouncementId.Create();
+        AdoptionAnnouncementId secondDeletedAnnouncementId = AdoptionAnnouncementId.Create();
 
         //Act
         Result firstResult = announcement.PersistAdoptionAnnouncementAfterLastCatReassignment(firstDeletedAnnouncementId);
@@ -51,7 +51,7 @@ public sealed class AdoptionAnnouncementMergeLogTests
     {
         //Arrange
         AdoptionAnnouncement announcement = AdoptionAnnouncementFactory.CreateRandom(Faker);
-        AdoptionAnnouncementId deletedAnnouncementId = AdoptionAnnouncementId.New();
+        AdoptionAnnouncementId deletedAnnouncementId = AdoptionAnnouncementId.Create();
         announcement.PersistAdoptionAnnouncementAfterLastCatReassignment(deletedAnnouncementId);
 
         //Act

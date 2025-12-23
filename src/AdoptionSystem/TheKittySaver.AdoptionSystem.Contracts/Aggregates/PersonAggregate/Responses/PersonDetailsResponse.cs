@@ -8,6 +8,7 @@ public sealed record PersonDetailsResponse(
     string Username,
     string Email,
     string PhoneNumber,
+    DateTimeOffset CreatedAt,
     IReadOnlyCollection<PersonAddressEmbeddedDto> Addresses) : ILinksResponse
 {
     public IReadOnlyCollection<LinkDto> Links { get; set; } = [];
