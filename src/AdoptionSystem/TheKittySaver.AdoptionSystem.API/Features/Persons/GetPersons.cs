@@ -13,7 +13,7 @@ namespace TheKittySaver.AdoptionSystem.API.Features.Persons;
 
 internal sealed class GetPersons : IEndpoint
 {
-    internal sealed record Query(int Page = 0, int PageSize = 50, string? Sort = null)
+    internal sealed record Query(int Page = 1, int PageSize = 50, string? Sort = null)
         : IQuery<PaginationResponse<PersonListItemResponse>>, IPaginationable, ISortable;
 
     internal sealed class Handler : IQueryHandler<Query, PaginationResponse<PersonListItemResponse>>

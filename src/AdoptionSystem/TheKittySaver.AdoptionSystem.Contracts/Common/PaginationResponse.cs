@@ -7,7 +7,19 @@ public sealed record PaginationResponse<T> : ILinksResponse
     public required int PageSize { get; init; }
     public required int TotalCount { get; init; }
 
-    public int TotalPages => (int)Math.Ceiling(TotalCount / (double)PageSize);
+    public int TotalPages
+    {
+        get
+        {
+            if (PageSize == 0)
+            {
+                return 0;
+            }
+            int result = (int)Math.Ceiling(TotalCount / (double)PageSize);
+            return result;
+        }
+    }
+
     public bool HasNextPage => Page < TotalPages;
     public bool HasPreviousPage => Page > 1;
 

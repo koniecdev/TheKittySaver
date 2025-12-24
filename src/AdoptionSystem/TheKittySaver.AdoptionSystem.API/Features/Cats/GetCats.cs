@@ -20,7 +20,7 @@ internal sealed class GetCats : IEndpoint
     internal sealed record Query(
         ValueMaybe<PersonId> MaybePersonId,
         ValueMaybe<AdoptionAnnouncementId> MaybeAdoptionAnnouncementId,
-        int Page = 0,
+        int Page = 1,
         int PageSize = 50,
         string? Sort = null)
         : IQuery<PaginationResponse<CatListItemResponse>>, IPaginationable, ISortable;
