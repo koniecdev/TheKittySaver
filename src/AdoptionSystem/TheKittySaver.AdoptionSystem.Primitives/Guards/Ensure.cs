@@ -17,9 +17,9 @@ public static class Ensure
         [CallerArgumentExpression(nameof(value))] string argumentName = "")
         where TEnum : struct, Enum
     {
-        if (Convert.ToInt32(value, CultureInfo.InvariantCulture) == 0)
+        if (!Enum.IsDefined(value))
         {
-            throw new ArgumentException($"{argumentName} must have a valid value.", argumentName);
+            throw new ArgumentOutOfRangeException(argumentName, value, $"{argumentName} must be a defined enum value.");
         }
     }
     

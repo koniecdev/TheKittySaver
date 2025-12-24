@@ -292,6 +292,8 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
 
     public Result UpdateVaccinationDate(VaccinationId vaccinationId, VaccinationDate updatedDate)
     {
+        Ensure.NotEmpty(vaccinationId);
+        
         Maybe<Vaccination> maybeVaccination = _vaccinations.GetByIdOrDefault(vaccinationId);
         if (maybeVaccination.HasNoValue)
         {
