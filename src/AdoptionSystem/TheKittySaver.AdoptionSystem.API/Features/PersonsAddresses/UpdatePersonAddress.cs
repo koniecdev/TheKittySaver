@@ -25,9 +25,9 @@ internal sealed class UpdatePersonAddress : IEndpoint
         string PostalCode,
         string Region,
         string City,
-        string? Line) : ICommand<Result<PersonAddressResponse>>;
+        string? Line) : ICommand<Result>;
 
-    internal sealed class Handler : ICommandHandler<Command, Result<PersonAddressResponse>>
+    internal sealed class Handler : ICommandHandler<Command, Result>
     {
         private readonly IPersonRepository _personRepository;
         private readonly IAddressConsistencySpecification _addressConsistencySpecification;
@@ -43,7 +43,7 @@ internal sealed class UpdatePersonAddress : IEndpoint
             _unitOfWork = unitOfWork;
         }
 
-        public async ValueTask<Result<PersonAddressResponse>> Handle(Command command, CancellationToken cancellationToken)
+        public async ValueTask<Result> Handle(Command command, CancellationToken cancellationToken)
         {
             Maybe<Person> maybePerson = await _personRepository.GetByIdAsync(command.PersonId, cancellationToken);
             if (maybePerson.HasNoValue)
@@ -109,19 +109,7 @@ internal sealed class UpdatePersonAddress : IEndpoint
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            Address address = person.Addresses.First(a => a.Id == command.AddressId);
-
-            PersonAddressResponse response = new(
-                Id: address.Id,
-                PersonId: person.Id,
-                CountryCode: address.CountryCode,
-                Name: address.Name.Value,
-                PostalCode: address.PostalCode.Value,
-                Region: address.Region.Value,
-                City: address.City.Value,
-                Line: address.Line?.Value);
-
-            return response;
+            return Result.Success();
         }
     }
 
@@ -136,11 +124,11 @@ internal sealed class UpdatePersonAddress : IEndpoint
         {
             Command command = request.MapToCommand(new PersonId(personId), new AddressId(addressId));
 
-            Result<PersonAddressResponse> commandResult = await sender.Send(command, cancellationToken);
+            Result commandResult = await sender.Send(command, cancellationToken);
 
             return commandResult.IsFailure
                 ? Results.Problem(commandResult.Error.ToProblemDetails())
-                : Results.Ok(commandResult.Value);
+                : Results.NoContent();
         });
     }
 }
