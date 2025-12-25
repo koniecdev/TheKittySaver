@@ -40,7 +40,7 @@ internal sealed class DeletePersonAddress : IEndpoint
 
             Person person = maybePerson.Value;
 
-            Result deleteResult = person.DeleteAddress(command.AddressId);
+            Result deleteResult = person.RemoveAddress(command.AddressId);
             if (deleteResult.IsFailure)
             {
                 return deleteResult;

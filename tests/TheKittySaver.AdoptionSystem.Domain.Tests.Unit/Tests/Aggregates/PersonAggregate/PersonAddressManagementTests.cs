@@ -352,7 +352,7 @@ public sealed class PersonAddressManagementTests
             Maybe<AddressLine>.None);
 
         //Act
-        Result result = person.DeleteAddress(addResult.Value.Id);
+        Result result = person.RemoveAddress(addResult.Value.Id);
 
         //Assert
         result.IsSuccess.ShouldBeTrue();
@@ -367,7 +367,7 @@ public sealed class PersonAddressManagementTests
         AddressId nonExistentAddressId = AddressId.Create();
 
         //Act
-        Result result = person.DeleteAddress(nonExistentAddressId);
+        Result result = person.RemoveAddress(nonExistentAddressId);
 
         //Assert
         result.IsFailure.ShouldBeTrue();
@@ -381,7 +381,7 @@ public sealed class PersonAddressManagementTests
         Person person = PersonFactory.CreateRandom(Faker);
 
         //Act
-        Action deleteAddress = () => person.DeleteAddress(AddressId.Empty);
+        Action deleteAddress = () => person.RemoveAddress(AddressId.Empty);
 
         //Assert
         deleteAddress.ShouldThrow<ArgumentException>()

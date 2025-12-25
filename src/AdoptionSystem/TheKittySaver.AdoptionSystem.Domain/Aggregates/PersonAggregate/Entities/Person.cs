@@ -116,7 +116,7 @@ public sealed class Person : AggregateRoot<PersonId>
         return updateAddressDetailsResult;
     }
 
-    public Result DeleteAddress(AddressId addressId)
+    public Result RemoveAddress(AddressId addressId)
     {
         Ensure.NotEmpty(addressId);
 
