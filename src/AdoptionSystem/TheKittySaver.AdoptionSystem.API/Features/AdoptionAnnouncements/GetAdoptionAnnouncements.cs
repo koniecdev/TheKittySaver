@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using TheKittySaver.AdoptionSystem.API.Common;
 using TheKittySaver.AdoptionSystem.API.Extensions;
 using TheKittySaver.AdoptionSystem.Calculators.Abstractions;
+using TheKittySaver.AdoptionSystem.Calculators.Factories;
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.AdoptionAnnouncementAggregate.Responses;
 using TheKittySaver.AdoptionSystem.Contracts.Common;
 using TheKittySaver.AdoptionSystem.Domain.Core.Extensions;
@@ -27,14 +28,14 @@ internal sealed class GetAdoptionAnnouncements : IEndpoint
     internal sealed class Handler : IQueryHandler<Query, PaginationResponse<AdoptionAnnouncementListItemResponse>>
     {
         private readonly IApplicationReadDbContext _readDbContext;
-        private readonly IAdoptionPriorityScoreCalculator _calculator;
+        private readonly IAdoptionPriorityScoreCalculatorFactory _calculatorFactory;
 
         public Handler(
             IApplicationReadDbContext readDbContext,
-            IAdoptionPriorityScoreCalculator calculator)
+            IAdoptionPriorityScoreCalculatorFactory calculatorFactory)
         {
             _readDbContext = readDbContext;
-            _calculator = calculator;
+            _calculatorFactory = calculatorFactory;
         }
 
         public async ValueTask<PaginationResponse<AdoptionAnnouncementListItemResponse>> Handle(Query query,
@@ -85,11 +86,12 @@ internal sealed class GetAdoptionAnnouncements : IEndpoint
                 })
                 .ToListAsync(cancellationToken);
  
+            IAdoptionPriorityScoreCalculator calculator = _calculatorFactory.Create();
             IEnumerable<AdoptionAnnouncementListItemResponse> items = rawItems.Select(rawAa =>
             {
                 string aaTitle = string.Join(", ", rawAa.Cats.Select(c => c.Name));
                 decimal aaPriorityScore = rawAa.Cats
-                    .Select(cat => _calculator.Calculate(
+                    .Select(cat => calculator.Calculate(
                         returnCount: cat.AdoptionHistoryReturnCount,
                         age: cat.Age,
                         color: cat.Color,
