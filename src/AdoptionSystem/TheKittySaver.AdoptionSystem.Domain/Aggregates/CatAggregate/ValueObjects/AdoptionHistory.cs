@@ -1,6 +1,7 @@
 ﻿using TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
 using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
+using TheKittySaver.AdoptionSystem.Primitives.Guards;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.ValueObjects;
 
@@ -20,6 +21,9 @@ public sealed class AdoptionHistory : ValueObject
         DateTimeOffset lastReturn,
         string reason)
     {
+        Ensure.NotEmpty(currentDate);
+        Ensure.NotEmpty(lastReturn);
+        
         if (counterHowManyTimesWasTheCatReturned < 0)
         {
             return Result.Failure<AdoptionHistory>(

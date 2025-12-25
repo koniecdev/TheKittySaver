@@ -36,6 +36,7 @@ public sealed class ListingSource : ValueObject
         }
 
         sourceName = sourceName.Trim();
+        
         if (sourceName.Length > MaxSourceNameLength)
         {
             return Result.Failure<ListingSource>(
