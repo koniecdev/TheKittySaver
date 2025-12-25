@@ -26,9 +26,9 @@ internal sealed class CreatePersonAddress : IEndpoint
         string PostalCode,
         string Region,
         string City,
-        string? Line) : ICommand<Result<PersonAddressResponse>>;
+        string? Line) : ICommand<Result<AddressId>>;
 
-    internal sealed class Handler : ICommandHandler<Command, Result<PersonAddressResponse>>
+    internal sealed class Handler : ICommandHandler<Command, Result<AddressId>>
     {
         private readonly IPersonRepository _personRepository;
         private readonly IAddressConsistencySpecification _addressConsistencySpecification;
@@ -44,12 +44,12 @@ internal sealed class CreatePersonAddress : IEndpoint
             _unitOfWork = unitOfWork;
         }
 
-        public async ValueTask<Result<PersonAddressResponse>> Handle(Command command, CancellationToken cancellationToken)
+        public async ValueTask<Result<AddressId>> Handle(Command command, CancellationToken cancellationToken)
         {
             Maybe<Person> maybePerson = await _personRepository.GetByIdAsync(command.PersonId, cancellationToken);
             if (maybePerson.HasNoValue)
             {
-                return Result.Failure<PersonAddressResponse>(DomainErrors.PersonEntity.NotFound(command.PersonId));
+                return Result.Failure<AddressId>(DomainErrors.PersonEntity.NotFound(command.PersonId));
             }
 
             Person person = maybePerson.Value;
@@ -57,25 +57,25 @@ internal sealed class CreatePersonAddress : IEndpoint
             Result<AddressName> createNameResult = AddressName.Create(command.Name);
             if (createNameResult.IsFailure)
             {
-                return Result.Failure<PersonAddressResponse>(createNameResult.Error);
+                return Result.Failure<AddressId>(createNameResult.Error);
             }
 
             Result<AddressPostalCode> createPostalCodeResult = AddressPostalCode.Create(command.PostalCode);
             if (createPostalCodeResult.IsFailure)
             {
-                return Result.Failure<PersonAddressResponse>(createPostalCodeResult.Error);
+                return Result.Failure<AddressId>(createPostalCodeResult.Error);
             }
 
             Result<AddressRegion> createRegionResult = AddressRegion.Create(command.Region);
             if (createRegionResult.IsFailure)
             {
-                return Result.Failure<PersonAddressResponse>(createRegionResult.Error);
+                return Result.Failure<AddressId>(createRegionResult.Error);
             }
 
             Result<AddressCity> createCityResult = AddressCity.Create(command.City);
             if (createCityResult.IsFailure)
             {
-                return Result.Failure<PersonAddressResponse>(createCityResult.Error);
+                return Result.Failure<AddressId>(createCityResult.Error);
             }
 
             Maybe<AddressLine> maybeLine = Maybe<AddressLine>.None;
@@ -84,7 +84,7 @@ internal sealed class CreatePersonAddress : IEndpoint
                 Result<AddressLine> createLineResult = AddressLine.Create(command.Line);
                 if (createLineResult.IsFailure)
                 {
-                    return Result.Failure<PersonAddressResponse>(createLineResult.Error);
+                    return Result.Failure<AddressId>(createLineResult.Error);
                 }
                 maybeLine = Maybe<AddressLine>.From(createLineResult.Value);
             }
@@ -100,22 +100,12 @@ internal sealed class CreatePersonAddress : IEndpoint
 
             if (addAddressResult.IsFailure)
             {
-                return Result.Failure<PersonAddressResponse>(addAddressResult.Error);
+                return Result.Failure<AddressId>(addAddressResult.Error);
             }
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             
-            PersonAddressResponse response = new(
-                Id: addAddressResult.Value.Id,
-                PersonId: person.Id,
-                CountryCode: addAddressResult.Value.CountryCode,
-                Name: addAddressResult.Value.Name.Value,
-                PostalCode: addAddressResult.Value.PostalCode.Value,
-                Region: addAddressResult.Value.Region.Value,
-                City: addAddressResult.Value.City.Value,
-                Line: addAddressResult.Value.Line?.Value);
-
-            return response;
+            return addAddressResult.Value.Id;
         }
     }
 
@@ -129,11 +119,11 @@ internal sealed class CreatePersonAddress : IEndpoint
         {
             Command command = request.MapToCommand(new PersonId(personId));
 
-            Result<PersonAddressResponse> commandResult = await sender.Send(command, cancellationToken);
+            Result<AddressId> commandResult = await sender.Send(command, cancellationToken);
 
             return commandResult.IsFailure
                 ? Results.Problem(commandResult.Error.ToProblemDetails())
-                : Results.Created($"/api/v1/persons/{personId}/addresses/{commandResult.Value.Id}", commandResult.Value);
+                : Results.Created($"/api/v1/persons/{personId}/addresses/{commandResult}", commandResult.Value);
         });
     }
 }
