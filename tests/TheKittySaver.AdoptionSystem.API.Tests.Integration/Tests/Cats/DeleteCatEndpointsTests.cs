@@ -15,14 +15,14 @@ public sealed class DeleteCatEndpointsTests(TheKittySaverApiFactory appFactory)
     [Fact]
     public async Task DeleteCat_ShouldReturnNoContent_WhenExistingCatIdIsProvided()
     {
-        // Arrange
+        //Arrange
         CatId catId = await CatApiFactory.CreateRandomAndGetIdAsync(ApiClient, Faker, TestPersonId);
 
-        // Act
+        //Act
         HttpResponseMessage httpResponseMessage =
             await ApiClient.Http.DeleteAsync(new Uri($"api/v1/cats/{catId}", UriKind.Relative));
 
-        // Assert
+        //Assert
         _ = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NoContent);
 
@@ -34,11 +34,11 @@ public sealed class DeleteCatEndpointsTests(TheKittySaverApiFactory appFactory)
     [Fact]
     public async Task DeleteCat_ShouldReturnNotFound_WhenNonExistingCatIdIsProvided()
     {
-        // Act
+        //Act
         HttpResponseMessage httpResponseMessage =
             await ApiClient.Http.DeleteAsync(new Uri($"api/v1/cats/{Guid.NewGuid()}", UriKind.Relative));
 
-        // Assert
+        //Assert
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NotFound);
         ProblemDetails problemDetails = await httpResponseMessage.ToProblemDetailsAsync();
         problemDetails.Status.ShouldBe(StatusCodes.Status404NotFound);

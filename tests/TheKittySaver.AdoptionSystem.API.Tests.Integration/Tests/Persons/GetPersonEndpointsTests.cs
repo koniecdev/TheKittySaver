@@ -19,11 +19,11 @@ public sealed class GetPersonEndpointsTests(TheKittySaverApiFactory appFactory)
     [Fact]
     public async Task GetPerson_ShouldReturnNotFound_WhenRandomIdIsProvided()
     {
-        // Act
+        //Act
         HttpResponseMessage httpResponseMessage =
             await ApiClient.Http.GetAsync(new Uri($"/api/v1/persons/{Guid.NewGuid()}", UriKind.Relative));
 
-        // Assert
+        //Assert
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NotFound);
 
         ProblemDetails? problemDetails =
@@ -35,7 +35,7 @@ public sealed class GetPersonEndpointsTests(TheKittySaverApiFactory appFactory)
     [Fact]
     public async Task GetPerson_ShouldMapAllOfPersonProperties_WhenPersonsExists()
     {
-        // Arrange
+        //Arrange
         CreatePersonRequest personRequest = PersonApiFactory.GenerateRandomCreateRequest(Faker);
         HttpResponseMessage createPersonHttpResponseMessage =
             await ApiClient.Http.PostAsJsonAsync(new Uri("/api/v1/persons", UriKind.Relative), personRequest);
@@ -43,10 +43,10 @@ public sealed class GetPersonEndpointsTests(TheKittySaverApiFactory appFactory)
 
         PersonId personId = JsonSerializer.Deserialize<PersonId>(stringResponse, ApiClient.JsonOptions);
 
-        // Act
+        //Act
         PersonDetailsResponse response = await PersonApiQueryService.GetByIdAsync(ApiClient, personId);
 
-        // Assert
+        //Assert
         response.ShouldNotBeNull();
         response.Id.ShouldBe(personId);
         response.Username.ShouldBe(personRequest.Username);
@@ -61,7 +61,7 @@ public sealed class GetPersonEndpointsTests(TheKittySaverApiFactory appFactory)
     [Fact]
     public async Task GetPerson_ShouldReturnProperPersons_WhenMultiplePersonsExists()
     {
-        // Arrange
+        //Arrange
         CreatePersonRequest personRequest = PersonApiFactory.GenerateRandomCreateRequest(Faker);
         HttpResponseMessage createPersonHttpResponseMessage =
             await ApiClient.Http.PostAsJsonAsync(new Uri("/api/v1/persons", UriKind.Relative), personRequest);
@@ -71,10 +71,10 @@ public sealed class GetPersonEndpointsTests(TheKittySaverApiFactory appFactory)
         CreatePersonRequest anotherPersonRequest = PersonApiFactory.GenerateRandomCreateRequest(Faker);
         _ = await ApiClient.Http.PostAsJsonAsync(new Uri("/api/v1/persons", UriKind.Relative), anotherPersonRequest);
 
-        // Act
+        //Act
         PersonDetailsResponse response = await PersonApiQueryService.GetByIdAsync(ApiClient, personId);
 
-        // Assert
+        //Assert
         response.ShouldNotBeNull();
         response.Id.ShouldBe(personId);
     }

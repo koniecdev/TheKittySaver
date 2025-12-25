@@ -12,10 +12,10 @@ public sealed class GetCatsEndpointsTests(TheKittySaverApiFactory appFactory)
     [Fact]
     public async Task GetCats_ShouldReturnEmptyItemList_WhenNoCatsExist()
     {
-        // Act
+        //Act
         PaginationResponse<CatListItemResponse> response = await CatApiQueryService.GetAllAsync(ApiClient);
 
-        // Assert
+        //Assert
         response.ShouldNotBeNull();
         response.Items.ShouldNotBeNull();
         response.Items.Count.ShouldBe(0);
@@ -24,13 +24,13 @@ public sealed class GetCatsEndpointsTests(TheKittySaverApiFactory appFactory)
     [Fact]
     public async Task GetCats_ShouldMapAllOfCatProperties_WhenCatExists()
     {
-        // Arrange
+        //Arrange
         CatDetailsResponse catResponse = await CatApiFactory.CreateRandomAsync(ApiClient, Faker, TestPersonId);
 
-        // Act
+        //Act
         PaginationResponse<CatListItemResponse> response = await CatApiQueryService.GetAllAsync(ApiClient);
 
-        // Assert
+        //Assert
         response.ShouldNotBeNull();
         response.Items.ShouldNotBeNull();
         response.Items.Count.ShouldBe(1);
@@ -46,14 +46,14 @@ public sealed class GetCatsEndpointsTests(TheKittySaverApiFactory appFactory)
     [Fact]
     public async Task GetCats_ShouldReturnMultipleCats_WhenMultipleCatsExist()
     {
-        // Arrange
+        //Arrange
         _ = await CatApiFactory.CreateRandomAsync(ApiClient, Faker, TestPersonId);
         _ = await CatApiFactory.CreateRandomAsync(ApiClient, Faker, TestPersonId);
 
-        // Act
+        //Act
         PaginationResponse<CatListItemResponse> response = await CatApiQueryService.GetAllAsync(ApiClient);
 
-        // Assert
+        //Assert
         response.ShouldNotBeNull();
         response.Items.ShouldNotBeNull();
         response.Items.Count.ShouldBe(2);

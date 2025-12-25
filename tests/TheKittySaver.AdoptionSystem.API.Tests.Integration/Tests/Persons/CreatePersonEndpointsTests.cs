@@ -19,14 +19,14 @@ public sealed class CreatePersonEndpointsTests(TheKittySaverApiFactory appFactor
     [Fact]
     public async Task CreatePerson_ShouldReturnPersonId_WhenValidDataIsProvided()
     {
-        // Arrange
+        //Arrange
         CreatePersonRequest request = PersonApiFactory.GenerateRandomCreateRequest(Faker);
 
-        // Act
+        //Act
         HttpResponseMessage httpResponseMessage =
             await ApiClient.Http.PostAsJsonAsync(new Uri("api/v1/persons", UriKind.Relative), request);
 
-        // Assert
+        //Assert
         string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.Created);
 
@@ -53,18 +53,18 @@ public sealed class CreatePersonEndpointsTests(TheKittySaverApiFactory appFactor
         bool replaceEmailWithNull,
         bool replacePhoneNumberWithNull)
     {
-        // Arrange
+        //Arrange
         CreatePersonRequest request = new(
             replaceIdentityIdWithEmpty ? IdentityId.Empty : IdentityId.New(),
             replaceUsernameWithNull ? null! : Faker.Internet.UserName(),
             replaceEmailWithNull ? null! : Faker.Internet.Email(),
             replacePhoneNumberWithNull ? null! : Faker.Person.PolishPhoneNumber());
 
-        // Act
+        //Act
         HttpResponseMessage httpResponseMessage =
             await ApiClient.Http.PostAsJsonAsync(new Uri("api/v1/persons", UriKind.Relative), request);
 
-        // Assert
+        //Assert
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
         ProblemDetails? problemDetails =
             await httpResponseMessage.Content.ReadFromJsonAsync<ProblemDetails>(ApiClient.JsonOptions);

@@ -13,11 +13,11 @@ public sealed class GetPersonsEndpointsTests(TheKittySaverApiFactory appFactory)
     [Fact]
     public async Task GetPersons_ShouldReturnEmptyItemList_WhenNoPersonsExists()
     {
-        // Act
+        //Act
         PaginationResponse<PersonListItemResponse> response = 
             await PersonApiQueryService.GetAllAsync(ApiClient);
 
-        // Assert
+        //Assert
         response.ShouldNotBeNull();
         response.Items.ShouldNotBeNull();
         response.Items.Count.ShouldBe(0);
@@ -26,14 +26,14 @@ public sealed class GetPersonsEndpointsTests(TheKittySaverApiFactory appFactory)
     [Fact]
     public async Task GetPersons_ShouldMapAllOfPersonProperties_WhenPersonsExists()
     {
-        // Arrange
+        //Arrange
         PersonDetailsResponse personResponse = await PersonApiFactory.CreateRandomAsync(ApiClient, Faker);
 
-        // Act
+        //Act
         PaginationResponse<PersonListItemResponse> response = 
             await PersonApiQueryService.GetAllAsync(ApiClient);
 
-        // Assert
+        //Assert
         response.ShouldNotBeNull();
         response.Items.ShouldNotBeNull();
         response.Items.Count.ShouldBe(1);
@@ -48,15 +48,15 @@ public sealed class GetPersonsEndpointsTests(TheKittySaverApiFactory appFactory)
     [Fact]
     public async Task GetPersons_ShouldReturnMultiplePersons_WhenMultiplePersonsExists()
     {
-        // Arrange
+        //Arrange
         _ = await PersonApiFactory.CreateRandomAsync(ApiClient, Faker);
         _ = await PersonApiFactory.CreateRandomAsync(ApiClient, Faker);
 
-        // Act
+        //Act
         PaginationResponse<PersonListItemResponse> response = 
             await PersonApiQueryService.GetAllAsync(ApiClient);
 
-        // Assert
+        //Assert
         response.ShouldNotBeNull();
         response.Items.ShouldNotBeNull();
         response.Items.Count.ShouldBe(2);

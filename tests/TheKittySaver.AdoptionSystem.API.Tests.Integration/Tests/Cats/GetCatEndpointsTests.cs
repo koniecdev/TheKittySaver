@@ -15,11 +15,11 @@ public sealed class GetCatEndpointsTests(TheKittySaverApiFactory appFactory)
     [Fact]
     public async Task GetCat_ShouldReturnNotFound_WhenRandomIdIsProvided()
     {
-        // Act
+        //Act
         HttpResponseMessage httpResponseMessage =
             await ApiClient.Http.GetAsync(new Uri($"/api/v1/cats/{Guid.NewGuid()}", UriKind.Relative));
 
-        // Assert
+        //Assert
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NotFound);
 
         ProblemDetails? problemDetails =
@@ -31,13 +31,13 @@ public sealed class GetCatEndpointsTests(TheKittySaverApiFactory appFactory)
     [Fact]
     public async Task GetCat_ShouldMapAllOfCatProperties_WhenCatExists()
     {
-        // Arrange
+        //Arrange
         CatDetailsResponse createdCat = await CatApiFactory.CreateRandomAsync(ApiClient, Faker, TestPersonId);
 
-        // Act
+        //Act
         CatDetailsResponse response = await CatApiQueryService.GetByIdAsync(ApiClient, createdCat.Id);
 
-        // Assert
+        //Assert
         response.ShouldNotBeNull();
         response.Id.ShouldBe(createdCat.Id);
         response.PersonId.ShouldBe(TestPersonId);
@@ -53,14 +53,14 @@ public sealed class GetCatEndpointsTests(TheKittySaverApiFactory appFactory)
     [Fact]
     public async Task GetCat_ShouldReturnProperCat_WhenMultipleCatsExist()
     {
-        // Arrange
+        //Arrange
         CatDetailsResponse cat = await CatApiFactory.CreateRandomAsync(ApiClient, Faker, TestPersonId);
         _ = await CatApiFactory.CreateRandomAsync(ApiClient, Faker, TestPersonId);
 
-        // Act
+        //Act
         CatDetailsResponse response = await CatApiQueryService.GetByIdAsync(ApiClient, cat.Id);
 
-        // Assert
+        //Assert
         response.ShouldNotBeNull();
         response.Id.ShouldBe(cat.Id);
     }
