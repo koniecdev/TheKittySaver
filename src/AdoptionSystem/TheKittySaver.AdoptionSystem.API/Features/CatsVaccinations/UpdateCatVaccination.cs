@@ -23,9 +23,9 @@ internal sealed class UpdateCatVaccination : IEndpoint
         VaccinationId VaccinationId,
         VaccinationType Type,
         DateOnly VaccinationDate,
-        string? VeterinarianNote) : ICommand<Result<CatVaccinationResponse>>;
+        string? VeterinarianNote) : ICommand<Result>;
 
-    internal sealed class Handler : ICommandHandler<Command, Result<CatVaccinationResponse>>
+    internal sealed class Handler : ICommandHandler<Command, Result>
     {
         private readonly ICatRepository _catRepository;
         private readonly IUnitOfWork _unitOfWork;
@@ -41,7 +41,7 @@ internal sealed class UpdateCatVaccination : IEndpoint
             _timeProvider = timeProvider;
         }
 
-        public async ValueTask<Result<CatVaccinationResponse>> Handle(Command command, CancellationToken cancellationToken)
+        public async ValueTask<Result> Handle(Command command, CancellationToken cancellationToken)
         {
             Maybe<Cat> maybeCat = await _catRepository.GetByIdAsync(command.CatId, cancellationToken);
             if (maybeCat.HasNoValue)
@@ -89,16 +89,7 @@ internal sealed class UpdateCatVaccination : IEndpoint
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            Vaccination vaccination = cat.Vaccinations.First(v => v.Id == command.VaccinationId);
-
-            CatVaccinationResponse response = new(
-                Id: vaccination.Id,
-                CatId: cat.Id,
-                Type: vaccination.Type,
-                VaccinationDate: vaccination.Date.Value,
-                VeterinarianNote: vaccination.VeterinarianNote?.Value);
-
-            return response;
+            return Result.Success();
         }
     }
 
@@ -113,11 +104,11 @@ internal sealed class UpdateCatVaccination : IEndpoint
         {
             Command command = request.MapToCommand(new CatId(catId), new VaccinationId(vaccinationId));
 
-            Result<CatVaccinationResponse> commandResult = await sender.Send(command, cancellationToken);
+            Result commandResult = await sender.Send(command, cancellationToken);
 
             return commandResult.IsFailure
                 ? Results.Problem(commandResult.Error.ToProblemDetails())
-                : Results.Ok(commandResult.Value);
+                : Results.NoContent();
         });
     }
 }
