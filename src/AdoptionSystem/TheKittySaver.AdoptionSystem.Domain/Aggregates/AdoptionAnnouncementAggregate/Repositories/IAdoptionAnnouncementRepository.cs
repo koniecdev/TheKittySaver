@@ -7,7 +7,7 @@ namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAgg
 
 public interface IAdoptionAnnouncementRepository : IRepository<AdoptionAnnouncement, AdoptionAnnouncementId>
 {
-    public Task<IReadOnlyCollection<AdoptionAnnouncement>> GetAdoptionAnnouncementByPersonIdAsync(
+    public Task<IReadOnlyCollection<AdoptionAnnouncement>> GetAdoptionAnnouncementsByPersonIdAsync(
         PersonId personId,
         CancellationToken cancellationToken);
 }

@@ -48,7 +48,7 @@ internal sealed class DeletePerson : IEndpoint
             }
             
             IReadOnlyCollection<AdoptionAnnouncement> personAdvertisements = 
-                await _adoptionAnnouncementRepository.GetAdoptionAnnouncementByPersonIdAsync(command.PersonId, cancellationToken);
+                await _adoptionAnnouncementRepository.GetAdoptionAnnouncementsByPersonIdAsync(command.PersonId, cancellationToken);
 
             foreach (AdoptionAnnouncement adoptionAnnouncement in personAdvertisements)
             {
