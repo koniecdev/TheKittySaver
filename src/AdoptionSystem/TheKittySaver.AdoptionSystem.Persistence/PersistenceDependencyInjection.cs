@@ -18,64 +18,59 @@ namespace TheKittySaver.AdoptionSystem.Persistence;
 
 public static class PersistenceDependencyInjection
 {
-    public static async Task MigrateDatabaseAsync(this IServiceProvider serviceProvider)
+    extension(IServiceCollection services)
     {
-        await using AsyncServiceScope scope = serviceProvider.CreateAsyncScope();
-        ApplicationWriteDbContext dbContext = scope.ServiceProvider.GetRequiredService<ApplicationWriteDbContext>();
-        await dbContext.Database.MigrateAsync();
-    }
-
-    public static IServiceCollection AddPersistence(
-        this IServiceCollection services)
-    {
-        services.AddSingleton<IValidator<ConnectionStringSettings>, ConnectionStringSettingsValidator>();
-        services.AddOptionsWithFluentValidation<ConnectionStringSettings>(ConnectionStringSettings.ConfigurationSection);
-
-        services.AddSingleton<EntitiesCreatedAtSetterInterceptor>();
-        services.AddSingleton<DomainEventsPublishingInterceptor>();
-
-        services.AddDbContextFactory<ApplicationWriteDbContext>((sp, options) =>
+        public IServiceCollection AddPersistence()
         {
-            options.UseSqlServer(
-                    sp.GetRequiredService<IOptions<ConnectionStringSettings>>().Value.Database,
-                    sqlOptions =>
-                    {
-                        sqlOptions.EnableRetryOnFailure(
-                            maxRetryCount: 3,
-                            maxRetryDelay: TimeSpan.FromSeconds(10),
-                            errorNumbersToAdd: null);
-                        sqlOptions.CommandTimeout(30);
-                    })
-                .AddInterceptors(
-                    sp.GetRequiredService<EntitiesCreatedAtSetterInterceptor>(),
-                    sp.GetRequiredService<DomainEventsPublishingInterceptor>());
-        });
+            services.AddSingleton<IValidator<ConnectionStringSettings>, ConnectionStringSettingsValidator>();
+            services.AddOptionsWithFluentValidation<ConnectionStringSettings>(ConnectionStringSettings.ConfigurationSection);
 
-        services.AddDbContextFactory<ApplicationReadDbContext>((sp, options) =>
-            options.UseSqlServer(
-                    sp.GetRequiredService<IOptions<ConnectionStringSettings>>().Value.Database,
-                    sqlOptions =>
-                    {
-                        sqlOptions.EnableRetryOnFailure(
-                            maxRetryCount: 3,
-                            maxRetryDelay: TimeSpan.FromSeconds(10),
-                            errorNumbersToAdd: null);
-                        sqlOptions.CommandTimeout(30);
-                    })
-                .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking));
+            services.AddSingleton<EntitiesCreatedAtSetterInterceptor>();
+            services.AddSingleton<DomainEventsPublishingInterceptor>();
 
-        services.AddScoped<IApplicationReadDbContext>(serviceProvider =>
-            serviceProvider.GetRequiredService<ApplicationReadDbContext>());
+            services.AddDbContextFactory<ApplicationWriteDbContext>((sp, options) =>
+            {
+                options.UseSqlServer(
+                        sp.GetRequiredService<IOptions<ConnectionStringSettings>>().Value.Database,
+                        sqlOptions =>
+                        {
+                            sqlOptions.EnableRetryOnFailure(
+                                maxRetryCount: 3,
+                                maxRetryDelay: TimeSpan.FromSeconds(10),
+                                errorNumbersToAdd: null);
+                            sqlOptions.CommandTimeout(30);
+                        })
+                    .AddInterceptors(
+                        sp.GetRequiredService<EntitiesCreatedAtSetterInterceptor>(),
+                        sp.GetRequiredService<DomainEventsPublishingInterceptor>());
+            });
 
-        services.AddScoped<IUnitOfWork>(serviceProvider =>
-            serviceProvider.GetRequiredService<ApplicationWriteDbContext>());
+            services.AddDbContextFactory<ApplicationReadDbContext>((sp, options) =>
+                options.UseSqlServer(
+                        sp.GetRequiredService<IOptions<ConnectionStringSettings>>().Value.Database,
+                        sqlOptions =>
+                        {
+                            sqlOptions.EnableRetryOnFailure(
+                                maxRetryCount: 3,
+                                maxRetryDelay: TimeSpan.FromSeconds(10),
+                                errorNumbersToAdd: null);
+                            sqlOptions.CommandTimeout(30);
+                        })
+                    .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking));
 
-        services.AddScoped<IPersonRepository, PersonRepository>();
-        services.AddScoped<ICatRepository, CatRepository>();
-        services.AddScoped<IAdoptionAnnouncementRepository, AdoptionAnnouncementRepository>();
+            services.AddScoped<IApplicationReadDbContext>(serviceProvider =>
+                serviceProvider.GetRequiredService<ApplicationReadDbContext>());
 
-        services.AddScoped<IPersonUniquenessCheckerService, PersonUniquenessCheckerService>();
+            services.AddScoped<IUnitOfWork>(serviceProvider =>
+                serviceProvider.GetRequiredService<ApplicationWriteDbContext>());
 
-        return services;
+            services.AddScoped<IPersonRepository, PersonRepository>();
+            services.AddScoped<ICatRepository, CatRepository>();
+            services.AddScoped<IAdoptionAnnouncementRepository, AdoptionAnnouncementRepository>();
+
+            services.AddScoped<IPersonUniquenessCheckerService, PersonUniquenessCheckerService>();
+
+            return services;
+        }
     }
 }
