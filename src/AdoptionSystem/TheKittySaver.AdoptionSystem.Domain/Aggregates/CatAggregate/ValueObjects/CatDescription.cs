@@ -15,6 +15,8 @@ public sealed class CatDescription : ValueObject
         {
             return Result.Failure<CatDescription>(DomainErrors.CatEntity.DescriptionProperty.NullOrEmpty);
         }
+        
+        value = value.Trim();
 
         if (value.Length > MaxLength)
         {

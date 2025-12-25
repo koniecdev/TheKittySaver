@@ -16,6 +16,8 @@ public sealed class AdoptionAnnouncementDescription : ValueObject
             return Result.Failure<AdoptionAnnouncementDescription>(DomainErrors.AdoptionAnnouncementErrors.DescriptionProperty.NullOrEmpty);
         }
 
+        value = value.Trim();
+        
         if (value.Length > MaxLength)
         {
             return Result.Failure<AdoptionAnnouncementDescription>(DomainErrors.AdoptionAnnouncementErrors.DescriptionProperty.LongerThanAllowed);
