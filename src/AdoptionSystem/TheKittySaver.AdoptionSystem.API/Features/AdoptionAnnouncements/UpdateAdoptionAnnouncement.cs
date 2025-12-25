@@ -15,6 +15,7 @@ using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.PhoneNumbers;
 using TheKittySaver.AdoptionSystem.Persistence.DbContexts.Abstractions;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.AdoptionAnnouncementAggregate;
 using TheKittySaver.AdoptionSystem.Primitives.Enums;
+using TheKittySaver.AdoptionSystem.Primitives.Guards;
 
 namespace TheKittySaver.AdoptionSystem.API.Features.AdoptionAnnouncements;
 
@@ -184,6 +185,9 @@ internal static class UpdateAdoptionAnnouncementMappings
     {
         public UpdateAdoptionAnnouncement.Command MapToCommand(AdoptionAnnouncementId adoptionAnnouncementId)
         {
+            Ensure.NotEmpty(adoptionAnnouncementId);
+            ArgumentNullException.ThrowIfNull(request);
+            
             UpdateAdoptionAnnouncement.Command command = new(
                 AdoptionAnnouncementId: adoptionAnnouncementId,
                 Description: request.Description,

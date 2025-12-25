@@ -13,6 +13,7 @@ using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.PhoneNumbers;
 using TheKittySaver.AdoptionSystem.Persistence.DbContexts.Abstractions;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
+using TheKittySaver.AdoptionSystem.Primitives.Guards;
 
 namespace TheKittySaver.AdoptionSystem.API.Features.Persons;
 
@@ -126,6 +127,9 @@ internal static class UpdatePersonMappings
     {
         public UpdatePerson.Command MapToCommand(PersonId personId)
         {
+            Ensure.NotEmpty(personId);
+            ArgumentNullException.ThrowIfNull(request);
+            
             UpdatePerson.Command command = new(
                 PersonId: personId,
                 Username: request.Username,

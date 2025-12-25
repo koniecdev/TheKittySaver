@@ -11,6 +11,7 @@ using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
 using TheKittySaver.AdoptionSystem.Persistence.DbContexts.Abstractions;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate.Enums;
+using TheKittySaver.AdoptionSystem.Primitives.Guards;
 
 namespace TheKittySaver.AdoptionSystem.API.Features.Cats;
 
@@ -298,6 +299,9 @@ internal static class UpdateCatMappings
     {
         public UpdateCat.Command MapToCommand(CatId catId)
         {
+            Ensure.NotEmpty(catId);
+            ArgumentNullException.ThrowIfNull(request);
+            
             UpdateCat.Command command = new(
                 CatId: catId,
                 Name: request.Name,

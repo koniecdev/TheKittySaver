@@ -14,6 +14,7 @@ using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.AddressCompounds.Sp
 using TheKittySaver.AdoptionSystem.Persistence.DbContexts.Abstractions;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
 using TheKittySaver.AdoptionSystem.Primitives.Enums;
+using TheKittySaver.AdoptionSystem.Primitives.Guards;
 
 namespace TheKittySaver.AdoptionSystem.API.Features.PersonsAddresses;
 
@@ -134,6 +135,9 @@ internal static class CreatePersonAddressMappings
     {
         public CreatePersonAddress.Command MapToCommand(PersonId personId)
         {
+            Ensure.NotEmpty(personId);
+            ArgumentNullException.ThrowIfNull(request);
+            
             CreatePersonAddress.Command command = new(
                 PersonId: personId,
                 TwoLetterIsoCountryCode: request.TwoLetterIsoCountryCode,

@@ -13,6 +13,7 @@ using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.AddressCompounds;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.AddressCompounds.Specifications;
 using TheKittySaver.AdoptionSystem.Persistence.DbContexts.Abstractions;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
+using TheKittySaver.AdoptionSystem.Primitives.Guards;
 
 namespace TheKittySaver.AdoptionSystem.API.Features.PersonsAddresses;
 
@@ -139,6 +140,10 @@ internal static class UpdatePersonAddressMappings
     {
         public UpdatePersonAddress.Command MapToCommand(PersonId personId, AddressId addressId)
         {
+            Ensure.NotEmpty(personId);
+            Ensure.NotEmpty(addressId);
+            ArgumentNullException.ThrowIfNull(request);
+            
             UpdatePersonAddress.Command command = new(
                 PersonId: personId,
                 AddressId: addressId,

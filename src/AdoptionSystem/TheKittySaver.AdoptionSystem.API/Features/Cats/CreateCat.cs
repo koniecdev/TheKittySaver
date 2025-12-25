@@ -244,6 +244,8 @@ internal static class CreateCatMappings
     {
         public CreateCat.Command MapToCommand()
         {
+            ArgumentNullException.ThrowIfNull(request);
+            
             CreateCat.Command command = new(
                 PersonId: request.PersonId,
                 Name: request.Name,

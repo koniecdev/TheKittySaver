@@ -104,6 +104,8 @@ internal static class ReorderCatGalleryMappings
     {
         public ReorderCatGallery.Command MapToCommand(CatId catId)
         {
+            ArgumentNullException.ThrowIfNull(request);
+            
             ReorderCatGallery.Command command = new(
                 CatId: catId,
                 NewOrders: request.NewOrders);

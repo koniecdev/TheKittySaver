@@ -13,6 +13,7 @@ using TheKittySaver.AdoptionSystem.Domain.Services.CatAdoptionAnnouncementReassi
 using TheKittySaver.AdoptionSystem.Persistence.DbContexts.Abstractions;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.AdoptionAnnouncementAggregate;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate;
+using TheKittySaver.AdoptionSystem.Primitives.Guards;
 
 namespace TheKittySaver.AdoptionSystem.API.Features.Cats;
 
@@ -129,6 +130,9 @@ internal static class ReassignCatMappings
     {
         public ReassignCat.Command MapToCommand(CatId catId)
         {
+            Ensure.NotEmpty(catId);
+            ArgumentNullException.ThrowIfNull(request);
+            
             ReassignCat.Command command = new(
                 CatId: catId,
                 AdoptionAnnouncementId: request.AdoptionAnnouncementId);

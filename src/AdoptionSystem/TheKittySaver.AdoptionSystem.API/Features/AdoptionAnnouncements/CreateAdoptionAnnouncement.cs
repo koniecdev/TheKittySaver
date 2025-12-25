@@ -184,6 +184,8 @@ internal static class CreateAdoptionAnnouncementMappings
     {
         public CreateAdoptionAnnouncement.Command MapToCommand()
         {
+            ArgumentNullException.ThrowIfNull(request);
+            
             CreateAdoptionAnnouncement.Command command = new(
                 CatId: request.CatId,
                 Description: request.Description,

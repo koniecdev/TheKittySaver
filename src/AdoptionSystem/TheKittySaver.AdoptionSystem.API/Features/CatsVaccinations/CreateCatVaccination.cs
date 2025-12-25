@@ -12,6 +12,7 @@ using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
 using TheKittySaver.AdoptionSystem.Persistence.DbContexts.Abstractions;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate.Enums;
+using TheKittySaver.AdoptionSystem.Primitives.Guards;
 
 namespace TheKittySaver.AdoptionSystem.API.Features.CatsVaccinations;
 
@@ -21,9 +22,9 @@ internal sealed class CreateCatVaccination : IEndpoint
         CatId CatId,
         VaccinationType Type,
         DateOnly VaccinationDate,
-        string? VeterinarianNote) : ICommand<Result<CatVaccinationResponse>>;
+        string? VeterinarianNote) : ICommand<Result<VaccinationId>>;
 
-    internal sealed class Handler : ICommandHandler<Command, Result<CatVaccinationResponse>>
+    internal sealed class Handler : ICommandHandler<Command, Result<VaccinationId>>
     {
         private readonly ICatRepository _catRepository;
         private readonly IUnitOfWork _unitOfWork;
@@ -39,12 +40,12 @@ internal sealed class CreateCatVaccination : IEndpoint
             _timeProvider = timeProvider;
         }
 
-        public async ValueTask<Result<CatVaccinationResponse>> Handle(Command command, CancellationToken cancellationToken)
+        public async ValueTask<Result<VaccinationId>> Handle(Command command, CancellationToken cancellationToken)
         {
             Maybe<Cat> maybeCat = await _catRepository.GetByIdAsync(command.CatId, cancellationToken);
             if (maybeCat.HasNoValue)
             {
-                return Result.Failure<CatVaccinationResponse>(DomainErrors.CatEntity.NotFound(command.CatId));
+                return Result.Failure<VaccinationId>(DomainErrors.CatEntity.NotFound(command.CatId));
             }
 
             Cat cat = maybeCat.Value;
@@ -55,7 +56,7 @@ internal sealed class CreateCatVaccination : IEndpoint
                 Result<VaccinationNote> createNoteResult = VaccinationNote.Create(command.VeterinarianNote);
                 if (createNoteResult.IsFailure)
                 {
-                    return Result.Failure<CatVaccinationResponse>(createNoteResult.Error);
+                    return Result.Failure<VaccinationId>(createNoteResult.Error);
                 }
                 veterinarianNote = createNoteResult.Value;
             }
@@ -70,21 +71,12 @@ internal sealed class CreateCatVaccination : IEndpoint
 
             if (addVaccinationResult.IsFailure)
             {
-                return Result.Failure<CatVaccinationResponse>(addVaccinationResult.Error);
+                return Result.Failure<VaccinationId>(addVaccinationResult.Error);
             }
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            Vaccination vaccination = addVaccinationResult.Value;
-
-            CatVaccinationResponse response = new(
-                Id: vaccination.Id,
-                CatId: cat.Id,
-                Type: vaccination.Type,
-                VaccinationDate: vaccination.Date.Value,
-                VeterinarianNote: vaccination.VeterinarianNote?.Value);
-
-            return response;
+            return Result.Success(addVaccinationResult.Value.Id);
         }
     }
 
@@ -98,11 +90,11 @@ internal sealed class CreateCatVaccination : IEndpoint
         {
             Command command = request.MapToCommand(new CatId(catId));
 
-            Result<CatVaccinationResponse> commandResult = await sender.Send(command, cancellationToken);
+            Result<VaccinationId> commandResult = await sender.Send(command, cancellationToken);
 
             return commandResult.IsFailure
                 ? Results.Problem(commandResult.Error.ToProblemDetails())
-                : Results.Created($"/api/v1/cats/{catId}/vaccinations/{commandResult.Value.Id}", commandResult.Value);
+                : Results.Created($"/api/v1/cats/{catId}/vaccinations/{commandResult}", commandResult.Value);
         });
     }
 }
@@ -113,6 +105,9 @@ internal static class CreateCatVaccinationMappings
     {
         public CreateCatVaccination.Command MapToCommand(CatId catId)
         {
+            Ensure.NotEmpty(catId);
+            ArgumentNullException.ThrowIfNull(request);
+            
             CreateCatVaccination.Command command = new(
                 CatId: catId,
                 Type: request.Type,

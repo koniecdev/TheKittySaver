@@ -12,6 +12,7 @@ using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
 using TheKittySaver.AdoptionSystem.Persistence.DbContexts.Abstractions;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate.Enums;
+using TheKittySaver.AdoptionSystem.Primitives.Guards;
 
 namespace TheKittySaver.AdoptionSystem.API.Features.CatsVaccinations;
 
@@ -127,6 +128,10 @@ internal static class UpdateCatVaccinationMappings
     {
         public UpdateCatVaccination.Command MapToCommand(CatId catId, VaccinationId vaccinationId)
         {
+            Ensure.NotEmpty(catId);
+            Ensure.NotEmpty(vaccinationId);
+            ArgumentNullException.ThrowIfNull(request);
+            
             UpdateCatVaccination.Command command = new(
                 CatId: catId,
                 VaccinationId: vaccinationId,
