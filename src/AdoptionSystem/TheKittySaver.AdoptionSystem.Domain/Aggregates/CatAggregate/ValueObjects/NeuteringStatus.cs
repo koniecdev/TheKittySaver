@@ -15,6 +15,8 @@ public sealed class NeuteringStatus : ValueObject
         IsNeutered = isNeutered;
     }
 
+    public override string ToString() => IsNeutered ? "Neutered" : "Not Neutered";
+
     protected override IEnumerable<object> GetAtomicValues()
     {
         yield return IsNeutered;

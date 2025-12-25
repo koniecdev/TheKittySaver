@@ -54,6 +54,8 @@ public sealed class ListingSource : ValueObject
         SourceName = sourceName;
     }
 
+    public override string ToString() => $"{Type}: {SourceName}";
+
     protected override IEnumerable<object> GetAtomicValues()
     {
         yield return Type;

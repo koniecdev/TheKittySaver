@@ -37,8 +37,10 @@ internal sealed class GetCatGalleryItem : IEndpoint
                     DisplayOrder: g.DisplayOrder))
                 .FirstOrDefaultAsync(cancellationToken);
 
-            return response ?? Result.Failure<CatGalleryItemResponse>(
-                DomainErrors.CatGalleryItemEntity.NotFound(query.GalleryItemId));
+            return response is null
+                ? Result.Failure<CatGalleryItemResponse>(
+                    DomainErrors.CatGalleryItemEntity.NotFound(query.GalleryItemId))
+                : Result.Success(response);
         }
     }
 

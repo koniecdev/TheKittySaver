@@ -42,13 +42,10 @@ internal sealed class GetAdoptionAnnouncement : IEndpoint
                     Status: aa.Status))
                 .FirstOrDefaultAsync(cancellationToken);
 
-            if (response is null)
-            {
-                return Result.Failure<AdoptionAnnouncementDetailsResponse>(
-                    DomainErrors.AdoptionAnnouncementErrors.NotFound(query.AdoptionAnnouncementId));
-            }
-            
-            return Result.Success(response);
+            return response is null
+                ? Result.Failure<AdoptionAnnouncementDetailsResponse>(
+                    DomainErrors.AdoptionAnnouncementErrors.NotFound(query.AdoptionAnnouncementId))
+                : Result.Success(response);
         }
     }
 

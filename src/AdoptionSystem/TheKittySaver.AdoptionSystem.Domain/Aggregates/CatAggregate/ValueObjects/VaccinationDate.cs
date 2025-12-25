@@ -33,6 +33,8 @@ public sealed class VaccinationDate : ValueObject
         Value = value;
     }
 
+    public override string ToString() => Value.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+
     protected override IEnumerable<object> GetAtomicValues()
     {
         yield return Value;

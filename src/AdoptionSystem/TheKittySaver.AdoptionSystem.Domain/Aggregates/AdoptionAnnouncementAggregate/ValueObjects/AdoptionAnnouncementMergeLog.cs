@@ -19,7 +19,9 @@ public sealed class AdoptionAnnouncementMergeLog : ValueObject
     {
         MergedAdoptionAnnouncementId = mergedAdoptionAnnouncementId;
     }
-    
+
+    public override string ToString() => MergedAdoptionAnnouncementId.ToString();
+
     protected override IEnumerable<object> GetAtomicValues()
     {
         yield return MergedAdoptionAnnouncementId;

@@ -61,7 +61,21 @@ public sealed class AdoptionHistory : ValueObject
         LastReturnDate = lastReturnDate;
         LastReturnReason = lastReturnReason;
     }
-    
+
+    public override string ToString()
+    {
+        if (ReturnCount == 0)
+        {
+            return "Never returned";
+        }
+
+        return string.Format(
+            System.Globalization.CultureInfo.InvariantCulture,
+            "Returned {0} time(s), last: {1:yyyy-MM-dd}",
+            ReturnCount,
+            LastReturnDate);
+    }
+
     protected override IEnumerable<object> GetAtomicValues()
     {
         yield return ReturnCount;

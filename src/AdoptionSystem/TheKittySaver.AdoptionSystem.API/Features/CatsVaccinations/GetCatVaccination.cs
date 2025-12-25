@@ -39,8 +39,10 @@ internal sealed class GetCatVaccination : IEndpoint
                     VeterinarianNote: v.VeterinarianNote))
                 .FirstOrDefaultAsync(cancellationToken);
 
-            return response ?? Result.Failure<CatVaccinationResponse>(
-                DomainErrors.VaccinationEntity.NotFound(query.VaccinationId));
+            return response is null 
+                ? Result.Failure<CatVaccinationResponse>(
+                    DomainErrors.VaccinationEntity.NotFound(query.VaccinationId)) 
+                : Result.Success(response);
         }
     }
 

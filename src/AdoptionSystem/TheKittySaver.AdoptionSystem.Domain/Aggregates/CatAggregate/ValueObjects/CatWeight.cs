@@ -34,6 +34,8 @@ public sealed class CatWeight : ValueObject
         ValueInKilograms = valueInKilograms;
     }
 
+    public override string ToString() => string.Format(System.Globalization.CultureInfo.InvariantCulture, "{0} kg", ValueInKilograms);
+
     protected override IEnumerable<object> GetAtomicValues()
     {
         yield return ValueInKilograms;

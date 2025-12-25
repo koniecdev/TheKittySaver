@@ -47,6 +47,16 @@ public sealed class SpecialNeedsStatus : ValueObject
         SeverityType = severityType;
     }
 
+    public override string ToString()
+    {
+        if (!HasSpecialNeeds)
+        {
+            return "No special needs";
+        }
+
+        return $"{SeverityType}: {Description}";
+    }
+
     protected override IEnumerable<object> GetAtomicValues()
     {
         yield return HasSpecialNeeds;

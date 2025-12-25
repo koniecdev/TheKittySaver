@@ -18,6 +18,8 @@ public sealed class HealthStatus : ValueObject
         Value = value;
     }
 
+    public override string ToString() => Value.ToString();
+
     protected override IEnumerable<object> GetAtomicValues()
     {
         yield return Value;

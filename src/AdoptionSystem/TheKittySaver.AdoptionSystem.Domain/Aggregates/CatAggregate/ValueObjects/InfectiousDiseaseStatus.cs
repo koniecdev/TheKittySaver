@@ -61,6 +61,13 @@ public sealed class InfectiousDiseaseStatus : ValueObject
         LastTestedAt = lastTestedAt;
     }
 
+    public override string ToString() => string.Format(
+        System.Globalization.CultureInfo.InvariantCulture,
+        "FIV: {0}, FeLV: {1} (tested: {2:yyyy-MM-dd})",
+        FivStatus,
+        FelvStatus,
+        LastTestedAt);
+
     protected override IEnumerable<object> GetAtomicValues()
     {
         yield return FivStatus;

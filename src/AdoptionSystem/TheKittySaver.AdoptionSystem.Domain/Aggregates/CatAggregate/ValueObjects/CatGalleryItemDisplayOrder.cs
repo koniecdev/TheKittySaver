@@ -32,7 +32,9 @@ public sealed class CatGalleryItemDisplayOrder : ValueObject
     {
         Value = value;
     }
-    
+
+    public override string ToString() => Value.ToString(System.Globalization.CultureInfo.InvariantCulture);
+
     protected override IEnumerable<object> GetAtomicValues()
     {
         yield return Value;

@@ -45,13 +45,10 @@ internal sealed class GetPerson : IEndpoint
                         .ToList()))
                 .FirstOrDefaultAsync(cancellationToken);
 
-            if (response is null)
-            {
-                return Result.Failure<PersonDetailsResponse>(
-                    DomainErrors.PersonEntity.NotFound(query.PersonId));
-            }
-
-            return Result.Success(response);
+            return response is null
+                ? Result.Failure<PersonDetailsResponse>(
+                    DomainErrors.PersonEntity.NotFound(query.PersonId))
+                : Result.Success(response);
         }
     }
 
