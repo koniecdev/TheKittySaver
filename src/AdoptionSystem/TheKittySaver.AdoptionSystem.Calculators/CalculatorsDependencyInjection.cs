@@ -14,8 +14,6 @@ public static class CalculatorsDependencyInjection
             services.Configure<CalculatorsOptions>(configuration.GetSection(CalculatorsOptions.SectionName));
 
             services.AddSingleton<IAdoptionPriorityScoreCalculatorFactory, AdoptionPriorityScoreCalculatorFactory>();
-            services.AddSingleton<IAdoptionPriorityScoreCalculator>(sp =>
-                sp.GetRequiredService<IAdoptionPriorityScoreCalculatorFactory>().CreateAdoptionPriorityScoreCalculator());
 
             return services;
         }
