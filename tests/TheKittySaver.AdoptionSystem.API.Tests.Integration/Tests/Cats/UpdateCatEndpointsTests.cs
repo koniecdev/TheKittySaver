@@ -17,16 +17,16 @@ public sealed class UpdateCatEndpointsTests(TheKittySaverApiFactory appFactory)
     [Fact]
     public async Task UpdateCat_ShouldMapEveryRequestProperty_WhenValidDataIsProvided()
     {
-        // Arrange
+        //Arrange
         CatDetailsResponse cat = await CatApiFactory.CreateRandomAsync(ApiClient, Faker, TestPersonId);
         UpdateCatRequest request = CatApiFactory.GenerateRandomUpdateRequest(Faker);
 
-        // Act
+        //Act
         HttpResponseMessage httpResponseMessage =
             await ApiClient.Http.PutAsJsonAsync(
                 new Uri($"api/v1/cats/{cat.Id}", UriKind.Relative), request);
 
-        // Assert
+        //Assert
         _ = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NoContent);
 
@@ -44,15 +44,15 @@ public sealed class UpdateCatEndpointsTests(TheKittySaverApiFactory appFactory)
     [Fact]
     public async Task UpdateCat_ShouldReturnNotFound_WhenNotExistingCatIdIsProvided()
     {
-        // Arrange
+        //Arrange
         UpdateCatRequest request = CatApiFactory.GenerateRandomUpdateRequest(Faker);
 
-        // Act
+        //Act
         HttpResponseMessage httpResponseMessage =
             await ApiClient.Http.PutAsJsonAsync(
                 new Uri($"api/v1/cats/{Guid.NewGuid()}", UriKind.Relative), request);
 
-        // Assert
+        //Assert
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NotFound);
         ProblemDetails? problemDetails =
             await httpResponseMessage.Content.ReadFromJsonAsync<ProblemDetails>(ApiClient.JsonOptions);

@@ -33,7 +33,7 @@
 //     [Fact]
 //     public async Task CreatePersonAddress_ShouldReturnAddress_WhenValidDataIsProvided()
 //     {
-//         // Arrange
+//         //Arrange
 //         PersonDetailsResponse person = await CreateTestPersonAsync();
 //         CreatePersonAddressRequest request = new(
 //             CountryCode.PL,
@@ -43,11 +43,11 @@
 //             "Warszawa",
 //             "ul. Testowa 1");
 //
-//         // Act
+//         //Act
 //         HttpResponseMessage httpResponseMessage = await _httpClient.PostAsJsonAsync(
 //             new Uri($"api/v1/persons/{person.Id.Value}/addresses", UriKind.Relative), request);
 //
-//         // Assert
+//         //Assert
 //         string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
 //         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.Created);
 //
@@ -67,7 +67,7 @@
 //     [Fact]
 //     public async Task CreatePersonAddress_ShouldReturnAddress_WhenLineIsNull()
 //     {
-//         // Arrange
+//         //Arrange
 //         PersonDetailsResponse person = await CreateTestPersonAsync();
 //         CreatePersonAddressRequest request = new(
 //             CountryCode.PL,
@@ -76,11 +76,11 @@
 //             "Wielkopolskie",
 //             _faker.Address.City());
 //
-//         // Act
+//         //Act
 //         HttpResponseMessage httpResponseMessage = await _httpClient.PostAsJsonAsync(
 //             new Uri($"api/v1/persons/{person.Id.Value}/addresses", UriKind.Relative), request);
 //
-//         // Assert
+//         //Assert
 //         string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
 //
 //         PersonAddressResponse addressResponse = JsonSerializer.Deserialize<PersonAddressResponse>(stringResponse, _jsonSerializerOptions)
@@ -93,7 +93,7 @@
 //     [Fact]
 //     public async Task CreatePersonAddress_ShouldReturnNotFound_WhenPersonDoesNotExist()
 //     {
-//         // Arrange
+//         //Arrange
 //         Guid nonExistentPersonId = Guid.NewGuid();
 //         CreatePersonAddressRequest request = new(
 //             CountryCode.PL,
@@ -102,26 +102,26 @@
 //             "Małopolskie",
 //             _faker.Address.City());
 //
-//         // Act
+//         //Act
 //         HttpResponseMessage httpResponseMessage = await _httpClient.PostAsJsonAsync(
 //             new Uri($"api/v1/persons/{nonExistentPersonId}/addresses", UriKind.Relative), request);
 //
-//         // Assert
+//         //Assert
 //         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NotFound);
 //     }
 //
 //     [Fact]
 //     public async Task GetPersonAddress_ShouldReturnAddress_WhenAddressExists()
 //     {
-//         // Arrange
+//         //Arrange
 //         PersonDetailsResponse person = await CreateTestPersonAsync();
 //         PersonAddressResponse createdAddress = await CreateTestAddressAsync(person.Id);
 //
-//         // Act
+//         //Act
 //         HttpResponseMessage httpResponseMessage = await _httpClient.GetAsync(
 //             new Uri($"api/v1/persons/{person.Id.Value}/addresses/{createdAddress.Id.Value}", UriKind.Relative));
 //
-//         // Assert
+//         //Assert
 //         string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
 //
 //         PersonAddressResponse addressResponse = JsonSerializer.Deserialize<PersonAddressResponse>(stringResponse, _jsonSerializerOptions)
@@ -135,31 +135,31 @@
 //     [Fact]
 //     public async Task GetPersonAddress_ShouldReturnNotFound_WhenAddressDoesNotExist()
 //     {
-//         // Arrange
+//         //Arrange
 //         PersonDetailsResponse person = await CreateTestPersonAsync();
 //         Guid nonExistentAddressId = Guid.NewGuid();
 //
-//         // Act
+//         //Act
 //         HttpResponseMessage httpResponseMessage = await _httpClient.GetAsync(
 //             new Uri($"api/v1/persons/{person.Id.Value}/addresses/{nonExistentAddressId}", UriKind.Relative));
 //
-//         // Assert
+//         //Assert
 //         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NotFound);
 //     }
 //
 //     [Fact]
 //     public async Task GetPerson_ShouldReturnEmbeddedAddresses_WhenPersonHasAddresses()
 //     {
-//         // Arrange
+//         //Arrange
 //         PersonDetailsResponse person = await CreateTestPersonAsync();
 //         PersonAddressResponse address1 = await CreateTestAddressAsync(person.Id, "Home");
 //         PersonAddressResponse address2 = await CreateTestAddressAsync(person.Id, "Work");
 //
-//         // Act
+//         //Act
 //         HttpResponseMessage httpResponseMessage = await _httpClient.GetAsync(
 //             new Uri($"api/v1/persons/{person.Id.Value}", UriKind.Relative));
 //
-//         // Assert
+//         //Assert
 //         string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
 //
 //         PersonDetailsResponse personResponse = JsonSerializer.Deserialize<PersonDetailsResponse>(stringResponse, _jsonSerializerOptions)
@@ -173,7 +173,7 @@
 //     [Fact]
 //     public async Task UpdatePersonAddress_ShouldReturnUpdatedAddress_WhenValidDataIsProvided()
 //     {
-//         // Arrange
+//         //Arrange
 //         PersonDetailsResponse person = await CreateTestPersonAsync();
 //         PersonAddressResponse createdAddress = await CreateTestAddressAsync(person.Id);
 //         UpdatePersonAddressRequest updateRequest = new(
@@ -183,11 +183,11 @@
 //             "Warszawa",
 //             "ul. Nowa 5");
 //
-//         // Act
+//         //Act
 //         HttpResponseMessage httpResponseMessage = await _httpClient.PutAsJsonAsync(
 //             new Uri($"api/v1/persons/{person.Id.Value}/addresses/{createdAddress.Id.Value}", UriKind.Relative), updateRequest);
 //
-//         // Assert
+//         //Assert
 //         string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
 //
 //         PersonAddressResponse addressResponse = JsonSerializer.Deserialize<PersonAddressResponse>(stringResponse, _jsonSerializerOptions)
@@ -202,7 +202,7 @@
 //     [Fact]
 //     public async Task UpdatePersonAddress_ShouldReturnNotFound_WhenAddressDoesNotExist()
 //     {
-//         // Arrange
+//         //Arrange
 //         PersonDetailsResponse person = await CreateTestPersonAsync();
 //         Guid nonExistentAddressId = Guid.NewGuid();
 //         UpdatePersonAddressRequest updateRequest = new(
@@ -211,26 +211,26 @@
 //             "Mazowieckie",
 //             "Warszawa");
 //
-//         // Act
+//         //Act
 //         HttpResponseMessage httpResponseMessage = await _httpClient.PutAsJsonAsync(
 //             new Uri($"api/v1/persons/{person.Id.Value}/addresses/{nonExistentAddressId}", UriKind.Relative), updateRequest);
 //
-//         // Assert
+//         //Assert
 //         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NotFound);
 //     }
 //
 //     [Fact]
 //     public async Task DeletePersonAddress_ShouldReturnNoContent_WhenAddressExists()
 //     {
-//         // Arrange
+//         //Arrange
 //         PersonDetailsResponse person = await CreateTestPersonAsync();
 //         PersonAddressResponse createdAddress = await CreateTestAddressAsync(person.Id);
 //
-//         // Act
+//         //Act
 //         HttpResponseMessage httpResponseMessage = await _httpClient.DeleteAsync(
 //             new Uri($"api/v1/persons/{person.Id.Value}/addresses/{createdAddress.Id.Value}", UriKind.Relative));
 //
-//         // Assert
+//         //Assert
 //         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NoContent);
 //
 //         // Verify address is deleted
@@ -242,15 +242,15 @@
 //     [Fact]
 //     public async Task DeletePersonAddress_ShouldReturnNotFound_WhenAddressDoesNotExist()
 //     {
-//         // Arrange
+//         //Arrange
 //         PersonDetailsResponse person = await CreateTestPersonAsync();
 //         Guid nonExistentAddressId = Guid.NewGuid();
 //
-//         // Act
+//         //Act
 //         HttpResponseMessage httpResponseMessage = await _httpClient.DeleteAsync(
 //             new Uri($"api/v1/persons/{person.Id.Value}/addresses/{nonExistentAddressId}", UriKind.Relative));
 //
-//         // Assert
+//         //Assert
 //         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NotFound);
 //     }
 //

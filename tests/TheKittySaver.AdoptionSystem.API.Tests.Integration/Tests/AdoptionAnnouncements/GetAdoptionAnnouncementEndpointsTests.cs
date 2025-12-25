@@ -16,11 +16,11 @@ public sealed class GetAdoptionAnnouncementEndpointsTests(TheKittySaverApiFactor
     [Fact]
     public async Task GetAdoptionAnnouncement_ShouldReturnNotFound_WhenRandomIdIsProvided()
     {
-        // Act
+        //Act
         HttpResponseMessage httpResponseMessage =
             await ApiClient.Http.GetAsync(new Uri($"/api/v1/adoption-announcements/{Guid.NewGuid()}", UriKind.Relative));
 
-        // Assert
+        //Assert
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NotFound);
 
         ProblemDetails? problemDetails =
@@ -32,15 +32,15 @@ public sealed class GetAdoptionAnnouncementEndpointsTests(TheKittySaverApiFactor
     [Fact]
     public async Task GetAdoptionAnnouncement_ShouldMapAllProperties_WhenAnnouncementExists()
     {
-        // Arrange
+        //Arrange
         AdoptionAnnouncementDetailsResponse createdAnnouncement =
             await AdoptionAnnouncementApiFactory.CreateRandomAsync(ApiClient, Faker, TestCatId);
 
-        // Act
+        //Act
         AdoptionAnnouncementDetailsResponse response =
             await AdoptionAnnouncementApiQueryService.GetByIdAsync(ApiClient, createdAnnouncement.Id);
 
-        // Assert
+        //Assert
         response.ShouldNotBeNull();
         response.Id.ShouldBe(createdAnnouncement.Id);
         response.PersonId.ShouldBe(TestPersonId);
@@ -53,18 +53,18 @@ public sealed class GetAdoptionAnnouncementEndpointsTests(TheKittySaverApiFactor
     [Fact]
     public async Task GetAdoptionAnnouncement_ShouldReturnProperAnnouncement_WhenMultipleAnnouncementsExist()
     {
-        // Arrange
+        //Arrange
         AdoptionAnnouncementDetailsResponse announcement =
             await AdoptionAnnouncementApiFactory.CreateRandomAsync(ApiClient, Faker, TestCatId);
 
         CatId anotherCatId = await CatApiFactory.CreateRandomWithThumbnailAndGetIdAsync(ApiClient, Faker, TestPersonId);
         _ = await AdoptionAnnouncementApiFactory.CreateRandomAsync(ApiClient, Faker, anotherCatId);
 
-        // Act
+        //Act
         AdoptionAnnouncementDetailsResponse response =
             await AdoptionAnnouncementApiQueryService.GetByIdAsync(ApiClient, announcement.Id);
 
-        // Assert
+        //Assert
         response.ShouldNotBeNull();
         response.Id.ShouldBe(announcement.Id);
     }

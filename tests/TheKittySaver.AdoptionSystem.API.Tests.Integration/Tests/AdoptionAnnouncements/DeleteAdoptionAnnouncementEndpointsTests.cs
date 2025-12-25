@@ -15,14 +15,14 @@ public sealed class DeleteAdoptionAnnouncementEndpointsTests(TheKittySaverApiFac
     [Fact]
     public async Task DeleteAdoptionAnnouncement_ShouldReturnNoContent_WhenExistingAnnouncementIdIsProvided()
     {
-        // Arrange
+        //Arrange
         AdoptionAnnouncementId announcementId = await AdoptionAnnouncementApiFactory.CreateRandomAndGetIdAsync(ApiClient, Faker, TestCatId);
 
-        // Act
+        //Act
         HttpResponseMessage httpResponseMessage =
             await ApiClient.Http.DeleteAsync(new Uri($"api/v1/adoption-announcements/{announcementId}", UriKind.Relative));
 
-        // Assert
+        //Assert
         _ = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NoContent);
 
@@ -34,11 +34,11 @@ public sealed class DeleteAdoptionAnnouncementEndpointsTests(TheKittySaverApiFac
     [Fact]
     public async Task DeleteAdoptionAnnouncement_ShouldReturnNotFound_WhenNonExistingAnnouncementIdIsProvided()
     {
-        // Act
+        //Act
         HttpResponseMessage httpResponseMessage =
             await ApiClient.Http.DeleteAsync(new Uri($"api/v1/adoption-announcements/{Guid.NewGuid()}", UriKind.Relative));
 
-        // Assert
+        //Assert
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NotFound);
         ProblemDetails problemDetails = await httpResponseMessage.ToProblemDetailsAsync();
         problemDetails.Status.ShouldBe(StatusCodes.Status404NotFound);

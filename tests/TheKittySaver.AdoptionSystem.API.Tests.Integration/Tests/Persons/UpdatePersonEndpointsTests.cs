@@ -17,16 +17,16 @@ public sealed class UpdatePersonEndpointsTests(TheKittySaverApiFactory appFactor
     [Fact]
     public async Task UpdatePerson_ShouldMapEveryRequestProperty_WhenValidDataIsProvided()
     {
-        // Arrange
+        //Arrange
         PersonDetailsResponse person = await PersonApiFactory.CreateRandomAsync(ApiClient, Faker);
         UpdatePersonRequest request = PersonApiFactory.GenerateRandomUpdateRequest(Faker);
 
-        // Act
+        //Act
         HttpResponseMessage httpResponseMessage =
             await ApiClient.Http.PutAsJsonAsync(
                 new Uri($"api/v1/persons/{person.Id}", UriKind.Relative), request);
 
-        // Assert
+        //Assert
         _ = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NoContent);
 
@@ -48,7 +48,7 @@ public sealed class UpdatePersonEndpointsTests(TheKittySaverApiFactory appFactor
         bool replaceEmailWithNull,
         bool replacePhoneNumberWithNull)
     {
-        // Arrange
+        //Arrange
         PersonDetailsResponse person = await PersonApiFactory.CreateRandomAsync(ApiClient, Faker);
 
         UpdatePersonRequest request = new(
@@ -56,12 +56,12 @@ public sealed class UpdatePersonEndpointsTests(TheKittySaverApiFactory appFactor
             replaceEmailWithNull ? null! : Faker.Internet.Email(),
             replacePhoneNumberWithNull ? null! : Faker.Person.PolishPhoneNumber());
 
-        // Act
+        //Act
         HttpResponseMessage httpResponseMessage =
             await ApiClient.Http.PutAsJsonAsync(
                 new Uri($"api/v1/persons/{person.Id}", UriKind.Relative), request);
 
-        // Assert
+        //Assert
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
         ProblemDetails? problemDetails =
             await httpResponseMessage.Content.ReadFromJsonAsync<ProblemDetails>(ApiClient.JsonOptions);
@@ -72,15 +72,15 @@ public sealed class UpdatePersonEndpointsTests(TheKittySaverApiFactory appFactor
     [Fact]
     public async Task UpdatePerson_ShouldReturnNotFound_WhenNotExistingPersonIdIsProvided()
     {
-        // Arrange
+        //Arrange
         UpdatePersonRequest request = PersonApiFactory.GenerateRandomUpdateRequest(Faker);
 
-        // Act
+        //Act
         HttpResponseMessage httpResponseMessage =
             await ApiClient.Http.PutAsJsonAsync(
                 new Uri($"api/v1/persons/{Guid.NewGuid()}", UriKind.Relative), request);
 
-        // Assert
+        //Assert
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 }

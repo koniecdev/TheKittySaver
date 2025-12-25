@@ -20,14 +20,14 @@ public sealed class CreateCatEndpointsTests(TheKittySaverApiFactory appFactory)
     [Fact]
     public async Task CreateCat_ShouldReturnCatId_WhenValidDataIsProvided()
     {
-        // Arrange
+        //Arrange
         CreateCatRequest request = CatApiFactory.GenerateRandomCreateRequest(Faker, TestPersonId);
 
-        // Act
+        //Act
         HttpResponseMessage httpResponseMessage =
             await ApiClient.Http.PostAsJsonAsync(new Uri("api/v1/cats", UriKind.Relative), request);
 
-        // Assert
+        //Assert
         string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.Created);
 
@@ -45,15 +45,15 @@ public sealed class CreateCatEndpointsTests(TheKittySaverApiFactory appFactory)
     [Fact]
     public async Task CreateCat_ShouldReturnNotFound_WhenPersonDoesNotExist()
     {
-        // Arrange
+        //Arrange
         PersonId nonExistentPersonId = new(Guid.NewGuid());
         CreateCatRequest request = CatApiFactory.GenerateRandomCreateRequest(Faker, nonExistentPersonId);
 
-        // Act
+        //Act
         HttpResponseMessage httpResponseMessage =
             await ApiClient.Http.PostAsJsonAsync(new Uri("api/v1/cats", UriKind.Relative), request);
 
-        // Assert
+        //Assert
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NotFound);
         ProblemDetails? problemDetails =
             await httpResponseMessage.Content.ReadFromJsonAsync<ProblemDetails>(ApiClient.JsonOptions);

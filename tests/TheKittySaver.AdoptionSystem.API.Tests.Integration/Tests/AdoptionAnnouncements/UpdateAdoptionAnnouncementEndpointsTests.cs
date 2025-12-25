@@ -17,17 +17,17 @@ public sealed class UpdateAdoptionAnnouncementEndpointsTests(TheKittySaverApiFac
     [Fact]
     public async Task UpdateAdoptionAnnouncement_ShouldMapEveryRequestProperty_WhenValidDataIsProvided()
     {
-        // Arrange
+        //Arrange
         AdoptionAnnouncementDetailsResponse announcement =
             await AdoptionAnnouncementApiFactory.CreateRandomAsync(ApiClient, Faker, TestCatId);
         UpdateAdoptionAnnouncementRequest request = AdoptionAnnouncementApiFactory.GenerateRandomUpdateRequest(Faker);
 
-        // Act
+        //Act
         HttpResponseMessage httpResponseMessage =
             await ApiClient.Http.PutAsJsonAsync(
                 new Uri($"api/v1/adoption-announcements/{announcement.Id}", UriKind.Relative), request);
 
-        // Assert
+        //Assert
         _ = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NoContent);
 
@@ -44,15 +44,15 @@ public sealed class UpdateAdoptionAnnouncementEndpointsTests(TheKittySaverApiFac
     [Fact]
     public async Task UpdateAdoptionAnnouncement_ShouldReturnNotFound_WhenNotExistingAnnouncementIdIsProvided()
     {
-        // Arrange
+        //Arrange
         UpdateAdoptionAnnouncementRequest request = AdoptionAnnouncementApiFactory.GenerateRandomUpdateRequest(Faker);
 
-        // Act
+        //Act
         HttpResponseMessage httpResponseMessage =
             await ApiClient.Http.PutAsJsonAsync(
                 new Uri($"api/v1/adoption-announcements/{Guid.NewGuid()}", UriKind.Relative), request);
 
-        // Assert
+        //Assert
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NotFound);
         ProblemDetails? problemDetails =
             await httpResponseMessage.Content.ReadFromJsonAsync<ProblemDetails>(ApiClient.JsonOptions);

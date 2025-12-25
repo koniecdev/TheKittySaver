@@ -13,11 +13,11 @@ public sealed class GetAdoptionAnnouncementsEndpointsTests(TheKittySaverApiFacto
     [Fact]
     public async Task GetAdoptionAnnouncements_ShouldReturnEmptyItemList_WhenNoAnnouncementsExist()
     {
-        // Act
+        //Act
         PaginationResponse<AdoptionAnnouncementListItemResponse> response =
             await AdoptionAnnouncementApiQueryService.GetAllAsync(ApiClient);
 
-        // Assert
+        //Assert
         response.ShouldNotBeNull();
         response.Items.ShouldNotBeNull();
         response.Items.Count.ShouldBe(0);
@@ -26,15 +26,15 @@ public sealed class GetAdoptionAnnouncementsEndpointsTests(TheKittySaverApiFacto
     [Fact]
     public async Task GetAdoptionAnnouncements_ShouldMapAllProperties_WhenAnnouncementExists()
     {
-        // Arrange
+        //Arrange
         AdoptionAnnouncementDetailsResponse announcementResponse =
             await AdoptionAnnouncementApiFactory.CreateRandomAsync(ApiClient, Faker, TestCatId);
 
-        // Act
+        //Act
         PaginationResponse<AdoptionAnnouncementListItemResponse> response =
             await AdoptionAnnouncementApiQueryService.GetAllAsync(ApiClient);
 
-        // Assert
+        //Assert
         response.ShouldNotBeNull();
         response.Items.ShouldNotBeNull();
         response.Items.Count.ShouldBe(1);
@@ -50,17 +50,17 @@ public sealed class GetAdoptionAnnouncementsEndpointsTests(TheKittySaverApiFacto
     [Fact]
     public async Task GetAdoptionAnnouncements_ShouldReturnMultipleAnnouncements_WhenMultipleAnnouncementsExist()
     {
-        // Arrange
+        //Arrange
         _ = await AdoptionAnnouncementApiFactory.CreateRandomAsync(ApiClient, Faker, TestCatId);
 
         CatId anotherCatId = await CatApiFactory.CreateRandomWithThumbnailAndGetIdAsync(ApiClient, Faker, TestPersonId);
         _ = await AdoptionAnnouncementApiFactory.CreateRandomAsync(ApiClient, Faker, anotherCatId);
 
-        // Act
+        //Act
         PaginationResponse<AdoptionAnnouncementListItemResponse> response =
             await AdoptionAnnouncementApiQueryService.GetAllAsync(ApiClient);
 
-        // Assert
+        //Assert
         response.ShouldNotBeNull();
         response.Items.ShouldNotBeNull();
         response.Items.Count.ShouldBe(2);
