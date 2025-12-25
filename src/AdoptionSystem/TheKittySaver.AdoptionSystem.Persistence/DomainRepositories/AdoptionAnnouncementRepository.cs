@@ -15,7 +15,7 @@ internal sealed class AdoptionAnnouncementRepository :
     {
     }
 
-    public async Task<IReadOnlyCollection<AdoptionAnnouncement>> GetAdoptionAnnouncementByPersonIdAsync(
+    public async Task<IReadOnlyCollection<AdoptionAnnouncement>> GetAdoptionAnnouncementsByPersonIdAsync(
         PersonId personId,
         CancellationToken cancellationToken)
     {
