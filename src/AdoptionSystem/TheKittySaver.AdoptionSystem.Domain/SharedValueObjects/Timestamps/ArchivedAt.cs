@@ -1,6 +1,7 @@
 using TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
 using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
+using TheKittySaver.AdoptionSystem.Primitives.Guards;
 
 namespace TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.Timestamps;
 
@@ -12,6 +13,8 @@ public sealed class ArchivedAt : ValueObject
 
     public static Result<ArchivedAt> Create(DateTimeOffset value)
     {
+        Ensure.NotEmpty(value);
+
         if (value < MinimumAllowedValue)
         {
             return Result.Failure<ArchivedAt>(DomainErrors.ArchivedAtValueObject.CannotBeInThePast);

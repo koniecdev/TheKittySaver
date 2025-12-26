@@ -1,6 +1,7 @@
 using TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
 using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
+using TheKittySaver.AdoptionSystem.Primitives.Guards;
 
 namespace TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.Timestamps;
 
@@ -12,6 +13,8 @@ public sealed class ClaimedAt : ValueObject
 
     public static Result<ClaimedAt> Create(DateTimeOffset value)
     {
+        Ensure.NotEmpty(value);
+
         if (value < MinimumAllowedValue)
         {
             return Result.Failure<ClaimedAt>(DomainErrors.ClaimedAtValueObject.CannotBeInThePast);
