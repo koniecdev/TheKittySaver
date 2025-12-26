@@ -29,6 +29,11 @@ public sealed class AdoptionAnnouncementMergeLog : ValueObject
         MergedAt = mergedAt;
     }
 
+    private AdoptionAnnouncementMergeLog()
+    {
+        MergedAt = null!;
+    }
+
     public override string ToString() => MergedAdoptionAnnouncementId.ToString();
 
     protected override IEnumerable<object> GetAtomicValues()

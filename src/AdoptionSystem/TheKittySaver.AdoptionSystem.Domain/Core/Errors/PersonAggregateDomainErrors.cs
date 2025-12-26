@@ -14,6 +14,9 @@ public static partial class DomainErrors
     {
         public static Error NotFound(PersonId id)
             => HasNotBeenFound(nameof(PersonEntity), id.Value);
+        
+        public static Error NotFoundByIdentityId(IdentityId id)
+            => HasNotBeenFound(nameof(PersonEntity), id.Value);
 
         public static Error IsArchived(PersonId id)
             => InvalidOperation(

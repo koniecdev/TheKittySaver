@@ -36,13 +36,15 @@ internal sealed class DeleteAdoptionAnnouncement : IEndpoint
 
         public async ValueTask<Result> Handle(Command command, CancellationToken cancellationToken)
         {
-            Maybe<AdoptionAnnouncement> maybeAnnouncement = await _adoptionAnnouncementRepository.GetByIdAsync(
+            Maybe<AdoptionAnnouncement> maybeAa = await _adoptionAnnouncementRepository.GetByIdAsync(
                 command.AdoptionAnnouncementId,
                 cancellationToken);
-            if (maybeAnnouncement.HasNoValue)
+            if (maybeAa.HasNoValue)
             {
                 return Result.Failure(DomainErrors.AdoptionAnnouncementEntity.NotFound(command.AdoptionAnnouncementId));
             }
+            
+            AdoptionAnnouncement adoptionAnnouncement = maybeAa.Value;
             
             IReadOnlyCollection<Cat> catsInAnnouncement =
                 await _catRepository.GetCatsByAdoptionAnnouncementIdAsync(
@@ -62,7 +64,7 @@ internal sealed class DeleteAdoptionAnnouncement : IEndpoint
                 }
             }
             
-            _adoptionAnnouncementRepository.Remove(maybeAnnouncement.Value);
+            _adoptionAnnouncementRepository.Remove(adoptionAnnouncement);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result.Success();

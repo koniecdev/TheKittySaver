@@ -10,4 +10,8 @@ public interface IAdoptionAnnouncementRepository : IRepository<AdoptionAnnouncem
     public Task<IReadOnlyCollection<AdoptionAnnouncement>> GetAdoptionAnnouncementsByPersonIdAsync(
         PersonId personId,
         CancellationToken cancellationToken);
+    
+    public Task<IReadOnlyCollection<AdoptionAnnouncement>> GetArchivedAnnouncementsByPersonIdAsync(
+        PersonId personId,
+        CancellationToken cancellationToken);
 }

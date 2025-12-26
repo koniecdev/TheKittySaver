@@ -27,4 +27,18 @@ internal sealed class AdoptionAnnouncementRepository :
         
         return adopAnnouncements;
     }
+
+    public async Task<IReadOnlyCollection<AdoptionAnnouncement>> GetArchivedAnnouncementsByPersonIdAsync(
+        PersonId personId,
+        CancellationToken cancellationToken)
+    {
+        Ensure.NotEmpty(personId);
+        
+        List<AdoptionAnnouncement> adopAnnouncements = await DbContext.AdoptionAnnouncements
+            .IgnoreQueryFilters()
+            .Where(x => x.PersonId == personId)
+            .ToListAsync(cancellationToken);
+        
+        return adopAnnouncements;
+    }
 }
