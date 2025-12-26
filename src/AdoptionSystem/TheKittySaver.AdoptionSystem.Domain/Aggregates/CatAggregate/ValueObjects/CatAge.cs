@@ -2,6 +2,7 @@
 using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
 using TheKittySaver.AdoptionSystem.Primitives.Consts;
+using TheKittySaver.AdoptionSystem.Primitives.Guards;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.ValueObjects;
 
@@ -13,6 +14,9 @@ public sealed class CatAge : ValueObject
     
     public static bool IsDateTooOldForCat(DateTimeOffset date, DateTimeOffset currentDate)
     {
+        Ensure.NotEmpty(date);
+        Ensure.NotEmpty(currentDate);
+
         DateTimeOffset oldestAllowedDate = currentDate.Subtract(TimeSpan.FromDays(UtilityConsts.AverageOfDaysInOneYear * MaximumAllowedValue));
         return date < oldestAllowedDate;
     }
