@@ -8,4 +8,5 @@ public interface IArchivable
     public ArchivedAt? ArchivedAt { get; }
     
     public Result Archive(ArchivedAt archivedAt);
+    public Result Unarchive();
 }
