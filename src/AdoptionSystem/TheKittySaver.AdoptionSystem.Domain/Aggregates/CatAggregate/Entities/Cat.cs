@@ -1,4 +1,5 @@
-﻿using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Events;
+﻿using System.Diagnostics.CodeAnalysis;
+using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Events;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.ValueObjects;
 using TheKittySaver.AdoptionSystem.Domain.Core.Abstractions;
 using TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
@@ -54,6 +55,10 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
         DateTimeOffset dateTimeOfOperation)
     {
         Ensure.NotEmpty(adoptionAnnouncementId);
+        if (IsArchived(out Result? failure))
+        {
+            return failure;
+        }
 
         if (Status is not CatStatusType.Draft)
         {
@@ -89,6 +94,10 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
         DateTimeOffset dateTimeOfOperation)
     {
         Ensure.NotEmpty(destinationAdoptionAnnouncementId);
+        if (IsArchived(out Result? failure))
+        {
+            return failure;
+        }
 
         if (Status is not CatStatusType.Published || AdoptionAnnouncementId is null)
         {
@@ -117,6 +126,11 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
 
     public Result UnassignFromAdoptionAnnouncement()
     {
+        if (IsArchived(out Result? failure))
+        {
+            return failure;
+        }
+        
         if (Status is not CatStatusType.Published)
         {
             return Result.Failure(DomainErrors.CatEntity.StatusProperty.NotPublished(Id));
@@ -143,6 +157,11 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
     public Result UpdateName(CatName updatedName)
     {
         ArgumentNullException.ThrowIfNull(updatedName);
+        if (IsArchived(out Result? failure))
+        {
+            return failure;
+        }
+        
         Name = updatedName;
         return Result.Success();
     }
@@ -150,6 +169,11 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
     public Result UpdateDescription(CatDescription updatedDescription)
     {
         ArgumentNullException.ThrowIfNull(updatedDescription);
+        if (IsArchived(out Result? failure))
+        {
+            return failure;
+        }
+        
         Description = updatedDescription;
         return Result.Success();
     }
@@ -157,6 +181,11 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
     public Result UpdateAge(CatAge updatedAge)
     {
         ArgumentNullException.ThrowIfNull(updatedAge);
+        if (IsArchived(out Result? failure))
+        {
+            return failure;
+        }
+        
         Age = updatedAge;
         return Result.Success();
     }
@@ -164,6 +193,11 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
     public Result UpdateGender(CatGender updatedGender)
     {
         ArgumentNullException.ThrowIfNull(updatedGender);
+        if (IsArchived(out Result? failure))
+        {
+            return failure;
+        }
+        
         Gender = updatedGender;
         return Result.Success();
     }
@@ -178,6 +212,11 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
     public Result UpdateWeight(CatWeight updatedWeight)
     {
         ArgumentNullException.ThrowIfNull(updatedWeight);
+        if (IsArchived(out Result? failure))
+        {
+            return failure;
+        }
+        
         Weight = updatedWeight;
         return Result.Success();
     }
@@ -185,6 +224,11 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
     public Result UpdateHealthStatus(HealthStatus updatedHealthStatus)
     {
         ArgumentNullException.ThrowIfNull(updatedHealthStatus);
+        if (IsArchived(out Result? failure))
+        {
+            return failure;
+        }
+        
         HealthStatus = updatedHealthStatus;
         return Result.Success();
     }
@@ -192,6 +236,11 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
     public Result UpdateSpecialNeeds(SpecialNeedsStatus updatedSpecialNeeds)
     {
         ArgumentNullException.ThrowIfNull(updatedSpecialNeeds);
+        if (IsArchived(out Result? failure))
+        {
+            return failure;
+        }
+        
         SpecialNeeds = updatedSpecialNeeds;
         return Result.Success();
     }
@@ -199,6 +248,11 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
     public Result UpdateTemperament(Temperament updatedTemperament)
     {
         ArgumentNullException.ThrowIfNull(updatedTemperament);
+        if (IsArchived(out Result? failure))
+        {
+            return failure;
+        }
+        
         Temperament = updatedTemperament;
         return Result.Success();
     }
@@ -206,6 +260,11 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
     public Result UpdateAdoptionHistory(AdoptionHistory updatedAdoptionHistory)
     {
         ArgumentNullException.ThrowIfNull(updatedAdoptionHistory);
+        if (IsArchived(out Result? failure))
+        {
+            return failure;
+        }
+        
         AdoptionHistory = updatedAdoptionHistory;
         return Result.Success();
     }
@@ -213,6 +272,11 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
     public Result UpdateListingSource(ListingSource updatedListingSource)
     {
         ArgumentNullException.ThrowIfNull(updatedListingSource);
+        if (IsArchived(out Result? failure))
+        {
+            return failure;
+        }
+        
         ListingSource = updatedListingSource;
         return Result.Success();
     }
@@ -220,6 +284,11 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
     public Result UpdateNeuteringStatus(NeuteringStatus updatedNeuteringStatus)
     {
         ArgumentNullException.ThrowIfNull(updatedNeuteringStatus);
+        if (IsArchived(out Result? failure))
+        {
+            return failure;
+        }
+        
         NeuteringStatus = updatedNeuteringStatus;
         return Result.Success();
     }
@@ -227,6 +296,11 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
     public Result UpdateInfectiousDiseaseStatus(InfectiousDiseaseStatus updatedInfectiousDiseaseStatus)
     {
         ArgumentNullException.ThrowIfNull(updatedInfectiousDiseaseStatus);
+        if (IsArchived(out Result? failure))
+        {
+            return failure;
+        }
+        
         InfectiousDiseaseStatus = updatedInfectiousDiseaseStatus;
         return Result.Success();
     }
@@ -234,6 +308,10 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
     public Result Claim(ClaimedAt claimedAt)
     {
         ArgumentNullException.ThrowIfNull(claimedAt);
+        if (IsArchived(out Result? failure))
+        {
+            return failure;
+        }
 
         switch (Status)
         {
@@ -261,6 +339,11 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
         VaccinationNote? veterinarianNote = null)
     {
         Ensure.IsInEnum(type);
+        if (IsArchived(out Result? failure))
+        {
+            return Result.Failure<Vaccination>(failure.Error);
+        }
+        
         Result<Vaccination> vaccinationResult = Vaccination.Create(
             Id,
             type,
@@ -281,6 +364,10 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
     {
         Ensure.IsInEnum(updatedType);
         Ensure.NotEmpty(vaccinationId);
+        if (IsArchived(out Result? failure))
+        {
+            return failure;
+        }
 
         Maybe<Vaccination> maybeVaccination = _vaccinations.GetByIdOrDefault(vaccinationId);
         if (maybeVaccination.HasNoValue)
@@ -295,7 +382,11 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
     public Result UpdateVaccinationDate(VaccinationId vaccinationId, VaccinationDate updatedDate)
     {
         Ensure.NotEmpty(vaccinationId);
-        
+        if (IsArchived(out Result? failure))
+        {
+            return failure;
+        }
+
         Maybe<Vaccination> maybeVaccination = _vaccinations.GetByIdOrDefault(vaccinationId);
         if (maybeVaccination.HasNoValue)
         {
@@ -311,6 +402,10 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
         VaccinationNote? updatedVeterinarianNote)
     {
         Ensure.NotEmpty(vaccinationId);
+        if (IsArchived(out Result? failure))
+        {
+            return failure;
+        }
 
         Maybe<Vaccination> maybeVaccination = _vaccinations.GetByIdOrDefault(vaccinationId);
         if (maybeVaccination.HasNoValue)
@@ -325,6 +420,10 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
     public Result RemoveVaccination(VaccinationId vaccinationId)
     {
         Ensure.NotEmpty(vaccinationId);
+        if (IsArchived(out Result? failure))
+        {
+            return failure;
+        }
 
         Maybe<Vaccination> maybeVaccination = _vaccinations.GetByIdOrDefault(vaccinationId);
         if (maybeVaccination.HasNoValue)
@@ -339,6 +438,11 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
     
     public Result<CatThumbnailId> UpsertThumbnail()
     {
+        if (IsArchived(out Result? failure))
+        {
+            return Result.Failure<CatThumbnailId>(failure.Error);
+        }
+        
         if (Status is not (CatStatusType.Draft or CatStatusType.Published))
         {
             return Result.Failure<CatThumbnailId>(
@@ -357,6 +461,11 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
 
     public Result<CatThumbnailId> RemoveThumbnail()
     {
+        if (IsArchived(out Result? failure))
+        {
+            return Result.Failure<CatThumbnailId>(failure.Error);
+        }
+        
         if (Thumbnail is null)
         {
             return Result.Failure<CatThumbnailId>(
@@ -376,6 +485,11 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
 
     public Result<CatGalleryItem> AddGalleryItem()
     {
+        if (IsArchived(out Result? failure))
+        {
+            return Result.Failure<CatGalleryItem>(failure.Error);
+        }
+        
         if (_galleryItems.Count >= MaximumGalleryItemsCount)
         {
             return Result.Failure<CatGalleryItem>(DomainErrors.CatEntity.GalleryIsFull);
@@ -405,6 +519,10 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
     public Result ReorderGalleryItems(Dictionary<CatGalleryItemId, CatGalleryItemDisplayOrder> newOrders)
     {
         ArgumentNullException.ThrowIfNull(newOrders);
+        if (IsArchived(out Result? failure))
+        {
+            return failure;
+        }
 
         if (newOrders.Count != _galleryItems.Count)
         {
@@ -445,7 +563,11 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
     public Result RemoveGalleryItem(CatGalleryItemId galleryItemId)
     {
         Ensure.NotEmpty(galleryItemId);
-
+        if (IsArchived(out Result? failure))
+        {
+            return failure;
+        }
+        
         Maybe<CatGalleryItem> maybeGalleryItem = _galleryItems.GetByIdOrDefault(galleryItemId);
         if (maybeGalleryItem.HasNoValue)
         {
@@ -478,9 +600,9 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
     public Result Archive(ArchivedAt archivedAt)
     {
         ArgumentNullException.ThrowIfNull(archivedAt);
-        if (ArchivedAt is not null)
+        if (IsArchived(out Result? failure))
         {
-            return Result.Failure(DomainErrors.CatEntity.IsArchived(Id));
+            return failure;
         }
 
         ArchivedAt = archivedAt;
@@ -598,5 +720,16 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
         ListingSource = null!;
         NeuteringStatus = null!;
         InfectiousDiseaseStatus = null!;
+    }
+    
+    private bool IsArchived([NotNullWhen(true)] out Result? failure)
+    {
+        bool isArchived = ArchivedAt is not null;
+        
+        failure = isArchived
+            ? Result.Failure(DomainErrors.CatEntity.IsArchived(Id))
+            : Result.Success();
+        
+        return isArchived;
     }
 }
