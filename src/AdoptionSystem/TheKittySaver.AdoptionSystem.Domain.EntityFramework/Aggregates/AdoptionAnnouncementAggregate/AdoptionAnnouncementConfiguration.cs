@@ -103,6 +103,12 @@ public sealed class AdoptionAnnouncementConfiguration : IEntityTypeConfiguration
         {
             complexBuilder.ToJson();
             complexBuilder.Property(x => x.MergedAdoptionAnnouncementId);
+            complexBuilder.ComplexProperty(x => x.MergedAt, mergedAtBuilder =>
+            {
+                mergedAtBuilder.IsRequired();
+                mergedAtBuilder.Property(x => x.Value)
+                    .HasColumnName(nameof(AdoptionAnnouncementMergeLog.MergedAt));
+            });
         });
         
         builder.HasMany<Cat>()

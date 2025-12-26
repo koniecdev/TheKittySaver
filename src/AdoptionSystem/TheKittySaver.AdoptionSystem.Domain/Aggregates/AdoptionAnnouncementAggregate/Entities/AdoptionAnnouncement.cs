@@ -27,14 +27,28 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
 
     public IReadOnlyList<AdoptionAnnouncementMergeLog> MergeLogs => _mergeLogs.AsReadOnly();
 
-    public Result PersistAdoptionAnnouncementAfterLastCatReassignment(AdoptionAnnouncementId deletedAdoptionAnnouncementId)
+    public Result PersistAdoptionAnnouncementAfterLastCatReassignment(
+        AdoptionAnnouncementId deletedAdoptionAnnouncementId,
+        AdoptionAnnouncementMergetAt mergedAt)
     {
-        AdoptionAnnouncementMergeLog log = AdoptionAnnouncementMergeLog.Create(deletedAdoptionAnnouncementId);
-        if (_mergeLogs.Contains(log))
+        Ensure.NotEmpty(deletedAdoptionAnnouncementId);
+        ArgumentNullException.ThrowIfNull(mergedAt);
+
+        if (_mergeLogs.Any(x => x.MergedAdoptionAnnouncementId == deletedAdoptionAnnouncementId))
         {
             return Result.Failure(DomainErrors.AdoptionAnnouncementErrors.MergeLogsProperty.AlreadyExists);
         }
-        _mergeLogs.Add(log);
+
+        Result<AdoptionAnnouncementMergeLog> logResult = AdoptionAnnouncementMergeLog.Create(
+            deletedAdoptionAnnouncementId,
+            mergedAt);
+
+        if (logResult.IsFailure)
+        {
+            return Result.Failure(logResult.Error);
+        }
+
+        _mergeLogs.Add(logResult.Value);
         return Result.Success();
     }
     
