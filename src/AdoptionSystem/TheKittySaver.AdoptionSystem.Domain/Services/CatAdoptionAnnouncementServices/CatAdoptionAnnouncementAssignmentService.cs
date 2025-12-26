@@ -43,7 +43,7 @@ internal sealed class CatAdoptionAnnouncementAssignmentService : ICatAdoptionAnn
     {
         if (cat.PersonId != adoptionAnnouncement.PersonId)
         {
-            return Result.Failure(DomainErrors.CatAdoptionAnnouncementServiceErrors.PersonIdMismatch(
+            return Result.Failure(DomainErrors.CatAdoptionAnnouncementService.PersonIdMismatch(
                 catId: cat.Id,
                 catPersonId: cat.PersonId,
                 adoptionAnnouncementId: adoptionAnnouncement.Id,
@@ -57,7 +57,7 @@ internal sealed class CatAdoptionAnnouncementAssignmentService : ICatAdoptionAnn
 
         if (adoptionAnnouncement.Status is not AnnouncementStatusType.Active)
         {
-            return Result.Failure(DomainErrors.AdoptionAnnouncementErrors.StatusProperty.UnavailableForAssigning);
+            return Result.Failure(DomainErrors.AdoptionAnnouncementEntity.StatusProperty.UnavailableForAssigning);
         }
 
         if (catsAlreadyAssignedToAa.Any(c => c.Id == cat.Id))
@@ -67,7 +67,7 @@ internal sealed class CatAdoptionAnnouncementAssignmentService : ICatAdoptionAnn
 
         if (!catsAlreadyAssignedToAa.All(c => c.InfectiousDiseaseStatus.IsCompatibleWith(cat.InfectiousDiseaseStatus)))
         {
-            return Result.Failure(DomainErrors.CatAdoptionAnnouncementServiceErrors
+            return Result.Failure(DomainErrors.CatAdoptionAnnouncementService
                 .InfectiousDiseaseConflict(cat.Id, adoptionAnnouncement.Id));
         }
         

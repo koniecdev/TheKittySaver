@@ -23,13 +23,13 @@ internal sealed class CatAdoptionAnnouncementReassignmentService : ICatAdoptionA
         if (sourceAdoptionAnnouncement.Status is not AnnouncementStatusType.Active)
         {
             return Result.Failure(
-                DomainErrors.AdoptionAnnouncementErrors.StatusProperty.CannotReassignCatFromInactiveAnnouncement);
+                DomainErrors.AdoptionAnnouncementEntity.StatusProperty.CannotReassignCatFromInactiveAnnouncement);
         }
         
         if(destinationAdoptionAnnouncement.Status is not AnnouncementStatusType.Active)
         {
             return Result.Failure(
-                DomainErrors.AdoptionAnnouncementErrors.StatusProperty.CannotReassignCatToInactiveAnnouncement);
+                DomainErrors.AdoptionAnnouncementEntity.StatusProperty.CannotReassignCatToInactiveAnnouncement);
         }
 
         if (catsInitiallyAssignedToDestinationAdoptionAnnouncement.Contains(cat))

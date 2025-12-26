@@ -49,7 +49,7 @@ public sealed class AdoptionAnnouncementDescriptionTests
         //Assert
         result.IsFailure.ShouldBeTrue();
         result.Error.ShouldNotBeNull();
-        result.Error.ShouldBe(DomainErrors.AdoptionAnnouncementErrors.DescriptionProperty.NullOrEmpty);
+        result.Error.ShouldBe(DomainErrors.AdoptionAnnouncementEntity.DescriptionProperty.NullOrEmpty);
     }
 
     [Fact]
@@ -64,7 +64,7 @@ public sealed class AdoptionAnnouncementDescriptionTests
         //Assert
         result.IsFailure.ShouldBeTrue();
         result.Error.ShouldNotBeNull();
-        result.Error.ShouldBe(DomainErrors.AdoptionAnnouncementErrors.DescriptionProperty.LongerThanAllowed);
+        result.Error.ShouldBe(DomainErrors.AdoptionAnnouncementEntity.DescriptionProperty.LongerThanAllowed);
     }
 
     [Fact]

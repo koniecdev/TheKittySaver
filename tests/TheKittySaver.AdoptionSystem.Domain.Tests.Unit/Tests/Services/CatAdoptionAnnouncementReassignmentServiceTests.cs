@@ -114,7 +114,7 @@ public sealed class CatAdoptionAnnouncementReassignmentServiceTests
 
         //Assert
         result.IsFailure.ShouldBeTrue();
-        result.Error.ShouldBe(DomainErrors.AdoptionAnnouncementErrors.StatusProperty
+        result.Error.ShouldBe(DomainErrors.AdoptionAnnouncementEntity.StatusProperty
             .CannotReassignCatFromInactiveAnnouncement);
     }
 
@@ -139,7 +139,7 @@ public sealed class CatAdoptionAnnouncementReassignmentServiceTests
 
         //Assert
         result.IsFailure.ShouldBeTrue();
-        result.Error.ShouldBe(DomainErrors.AdoptionAnnouncementErrors.StatusProperty
+        result.Error.ShouldBe(DomainErrors.AdoptionAnnouncementEntity.StatusProperty
             .CannotReassignCatToInactiveAnnouncement);
     }
 

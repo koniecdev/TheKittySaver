@@ -58,7 +58,7 @@ internal sealed class AssignCat : IEndpoint
                 cancellationToken);
             if (maybeAnnouncement.HasNoValue)
             {
-                return Result.Failure(DomainErrors.AdoptionAnnouncementErrors.NotFound(command.AdoptionAnnouncementId));
+                return Result.Failure(DomainErrors.AdoptionAnnouncementEntity.NotFound(command.AdoptionAnnouncementId));
             }
 
             IReadOnlyCollection<Cat> catsAlreadyAssigned = await _catRepository.GetCatsByAdoptionAnnouncementIdAsync(

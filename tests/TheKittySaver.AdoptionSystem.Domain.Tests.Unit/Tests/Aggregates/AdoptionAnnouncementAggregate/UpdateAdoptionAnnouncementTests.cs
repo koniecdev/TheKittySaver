@@ -104,7 +104,7 @@ public sealed class UpdateAdoptionAnnouncementTests
 
         //Assert
         result.IsFailure.ShouldBeTrue();
-        result.Error.ShouldBe(DomainErrors.AdoptionAnnouncementErrors.StatusProperty.CanOnlyUpdateWhenActive);
+        result.Error.ShouldBe(DomainErrors.AdoptionAnnouncementEntity.StatusProperty.CanOnlyUpdateWhenActive);
     }
 
     [Fact]
@@ -150,7 +150,7 @@ public sealed class UpdateAdoptionAnnouncementTests
 
         //Assert
         result.IsFailure.ShouldBeTrue();
-        result.Error.ShouldBe(DomainErrors.AdoptionAnnouncementErrors.StatusProperty.CanOnlyUpdateWhenActive);
+        result.Error.ShouldBe(DomainErrors.AdoptionAnnouncementEntity.StatusProperty.CanOnlyUpdateWhenActive);
     }
 
     [Fact]
@@ -196,6 +196,6 @@ public sealed class UpdateAdoptionAnnouncementTests
 
         //Assert
         result.IsFailure.ShouldBeTrue();
-        result.Error.ShouldBe(DomainErrors.AdoptionAnnouncementErrors.StatusProperty.CanOnlyUpdateWhenActive);
+        result.Error.ShouldBe(DomainErrors.AdoptionAnnouncementEntity.StatusProperty.CanOnlyUpdateWhenActive);
     }
 }

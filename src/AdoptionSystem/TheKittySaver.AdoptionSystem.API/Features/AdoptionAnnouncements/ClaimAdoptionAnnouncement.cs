@@ -40,7 +40,7 @@ internal sealed class ClaimAdoptionAnnouncement : IEndpoint
 
             if (maybeAnnouncement.HasNoValue)
             {
-                return Result.Failure(DomainErrors.AdoptionAnnouncementErrors.NotFound(command.AdoptionAnnouncementId));
+                return Result.Failure(DomainErrors.AdoptionAnnouncementEntity.NotFound(command.AdoptionAnnouncementId));
             }
 
             AdoptionAnnouncement announcement = maybeAnnouncement.Value;

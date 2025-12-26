@@ -8,7 +8,7 @@ namespace TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 
 public static partial class DomainErrors
 {
-    public static class CatAdoptionAnnouncementServiceErrors
+    public static class CatAdoptionAnnouncementService
     {
         public static Error PersonIdMismatch(
             CatId catId,
@@ -16,7 +16,7 @@ public static partial class DomainErrors
             AdoptionAnnouncementId adoptionAnnouncementId,
             PersonId adoptionAnnouncementPersonId)
             => new(
-                $"{nameof(CatAdoptionAnnouncementServiceErrors)}.PersonIdMismatch",
+                $"{nameof(CatAdoptionAnnouncementService)}.PersonIdMismatch",
                 $"Cannot reassign cat with id '{catId.Value}' (PersonId: '{catPersonId.Value}') to adoption announcement with id '{adoptionAnnouncementId.Value}' (PersonId: '{adoptionAnnouncementPersonId.Value}'). The cat and adoption announcement must belong to the same person.",
                 TypeOfError.Conflict);
 
@@ -24,7 +24,7 @@ public static partial class DomainErrors
             CatId catId,
             AdoptionAnnouncementId adoptionAnnouncementId)
             => new(
-                $"{nameof(CatAdoptionAnnouncementServiceErrors)}.InfectiousDiseaseConflict",
+                $"{nameof(CatAdoptionAnnouncementService)}.InfectiousDiseaseConflict",
                 $"Cannot assign cat with id '{catId.Value}' to adoption announcement with id '{adoptionAnnouncementId.Value}'. The cat's infectious disease status is not compatible with the cats already assigned to this announcement.",
                 TypeOfError.Conflict);
     }

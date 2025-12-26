@@ -79,7 +79,7 @@ public sealed class AdoptionAnnouncementMergeLogTests
 
         //Assert
         result.IsFailure.ShouldBeTrue();
-        result.Error.ShouldBe(DomainErrors.AdoptionAnnouncementErrors.MergeLogsProperty.AlreadyExists);
+        result.Error.ShouldBe(DomainErrors.AdoptionAnnouncementEntity.MergeLogsProperty.AlreadyExists);
         announcement.MergeLogs.Count.ShouldBe(1);
     }
 

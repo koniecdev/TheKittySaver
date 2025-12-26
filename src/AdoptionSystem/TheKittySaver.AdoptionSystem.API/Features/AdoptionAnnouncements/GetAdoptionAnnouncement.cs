@@ -44,7 +44,7 @@ internal sealed class GetAdoptionAnnouncement : IEndpoint
 
             return response is null
                 ? Result.Failure<AdoptionAnnouncementDetailsResponse>(
-                    DomainErrors.AdoptionAnnouncementErrors.NotFound(query.AdoptionAnnouncementId))
+                    DomainErrors.AdoptionAnnouncementEntity.NotFound(query.AdoptionAnnouncementId))
                 : Result.Success(response);
         }
     }

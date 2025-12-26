@@ -1,4 +1,5 @@
-﻿using TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAggregate.ValueObjects;
+﻿using System.Diagnostics.CodeAnalysis;
+using TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAggregate.ValueObjects;
 using TheKittySaver.AdoptionSystem.Domain.Core.Abstractions;
 using TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
 using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
@@ -14,7 +15,7 @@ using TheKittySaver.AdoptionSystem.Primitives.Guards;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAggregate.Entities;
 
-public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>, IClaimable
+public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>, IClaimable, IArchivable
 {
     private readonly List<AdoptionAnnouncementMergeLog> _mergeLogs = [];
     public PersonId PersonId { get; }
@@ -24,6 +25,7 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
     public Email Email { get; private set; }
     public PhoneNumber PhoneNumber { get; private set; }
     public AnnouncementStatusType Status { get; private set; }
+    public ArchivedAt? ArchivedAt { get; private set; }
 
     public IReadOnlyList<AdoptionAnnouncementMergeLog> MergeLogs => _mergeLogs.AsReadOnly();
 
@@ -36,7 +38,7 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
 
         if (_mergeLogs.Any(x => x.MergedAdoptionAnnouncementId == deletedAdoptionAnnouncementId))
         {
-            return Result.Failure(DomainErrors.AdoptionAnnouncementErrors.MergeLogsProperty.AlreadyExists);
+            return Result.Failure(DomainErrors.AdoptionAnnouncementEntity.MergeLogsProperty.AlreadyExists);
         }
 
         Result<AdoptionAnnouncementMergeLog> logResult = AdoptionAnnouncementMergeLog.Create(
@@ -58,7 +60,7 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
         
         if (Status is not AnnouncementStatusType.Active)
         {
-            return Result.Failure(DomainErrors.AdoptionAnnouncementErrors.DescriptionProperty.CanOnlyUpdateWhenActive);
+            return Result.Failure(DomainErrors.AdoptionAnnouncementEntity.DescriptionProperty.CanOnlyUpdateWhenActive);
         }
         
         Description = updatedDescription.HasValue 
@@ -73,7 +75,7 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
 
         if (Status is not AnnouncementStatusType.Active)
         {
-            return Result.Failure(DomainErrors.AdoptionAnnouncementErrors.StatusProperty.CanOnlyUpdateWhenActive);
+            return Result.Failure(DomainErrors.AdoptionAnnouncementEntity.StatusProperty.CanOnlyUpdateWhenActive);
         }
 
         Address = updatedAddress;
@@ -86,7 +88,7 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
 
         if (Status is not AnnouncementStatusType.Active)
         {
-            return Result.Failure(DomainErrors.AdoptionAnnouncementErrors.StatusProperty.CanOnlyUpdateWhenActive);
+            return Result.Failure(DomainErrors.AdoptionAnnouncementEntity.StatusProperty.CanOnlyUpdateWhenActive);
         }
 
         Email = updatedEmail;
@@ -100,7 +102,7 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
         if (Status is not AnnouncementStatusType.Active)
         {
             return Result.Failure(
-                DomainErrors.AdoptionAnnouncementErrors.StatusProperty.CanOnlyUpdateWhenActive);
+                DomainErrors.AdoptionAnnouncementEntity.StatusProperty.CanOnlyUpdateWhenActive);
         }
 
         PhoneNumber = updatedPhoneNumber;
@@ -112,7 +114,7 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
         ArgumentNullException.ThrowIfNull(claimedAt);
         if (Status is AnnouncementStatusType.Claimed)
         {
-            return Result.Failure(DomainErrors.AdoptionAnnouncementErrors.StatusProperty.AlreadyClaimed(Id));
+            return Result.Failure(DomainErrors.AdoptionAnnouncementEntity.StatusProperty.AlreadyClaimed(Id));
         }
 
         Status = AnnouncementStatusType.Claimed;
@@ -146,6 +148,29 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
 
         return Result.Success(instance);
     }
+    
+    public Result Archive(ArchivedAt archivedAt)
+    {
+        ArgumentNullException.ThrowIfNull(archivedAt);
+        if (IsArchived(out Result? failure))
+        {
+            return failure;
+        }
+
+        ArchivedAt = archivedAt;
+        return Result.Success();
+    }
+
+    public Result Unarchive()
+    {
+        if (ArchivedAt is null)
+        {
+            return Result.Failure(DomainErrors.AdoptionAnnouncementEntity.IsNotArchived(Id));
+        }
+
+        ArchivedAt = null;
+        return Result.Success();
+    }
 
     private AdoptionAnnouncement(
         AdoptionAnnouncementId id,
@@ -169,5 +194,16 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
         Address = null!;
         Email = null!;
         PhoneNumber = null!;
+    }
+    
+    private bool IsArchived([NotNullWhen(true)] out Result? failure)
+    {
+        bool isArchived = ArchivedAt is not null;
+        
+        failure = isArchived
+            ? Result.Failure(DomainErrors.AdoptionAnnouncementEntity.IsArchived(Id))
+            : Result.Success();
+        
+        return isArchived;
     }
 }

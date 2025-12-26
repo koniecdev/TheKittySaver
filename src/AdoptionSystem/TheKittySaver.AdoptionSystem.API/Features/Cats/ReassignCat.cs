@@ -70,7 +70,7 @@ internal sealed class ReassignCat : IEndpoint
                 cancellationToken);
             if (maybeSourceAnnouncement.HasNoValue)
             {
-                return Result.Failure(DomainErrors.AdoptionAnnouncementErrors.NotFound(cat.AdoptionAnnouncementId.Value));
+                return Result.Failure(DomainErrors.AdoptionAnnouncementEntity.NotFound(cat.AdoptionAnnouncementId.Value));
             }
 
             Maybe<AdoptionAnnouncement> maybeDestinationAnnouncement = await _adoptionAnnouncementRepository.GetByIdAsync(
@@ -78,7 +78,7 @@ internal sealed class ReassignCat : IEndpoint
                 cancellationToken);
             if (maybeDestinationAnnouncement.HasNoValue)
             {
-                return Result.Failure(DomainErrors.AdoptionAnnouncementErrors.NotFound(command.AdoptionAnnouncementId));
+                return Result.Failure(DomainErrors.AdoptionAnnouncementEntity.NotFound(command.AdoptionAnnouncementId));
             }
 
             

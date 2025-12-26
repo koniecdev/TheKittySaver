@@ -41,7 +41,7 @@ internal sealed class DeleteAdoptionAnnouncement : IEndpoint
                 cancellationToken);
             if (maybeAnnouncement.HasNoValue)
             {
-                return Result.Failure(DomainErrors.AdoptionAnnouncementErrors.NotFound(command.AdoptionAnnouncementId));
+                return Result.Failure(DomainErrors.AdoptionAnnouncementEntity.NotFound(command.AdoptionAnnouncementId));
             }
             
             IReadOnlyCollection<Cat> catsInAnnouncement =
@@ -50,7 +50,7 @@ internal sealed class DeleteAdoptionAnnouncement : IEndpoint
 
             if (catsInAnnouncement.Any(x => x.Status is CatStatusType.Claimed))
             {
-                return Result.Failure(DomainErrors.AdoptionAnnouncementErrors.CannotDeleteAnnouncementWithClaimedCats);
+                return Result.Failure(DomainErrors.AdoptionAnnouncementEntity.CannotDeleteAnnouncementWithClaimedCats);
             }
             
             foreach (Cat cat in catsInAnnouncement)

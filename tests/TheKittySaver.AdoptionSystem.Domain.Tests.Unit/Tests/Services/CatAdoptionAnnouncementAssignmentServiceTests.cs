@@ -115,7 +115,7 @@ public sealed class CatAdoptionAnnouncementAssignmentServiceTests
 
         //Assert
         result.IsFailure.ShouldBeTrue();
-        result.Error.ShouldBe(DomainErrors.CatAdoptionAnnouncementServiceErrors.PersonIdMismatch(
+        result.Error.ShouldBe(DomainErrors.CatAdoptionAnnouncementService.PersonIdMismatch(
             cat.Id,
             catPersonId,
             announcement.Id,
@@ -187,7 +187,7 @@ public sealed class CatAdoptionAnnouncementAssignmentServiceTests
 
         //Assert
         result.IsFailure.ShouldBeTrue();
-        result.Error.ShouldBe(DomainErrors.AdoptionAnnouncementErrors.StatusProperty.UnavailableForAssigning);
+        result.Error.ShouldBe(DomainErrors.AdoptionAnnouncementEntity.StatusProperty.UnavailableForAssigning);
     }
 
     [Fact]
@@ -243,7 +243,7 @@ public sealed class CatAdoptionAnnouncementAssignmentServiceTests
 
         //Assert
         result.IsFailure.ShouldBeTrue();
-        result.Error.ShouldBe(DomainErrors.CatAdoptionAnnouncementServiceErrors
+        result.Error.ShouldBe(DomainErrors.CatAdoptionAnnouncementService
             .InfectiousDiseaseConflict(newCat.Id, announcement.Id));
     }
 
@@ -271,7 +271,7 @@ public sealed class CatAdoptionAnnouncementAssignmentServiceTests
 
         //Assert
         result.IsFailure.ShouldBeTrue();
-        result.Error.ShouldBe(DomainErrors.CatAdoptionAnnouncementServiceErrors
+        result.Error.ShouldBe(DomainErrors.CatAdoptionAnnouncementService
             .InfectiousDiseaseConflict(newCat.Id, announcement.Id));
     }
 
@@ -384,7 +384,7 @@ public sealed class CatAdoptionAnnouncementAssignmentServiceTests
 
         //Assert
         result.IsFailure.ShouldBeTrue();
-        result.Error.ShouldBe(DomainErrors.CatAdoptionAnnouncementServiceErrors
+        result.Error.ShouldBe(DomainErrors.CatAdoptionAnnouncementService
             .InfectiousDiseaseConflict(newCat.Id, announcement.Id));
     }
 

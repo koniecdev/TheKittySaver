@@ -44,7 +44,7 @@ public sealed class AdoptionAnnouncementClaimTests
 
         //Assert
         result.IsFailure.ShouldBeTrue();
-        result.Error.ShouldBe(DomainErrors.AdoptionAnnouncementErrors.StatusProperty.AlreadyClaimed(announcement.Id));
+        result.Error.ShouldBe(DomainErrors.AdoptionAnnouncementEntity.StatusProperty.AlreadyClaimed(announcement.Id));
     }
 
     [Fact]
