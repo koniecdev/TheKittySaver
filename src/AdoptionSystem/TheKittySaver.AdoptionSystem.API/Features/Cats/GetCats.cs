@@ -4,6 +4,7 @@ using Mediator;
 using Microsoft.EntityFrameworkCore;
 using TheKittySaver.AdoptionSystem.API.Common;
 using TheKittySaver.AdoptionSystem.API.Extensions;
+using TheKittySaver.AdoptionSystem.Contracts.Aggregates.CatAggregate.Gallery.Responses;
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.CatAggregate.Responses;
 using TheKittySaver.AdoptionSystem.Contracts.Common;
 using TheKittySaver.AdoptionSystem.Domain.Core.Extensions;
@@ -75,7 +76,13 @@ internal sealed class GetCats : IEndpoint
                     IsNeutered: c.NeuteringStatusIsNeutered,
                     InfectiousDiseaseStatusFivStatus: c.InfectiousDiseaseStatusFivStatus,
                     InfectiousDiseaseStatusFelvStatus: c.InfectiousDiseaseStatusFelvStatus,
-                    InfectiousDiseaseStatusLastTestedAt: c.InfectiousDiseaseStatusLastTestedAt))
+                    InfectiousDiseaseStatusLastTestedAt: c.InfectiousDiseaseStatusLastTestedAt,
+                    GalleryItems: c.GalleryItems
+                        .OrderBy(g => g.DisplayOrder)
+                        .Select(g => new CatGalleryItemEmbeddedDto(
+                            Path: $"cats/{c.Id}/gallery/{g.Id}/file",
+                            DisplayOrder: g.DisplayOrder))
+                        .ToList()))
                 .ToListAsync(cancellationToken);
 
             PaginationResponse<CatListItemResponse> response = new()

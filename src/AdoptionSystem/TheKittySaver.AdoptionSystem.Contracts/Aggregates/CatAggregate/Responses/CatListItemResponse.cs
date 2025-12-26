@@ -1,3 +1,4 @@
+using TheKittySaver.AdoptionSystem.Contracts.Aggregates.CatAggregate.Gallery.Responses;
 using TheKittySaver.AdoptionSystem.Contracts.Common;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.AdoptionAnnouncementAggregate;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate;
@@ -29,7 +30,8 @@ public sealed record CatListItemResponse(
     bool IsNeutered,
     FivStatus InfectiousDiseaseStatusFivStatus,
     FelvStatus InfectiousDiseaseStatusFelvStatus,
-    DateOnly InfectiousDiseaseStatusLastTestedAt) : ILinksResponse
+    DateOnly InfectiousDiseaseStatusLastTestedAt,
+    IReadOnlyCollection<CatGalleryItemEmbeddedDto> GalleryItems) : ILinksResponse
 {
     public IReadOnlyCollection<LinkDto> Links { get; set; } = [];
 }

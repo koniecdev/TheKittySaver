@@ -64,7 +64,7 @@ internal sealed class GetCat : IEndpoint
                     GalleryItems: cat.GalleryItems
                         .OrderBy(g => g.DisplayOrder)
                         .Select(g => new CatGalleryItemEmbeddedDto(
-                            Id: g.Id,
+                            Path: $"cats/{cat.Id}/gallery/{g.Id}/file",
                             DisplayOrder: g.DisplayOrder))
                         .ToList()))
                 .FirstOrDefaultAsync(cancellationToken);
