@@ -15,6 +15,15 @@ public sealed class CatConfiguration : IEntityTypeConfiguration<Cat>
         builder.Property(x => x.Id)
             .ValueGeneratedNever();
         
+        builder.HasQueryFilter(x => x.ArchivedAt == null);
+        
+        builder.ComplexProperty(x => x.ArchivedAt, complexBuilder =>
+        {
+            complexBuilder.IsRequired(false);
+            complexBuilder.Property(x => x.Value)
+                .HasColumnName(nameof(Cat.ArchivedAt));
+        });
+        
         EntityConfiguration.ConfigureCreatedAt(builder);
         
         builder.ComplexProperty(x => x.ClaimedAt, complexBuilder =>

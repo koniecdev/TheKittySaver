@@ -18,8 +18,17 @@ public sealed class PersonConfiguration : IEntityTypeConfiguration<Person>
         builder.Property(x => x.Id)
             .ValueGeneratedNever();
         
+        builder.HasQueryFilter(x => x.ArchivedAt == null);
+        
+        builder.ComplexProperty(x => x.ArchivedAt, complexBuilder =>
+        {
+            complexBuilder.IsRequired(false);
+            complexBuilder.Property(x => x.Value)
+                .HasColumnName(nameof(Person.ArchivedAt));
+        });
+        
         EntityConfiguration.ConfigureCreatedAt(builder);
-
+        
         builder.Property(x => x.IdentityId);
         builder.HasIndex(x => x.IdentityId).IsUnique();
         
@@ -38,6 +47,9 @@ public sealed class PersonConfiguration : IEntityTypeConfiguration<Person>
                 .HasColumnName(nameof(Person.Email))
                 .HasMaxLength(Email.MaxLength);
         });
+        
+        //Lack of complexproperty support - builder.HasIndex(x => x.Email).IsUnique(); - raw sql in migration.
+        //20251221232841_UniqueIndexesConstraints.cs
 
         builder.ComplexProperty(x => x.PhoneNumber, complexBuilder =>
         {
@@ -46,6 +58,9 @@ public sealed class PersonConfiguration : IEntityTypeConfiguration<Person>
                 .HasColumnName(nameof(Person.PhoneNumber))
                 .HasMaxLength(PhoneNumber.MaxLength);
         });
+        
+        //Lack of complexproperty support - builder.HasIndex(x => x.PhoneNumber).IsUnique(); - raw sql in migration.
+        //20251221232841_UniqueIndexesConstraints.cs
         
         builder.HasMany(x=>x.Addresses)
             .WithOne()
