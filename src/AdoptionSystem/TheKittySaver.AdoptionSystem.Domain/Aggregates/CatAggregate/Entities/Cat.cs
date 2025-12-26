@@ -15,7 +15,7 @@ using TheKittySaver.AdoptionSystem.Primitives.Guards;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Entities;
 
-public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
+public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchivable
 {
     public const int MaximumGalleryItemsCount = 20;
 
@@ -41,6 +41,8 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
     public NeuteringStatus NeuteringStatus { get; private set; }
     public InfectiousDiseaseStatus InfectiousDiseaseStatus { get; private set; }
     public CatThumbnail? Thumbnail { get; private set; }
+    
+    public ArchivedAt? ArchivedAt { get; private set; }
     
     public IReadOnlyList<CatGalleryItem> GalleryItems => _galleryItems.AsReadOnly();
     public IReadOnlyList<Vaccination> Vaccinations => _vaccinations.AsReadOnly();
@@ -470,6 +472,28 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable
             }
         }
 
+        return Result.Success();
+    }
+    
+    public Result Archive(ArchivedAt archivedAt)
+    {
+        ArgumentNullException.ThrowIfNull(archivedAt);
+        if (ArchivedAt is null)
+        {
+            return Result.Failure("Person is already archived");
+        }
+        ArchivedAt = archivedAt;
+        return Result.Success();
+    }
+
+    public Result Unarchive()
+    {
+        if (ArchivedAt is null)
+        {
+            return Result.Failure("Person is not archived");
+        }
+        
+        ArchivedAt = null;
         return Result.Success();
     }
 
