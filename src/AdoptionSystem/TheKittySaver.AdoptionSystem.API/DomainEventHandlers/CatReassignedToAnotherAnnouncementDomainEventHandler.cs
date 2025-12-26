@@ -63,11 +63,17 @@ internal sealed class CatReassignedToAnotherAnnouncementDomainEventHandler
                 Result<AdoptionAnnouncementMergetAt> mergedAtResult = AdoptionAnnouncementMergetAt.Create(
                     _timeProvider.GetUtcNow());
 
-                if (mergedAtResult.IsSuccess)
+                if (mergedAtResult.IsFailure)
                 {
-                    maybeDestination.Value.PersistAdoptionAnnouncementAfterLastCatReassignment(
-                        notification.SourceAdoptionAnnouncementId,
-                        mergedAtResult.Value);
+                    throw new InvalidOperationException("Failed to create merged at");
+                }
+
+                Result persistResult = maybeDestination.Value.PersistAdoptionAnnouncementAfterLastCatReassignment(
+                    notification.SourceAdoptionAnnouncementId,
+                    mergedAtResult.Value);
+                if (persistResult.IsFailure)
+                {
+                    throw new InvalidOperationException("Failed to persist merged at");
                 }
             }
 
