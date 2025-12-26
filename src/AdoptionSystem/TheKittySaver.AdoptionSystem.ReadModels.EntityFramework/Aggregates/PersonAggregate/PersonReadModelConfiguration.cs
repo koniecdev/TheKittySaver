@@ -14,6 +14,8 @@ public sealed class PersonReadModelConfiguration : IEntityTypeConfiguration<Pers
 
         builder.Property(personReadModel => personReadModel.Id)
             .ValueGeneratedNever();
+        
+        builder.HasQueryFilter(x => x.ArchivedAt == null);
 
         builder.HasMany(personReadModel => personReadModel.Addresses)
             .WithOne(addressReadModel => addressReadModel.Person)

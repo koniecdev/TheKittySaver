@@ -21,7 +21,8 @@ public sealed record AdoptionAnnouncementReadModel(
     string Email,
     string PhoneNumber,
     AnnouncementStatusType Status,
-    DateTimeOffset CreatedAt) : IReadOnlyEntity<AdoptionAnnouncementId>
+    DateTimeOffset CreatedAt,
+    DateTimeOffset? ArchivedAt) : IReadOnlyEntity<AdoptionAnnouncementId>
 {
     public IReadOnlyList<AdoptionAnnouncementMergeLogReadModel> MergeLogs { get; init; } = [];
     public PersonReadModel Person { get; init; } = null!;

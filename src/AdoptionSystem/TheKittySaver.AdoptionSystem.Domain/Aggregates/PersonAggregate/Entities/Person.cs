@@ -214,7 +214,7 @@ public sealed class Person : AggregateRoot<PersonId>, IArchivable
 
     private Result Anonymize()
     {
-        string randomGuid = Guid.NewGuid().ToString();
+        string randomGuid = Guid.NewGuid().ToString()[..8];
         
         Result<Username> userNameAnonymizedResult = Username.Create(randomGuid);
         if (userNameAnonymizedResult.IsFailure)

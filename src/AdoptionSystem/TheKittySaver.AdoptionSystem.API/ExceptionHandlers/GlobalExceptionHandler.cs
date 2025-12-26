@@ -17,7 +17,6 @@ internal sealed class GlobalExceptionHandler : IExceptionHandler
         Exception exception,
         CancellationToken cancellationToken)
     {
-
         ProblemDetails problemDetails = new()
         {
             Status = StatusCodes.Status500InternalServerError,

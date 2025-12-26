@@ -34,7 +34,8 @@ public sealed record CatReadModel(
     FelvStatus InfectiousDiseaseStatusFelvStatus,
     DateOnly InfectiousDiseaseStatusLastTestedAt,
     CatStatusType Status,
-    DateTimeOffset CreatedAt) : IReadOnlyEntity<CatId>
+    DateTimeOffset CreatedAt,
+    DateTimeOffset? ArchivedAt) : IReadOnlyEntity<CatId>
 {
     public AdoptionAnnouncementReadModel? AdoptionAnnouncement { get; init; }
     public CatThumbnailReadModel? Thumbnail { get; init; }

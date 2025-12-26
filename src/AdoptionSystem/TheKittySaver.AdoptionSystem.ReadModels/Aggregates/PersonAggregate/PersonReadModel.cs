@@ -9,7 +9,8 @@ public sealed record PersonReadModel(
     string Username,
     string Email,
     string PhoneNumber,
-    DateTimeOffset CreatedAt) : IReadOnlyEntity<PersonId>
+    DateTimeOffset CreatedAt,
+    DateTimeOffset? ArchivedAt) : IReadOnlyEntity<PersonId>
 {
     public IReadOnlyList<AddressReadModel> Addresses { get; init; } = [];
 }

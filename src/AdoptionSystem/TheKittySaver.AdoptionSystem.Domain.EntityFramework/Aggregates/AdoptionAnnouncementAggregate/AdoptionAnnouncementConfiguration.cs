@@ -116,7 +116,7 @@ public sealed class AdoptionAnnouncementConfiguration : IEntityTypeConfiguration
             {
                 mergedAtBuilder.IsRequired();
                 mergedAtBuilder.Property(x => x.Value)
-                    .HasColumnName(nameof(AdoptionAnnouncementMergeLog.MergedAt));
+                    .HasJsonPropertyName(nameof(AdoptionAnnouncementMergeLog.MergedAt));
             });
         });
         
