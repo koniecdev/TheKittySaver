@@ -11,6 +11,7 @@ using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.Repositorie
 using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.OptionMonad;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
+using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.Timestamps;
 using TheKittySaver.AdoptionSystem.Persistence.DbContexts.Abstractions;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
 
@@ -25,18 +26,21 @@ internal sealed class DeletePerson : IEndpoint
         private readonly IPersonRepository _personRepository;
         private readonly ICatRepository _catRepository;
         private readonly IAdoptionAnnouncementRepository _adoptionAnnouncementRepository;
+        private readonly TimeProvider _timeProvider;
         private readonly IUnitOfWork _unitOfWork;
 
         public Handler(
             IPersonRepository personRepository,
             ICatRepository catRepository,
             IAdoptionAnnouncementRepository adoptionAnnouncementRepository,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork, 
+            TimeProvider timeProvider)
         {
             _personRepository = personRepository;
             _catRepository = catRepository;
             _adoptionAnnouncementRepository = adoptionAnnouncementRepository;
             _unitOfWork = unitOfWork;
+            _timeProvider = timeProvider;
         }
 
         public async ValueTask<Result> Handle(Command command, CancellationToken cancellationToken)
@@ -47,23 +51,33 @@ internal sealed class DeletePerson : IEndpoint
                 return Result.Failure(DomainErrors.PersonEntity.NotFound(command.PersonId));
             }
             
-            IReadOnlyCollection<AdoptionAnnouncement> personAdvertisements = 
-                await _adoptionAnnouncementRepository.GetAdoptionAnnouncementsByPersonIdAsync(command.PersonId, cancellationToken);
+            Person person = maybePerson.Value;
+            
+            IReadOnlyCollection<AdoptionAnnouncement> everyAdoptionAnnouncementOfThisPersonList = 
+                await _adoptionAnnouncementRepository
+                    .GetAdoptionAnnouncementsByPersonIdAsync(person.Id, cancellationToken);
 
-            foreach (AdoptionAnnouncement adoptionAnnouncement in personAdvertisements)
+            Result<ArchivedAt> datetimeOfOperationResult = ArchivedAt.Create(_timeProvider.GetUtcNow());
+            if (datetimeOfOperationResult.IsFailure)
             {
-                _adoptionAnnouncementRepository.Remove(adoptionAnnouncement);
+                return datetimeOfOperationResult;
             }
             
-            IReadOnlyCollection<Cat> personCats = 
-                await _catRepository.GetCatsByPersonIdAsync(command.PersonId, cancellationToken);
-
-            foreach (Cat cat in personCats)
+            foreach (AdoptionAnnouncement adoptionAnnouncement in everyAdoptionAnnouncementOfThisPersonList)
             {
-                _catRepository.Remove(cat);
+                adoptionAnnouncement.Archive(datetimeOfOperationResult.Value);
             }
             
-            _personRepository.Remove(maybePerson.Value);
+            IReadOnlyCollection<Cat> everyCatOfThisPersonList = 
+                await _catRepository.GetCatsByPersonIdAsync(person.Id, cancellationToken);
+
+            foreach (Cat cat in everyCatOfThisPersonList)
+            {
+                cat.Archive(datetimeOfOperationResult.Value);
+            }
+            
+            person.Archive(datetimeOfOperationResult.Value);
+            
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result.Success();

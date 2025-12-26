@@ -196,7 +196,9 @@ public sealed class Person : AggregateRoot<PersonId>, IArchivable
         }
         
         ArchivedAt = archivedAt;
-        return Result.Success();
+        
+        Result anonymizeResult = Anonymize();
+        return anonymizeResult;
     }
 
     public Result Unarchive()
@@ -210,7 +212,7 @@ public sealed class Person : AggregateRoot<PersonId>, IArchivable
         return Result.Success();
     }
 
-    public Result Anonymize()
+    private Result Anonymize()
     {
         string randomGuid = Guid.NewGuid().ToString();
         
