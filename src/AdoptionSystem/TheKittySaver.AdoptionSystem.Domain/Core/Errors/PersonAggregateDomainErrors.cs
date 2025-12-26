@@ -15,6 +15,18 @@ public static partial class DomainErrors
         public static Error NotFound(PersonId id)
             => HasNotBeenFound(nameof(PersonEntity), id.Value);
 
+        public static Error IsArchived(PersonId id)
+            => InvalidOperation(
+                nameof(PersonEntity),
+                $"Person with ID '{id.Value}' is archived and cannot be modified.",
+                "IsArchived");
+
+        public static Error IsNotArchived(PersonId id)
+            => InvalidOperation(
+                nameof(PersonEntity),
+                $"Person with ID '{id.Value}' is not archived.",
+                "IsNotArchived");
+
         public static class UsernameProperty
         {
             public static Error NullOrEmpty

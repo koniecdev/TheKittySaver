@@ -478,10 +478,11 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
     public Result Archive(ArchivedAt archivedAt)
     {
         ArgumentNullException.ThrowIfNull(archivedAt);
-        if (ArchivedAt is null)
+        if (ArchivedAt is not null)
         {
-            return Result.Failure("Person is already archived");
+            return Result.Failure(DomainErrors.CatEntity.IsArchived(Id));
         }
+
         ArchivedAt = archivedAt;
         return Result.Success();
     }
@@ -490,9 +491,9 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
     {
         if (ArchivedAt is null)
         {
-            return Result.Failure("Person is not archived");
+            return Result.Failure(DomainErrors.CatEntity.IsNotArchived(Id));
         }
-        
+
         ArchivedAt = null;
         return Result.Success();
     }

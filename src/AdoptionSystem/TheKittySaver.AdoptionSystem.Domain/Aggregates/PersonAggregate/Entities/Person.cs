@@ -203,9 +203,9 @@ public sealed class Person : AggregateRoot<PersonId>, IArchivable
     {
         if (ArchivedAt is null)
         {
-            return Result.Failure("Person is not archived");
+            return Result.Failure(DomainErrors.PersonEntity.IsNotArchived(Id));
         }
-        
+
         ArchivedAt = null;
         return Result.Success();
     }

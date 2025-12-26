@@ -18,6 +18,18 @@ public static partial class DomainErrors
         public static Error NotFound(CatId id)
             => HasNotBeenFound(nameof(CatEntity), id.Value);
 
+        public static Error IsArchived(CatId id)
+            => InvalidOperation(
+                nameof(CatEntity),
+                $"Cat with ID '{id.Value}' is archived and cannot be modified.",
+                "IsArchived");
+
+        public static Error IsNotArchived(CatId id)
+            => InvalidOperation(
+                nameof(CatEntity),
+                $"Cat with ID '{id.Value}' is not archived.",
+                "IsNotArchived");
+
         public static Error GalleryIsFull
             => CustomMessage(
                 nameof(CatEntity),
