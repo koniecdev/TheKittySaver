@@ -46,8 +46,6 @@
     <PackageVersion Include="Testcontainers.MsSql" Version="4.9.0" />
     <!-- Health Checks -->
     <PackageVersion Include="AspNetCore.HealthChecks.SqlServer" Version="9.0.0" />
-    <!-- Swagger UI -->
-    <PackageVersion Include="Swashbuckle.AspNetCore" Version="7.3.1" />
     <!-- Correlation ID -->
     <PackageVersion Include="Serilog.Enrichers.CorrelationId" Version="3.0.1" />
     <!-- Resilience / Polly -->

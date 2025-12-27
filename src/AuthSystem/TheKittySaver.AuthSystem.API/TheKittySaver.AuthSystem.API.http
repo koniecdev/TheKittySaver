@@ -1,0 +1,6 @@
+@TheKittySaver.AuthSystem.API_HostAddress = http://localhost:5064
+
+GET {{TheKittySaver.AuthSystem.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
