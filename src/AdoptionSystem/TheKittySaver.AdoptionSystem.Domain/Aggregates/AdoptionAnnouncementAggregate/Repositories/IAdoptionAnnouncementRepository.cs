@@ -14,4 +14,8 @@ public interface IAdoptionAnnouncementRepository : IRepository<AdoptionAnnouncem
     public Task<IReadOnlyCollection<AdoptionAnnouncement>> GetArchivedAnnouncementsByPersonIdAsync(
         PersonId personId,
         CancellationToken cancellationToken);
+
+    public Task<int> CountAnnouncementsByPersonIdAsync(
+        PersonId personId,
+        CancellationToken cancellationToken);
 }

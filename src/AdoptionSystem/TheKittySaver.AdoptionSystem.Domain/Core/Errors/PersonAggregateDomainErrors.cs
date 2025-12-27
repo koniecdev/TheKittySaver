@@ -30,6 +30,12 @@ public static partial class DomainErrors
                 $"Person with ID '{id.Value}' is not archived.",
                 "IsNotArchived");
 
+        public static Error HasRelatedEntities(PersonId id)
+            => InvalidDeleteOperation(
+                nameof(PersonEntity),
+                $"Cannot delete Person with ID '{id.Value}' because it has related Cats or Adoption Announcements. Archive instead or delete related entities first.",
+                "HasRelatedEntities");
+
         public static class UsernameProperty
         {
             public static Error NullOrEmpty

@@ -30,6 +30,12 @@ public static partial class DomainErrors
                 $"Cat with ID '{id.Value}' is not archived.",
                 "IsNotArchived");
 
+        public static Error CannotArchiveAssignedCat(CatId id)
+            => InvalidOperation(
+                nameof(CatEntity),
+                $"Cat with ID '{id.Value}' cannot be archived because it is assigned to an adoption announcement. Unassign it first.",
+                "CannotArchiveAssignedCat");
+
         public static Error GalleryIsFull
             => CustomMessage(
                 nameof(CatEntity),
@@ -326,6 +332,18 @@ public static partial class DomainErrors
     {
         public static Error NotFound(VaccinationId vaccinationId)
             => HasNotBeenFound(nameof(VaccinationEntity), vaccinationId.Value);
+
+        public static Error IsArchived(VaccinationId vaccinationId)
+            => InvalidOperation(
+                nameof(VaccinationEntity),
+                $"Vaccination with ID '{vaccinationId.Value}' is archived and cannot be modified.",
+                "IsArchived");
+
+        public static Error IsNotArchived(VaccinationId vaccinationId)
+            => InvalidOperation(
+                nameof(VaccinationEntity),
+                $"Vaccination with ID '{vaccinationId.Value}' is not archived.",
+                "IsNotArchived");
 
         public static class VeterinarianNoteProperty
         {

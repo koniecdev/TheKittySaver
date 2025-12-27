@@ -33,12 +33,24 @@ internal sealed class AdoptionAnnouncementRepository :
         CancellationToken cancellationToken)
     {
         Ensure.NotEmpty(personId);
-        
+
         List<AdoptionAnnouncement> adopAnnouncements = await DbContext.AdoptionAnnouncements
             .IgnoreQueryFilters()
             .Where(x => x.PersonId == personId)
             .ToListAsync(cancellationToken);
-        
+
         return adopAnnouncements;
+    }
+
+    public async Task<int> CountAnnouncementsByPersonIdAsync(
+        PersonId personId,
+        CancellationToken cancellationToken)
+    {
+        Ensure.NotEmpty(personId);
+
+        int count = await DbContext.AdoptionAnnouncements
+            .CountAsync(x => x.PersonId == personId, cancellationToken);
+
+        return count;
     }
 }
