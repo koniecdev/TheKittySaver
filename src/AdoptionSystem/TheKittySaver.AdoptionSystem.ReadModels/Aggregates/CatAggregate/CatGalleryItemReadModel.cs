@@ -7,4 +7,7 @@ public sealed record CatGalleryItemReadModel(
     CatGalleryItemId Id,
     CatId CatId,
     int DisplayOrder,
-    DateTimeOffset CreatedAt) : IReadOnlyEntity<CatGalleryItemId>;
+    DateTimeOffset CreatedAt) : IReadOnlyEntity<CatGalleryItemId>
+{
+    public CatReadModel Cat { get; init; } = null!;
+}

@@ -106,4 +106,33 @@ internal sealed class CatRepository : GenericRepository<Cat, CatId>, ICatReposit
 
         return count;
     }
+
+    public async Task<Maybe<Cat>> GetArchivedByIdAsync(
+        CatId catId,
+        CancellationToken cancellationToken)
+    {
+        Ensure.NotEmpty(catId);
+
+        Cat? result = await DbContext.Cats
+            .IgnoreQueryFilters()
+            .Where(x => x.Id == catId && x.ArchivedAt != null)
+            .Include(cat => cat.Thumbnail)
+            .Include(cat => cat.GalleryItems)
+            .Include(cat => cat.Vaccinations)
+            .FirstOrDefaultAsync(cancellationToken);
+
+        return Maybe<Cat>.From(result);
+    }
+
+    public async Task<int> CountCatsByPersonIdAsync(
+        PersonId personId,
+        CancellationToken cancellationToken)
+    {
+        Ensure.NotEmpty(personId);
+
+        int count = await DbContext.Cats
+            .CountAsync(x => x.PersonId == personId, cancellationToken);
+
+        return count;
+    }
 }

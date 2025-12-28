@@ -170,7 +170,7 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
         return Result.Success(instance);
     }
     
-    public Result Archive(ArchivedAt archivedAt)
+    internal Result Archive(ArchivedAt archivedAt)
     {
         ArgumentNullException.ThrowIfNull(archivedAt);
         if (IsArchived(out Result? failure))
@@ -182,7 +182,7 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
         return Result.Success();
     }
 
-    public Result Unarchive()
+    internal Result Unarchive()
     {
         if (ArchivedAt is null)
         {

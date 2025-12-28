@@ -12,5 +12,7 @@ public sealed class CatThumbnailReadModelConfiguration : IEntityTypeConfiguratio
 
         builder.Property(catThumbnailReadModel => catThumbnailReadModel.Id)
             .ValueGeneratedNever();
+
+        builder.HasQueryFilter(catThumbnailReadModel => catThumbnailReadModel.Cat.ArchivedAt == null);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAggregate.Entities;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAggregate.Repositories;
+using TheKittySaver.AdoptionSystem.Domain.Core.Monads.OptionMonad;
 using TheKittySaver.AdoptionSystem.Persistence.DbContexts.WriteDbContexts;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.AdoptionAnnouncementAggregate;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
@@ -40,5 +41,31 @@ internal sealed class AdoptionAnnouncementRepository :
             .ToListAsync(cancellationToken);
 
         return adopAnnouncements;
+    }
+
+    public async Task<Maybe<AdoptionAnnouncement>> GetArchivedByIdAsync(
+        AdoptionAnnouncementId announcementId,
+        CancellationToken cancellationToken)
+    {
+        Ensure.NotEmpty(announcementId);
+
+        AdoptionAnnouncement? result = await DbContext.AdoptionAnnouncements
+            .IgnoreQueryFilters()
+            .Where(x => x.Id == announcementId && x.ArchivedAt != null)
+            .FirstOrDefaultAsync(cancellationToken);
+
+        return Maybe<AdoptionAnnouncement>.From(result);
+    }
+
+    public async Task<int> CountAnnouncementsByPersonIdAsync(
+        PersonId personId,
+        CancellationToken cancellationToken)
+    {
+        Ensure.NotEmpty(personId);
+
+        int count = await DbContext.AdoptionAnnouncements
+            .CountAsync(x => x.PersonId == personId, cancellationToken);
+
+        return count;
     }
 }

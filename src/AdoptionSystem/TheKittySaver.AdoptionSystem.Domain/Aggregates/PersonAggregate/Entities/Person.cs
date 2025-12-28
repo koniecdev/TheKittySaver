@@ -187,7 +187,7 @@ public sealed class Person : AggregateRoot<PersonId>, IArchivable
         return Result.Success();
     }
 
-    public Result Archive(ArchivedAt archivedAt)
+    internal Result Archive(ArchivedAt archivedAt)
     {
         ArgumentNullException.ThrowIfNull(archivedAt);
         if (IsArchived(out Result? failure))
@@ -201,7 +201,7 @@ public sealed class Person : AggregateRoot<PersonId>, IArchivable
         return anonymizeResult;
     }
 
-    public Result Unarchive()
+    internal Result Unarchive()
     {
         if (ArchivedAt is null)
         {

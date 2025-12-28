@@ -12,5 +12,7 @@ public sealed class AddressReadModelConfiguration : IEntityTypeConfiguration<Add
 
         builder.Property(addressReadModel => addressReadModel.Id)
             .ValueGeneratedNever();
+
+        builder.HasQueryFilter(addressReadModel => addressReadModel.Person.ArchivedAt == null);
     }
 }

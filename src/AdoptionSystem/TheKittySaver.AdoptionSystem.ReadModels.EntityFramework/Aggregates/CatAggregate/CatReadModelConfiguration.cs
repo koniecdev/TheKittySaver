@@ -43,23 +43,25 @@ public sealed class CatReadModelConfiguration : IEntityTypeConfiguration<CatRead
         builder.Property(x=>x.WeightValueInKilograms)
             .HasPrecision(5, 2);
 
+        builder.HasQueryFilter(catReadModel => catReadModel.ArchivedAt == null);
+
         builder.HasOne(catReadModel => catReadModel.AdoptionAnnouncement)
             .WithMany(adoptionAnnouncementReadModel => adoptionAnnouncementReadModel.Cats)
             .HasForeignKey(catReadModel => catReadModel.AdoptionAnnouncementId)
             .OnDelete(DeleteBehavior.SetNull);
 
         builder.HasOne(catReadModel => catReadModel.Thumbnail)
-            .WithOne()
+            .WithOne(catThumbnailReadModel => catThumbnailReadModel.Cat)
             .HasForeignKey<CatThumbnailReadModel>(catThumbnailReadModel => catThumbnailReadModel.CatId)
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasMany(catReadModel => catReadModel.GalleryItems)
-            .WithOne()
+            .WithOne(catGalleryItemReadModel => catGalleryItemReadModel.Cat)
             .HasForeignKey(catGalleryItemReadModel => catGalleryItemReadModel.CatId)
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasMany(catReadModel => catReadModel.Vaccinations)
-            .WithOne()
+            .WithOne(vaccinationReadModel => vaccinationReadModel.Cat)
             .HasForeignKey(vaccinationReadModel => vaccinationReadModel.CatId)
             .OnDelete(DeleteBehavior.Cascade);
     }

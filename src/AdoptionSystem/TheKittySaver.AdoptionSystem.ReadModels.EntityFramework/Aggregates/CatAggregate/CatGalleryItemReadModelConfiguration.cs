@@ -12,5 +12,7 @@ public sealed class CatGalleryItemReadModelConfiguration : IEntityTypeConfigurat
 
         builder.Property(catGalleryItemReadModel => catGalleryItemReadModel.Id)
             .ValueGeneratedNever();
+
+        builder.HasQueryFilter(catGalleryItemReadModel => catGalleryItemReadModel.Cat.ArchivedAt == null);
     }
 }

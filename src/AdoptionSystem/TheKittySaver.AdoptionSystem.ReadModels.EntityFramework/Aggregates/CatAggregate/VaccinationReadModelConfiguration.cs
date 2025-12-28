@@ -15,5 +15,7 @@ public sealed class VaccinationReadModelConfiguration : IEntityTypeConfiguration
 
         builder.Property(vaccinationReadModel => vaccinationReadModel.Type)
             .HasConversion<string>();
+
+        builder.HasQueryFilter(vaccinationReadModel => vaccinationReadModel.Cat.ArchivedAt == null);
     }
 }

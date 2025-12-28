@@ -5,3 +5,22 @@
 <h1>Hello, world!</h1>
 
 Welcome to your new app.
+
+Health: @_health
+
+@code{
+    private string? _health = "unset";
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        _health = await GetHealthCheck();
+    }
+    
+    private static async Task<string?> GetHealthCheck()
+    {
+        using HttpClient client = new();
+        string healthCheckResult = 
+            await client.GetStringAsync("http://thekittysaver.adoptionsystem.api:8080/health/live");
+        return healthCheckResult;
+    }
+}

@@ -440,6 +440,43 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
             ? Result.Failure(DomainErrors.DeletionCorruption(nameof(Vaccination)))
             : Result.Success();
     }
+
+    public Result ArchiveVaccination(VaccinationId vaccinationId, ArchivedAt archivedAt)
+    {
+        Ensure.NotEmpty(vaccinationId);
+        ArgumentNullException.ThrowIfNull(archivedAt);
+        if (IsArchived(out Result? failure))
+        {
+            return failure;
+        }
+
+        Maybe<Vaccination> maybeVaccination = _vaccinations.GetByIdOrDefault(vaccinationId);
+        if (maybeVaccination.HasNoValue)
+        {
+            return Result.Failure(DomainErrors.VaccinationEntity.NotFound(vaccinationId));
+        }
+
+        Result archiveResult = maybeVaccination.Value.Archive(archivedAt);
+        return archiveResult;
+    }
+
+    public Result UnarchiveVaccination(VaccinationId vaccinationId)
+    {
+        Ensure.NotEmpty(vaccinationId);
+        if (IsArchived(out Result? failure))
+        {
+            return failure;
+        }
+
+        Maybe<Vaccination> maybeVaccination = _vaccinations.GetByIdOrDefault(vaccinationId);
+        if (maybeVaccination.HasNoValue)
+        {
+            return Result.Failure(DomainErrors.VaccinationEntity.NotFound(vaccinationId));
+        }
+
+        Result unarchiveResult = maybeVaccination.Value.Unarchive();
+        return unarchiveResult;
+    }
     
     public Result<CatThumbnailId> UpsertThumbnail()
     {
@@ -601,8 +638,8 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
 
         return Result.Success();
     }
-    
-    public Result Archive(ArchivedAt archivedAt)
+
+    internal Result Archive(ArchivedAt archivedAt)
     {
         ArgumentNullException.ThrowIfNull(archivedAt);
         if (IsArchived(out Result? failure))
@@ -611,10 +648,16 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
         }
 
         ArchivedAt = archivedAt;
+
+        foreach (Vaccination vaccination in _vaccinations)
+        {
+            vaccination.Archive(archivedAt);
+        }
+
         return Result.Success();
     }
 
-    public Result Unarchive()
+    internal Result Unarchive()
     {
         if (ArchivedAt is null)
         {
@@ -622,6 +665,12 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
         }
 
         ArchivedAt = null;
+
+        foreach (Vaccination vaccination in _vaccinations)
+        {
+            vaccination.Unarchive();
+        }
+
         return Result.Success();
     }
 

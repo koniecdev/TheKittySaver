@@ -2,6 +2,7 @@
 
     <PropertyGroup>
         <UserSecretsId>thekittysaver-adoptionsystem-api</UserSecretsId>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>
 
     <ItemGroup>
@@ -43,5 +44,11 @@
     
     <ItemGroup>
         <InternalsVisibleTo Include="TheKittySaver.AdoptionSystem.API.Tests.Integration" />
+    </ItemGroup>
+    
+    <ItemGroup>
+      <Content Include="..\..\..\.dockerignore">
+        <Link>.dockerignore</Link>
+      </Content>
     </ItemGroup>
 </Project>

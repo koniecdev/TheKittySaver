@@ -1,5 +1,6 @@
 ﻿using TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAggregate.Entities;
 using TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
+using TheKittySaver.AdoptionSystem.Domain.Core.Monads.OptionMonad;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.AdoptionAnnouncementAggregate;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
 
@@ -10,8 +11,16 @@ public interface IAdoptionAnnouncementRepository : IRepository<AdoptionAnnouncem
     public Task<IReadOnlyCollection<AdoptionAnnouncement>> GetAdoptionAnnouncementsByPersonIdAsync(
         PersonId personId,
         CancellationToken cancellationToken);
-    
+
     public Task<IReadOnlyCollection<AdoptionAnnouncement>> GetArchivedAnnouncementsByPersonIdAsync(
+        PersonId personId,
+        CancellationToken cancellationToken);
+
+    public Task<Maybe<AdoptionAnnouncement>> GetArchivedByIdAsync(
+        AdoptionAnnouncementId announcementId,
+        CancellationToken cancellationToken);
+
+    public Task<int> CountAnnouncementsByPersonIdAsync(
         PersonId personId,
         CancellationToken cancellationToken);
 }

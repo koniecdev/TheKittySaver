@@ -6,4 +6,7 @@ namespace TheKittySaver.AdoptionSystem.ReadModels.Aggregates.CatAggregate;
 public sealed record CatThumbnailReadModel(
     CatThumbnailId Id,
     CatId CatId,
-    DateTimeOffset CreatedAt) : IReadOnlyEntity<CatThumbnailId>;
+    DateTimeOffset CreatedAt) : IReadOnlyEntity<CatThumbnailId>
+{
+    public CatReadModel Cat { get; init; } = null!;
+}
