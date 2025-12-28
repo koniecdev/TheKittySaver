@@ -22,5 +22,9 @@ public sealed class AdoptionAnnouncementReadModelConfiguration : IEntityTypeConf
 
             mergeLogBuilder.Property(adoptionAnnouncementMergeLogReadModel => adoptionAnnouncementMergeLogReadModel.MergedAdoptionAnnouncementId);
         });
+
+        builder.HasQueryFilter(adoptionAnnouncementReadModel =>
+            adoptionAnnouncementReadModel.ArchivedAt == null &&
+            adoptionAnnouncementReadModel.Person.ArchivedAt == null);
     }
 }

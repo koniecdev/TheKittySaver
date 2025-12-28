@@ -10,4 +10,7 @@ public sealed record VaccinationReadModel(
     VaccinationType Type,
     DateOnly VaccinationDate,
     string? VeterinarianNote,
-    DateTimeOffset CreatedAt) : IReadOnlyEntity<VaccinationId>;
+    DateTimeOffset CreatedAt) : IReadOnlyEntity<VaccinationId>
+{
+    public CatReadModel Cat { get; init; } = null!;
+}

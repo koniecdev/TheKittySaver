@@ -7,6 +7,7 @@ using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Entities;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Repositories;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.Entities;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.Repositories;
+using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.Services;
 using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.OptionMonad;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
@@ -25,6 +26,7 @@ internal sealed class ArchivePerson : IEndpoint
         private readonly IPersonRepository _personRepository;
         private readonly ICatRepository _catRepository;
         private readonly IAdoptionAnnouncementRepository _adoptionAnnouncementRepository;
+        private readonly IPersonArchiveDomainService _personArchiveDomainService;
         private readonly TimeProvider _timeProvider;
         private readonly IUnitOfWork _unitOfWork;
 
@@ -32,12 +34,14 @@ internal sealed class ArchivePerson : IEndpoint
             IPersonRepository personRepository,
             ICatRepository catRepository,
             IAdoptionAnnouncementRepository adoptionAnnouncementRepository,
-            IUnitOfWork unitOfWork, 
+            IPersonArchiveDomainService personArchiveDomainService,
+            IUnitOfWork unitOfWork,
             TimeProvider timeProvider)
         {
             _personRepository = personRepository;
             _catRepository = catRepository;
             _adoptionAnnouncementRepository = adoptionAnnouncementRepository;
+            _personArchiveDomainService = personArchiveDomainService;
             _unitOfWork = unitOfWork;
             _timeProvider = timeProvider;
         }
@@ -49,34 +53,33 @@ internal sealed class ArchivePerson : IEndpoint
             {
                 return Result.Failure(DomainErrors.PersonEntity.NotFound(command.PersonId));
             }
-            
+
             Person person = maybePerson.Value;
-            
-            IReadOnlyCollection<AdoptionAnnouncement> everyAdoptionAnnouncementOfThisPersonList = 
+
+            IReadOnlyCollection<AdoptionAnnouncement> announcements =
                 await _adoptionAnnouncementRepository
                     .GetAdoptionAnnouncementsByPersonIdAsync(person.Id, cancellationToken);
 
-            Result<ArchivedAt> datetimeOfOperationResult = ArchivedAt.Create(_timeProvider.GetUtcNow());
-            if (datetimeOfOperationResult.IsFailure)
-            {
-                return datetimeOfOperationResult;
-            }
-            
-            foreach (AdoptionAnnouncement adoptionAnnouncement in everyAdoptionAnnouncementOfThisPersonList)
-            {
-                adoptionAnnouncement.Archive(datetimeOfOperationResult.Value);
-            }
-            
-            IReadOnlyCollection<Cat> everyCatOfThisPersonList = 
+            IReadOnlyCollection<Cat> cats =
                 await _catRepository.GetCatsByPersonIdAsync(person.Id, cancellationToken);
 
-            foreach (Cat cat in everyCatOfThisPersonList)
+            Result<ArchivedAt> archivedAtResult = ArchivedAt.Create(_timeProvider.GetUtcNow());
+            if (archivedAtResult.IsFailure)
             {
-                cat.Archive(datetimeOfOperationResult.Value);
+                return archivedAtResult;
             }
-            
-            person.Archive(datetimeOfOperationResult.Value);
-            
+
+            Result archiveResult = _personArchiveDomainService.Archive(
+                person,
+                cats,
+                announcements,
+                archivedAtResult.Value);
+
+            if (archiveResult.IsFailure)
+            {
+                return archiveResult;
+            }
+
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result.Success();

@@ -10,9 +10,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheKittySaver.AdoptionSyste
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B61AA9BF-2A92-4DD6-994A-70A05A9A72AB}"
 	ProjectSection(SolutionItems) = preProject
-		compose.yaml = compose.yaml
 		.gitignore = .gitignore
 		Directory.Packages.props = Directory.Packages.props
+		.editorconfig = .editorconfig
+		Directory.Build.props = Directory.Build.props
+		compose.yaml = compose.yaml
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheKittySaver.AdoptionSystem.Infrastructure", "src\AdoptionSystem\TheKittySaver.AdoptionSystem.Infrastructure\TheKittySaver.AdoptionSystem.Infrastructure.csproj", "{CEEAD516-ED18-40A6-8308-ECB3E460412B}"

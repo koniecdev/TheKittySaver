@@ -1,7 +1,28 @@
 ﻿services:
-  thekittysaver.adoptionsystem.slices:
-    image: thekittysaver.adoptionsystem.slices
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2025-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=Haslo12345
+    ports:
+      - "1434:1433"
+
+  thekittysaver.adoptionsystem.api:
+    image: thekittysaver.adoptionsystem.api
     build:
       context: .
-      dockerfile: src/AdoptionSystem/TheKittySaver.AdoptionSystem.Slices/Dockerfile
+      dockerfile: src/AdoptionSystem/TheKittySaver.AdoptionSystem.API/Dockerfile
+    ports:
+      - "5000:8080"
+    environment:
+      - ConnectionStringSettings__Database=Server=sqlserver,1433;Database=TheKittySaver;User Id=sa;Password=Haslo12345;TrustServerCertificate=True
+    depends_on:
+      - sqlserver
 
+  thekittysaver.frontend:
+    image: thekittysaver.frontend
+    build:
+      context: .
+      dockerfile: src/Frontend/TheKittySaver.Frontend/Dockerfile
+    ports:
+      - "5001:8080"

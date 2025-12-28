@@ -9,45 +9,43 @@ using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Repositories;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.Entities;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.Repositories;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.Services;
-using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.ValueObjects;
 using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.OptionMonad;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
-using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects;
-using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.PhoneNumbers;
 using TheKittySaver.AdoptionSystem.Persistence.DbContexts.Abstractions;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
-using TheKittySaver.AdoptionSystem.Primitives.Guards;
 
 namespace TheKittySaver.AdoptionSystem.API.Features.Persons;
 
 internal sealed class UnarchievePerson : IEndpoint
 {
-    internal sealed record Command(
-        IdentityId IdentityId) : ICommand<Result>;
+    internal sealed record Command(IdentityId IdentityId) : ICommand<Result>;
 
     internal sealed class Handler : ICommandHandler<Command, Result>
     {
         private readonly IPersonRepository _personRepository;
         private readonly ICatRepository _catRepository;
         private readonly IAdoptionAnnouncementRepository _announcementRepository;
+        private readonly IPersonArchiveDomainService _personArchiveDomainService;
         private readonly IUnitOfWork _unitOfWork;
 
         public Handler(
             IPersonRepository personRepository,
-            IUnitOfWork unitOfWork,
             ICatRepository catRepository,
-            IAdoptionAnnouncementRepository announcementRepository)
+            IAdoptionAnnouncementRepository announcementRepository,
+            IPersonArchiveDomainService personArchiveDomainService,
+            IUnitOfWork unitOfWork)
         {
             _personRepository = personRepository;
-            _unitOfWork = unitOfWork;
             _catRepository = catRepository;
             _announcementRepository = announcementRepository;
+            _personArchiveDomainService = personArchiveDomainService;
+            _unitOfWork = unitOfWork;
         }
 
         public async ValueTask<Result> Handle(Command command, CancellationToken cancellationToken)
         {
-            Maybe<Person> maybePerson = 
+            Maybe<Person> maybePerson =
                 await _personRepository.GetByIdentityIdAsync(command.IdentityId, cancellationToken);
             if (maybePerson.HasNoValue)
             {
@@ -55,22 +53,23 @@ internal sealed class UnarchievePerson : IEndpoint
             }
 
             Person person = maybePerson.Value;
-            person.Unarchive();
-            
-            IReadOnlyCollection<Cat> catsToUnarchieve = 
+
+            IReadOnlyCollection<Cat> archivedCats =
                 await _catRepository.GetArchivedCatsByPersonIdAsync(person.Id, cancellationToken);
-            foreach (Cat cat in catsToUnarchieve)
-            {
-                cat.Unarchive();
-            }
-            
-            IReadOnlyCollection<AdoptionAnnouncement> announcementsToUnarchieve = 
+
+            IReadOnlyCollection<AdoptionAnnouncement> archivedAnnouncements =
                 await _announcementRepository.GetArchivedAnnouncementsByPersonIdAsync(person.Id, cancellationToken);
-            foreach (AdoptionAnnouncement announcement in announcementsToUnarchieve)
+
+            Result unarchiveResult = _personArchiveDomainService.Unarchive(
+                person,
+                archivedCats,
+                archivedAnnouncements);
+
+            if (unarchiveResult.IsFailure)
             {
-                announcement.Unarchive();
+                return unarchiveResult;
             }
-            
+
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result.Success();

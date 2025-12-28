@@ -3,6 +3,7 @@ using TheKittySaver.AdoptionSystem.API.Common;
 using TheKittySaver.AdoptionSystem.API.Extensions;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Entities;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Repositories;
+using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Services;
 using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.OptionMonad;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
@@ -19,15 +20,18 @@ internal sealed class ArchiveCat : IEndpoint
     internal sealed class Handler : ICommandHandler<Command, Result>
     {
         private readonly ICatRepository _catRepository;
+        private readonly ICatArchiveDomainService _catArchiveDomainService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly TimeProvider _timeProvider;
 
         public Handler(
             ICatRepository catRepository,
+            ICatArchiveDomainService catArchiveDomainService,
             IUnitOfWork unitOfWork,
             TimeProvider timeProvider)
         {
             _catRepository = catRepository;
+            _catArchiveDomainService = catArchiveDomainService;
             _unitOfWork = unitOfWork;
             _timeProvider = timeProvider;
         }
@@ -48,7 +52,7 @@ internal sealed class ArchiveCat : IEndpoint
                 return archivedAtResult;
             }
 
-            Result archiveResult = cat.Archive(archivedAtResult.Value);
+            Result archiveResult = _catArchiveDomainService.Archive(cat, archivedAtResult.Value);
             if (archiveResult.IsFailure)
             {
                 return archiveResult;

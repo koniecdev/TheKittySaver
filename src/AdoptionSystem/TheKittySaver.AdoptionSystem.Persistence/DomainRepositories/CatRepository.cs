@@ -71,7 +71,7 @@ internal sealed class CatRepository : GenericRepository<Cat, CatId>, ICatReposit
 
         List<Cat> result = await DbContext.Cats
             .IgnoreQueryFilters()
-            .Where(x => x.PersonId == personId)
+            .Where(x => x.PersonId == personId && x.ArchivedAt != null)
             .Include(cat => cat.Thumbnail)
             .Include(cat => cat.GalleryItems)
             .Include(cat => cat.Vaccinations)

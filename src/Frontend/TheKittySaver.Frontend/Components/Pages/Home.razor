@@ -19,7 +19,8 @@ Health: @_health
     private static async Task<string?> GetHealthCheck()
     {
         using HttpClient client = new();
-        string healthCheckResult = await client.GetStringAsync("https://localhost:7157/health/live");
+        string healthCheckResult = 
+            await client.GetStringAsync("https://thekittysaver.adoptionsystem.api:8080/health/live");
         return healthCheckResult;
     }
 }

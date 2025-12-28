@@ -634,30 +634,12 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
         return Result.Success();
     }
 
-    /// <summary>
-    /// Archives the current cat entity along with its associated vaccinations, if applicable.
-    /// </summary>
-    /// <param name="archivedAt">The date and time when the cat is archived.</param>
-    /// <returns>
-    /// A <see cref="Result"/> indicating the success or failure of the operation.
-    /// Returns a failure if the cat is already archived or assigned to an adoption announcement.
-    /// </returns>
-    /// <remarks>
-    /// It is not possible to archive cat with assigned adoption announcement.
-    /// Claimed cats & a.a. are not visible to anyone else than the owner anyway.
-    /// The state of archived both unclaimed cat & unclaimed a.a. is possible through account archivization.
-    /// </remarks>
-    public Result Archive(ArchivedAt archivedAt)
+    internal Result Archive(ArchivedAt archivedAt)
     {
         ArgumentNullException.ThrowIfNull(archivedAt);
         if (IsArchived(out Result? failure))
         {
             return failure;
-        }
-
-        if (AdoptionAnnouncementId is not null)
-        {
-            return Result.Failure(DomainErrors.CatEntity.CannotArchiveAssignedCat(Id));
         }
 
         ArchivedAt = archivedAt;
@@ -670,7 +652,7 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
         return Result.Success();
     }
 
-    public Result Unarchive()
+    internal Result Unarchive()
     {
         if (ArchivedAt is null)
         {

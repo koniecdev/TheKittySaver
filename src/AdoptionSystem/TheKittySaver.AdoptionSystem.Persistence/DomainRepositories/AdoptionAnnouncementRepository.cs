@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAggregate.Entities;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAggregate.Repositories;
+using TheKittySaver.AdoptionSystem.Domain.Core.Monads.OptionMonad;
 using TheKittySaver.AdoptionSystem.Persistence.DbContexts.WriteDbContexts;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.AdoptionAnnouncementAggregate;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
@@ -36,10 +37,24 @@ internal sealed class AdoptionAnnouncementRepository :
 
         List<AdoptionAnnouncement> adopAnnouncements = await DbContext.AdoptionAnnouncements
             .IgnoreQueryFilters()
-            .Where(x => x.PersonId == personId)
+            .Where(x => x.PersonId == personId && x.ArchivedAt != null)
             .ToListAsync(cancellationToken);
 
         return adopAnnouncements;
+    }
+
+    public async Task<Maybe<AdoptionAnnouncement>> GetArchivedByIdAsync(
+        AdoptionAnnouncementId announcementId,
+        CancellationToken cancellationToken)
+    {
+        Ensure.NotEmpty(announcementId);
+
+        AdoptionAnnouncement? result = await DbContext.AdoptionAnnouncements
+            .IgnoreQueryFilters()
+            .Where(x => x.Id == announcementId && x.ArchivedAt != null)
+            .FirstOrDefaultAsync(cancellationToken);
+
+        return Maybe<AdoptionAnnouncement>.From(result);
     }
 
     public async Task<int> CountAnnouncementsByPersonIdAsync(

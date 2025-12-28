@@ -1,4 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
+using TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAggregate.Services;
+using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Services;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.Services;
 using TheKittySaver.AdoptionSystem.Domain.Services.AdoptionAnnouncementCreationServices;
 using TheKittySaver.AdoptionSystem.Domain.Services.CatAdoptionAnnouncementReassignmentServices;
@@ -19,6 +21,9 @@ public static class DomainDependencyInjection
             services.AddScoped<ICatAdoptionAnnouncementAssignmentService, CatAdoptionAnnouncementAssignmentService>();
             services.AddScoped<IAdoptionAnnouncementCreationService, AdoptionAnnouncementCreationService>();
             services.AddScoped<ICatAdoptionAnnouncementReassignmentService, CatAdoptionAnnouncementReassignmentService>();
+            services.AddScoped<ICatArchiveDomainService, CatArchiveDomainService>();
+            services.AddScoped<IAdoptionAnnouncementArchiveDomainService, AdoptionAnnouncementArchiveDomainService>();
+            services.AddScoped<IPersonArchiveDomainService, PersonArchiveDomainService>();
 
             return services;
         }
