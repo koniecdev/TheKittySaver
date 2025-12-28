@@ -12,8 +12,8 @@ internal static class CatGalleryApiFactory
     {
         byte[] imageBytes = ImageContentFactory.CreateMinimalPng();
 
-        using MultipartFormDataContent content = new();
-        ByteArrayContent fileContent = new(imageBytes);
+        using MultipartFormDataContent content = [];
+        using ByteArrayContent fileContent = new(imageBytes);
         fileContent.Headers.ContentType = new MediaTypeHeaderValue("image/png");
         content.Add(fileContent, "file", "test-image.png");
 
@@ -30,8 +30,8 @@ internal static class CatGalleryApiFactory
     {
         byte[] imageBytes = ImageContentFactory.CreateMinimalPng();
 
-        using MultipartFormDataContent content = new();
-        ByteArrayContent fileContent = new(imageBytes);
+        using MultipartFormDataContent content = [];
+        using ByteArrayContent fileContent = new(imageBytes);
         fileContent.Headers.ContentType = new MediaTypeHeaderValue("image/png");
         content.Add(fileContent, "file", "test-thumbnail.png");
 

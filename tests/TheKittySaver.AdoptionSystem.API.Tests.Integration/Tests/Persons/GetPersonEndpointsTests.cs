@@ -13,7 +13,7 @@ using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
 
 namespace TheKittySaver.AdoptionSystem.API.Tests.Integration.Tests.Persons;
 
-internal sealed class GetPersonEndpointsTests(TheKittySaverApiFactory appFactory)
+public sealed class GetPersonEndpointsTests(TheKittySaverApiFactory appFactory)
     : PersonEndpointsTestBase(appFactory)
 {
     [Fact]

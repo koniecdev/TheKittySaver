@@ -18,7 +18,7 @@
 //         CatId catId = await CatApiFactory.CreateRandomAndGetIdAsync(ApiClient, Faker, TestPersonId);
 //         byte[] imageBytes = ImageContentFactory.CreateMinimalPng();
 //
-//         using MultipartFormDataContent content = new();
+//         using MultipartFormDataContent content = [];
 //         using ByteArrayContent fileContent = new(imageBytes);
 //         fileContent.Headers.ContentType = new MediaTypeHeaderValue("image/png");
 //         content.Add(fileContent, "file", "test-image.png");
@@ -36,7 +36,7 @@
 //         CatId catId = await CatApiFactory.CreateRandomAndGetIdAsync(ApiClient, Faker, TestPersonId);
 //         byte[] imageBytes = ImageContentFactory.CreateMinimalJpeg();
 //
-//         using MultipartFormDataContent content = new();
+//         using MultipartFormDataContent content = [];
 //         using ByteArrayContent fileContent = new(imageBytes);
 //         fileContent.Headers.ContentType = new MediaTypeHeaderValue("image/jpeg");
 //         content.Add(fileContent, "file", "test-image.jpg");
@@ -54,7 +54,7 @@
 //         CatId catId = await CatApiFactory.CreateRandomAndGetIdAsync(ApiClient, Faker, TestPersonId);
 //         byte[] imageBytes = ImageContentFactory.CreateMinimalGif();
 //
-//         using MultipartFormDataContent content = new();
+//         using MultipartFormDataContent content = [];
 //         using ByteArrayContent fileContent = new(imageBytes);
 //         fileContent.Headers.ContentType = new MediaTypeHeaderValue("image/gif");
 //         content.Add(fileContent, "file", "test-image.gif");
@@ -72,7 +72,7 @@
 //         CatId catId = await CatApiFactory.CreateRandomAndGetIdAsync(ApiClient, Faker, TestPersonId);
 //         byte[] imageBytes = ImageContentFactory.CreateEmptyFile();
 //
-//         using MultipartFormDataContent content = new();
+//         using MultipartFormDataContent content = [];
 //         using ByteArrayContent fileContent = new(imageBytes);
 //         fileContent.Headers.ContentType = new MediaTypeHeaderValue("image/png");
 //         content.Add(fileContent, "file", "test-image.png");
@@ -92,7 +92,7 @@
 //         CatId catId = await CatApiFactory.CreateRandomAndGetIdAsync(ApiClient, Faker, TestPersonId);
 //         byte[] imageBytes = ImageContentFactory.CreateMinimalPng();
 //
-//         using MultipartFormDataContent content = new();
+//         using MultipartFormDataContent content = [];
 //         using ByteArrayContent fileContent = new(imageBytes);
 //         fileContent.Headers.ContentType = new MediaTypeHeaderValue("application/pdf");
 //         content.Add(fileContent, "file", "test-document.pdf");
@@ -112,7 +112,7 @@
 //         CatId catId = await CatApiFactory.CreateRandomAndGetIdAsync(ApiClient, Faker, TestPersonId);
 //         byte[] imageBytes = ImageContentFactory.CreateMinimalPng();
 //
-//         using MultipartFormDataContent content = new();
+//         using MultipartFormDataContent content = [];
 //         using ByteArrayContent fileContent = new(imageBytes);
 //         fileContent.Headers.ContentType = new MediaTypeHeaderValue("image/png");
 //         content.Add(fileContent, "file", "test-image.exe");
@@ -132,7 +132,7 @@
 //         CatId catId = await CatApiFactory.CreateRandomAndGetIdAsync(ApiClient, Faker, TestPersonId);
 //         byte[] imageBytes = ImageContentFactory.CreateMinimalPng();
 //
-//         using MultipartFormDataContent content = new();
+//         using MultipartFormDataContent content = [];
 //         using ByteArrayContent fileContent = new(imageBytes);
 //         fileContent.Headers.ContentType = new MediaTypeHeaderValue("image/jpeg");
 //         content.Add(fileContent, "file", "test-image.jpg");
@@ -152,7 +152,7 @@
 //         CatId catId = await CatApiFactory.CreateRandomAndGetIdAsync(ApiClient, Faker, TestPersonId);
 //         byte[] fakeImageBytes = ImageContentFactory.CreateInvalidFileWithFakeExtension();
 //
-//         using MultipartFormDataContent content = new();
+//         using MultipartFormDataContent content = [];
 //         using ByteArrayContent fileContent = new(fakeImageBytes);
 //         fileContent.Headers.ContentType = new MediaTypeHeaderValue("image/png");
 //         content.Add(fileContent, "file", "fake-image.png");
@@ -172,7 +172,7 @@
 //         CatId catId = await CatApiFactory.CreateRandomAndGetIdAsync(ApiClient, Faker, TestPersonId);
 //         byte[] imageBytes = ImageContentFactory.CreateMinimalPng();
 //
-//         using MultipartFormDataContent content = new();
+//         using MultipartFormDataContent content = [];
 //         using ByteArrayContent fileContent = new(imageBytes);
 //         fileContent.Headers.ContentType = new MediaTypeHeaderValue("image/png");
 //         content.Add(fileContent, "file", "../../../etc/passwd.png");
@@ -192,7 +192,7 @@
 //         CatId catId = await CatApiFactory.CreateRandomAndGetIdAsync(ApiClient, Faker, TestPersonId);
 //         byte[] imageBytes = ImageContentFactory.CreateMinimalPng();
 //
-//         using MultipartFormDataContent content = new();
+//         using MultipartFormDataContent content = [];
 //         using ByteArrayContent fileContent = new(imageBytes);
 //         fileContent.Headers.ContentType = new MediaTypeHeaderValue("image/png");
 //         content.Add(fileContent, "file", "image.php.png");
@@ -212,7 +212,7 @@
 //         CatId catId = await CatApiFactory.CreateRandomAndGetIdAsync(ApiClient, Faker, TestPersonId);
 //         byte[] imageBytes = ImageContentFactory.CreateMinimalPng();
 //
-//         using MultipartFormDataContent content = new();
+//         using MultipartFormDataContent content = [];
 //         using ByteArrayContent fileContent = new(imageBytes);
 //         fileContent.Headers.ContentType = new MediaTypeHeaderValue("image/png");
 //         content.Add(fileContent, "file", "test-image.jpg");
@@ -232,7 +232,7 @@
 //         CatId catId = await CatApiFactory.CreateRandomAndGetIdAsync(ApiClient, Faker, TestPersonId);
 //         byte[] imageBytes = ImageContentFactory.CreateMinimalPng();
 //
-//         using MultipartFormDataContent content = new();
+//         using MultipartFormDataContent content = [];
 //         using ByteArrayContent fileContent = new(imageBytes);
 //         fileContent.Headers.ContentType = new MediaTypeHeaderValue("image/png");
 //         content.Add(fileContent, "file", "tiny-thumbnail.png");
@@ -252,7 +252,7 @@
 //         CatId catId = await CatApiFactory.CreateRandomAndGetIdAsync(ApiClient, Faker, TestPersonId);
 //         byte[] imageBytes = ImageContentFactory.CreatePngWithDimensions(200, 200);
 //
-//         using MultipartFormDataContent content = new();
+//         using MultipartFormDataContent content = [];
 //         using ByteArrayContent fileContent = new(imageBytes);
 //         fileContent.Headers.ContentType = new MediaTypeHeaderValue("image/png");
 //         content.Add(fileContent, "file", "valid-thumbnail.png");
