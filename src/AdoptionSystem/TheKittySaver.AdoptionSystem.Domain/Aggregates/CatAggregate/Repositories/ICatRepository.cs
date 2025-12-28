@@ -16,7 +16,7 @@ public interface ICatRepository : IRepository<Cat, CatId>
     public Task<IReadOnlyCollection<Cat>> GetCatsByPersonIdAsync(
         PersonId personId,
         CancellationToken cancellationToken);
-    
+
     public Task<IReadOnlyCollection<Cat>> GetArchivedCatsByPersonIdAsync(
         PersonId personId,
         CancellationToken cancellationToken);

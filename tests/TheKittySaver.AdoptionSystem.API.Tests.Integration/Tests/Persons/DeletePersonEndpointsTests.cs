@@ -9,7 +9,7 @@ using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
 
 namespace TheKittySaver.AdoptionSystem.API.Tests.Integration.Tests.Persons;
 
-public sealed class DeletePersonEndpointsTests(TheKittySaverApiFactory appFactory)
+internal sealed class DeletePersonEndpointsTests(TheKittySaverApiFactory appFactory)
     : PersonEndpointsTestBase(appFactory)
 {
     //todo: testy sprawdzające anonimizacje danych w przypadku usunięcia konta, które ma istniejące koty/ogłoszenia

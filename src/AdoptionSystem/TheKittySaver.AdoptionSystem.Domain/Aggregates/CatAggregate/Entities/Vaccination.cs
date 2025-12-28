@@ -75,7 +75,7 @@ public sealed class Vaccination : Entity<VaccinationId>, IArchivable
         VeterinarianNote = updatedVeterinarianNote;
         return Result.Success();
     }
-    
+
     internal static Result<Vaccination> Create(
         CatId catId,
         VaccinationType type,

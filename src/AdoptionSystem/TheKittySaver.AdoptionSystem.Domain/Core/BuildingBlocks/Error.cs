@@ -19,12 +19,12 @@ public sealed class Error : ValueObject
         Message = message;
         Type = type;
     }
-    
+
     public override string ToString()
     {
         return $"[{Type}] {Code}: {Message}";
     }
-    
+
     protected override IEnumerable<object> GetAtomicValues()
     {
         yield return Code;

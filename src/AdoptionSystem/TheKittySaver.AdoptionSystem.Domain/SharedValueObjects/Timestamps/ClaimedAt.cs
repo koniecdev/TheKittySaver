@@ -7,7 +7,7 @@ namespace TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.Timestamps;
 
 public sealed class ClaimedAt : ValueObject
 {
-    public static readonly DateTimeOffset MinimumAllowedValue = 
+    public static readonly DateTimeOffset MinimumAllowedValue =
         new(2025, 1, 1, 0, 0, 0, TimeSpan.Zero);
     public DateTimeOffset Value { get; }
 

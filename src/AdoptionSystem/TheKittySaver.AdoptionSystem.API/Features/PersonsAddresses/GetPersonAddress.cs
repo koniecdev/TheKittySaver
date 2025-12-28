@@ -28,8 +28,8 @@ internal sealed class GetPersonAddress : IEndpoint
         public async ValueTask<Result<PersonAddressResponse>> Handle(Query query, CancellationToken cancellationToken)
         {
             PersonAddressResponse? response = await _readDbContext.Addresses
-                .Where(a => 
-                        a.PersonId == query.PersonId 
+                .Where(a =>
+                        a.PersonId == query.PersonId
                         && a.Id == query.AddressId)
                 .Select(address => new PersonAddressResponse(
                     Id: address.Id,

@@ -11,12 +11,12 @@ public sealed class AddressConfiguration : IEntityTypeConfiguration<Address>
     public void Configure(EntityTypeBuilder<Address> builder)
     {
         builder.ToTable("Addresses");
-        
+
         builder.Property(x => x.Id)
             .ValueGeneratedNever();
-        
+
         EntityConfiguration.ConfigureCreatedAt(builder);
-        
+
         builder.Property(x => x.CountryCode);
 
         builder.ComplexProperty(x => x.Name, complexBuilder =>
@@ -26,7 +26,7 @@ public sealed class AddressConfiguration : IEntityTypeConfiguration<Address>
                 .HasColumnName(nameof(Address.Name))
                 .HasMaxLength(AddressName.MaxLength);
         });
-        
+
         builder.ComplexProperty(x => x.PostalCode, complexBuilder =>
         {
             complexBuilder.IsRequired();
@@ -34,7 +34,7 @@ public sealed class AddressConfiguration : IEntityTypeConfiguration<Address>
                 .HasColumnName(nameof(Address.PostalCode))
                 .HasMaxLength(AddressPostalCode.MaxLength);
         });
-        
+
         builder.ComplexProperty(x => x.Region, complexBuilder =>
         {
             complexBuilder.IsRequired();
@@ -42,7 +42,7 @@ public sealed class AddressConfiguration : IEntityTypeConfiguration<Address>
                 .HasColumnName(nameof(Address.Region))
                 .HasMaxLength(AddressRegion.MaxLength);
         });
-        
+
         builder.ComplexProperty(x => x.City, complexBuilder =>
         {
             complexBuilder.IsRequired();
@@ -50,7 +50,7 @@ public sealed class AddressConfiguration : IEntityTypeConfiguration<Address>
                 .HasColumnName(nameof(Address.City))
                 .HasMaxLength(AddressCity.MaxLength);
         });
-        
+
         builder.ComplexProperty(x => x.Line, complexBuilder =>
         {
             complexBuilder.IsRequired(false);

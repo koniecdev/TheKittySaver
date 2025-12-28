@@ -7,11 +7,11 @@ using TheKittySaver.AdoptionSystem.Contracts.Common;
 // Shared/CleanerService.cs
 namespace TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared;
 
-public static class CleanerService
+internal static class CleanerService
 {
     public static async Task CleanDatabaseAsync(TestApiClient apiClient)
     {
-        PaginationResponse<PersonListItemResponse> personsResponse = 
+        PaginationResponse<PersonListItemResponse> personsResponse =
             await PersonApiQueryService.GetAllAsync(apiClient);
 
         foreach (PersonListItemResponse person in personsResponse.Items)

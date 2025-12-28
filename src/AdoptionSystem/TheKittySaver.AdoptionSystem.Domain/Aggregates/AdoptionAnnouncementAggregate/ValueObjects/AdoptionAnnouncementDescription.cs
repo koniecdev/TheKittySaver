@@ -17,12 +17,12 @@ public sealed class AdoptionAnnouncementDescription : ValueObject
         }
 
         value = value.Trim();
-        
+
         if (value.Length > MaxLength)
         {
             return Result.Failure<AdoptionAnnouncementDescription>(DomainErrors.AdoptionAnnouncementEntity.DescriptionProperty.LongerThanAllowed);
         }
-        
+
         AdoptionAnnouncementDescription instance = new(value);
         return Result.Success(instance);
     }

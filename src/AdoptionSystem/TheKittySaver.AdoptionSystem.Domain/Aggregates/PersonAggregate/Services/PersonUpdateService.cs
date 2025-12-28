@@ -38,11 +38,11 @@ internal sealed class PersonUpdateService : IPersonUpdateService
         {
             return Result.Failure(DomainErrors.PersonEntity.EmailAlreadyTaken(updatedEmail));
         }
-        
+
         Result updateEmailResult = maybePerson.Value.UpdateEmail(updatedEmail);
         return updateEmailResult;
     }
-    
+
     public async Task<Result> UpdatePhoneNumberAsync(
         PersonId personId,
         PhoneNumber updatedPhoneNumber,
@@ -59,7 +59,7 @@ internal sealed class PersonUpdateService : IPersonUpdateService
         {
             return Result.Failure(DomainErrors.PersonEntity.PhoneNumberAlreadyTaken(updatedPhoneNumber));
         }
-        
+
         Result updatePhoneNumberResult = maybePerson.Value.UpdatePhoneNumber(updatedPhoneNumber);
         return updatePhoneNumberResult;
     }

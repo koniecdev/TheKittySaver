@@ -48,7 +48,7 @@ public sealed class Person : AggregateRoot<PersonId>, IArchivable
         {
             return Result.Failure<Address>(failure.Error);
         }
-        
+
         if (_addresses.Any(x => x.Name == name))
         {
             return Result.Failure<Address>(DomainErrors.AddressEntity.NameAlreadyTaken(name));
@@ -81,7 +81,7 @@ public sealed class Person : AggregateRoot<PersonId>, IArchivable
         {
             return failure;
         }
-        
+
         Maybe<Address> maybeAddress = _addresses.GetByIdOrDefault(addressId);
         if (maybeAddress.HasNoValue)
         {
@@ -115,7 +115,7 @@ public sealed class Person : AggregateRoot<PersonId>, IArchivable
         {
             return failure;
         }
-        
+
         Maybe<Address> maybeAddress = _addresses.GetByIdOrDefault(addressId);
         if (maybeAddress.HasNoValue)
         {
@@ -128,7 +128,7 @@ public sealed class Person : AggregateRoot<PersonId>, IArchivable
             region,
             city,
             maybeLine);
-        
+
         return updateAddressDetailsResult;
     }
 
@@ -139,7 +139,7 @@ public sealed class Person : AggregateRoot<PersonId>, IArchivable
         {
             return failure;
         }
-        
+
         Maybe<Address> maybeAddress = _addresses.GetByIdOrDefault(addressId);
         if (maybeAddress.HasNoValue)
         {
@@ -158,7 +158,7 @@ public sealed class Person : AggregateRoot<PersonId>, IArchivable
         {
             return failure;
         }
-        
+
         Username = username;
         return Result.Success();
     }
@@ -170,7 +170,7 @@ public sealed class Person : AggregateRoot<PersonId>, IArchivable
         {
             return failure;
         }
-        
+
         Email = email;
         return Result.Success();
     }
@@ -182,7 +182,7 @@ public sealed class Person : AggregateRoot<PersonId>, IArchivable
         {
             return failure;
         }
-        
+
         PhoneNumber = phoneNumber;
         return Result.Success();
     }
@@ -194,9 +194,9 @@ public sealed class Person : AggregateRoot<PersonId>, IArchivable
         {
             return failure;
         }
-        
+
         ArchivedAt = archivedAt;
-        
+
         Result anonymizeResult = Anonymize();
         return anonymizeResult;
     }
@@ -215,28 +215,28 @@ public sealed class Person : AggregateRoot<PersonId>, IArchivable
     private Result Anonymize()
     {
         string randomGuid = Guid.NewGuid().ToString()[..8];
-        
+
         Result<Username> userNameAnonymizedResult = Username.Create(randomGuid);
         if (userNameAnonymizedResult.IsFailure)
         {
             return userNameAnonymizedResult;
         }
         Username = userNameAnonymizedResult.Value;
-        
+
         Result<Email> emailAnonymizedResult = Email.Create($"x{randomGuid}@x{randomGuid}.com");
         if (emailAnonymizedResult.IsFailure)
         {
             return emailAnonymizedResult;
         }
         Email = emailAnonymizedResult.Value;
-        
+
         PhoneNumber = PhoneNumber.CreateUnsafe(randomGuid);
-        
+
         _addresses.Clear();
-        
+
         return Result.Success();
     }
-    
+
     internal static Result<Person> Create(
         Username username,
         Email email,
@@ -270,18 +270,18 @@ public sealed class Person : AggregateRoot<PersonId>, IArchivable
     private Person()
     {
         Username = null!;
-        Email= null!;
-        PhoneNumber= null!;
+        Email = null!;
+        PhoneNumber = null!;
     }
-    
+
     private bool IsArchived([NotNullWhen(true)] out Result? failure)
     {
         bool isArchived = ArchivedAt is not null;
-        
+
         failure = isArchived
             ? Result.Failure(DomainErrors.PersonEntity.IsArchived(Id))
             : Result.Success();
-        
+
         return isArchived;
     }
 }

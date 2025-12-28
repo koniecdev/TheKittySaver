@@ -11,7 +11,7 @@ using TheKittySaver.AdoptionSystem.Contracts.Aggregates.PersonAggregate.Response
 
 namespace TheKittySaver.AdoptionSystem.API.Tests.Integration.Tests.Persons;
 
-public sealed class UpdatePersonEndpointsTests(TheKittySaverApiFactory appFactory)
+internal sealed class UpdatePersonEndpointsTests(TheKittySaverApiFactory appFactory)
     : PersonEndpointsTestBase(appFactory)
 {
     [Fact]

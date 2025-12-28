@@ -25,4 +25,4 @@ public sealed record CreateCatRequest(
     FivStatus InfectiousDiseaseStatusFivStatus,
     FelvStatus InfectiousDiseaseStatusFelvStatus,
     DateOnly InfectiousDiseaseStatusLastTestedAt);
-    
+

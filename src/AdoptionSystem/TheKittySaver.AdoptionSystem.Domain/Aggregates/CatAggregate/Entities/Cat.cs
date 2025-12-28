@@ -10,8 +10,8 @@ using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.Timestamps;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.AdoptionAnnouncementAggregate;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate;
-using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate.Enums;
+using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
 using TheKittySaver.AdoptionSystem.Primitives.Guards;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Entities;
@@ -25,7 +25,7 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
 
     public PersonId PersonId { get; }
     public AdoptionAnnouncementId? AdoptionAnnouncementId { get; private set; }
-    
+
     public ClaimedAt? ClaimedAt { get; private set; }
     public PublishedAt? PublishedAt { get; private set; }
     public CatName Name { get; private set; }
@@ -42,14 +42,14 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
     public NeuteringStatus NeuteringStatus { get; private set; }
     public InfectiousDiseaseStatus InfectiousDiseaseStatus { get; private set; }
     public CatThumbnail? Thumbnail { get; private set; }
-    
+
     public ArchivedAt? ArchivedAt { get; private set; }
-    
+
     public IReadOnlyList<CatGalleryItem> GalleryItems => _galleryItems.AsReadOnly();
     public IReadOnlyList<Vaccination> Vaccinations => _vaccinations.AsReadOnly();
 
     public CatStatusType Status { get; private set; } = CatStatusType.Draft;
-    
+
     public Result AssignToAdoptionAnnouncement(
         AdoptionAnnouncementId adoptionAnnouncementId,
         DateTimeOffset dateTimeOfOperation)
@@ -130,7 +130,7 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
         {
             return failure;
         }
-        
+
         if (Status is not CatStatusType.Published)
         {
             return Result.Failure(DomainErrors.CatEntity.StatusProperty.NotPublished(Id));
@@ -161,7 +161,7 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
         {
             return failure;
         }
-        
+
         Name = updatedName;
         return Result.Success();
     }
@@ -173,7 +173,7 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
         {
             return failure;
         }
-        
+
         Description = updatedDescription;
         return Result.Success();
     }
@@ -185,7 +185,7 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
         {
             return failure;
         }
-        
+
         Age = updatedAge;
         return Result.Success();
     }
@@ -197,7 +197,7 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
         {
             return failure;
         }
-        
+
         Gender = updatedGender;
         return Result.Success();
     }
@@ -221,7 +221,7 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
         {
             return failure;
         }
-        
+
         Weight = updatedWeight;
         return Result.Success();
     }
@@ -233,7 +233,7 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
         {
             return failure;
         }
-        
+
         HealthStatus = updatedHealthStatus;
         return Result.Success();
     }
@@ -245,7 +245,7 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
         {
             return failure;
         }
-        
+
         SpecialNeeds = updatedSpecialNeeds;
         return Result.Success();
     }
@@ -257,7 +257,7 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
         {
             return failure;
         }
-        
+
         Temperament = updatedTemperament;
         return Result.Success();
     }
@@ -269,7 +269,7 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
         {
             return failure;
         }
-        
+
         AdoptionHistory = updatedAdoptionHistory;
         return Result.Success();
     }
@@ -281,7 +281,7 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
         {
             return failure;
         }
-        
+
         ListingSource = updatedListingSource;
         return Result.Success();
     }
@@ -293,7 +293,7 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
         {
             return failure;
         }
-        
+
         NeuteringStatus = updatedNeuteringStatus;
         return Result.Success();
     }
@@ -305,7 +305,7 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
         {
             return failure;
         }
-        
+
         InfectiousDiseaseStatus = updatedInfectiousDiseaseStatus;
         return Result.Success();
     }
@@ -348,7 +348,7 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
         {
             return Result.Failure<Vaccination>(failure.Error);
         }
-        
+
         Result<Vaccination> vaccinationResult = Vaccination.Create(
             Id,
             type,
@@ -421,7 +421,7 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
         Result updateResult = maybeVaccination.Value.UpdateVeterinarianNote(updatedVeterinarianNote);
         return updateResult;
     }
-    
+
     public Result RemoveVaccination(VaccinationId vaccinationId)
     {
         Ensure.NotEmpty(vaccinationId);
@@ -477,14 +477,14 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
         Result unarchiveResult = maybeVaccination.Value.Unarchive();
         return unarchiveResult;
     }
-    
+
     public Result<CatThumbnailId> UpsertThumbnail()
     {
         if (IsArchived(out Result? failure))
         {
             return Result.Failure<CatThumbnailId>(failure.Error);
         }
-        
+
         if (Status is not (CatStatusType.Draft or CatStatusType.Published))
         {
             return Result.Failure<CatThumbnailId>(
@@ -507,7 +507,7 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
         {
             return Result.Failure<CatThumbnailId>(failure.Error);
         }
-        
+
         if (Thumbnail is null)
         {
             return Result.Failure<CatThumbnailId>(
@@ -531,7 +531,7 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
         {
             return Result.Failure<CatGalleryItem>(failure.Error);
         }
-        
+
         if (_galleryItems.Count >= MaximumGalleryItemsCount)
         {
             return Result.Failure<CatGalleryItem>(DomainErrors.CatEntity.GalleryIsFull);
@@ -609,7 +609,7 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
         {
             return failure;
         }
-        
+
         Maybe<CatGalleryItem> maybeGalleryItem = _galleryItems.GetByIdOrDefault(galleryItemId);
         if (maybeGalleryItem.HasNoValue)
         {
@@ -775,15 +775,15 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
         NeuteringStatus = null!;
         InfectiousDiseaseStatus = null!;
     }
-    
+
     private bool IsArchived([NotNullWhen(true)] out Result? failure)
     {
         bool isArchived = ArchivedAt is not null;
-        
+
         failure = isArchived
             ? Result.Failure(DomainErrors.CatEntity.IsArchived(Id))
             : Result.Success();
-        
+
         return isArchived;
     }
 }

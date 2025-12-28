@@ -9,7 +9,7 @@ namespace TheKittySaver.AdoptionSystem.Domain.Services.CatAdoptionAnnouncementSe
 
 internal sealed class CatAdoptionAnnouncementAssignmentService : ICatAdoptionAnnouncementAssignmentService
 {
-    
+
     //Kot jest dopiero co stworzony, i jeszcze nie ma ogłoszenia
     //Kot jest w draft -> atomowo przenosimy do published, oraz tworzymy active ogłoszenie
     //Flow endpoints:
@@ -18,18 +18,18 @@ internal sealed class CatAdoptionAnnouncementAssignmentService : ICatAdoptionAnn
 
     //Inny scenariusz, kot jest dodany od razu do rodziennego ogłoszenia
     //wtedy też ta metoda jest wystarczająca
-    
+
     //jeszcze innym casem jest przeciągnięcie kota z tego ogłoszenia do prywatnej strefy.
     //tym powinien się zająć unassignment service
-    
+
     //Innym casem jest przeciągnięcie kota z tego ogłoszenia do innego ogłoszenia
     //tym powiniein się zając reassignment service
-    
+
     //teoretycznie jeszcze innym case'm jest oznaczenie kota jako claimed, poza claimem ogłoszenia
     //to teoretycznie ukryje kota w ogłoszneiu, i tam pozostanie.
     //tym powininen zająć się catclaimservice. ReadModele powinny ignorować claim koty w ogłoszeniach do kalkulacji prio
-    
-    
+
+
     //To jest serwis który odpowiada za przypisanie draftowego kota do ogłoszenia już istniejącego, z jakimiś kotami.
     //Scenariusz przypisania kota do nowego ogłoszenia, bo to invariant ogłoszenia że dodaje sie atomowo z pierwszym publishem kota
     //to odpowiedzialność AdoptionAnnouncementCreationService.
@@ -49,7 +49,7 @@ internal sealed class CatAdoptionAnnouncementAssignmentService : ICatAdoptionAnn
                 adoptionAnnouncementId: adoptionAnnouncement.Id,
                 adoptionAnnouncementPersonId: adoptionAnnouncement.PersonId));
         }
-        
+
         if (cat.Status is not CatStatusType.Draft)
         {
             return Result.Failure(DomainErrors.CatEntity.StatusProperty.MustBeDraftForAssignment(cat.Id));
@@ -70,11 +70,11 @@ internal sealed class CatAdoptionAnnouncementAssignmentService : ICatAdoptionAnn
             return Result.Failure(DomainErrors.CatAdoptionAnnouncementService
                 .InfectiousDiseaseConflict(cat.Id, adoptionAnnouncement.Id));
         }
-        
+
         Result catAssignmentToAdoptionAnnouncementResult = cat.AssignToAdoptionAnnouncement(
             adoptionAnnouncement.Id,
             dateTimeOfOperation);
-        
+
         return catAssignmentToAdoptionAnnouncementResult;
     }
 }

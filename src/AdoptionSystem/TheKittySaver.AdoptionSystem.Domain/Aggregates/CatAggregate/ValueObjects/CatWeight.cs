@@ -8,9 +8,9 @@ public sealed class CatWeight : ValueObject
 {
     public const decimal MinWeightKg = 0.1m;
     public const decimal MaxWeightKg = 20m;
-    
+
     public decimal ValueInKilograms { get; }
-    
+
     public static Result<CatWeight> Create(decimal valueInKilograms)
     {
         switch (valueInKilograms)
@@ -22,10 +22,10 @@ public sealed class CatWeight : ValueObject
                 return Result.Failure<CatWeight>(
                     DomainErrors.CatEntity.WeightProperty.AboveMaximum(valueInKilograms, MaxWeightKg));
             default:
-            {
-                CatWeight instance = new(valueInKilograms);
-                return Result.Success(instance);
-            }
+                {
+                    CatWeight instance = new(valueInKilograms);
+                    return Result.Success(instance);
+                }
         }
     }
 

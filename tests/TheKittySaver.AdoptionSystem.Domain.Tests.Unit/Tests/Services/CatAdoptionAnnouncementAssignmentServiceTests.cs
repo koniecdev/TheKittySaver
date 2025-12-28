@@ -481,5 +481,5 @@ public sealed class CatAdoptionAnnouncementAssignmentServiceTests
         return result.Value;
     }
 
-    
+
 }

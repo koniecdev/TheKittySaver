@@ -301,7 +301,7 @@ internal static class UpdateCatMappings
         {
             Ensure.NotEmpty(catId);
             ArgumentNullException.ThrowIfNull(request);
-            
+
             UpdateCat.Command command = new(
                 CatId: catId,
                 Name: request.Name,

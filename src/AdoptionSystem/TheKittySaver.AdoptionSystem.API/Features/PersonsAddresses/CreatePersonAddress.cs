@@ -105,7 +105,7 @@ internal sealed class CreatePersonAddress : IEndpoint
             }
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
-            
+
             return addAddressResult.Value.Id;
         }
     }
@@ -137,7 +137,7 @@ internal static class CreatePersonAddressMappings
         {
             Ensure.NotEmpty(personId);
             ArgumentNullException.ThrowIfNull(request);
-            
+
             CreatePersonAddress.Command command = new(
                 PersonId: personId,
                 TwoLetterIsoCountryCode: request.TwoLetterIsoCountryCode,

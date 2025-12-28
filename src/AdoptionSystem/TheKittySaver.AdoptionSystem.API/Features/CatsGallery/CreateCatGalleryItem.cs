@@ -69,7 +69,7 @@ internal sealed class CreateCatGalleryItem : IEndpoint
             }
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
-            
+
             CatGalleryItemResponse response = new(
                 Id: catGalleryItem.Id,
                 CatId: cat.Id,

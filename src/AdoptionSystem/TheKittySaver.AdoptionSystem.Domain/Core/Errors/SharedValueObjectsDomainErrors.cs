@@ -74,7 +74,7 @@ public static partial class DomainErrors
                 nameof(AddressRegion.Value),
                 AddressRegion.MaxLength);
     }
-    
+
     public static class AddressPostalCodeValueObject
     {
         public static Error NullOrEmpty
@@ -102,7 +102,7 @@ public static partial class DomainErrors
                 nameof(AddressLine.Value),
                 AddressLine.MaxLength);
     }
-    
+
     public static class AddressConsistency
     {
         public const string PostalCodeRegionMismatchCode = "AddressConsistency.PostalCodeRegionMismatch";
@@ -141,7 +141,7 @@ public static partial class DomainErrors
                 $"Postal code prefix '{prefix}' is not recognized for the specified country.",
                 TypeOfError.Validation);
     }
-    
+
     public static class ClaimedAtValueObject
     {
         public static Error CannotBeInThePast
@@ -149,7 +149,7 @@ public static partial class DomainErrors
                 nameof(ClaimedAt),
                 nameof(ClaimedAt.Value));
     }
-    
+
     public static class ArchivedAtValueObject
     {
         public static Error CannotBeInThePast

@@ -65,7 +65,7 @@ internal sealed class CreateCat : IEndpoint
             {
                 return Result.Failure<CatId>(DomainErrors.PersonEntity.NotFound(command.PersonId));
             }
-            
+
             Result<CatName> createNameResult = CatName.Create(command.Name);
             if (createNameResult.IsFailure)
             {
@@ -245,7 +245,7 @@ internal static class CreateCatMappings
         public CreateCat.Command MapToCommand()
         {
             ArgumentNullException.ThrowIfNull(request);
-            
+
             CreateCat.Command command = new(
                 PersonId: request.PersonId,
                 Name: request.Name,

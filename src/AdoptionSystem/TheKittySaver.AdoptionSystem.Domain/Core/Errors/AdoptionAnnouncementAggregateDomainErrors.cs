@@ -1,7 +1,7 @@
-using AdoptionAnnouncementAggregate = TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAggregate.Entities.AdoptionAnnouncement;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAggregate.ValueObjects;
 using TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.AdoptionAnnouncementAggregate;
+using AdoptionAnnouncementAggregate = TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAggregate.Entities.AdoptionAnnouncement;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 
@@ -11,7 +11,7 @@ public static partial class DomainErrors
     {
         public static Error NotFound(AdoptionAnnouncementId id)
             => HasNotBeenFound(nameof(AdoptionAnnouncementEntity), id.Value);
-        
+
         public static Error IsArchived(AdoptionAnnouncementId id)
             => InvalidOperation(
                 nameof(AdoptionAnnouncementEntity),
@@ -28,7 +28,7 @@ public static partial class DomainErrors
                 nameof(AdoptionAnnouncementEntity),
                 "Cannot delete announcement with claimed cats. Please unassign cats that are not claimed first - this will make the announcement claimed as well.",
                 nameof(CannotDeleteAnnouncementWithClaimedCats));
-        
+
         public static class StatusProperty
         {
             public static Error UnavailableForAssigning
@@ -58,14 +58,14 @@ public static partial class DomainErrors
                     nameof(AdoptionAnnouncementAggregate.Status),
                     "Cannot reassign cat from an adoption announcement that is not active.",
                     nameof(CannotReassignCatFromInactiveAnnouncement));
-            
+
             public static Error CannotReassignCatToInactiveAnnouncement
                 => InvalidOperation(
                     nameof(AdoptionAnnouncementEntity),
                     nameof(AdoptionAnnouncementAggregate.Status),
                     "Cannot reassign cat to an adoption announcement that is not active.",
                     nameof(CannotReassignCatToInactiveAnnouncement));
-            
+
         }
 
         public static class MergeLogsProperty
@@ -88,7 +88,7 @@ public static partial class DomainErrors
                     nameof(AdoptionAnnouncementEntity),
                     nameof(AdoptionAnnouncementAggregate.Description),
                     AdoptionAnnouncementDescription.MaxLength);
-            
+
             public static Error CanOnlyUpdateWhenActive
                 => InvalidOperation(
                     nameof(AdoptionAnnouncementEntity),

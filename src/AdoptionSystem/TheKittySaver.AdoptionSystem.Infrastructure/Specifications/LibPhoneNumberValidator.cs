@@ -14,8 +14,8 @@ public sealed class LibPhoneNumberValidator : IValidPhoneNumberSpecification
         {
             return false;
         }
-        
-        try 
+
+        try
         {
             PhoneNumber parsedNumber = phoneNumber.StartsWith('+') || phoneNumber.StartsWith("00", StringComparison.Ordinal)
                 ? _phoneNumberUtil.Parse(phoneNumber, null)

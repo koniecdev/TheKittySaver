@@ -76,7 +76,7 @@ internal sealed class CreateAdoptionAnnouncement : IEndpoint
             Maybe<AdoptionAnnouncementDescription> maybeDescription = Maybe<AdoptionAnnouncementDescription>.None;
             if (!string.IsNullOrWhiteSpace(command.Description))
             {
-                Result<AdoptionAnnouncementDescription> createDescriptionResult = 
+                Result<AdoptionAnnouncementDescription> createDescriptionResult =
                     AdoptionAnnouncementDescription.Create(command.Description);
                 if (createDescriptionResult.IsFailure)
                 {
@@ -185,7 +185,7 @@ internal static class CreateAdoptionAnnouncementMappings
         public CreateAdoptionAnnouncement.Command MapToCommand()
         {
             ArgumentNullException.ThrowIfNull(request);
-            
+
             CreateAdoptionAnnouncement.Command command = new(
                 CatId: request.CatId,
                 Description: request.Description,

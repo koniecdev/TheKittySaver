@@ -1,6 +1,6 @@
-﻿using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate;
+﻿using TheKittySaver.AdoptionSystem.Primitives.Aggregates.AdoptionAnnouncementAggregate;
+using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate.Enums;
-using TheKittySaver.AdoptionSystem.Primitives.Aggregates.AdoptionAnnouncementAggregate;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
 using TheKittySaver.AdoptionSystem.ReadModels.Aggregates.AdoptionAnnouncementAggregate;
 using TheKittySaver.AdoptionSystem.ReadModels.Core.BuildingBlocks;

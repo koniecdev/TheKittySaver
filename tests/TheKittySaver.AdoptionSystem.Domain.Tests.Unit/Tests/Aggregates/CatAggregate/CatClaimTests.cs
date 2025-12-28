@@ -85,7 +85,7 @@ public sealed class CatClaimTests
         claim.ShouldThrow<ArgumentNullException>()
             .ParamName?.ToLowerInvariant().ShouldContain(nameof(Cat.ClaimedAt));
     }
-    
+
     [Fact]
     public void Claim_ShouldRaiseCatClaimedDomainEvent_WhenSuccessful()
     {

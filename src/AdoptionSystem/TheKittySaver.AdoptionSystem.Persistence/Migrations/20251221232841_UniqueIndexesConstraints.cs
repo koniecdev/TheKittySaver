@@ -15,7 +15,7 @@ namespace TheKittySaver.AdoptionSystem.Persistence.Migrations
                 table: "Persons",
                 column: "IdentityId",
                 unique: true);
-            
+
             migrationBuilder.Sql(
                 """
                 CREATE UNIQUE INDEX IX_Persons_Email ON Persons(Email);
@@ -29,7 +29,7 @@ namespace TheKittySaver.AdoptionSystem.Persistence.Migrations
             migrationBuilder.DropIndex(
                 name: "IX_Persons_IdentityId",
                 table: "Persons");
-            
+
             migrationBuilder.Sql(
                 """
                 DROP INDEX IX_Persons_Email ON Persons;

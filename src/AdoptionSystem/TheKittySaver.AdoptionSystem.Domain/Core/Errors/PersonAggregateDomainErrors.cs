@@ -1,10 +1,10 @@
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.Entities;
-using UsernameValueObject = TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.ValueObjects.Username;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.ValueObjects;
 using TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.PhoneNumbers;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
+using UsernameValueObject = TheKittySaver.AdoptionSystem.Domain.Aggregates.PersonAggregate.ValueObjects.Username;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 
@@ -14,7 +14,7 @@ public static partial class DomainErrors
     {
         public static Error NotFound(PersonId id)
             => HasNotBeenFound(nameof(PersonEntity), id.Value);
-        
+
         public static Error NotFoundByIdentityId(IdentityId id)
             => HasNotBeenFound(nameof(PersonEntity), id.Value);
 

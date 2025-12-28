@@ -2,7 +2,7 @@
 
 namespace TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
 
-public interface IRepository<TAggregateRoot, in TAggregateRootId> 
+public interface IRepository<TAggregateRoot, in TAggregateRootId>
     where TAggregateRootId : struct
     where TAggregateRoot : AggregateRoot<TAggregateRootId>
 {

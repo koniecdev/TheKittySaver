@@ -17,7 +17,7 @@ public sealed class CatGalleryItem : Entity<CatGalleryItemId>
         DisplayOrder = order;
         return Result.Success();
     }
-    
+
     internal static Result<CatGalleryItem> Create(
         CatId catId,
         CatGalleryItemDisplayOrder order)
@@ -37,7 +37,7 @@ public sealed class CatGalleryItem : Entity<CatGalleryItemId>
         CatId = catId;
         DisplayOrder = displayOrder;
     }
-    
+
     private CatGalleryItem()
     {
         DisplayOrder = null!;

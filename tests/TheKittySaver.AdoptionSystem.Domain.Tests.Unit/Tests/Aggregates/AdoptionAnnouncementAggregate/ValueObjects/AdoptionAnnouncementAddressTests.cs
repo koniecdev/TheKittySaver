@@ -72,7 +72,7 @@ public sealed class AdoptionAnnouncementAddressTests
         result.Value.City.ShouldBe(cityResult.Value);
         result.Value.Line.ShouldBeNull();
     }
-    
+
     [Fact]
     public void Create_ShouldThrow_WhenNullCityIsProvided()
     {

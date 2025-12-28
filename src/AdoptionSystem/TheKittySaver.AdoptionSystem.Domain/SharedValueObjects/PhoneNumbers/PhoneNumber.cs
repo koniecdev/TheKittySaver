@@ -7,9 +7,9 @@ namespace TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.PhoneNumbers;
 public sealed class PhoneNumber : ValueObject
 {
     public const int MaxLength = 30;
-    
+
     public string Value { get; }
-    
+
     /// <summary>
     /// This method should only be called by respected PhoneNumberFactory that check for phoneNumber invariants. 
     /// Unsafe factory static method for creating Phone Number.
@@ -24,12 +24,12 @@ public sealed class PhoneNumber : ValueObject
         PhoneNumber instance = new(value);
         return instance;
     }
-    
+
     private PhoneNumber(string value)
     {
         Value = value;
     }
-    
+
     public override string ToString() => Value;
     protected override IEnumerable<object> GetAtomicValues()
     {

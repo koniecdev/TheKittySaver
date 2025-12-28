@@ -2,7 +2,7 @@
 
 namespace TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared;
 
-public abstract class AsyncLifetimeTestBase : IAsyncLifetime
+internal abstract class AsyncLifetimeTestBase : IAsyncLifetime
 {
     protected Faker Faker { get; } = new();
     protected abstract TestApiClient ApiClient { get; }

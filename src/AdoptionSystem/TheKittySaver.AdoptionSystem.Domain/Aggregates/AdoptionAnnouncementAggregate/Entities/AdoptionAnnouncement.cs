@@ -53,7 +53,7 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
         _mergeLogs.Add(logResult.Value);
         return Result.Success();
     }
-    
+
     public Result UpdateDescription(Maybe<AdoptionAnnouncementDescription> updatedDescription)
     {
         ArgumentNullException.ThrowIfNull(updatedDescription);
@@ -124,7 +124,7 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
         PhoneNumber = updatedPhoneNumber;
         return Result.Success();
     }
-    
+
     public Result Claim(ClaimedAt claimedAt)
     {
         ArgumentNullException.ThrowIfNull(claimedAt);
@@ -143,7 +143,7 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
 
         return Result.Success();
     }
-    
+
     internal static Result<AdoptionAnnouncement> Create(
         PersonId personId,
         Maybe<AdoptionAnnouncementDescription> description,
@@ -156,7 +156,7 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
         ArgumentNullException.ThrowIfNull(address);
         ArgumentNullException.ThrowIfNull(email);
         ArgumentNullException.ThrowIfNull(phoneNumber);
-        
+
         AdoptionAnnouncementId id = AdoptionAnnouncementId.Create();
         AdoptionAnnouncement instance = new(
             id,
@@ -169,7 +169,7 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
 
         return Result.Success(instance);
     }
-    
+
     internal Result Archive(ArchivedAt archivedAt)
     {
         ArgumentNullException.ThrowIfNull(archivedAt);
@@ -216,15 +216,15 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
         Email = null!;
         PhoneNumber = null!;
     }
-    
+
     private bool IsArchived([NotNullWhen(true)] out Result? failure)
     {
         bool isArchived = ArchivedAt is not null;
-        
+
         failure = isArchived
             ? Result.Failure(DomainErrors.AdoptionAnnouncementEntity.IsArchived(Id))
             : Result.Success();
-        
+
         return isArchived;
     }
 }

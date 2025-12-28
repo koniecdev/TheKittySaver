@@ -8,7 +8,7 @@ internal static class ResultExtensions
     {
         public void EnsureSuccess() => EnsureTheSuccess(result);
     }
-    
+
     extension(Result result)
     {
         public void EnsureSuccess() => EnsureTheSuccess(result);
@@ -20,7 +20,7 @@ internal static class ResultExtensions
         {
             return;
         }
-            
+
         throw new InvalidOperationException(result.Error.ToString());
     }
 }

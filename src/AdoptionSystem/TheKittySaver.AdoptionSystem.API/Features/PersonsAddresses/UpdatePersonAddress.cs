@@ -143,7 +143,7 @@ internal static class UpdatePersonAddressMappings
             Ensure.NotEmpty(personId);
             Ensure.NotEmpty(addressId);
             ArgumentNullException.ThrowIfNull(request);
-            
+
             UpdatePersonAddress.Command command = new(
                 PersonId: personId,
                 AddressId: addressId,

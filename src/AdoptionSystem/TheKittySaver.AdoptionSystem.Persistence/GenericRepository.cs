@@ -23,7 +23,7 @@ internal abstract class GenericRepository<TAggregateRoot, TAggregateRootId> : IR
         CancellationToken cancellationToken)
     {
         Ensure.NotEmpty(id);
-        
+
         TAggregateRoot? entity = await DbContext.Set<TAggregateRoot>()
             .FirstOrDefaultAsync(x => x.Id.Equals(id), cancellationToken);
 
@@ -33,24 +33,24 @@ internal abstract class GenericRepository<TAggregateRoot, TAggregateRootId> : IR
     public async Task<bool> ExistsAsync(TAggregateRootId id, CancellationToken cancellationToken)
     {
         Ensure.NotEmpty(id);
-        
+
         bool result = await DbContext.Set<TAggregateRoot>()
             .AnyAsync(x => x.Id.Equals(id), cancellationToken);
-        
+
         return result;
     }
 
     public void Insert(TAggregateRoot aggregate)
     {
         ArgumentNullException.ThrowIfNull(aggregate);
-        
+
         DbContext.Set<TAggregateRoot>().Add(aggregate);
     }
 
     public void Remove(TAggregateRoot aggregate)
     {
         ArgumentNullException.ThrowIfNull(aggregate);
-        
+
         DbContext.Set<TAggregateRoot>().Remove(aggregate);
     }
 }

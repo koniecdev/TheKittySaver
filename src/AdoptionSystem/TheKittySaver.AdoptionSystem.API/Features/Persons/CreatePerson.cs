@@ -106,7 +106,7 @@ internal static class CreatePersonMappings
         public CreatePerson.Command MapToCommand()
         {
             ArgumentNullException.ThrowIfNull(request);
-            
+
             CreatePerson.Command response = new(IdentityId: request.IdentityId,
                 Username: request.Username,
                 Email: request.Email,

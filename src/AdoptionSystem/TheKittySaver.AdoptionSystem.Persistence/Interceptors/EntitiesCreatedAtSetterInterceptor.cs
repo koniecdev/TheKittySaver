@@ -27,10 +27,10 @@ internal sealed class EntitiesCreatedAtSetterInterceptor : SaveChangesIntercepto
 
         List<EntityEntry<IEntity>> addedEntitiesWithCreatedAtPropEntries = eventData.Context.ChangeTracker
             .Entries<IEntity>()
-            .Where(entry => entry.State is EntityState.Added 
+            .Where(entry => entry.State is EntityState.Added
                             && entry.Metadata.FindProperty(EntityConfiguration.CreatedAt) is not null)
             .ToList();
-        
+
         foreach (EntityEntry<IEntity> entry in addedEntitiesWithCreatedAtPropEntries)
         {
             entry.Property(EntityConfiguration.CreatedAt).CurrentValue = _timeProvider.GetUtcNow();

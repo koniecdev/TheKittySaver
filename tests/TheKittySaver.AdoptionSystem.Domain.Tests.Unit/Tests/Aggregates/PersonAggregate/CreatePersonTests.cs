@@ -9,13 +9,13 @@ namespace TheKittySaver.AdoptionSystem.Domain.Tests.Unit.Tests.Aggregates.Person
 public sealed class CreatePersonTests
 {
     private static readonly Faker Faker = new();
-    
+
     [Fact]
     public void Create_ShouldCreatePerson_WhenValidDataAreProvided()
     {
         //Arrange & Act
         Person person = PersonFactory.CreateRandom(Faker);
-        
+
         //Assert
         person.ShouldNotBeNull();
         person.Id.ShouldNotBe(PersonId.Empty);
@@ -25,46 +25,46 @@ public sealed class CreatePersonTests
         person.IdentityId.ShouldNotBe(IdentityId.Empty);
         person.Addresses.Count.ShouldBe(0);
     }
-    
+
     [Fact]
     public void Create_ShouldThrow_WhenNullUsernameIsProvided()
     {
         //Arrange & Act
         Func<Person> personCreation = () => PersonFactory.CreateRandom(Faker, replaceUsernameWithNull: true);
-        
+
         //Assert
         personCreation.ShouldThrow<ArgumentNullException>()
             .ParamName?.ToLowerInvariant().ShouldBe(nameof(Person.Username).ToLowerInvariant());
     }
-    
+
     [Fact]
     public void Create_ShouldThrow_WhenNullEmailIsProvided()
     {
         //Arrange & Act
         Func<Person> personCreation = () => PersonFactory.CreateRandom(Faker, replaceEmailWithNull: true);
-        
+
         //Assert
         personCreation.ShouldThrow<ArgumentNullException>()
             .ParamName?.ToLowerInvariant().ShouldBe(nameof(Person.Email).ToLowerInvariant());
     }
-    
+
     [Fact]
     public void Create_ShouldThrow_WhenNullPhoneNumberIsProvided()
     {
         //Arrange & Act
         Func<Person> personCreation = () => PersonFactory.CreateRandom(Faker, replacePhoneNumberWithNull: true);
-        
+
         //Assert
         personCreation.ShouldThrow<ArgumentNullException>()
             .ParamName?.ToLowerInvariant().ShouldBe(nameof(Person.PhoneNumber).ToLowerInvariant());
     }
-    
+
     [Fact]
     public void Create_ShouldThrow_WhenEmptyIdentityIdIsProvided()
     {
         //Arrange & Act
         Func<Person> personCreation = () => PersonFactory.CreateRandom(Faker, replaceIdentityIdWithEmpty: true);
-        
+
         //Assert
         personCreation.ShouldThrow<ArgumentException>()
             .ParamName?.ToLowerInvariant().ShouldBe(nameof(Person.IdentityId).ToLowerInvariant());

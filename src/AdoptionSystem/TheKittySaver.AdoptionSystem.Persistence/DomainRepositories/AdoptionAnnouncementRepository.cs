@@ -9,7 +9,7 @@ using TheKittySaver.AdoptionSystem.Primitives.Guards;
 
 namespace TheKittySaver.AdoptionSystem.Persistence.DomainRepositories;
 
-internal sealed class AdoptionAnnouncementRepository : 
+internal sealed class AdoptionAnnouncementRepository :
     GenericRepository<AdoptionAnnouncement, AdoptionAnnouncementId>, IAdoptionAnnouncementRepository
 {
     public AdoptionAnnouncementRepository(ApplicationWriteDbContext db) : base(db)
@@ -21,11 +21,11 @@ internal sealed class AdoptionAnnouncementRepository :
         CancellationToken cancellationToken)
     {
         Ensure.NotEmpty(personId);
-        
+
         List<AdoptionAnnouncement> adopAnnouncements = await DbContext.AdoptionAnnouncements
             .Where(x => x.PersonId == personId)
             .ToListAsync(cancellationToken);
-        
+
         return adopAnnouncements;
     }
 

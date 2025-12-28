@@ -8,11 +8,11 @@ namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.ValueObjec
 public sealed class SpecialNeedsStatus : ValueObject
 {
     public const int MaxDescriptionLength = 500;
-    
+
     public bool HasSpecialNeeds { get; }
     public string? Description { get; }
     public SpecialNeedsSeverityType SeverityType { get; }
-    
+
     public static SpecialNeedsStatus None() => new(false, null, SpecialNeedsSeverityType.None);
     public static Result<SpecialNeedsStatus> Create(string description, SpecialNeedsSeverityType severityType)
     {
@@ -61,7 +61,7 @@ public sealed class SpecialNeedsStatus : ValueObject
     {
         yield return HasSpecialNeeds;
         yield return SeverityType;
-        
+
         if (Description is not null)
         {
             yield return Description;

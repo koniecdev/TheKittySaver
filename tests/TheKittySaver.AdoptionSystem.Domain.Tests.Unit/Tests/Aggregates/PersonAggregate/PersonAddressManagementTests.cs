@@ -31,8 +31,8 @@ public sealed class PersonAddressManagementTests
         AddressRegion region = AddressFactory.CreateFixedRegion();
         AddressCity city = AddressFactory.CreateRandomCity(Faker);
         AddressLine line = AddressFactory.CreateRandomLine(Faker);
-        
-        
+
+
 
         //Act
         Result<Address> result = person.AddAddress(
@@ -61,8 +61,8 @@ public sealed class PersonAddressManagementTests
         AddressPostalCode postalCode = AddressFactory.CreateFixedPostalCode();
         AddressRegion region = AddressFactory.CreateFixedRegion();
         AddressCity city = AddressFactory.CreateRandomCity(Faker);
-        
-        
+
+
 
         person.AddAddress(specification, CountryCode.PL, name, postalCode, region, city, Maybe<AddressLine>.None);
 
@@ -88,8 +88,8 @@ public sealed class PersonAddressManagementTests
         Person person = PersonFactory.CreateRandom(Faker);
         IAddressConsistencySpecification specification = new PolandAddressConsistencySpecification();
         AddressName name = AddressFactory.CreateRandomName(Faker);
-        
-        
+
+
 
         Result<AddressPostalCode> postalCodeResult = AddressPostalCode.Create("60-123");
         postalCodeResult.EnsureSuccess();
@@ -125,8 +125,8 @@ public sealed class PersonAddressManagementTests
         AddressPostalCode postalCode = AddressFactory.CreateFixedPostalCode();
         AddressRegion region = AddressFactory.CreateFixedRegion();
         AddressCity city = AddressFactory.CreateRandomCity(Faker);
-        
-        
+
+
 
         //Act
         Action addAddress = () => person.AddAddress(
@@ -153,8 +153,8 @@ public sealed class PersonAddressManagementTests
         AddressPostalCode postalCode = AddressFactory.CreateFixedPostalCode();
         AddressRegion region = AddressFactory.CreateFixedRegion();
         AddressCity city = AddressFactory.CreateRandomCity(Faker);
-        
-        
+
+
 
         Result<Address> addResult = person.AddAddress(
             specification,
@@ -201,8 +201,8 @@ public sealed class PersonAddressManagementTests
         AddressPostalCode postalCode = AddressFactory.CreateFixedPostalCode();
         AddressRegion region = AddressFactory.CreateFixedRegion();
         AddressCity city = AddressFactory.CreateRandomCity(Faker);
-        
-        
+
+
 
         _ = person.AddAddress(
             specification,
@@ -240,8 +240,8 @@ public sealed class PersonAddressManagementTests
         AddressPostalCode postalCode = AddressFactory.CreateFixedPostalCode();
         AddressRegion region = AddressFactory.CreateFixedRegion();
         AddressCity city = AddressFactory.CreateRandomCity(Faker);
-        
-        
+
+
 
         Result<Address> addResult = person.AddAddress(
             specification,
@@ -270,8 +270,8 @@ public sealed class PersonAddressManagementTests
         AddressPostalCode originalPostalCode = AddressFactory.CreateFixedPostalCode();
         AddressRegion originalRegion = AddressFactory.CreateFixedRegion();
         AddressCity originalCity = AddressFactory.CreateRandomCity(Faker);
-        
-        
+
+
 
         Result<Address> addResult = person.AddAddress(
             specification,
@@ -339,8 +339,8 @@ public sealed class PersonAddressManagementTests
         AddressPostalCode postalCode = AddressFactory.CreateFixedPostalCode();
         AddressRegion region = AddressFactory.CreateFixedRegion();
         AddressCity city = AddressFactory.CreateRandomCity(Faker);
-        
-        
+
+
 
         Result<Address> addResult = person.AddAddress(
             specification,

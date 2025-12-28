@@ -15,7 +15,7 @@ public sealed class VaccinationNote : ValueObject
         {
             return Result.Failure<VaccinationNote>(DomainErrors.VaccinationEntity.VeterinarianNoteProperty.NullOrEmpty);
         }
-        
+
         value = value.Trim();
 
         if (value.Length > MaxLength)

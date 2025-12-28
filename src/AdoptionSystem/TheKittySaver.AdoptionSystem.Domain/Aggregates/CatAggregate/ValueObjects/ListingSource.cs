@@ -11,7 +11,7 @@ public sealed class ListingSource : ValueObject
 
     public ListingSourceType Type { get; }
     public string SourceName { get; }
-    
+
     public static Result<ListingSource> PrivatePerson(string name, bool isUrgent = false)
         => Create(isUrgent
             ? ListingSourceType.PrivatePersonUrgent
@@ -36,7 +36,7 @@ public sealed class ListingSource : ValueObject
         }
 
         sourceName = sourceName.Trim();
-        
+
         if (sourceName.Length > MaxSourceNameLength)
         {
             return Result.Failure<ListingSource>(

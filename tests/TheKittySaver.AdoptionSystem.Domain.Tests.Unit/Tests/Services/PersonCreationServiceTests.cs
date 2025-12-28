@@ -24,7 +24,7 @@ public sealed class PersonCreationServiceTests
         _uniquenessChecker = Substitute.For<IPersonUniquenessCheckerService>();
         _service = new PersonCreationService(_uniquenessChecker);
     }
-    
+
     [Fact]
     public async Task CreateAsync_ShouldSucceed_WhenAllDataIsValidAndUnique()
     {

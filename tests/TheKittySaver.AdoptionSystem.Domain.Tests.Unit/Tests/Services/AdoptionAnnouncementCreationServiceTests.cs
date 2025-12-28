@@ -111,7 +111,7 @@ public sealed class AdoptionAnnouncementCreationServiceTests
         result.Value.Email.ShouldBe(email);
         result.Value.PhoneNumber.ShouldBe(phoneNumber);
     }
-    
+
     [Fact]
     public void Create_ShouldFail_WhenCatHasNoThumbnail()
     {
@@ -146,7 +146,7 @@ public sealed class AdoptionAnnouncementCreationServiceTests
             AdoptionAnnouncementFactory.CreateRandom(Faker, personId: personId).Id,
             OperationDate.AddDays(-1));
         assignToAdoptionAnnouncementResult.EnsureSuccess();
-        
+
         AdoptionAnnouncementAddress address = AdoptionAnnouncementFactory.CreateRandomAddress(Faker);
         Email email = AdoptionAnnouncementFactory.CreateRandomEmail(Faker);
         PhoneNumber phoneNumber = AdoptionAnnouncementFactory.CreateRandomPhoneNumber(Faker);
@@ -164,7 +164,7 @@ public sealed class AdoptionAnnouncementCreationServiceTests
         //Assert
         result.IsFailure.ShouldBeTrue();
     }
-    
+
     [Fact]
     public void Create_ShouldNotPublishCat_WhenAssignmentFails()
     {

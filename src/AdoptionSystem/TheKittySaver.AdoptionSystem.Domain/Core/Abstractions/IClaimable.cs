@@ -6,6 +6,6 @@ namespace TheKittySaver.AdoptionSystem.Domain.Core.Abstractions;
 public interface IClaimable
 {
     public ClaimedAt? ClaimedAt { get; }
-    
+
     public Result Claim(ClaimedAt claimedAt);
 }

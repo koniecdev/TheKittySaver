@@ -21,7 +21,7 @@ public sealed class FailureLoggingBehaviour<TMessage, TResponse> : IPipelineBeha
         CancellationToken cancellationToken)
     {
         TResponse response = await next(message, cancellationToken);
-        
+
         if (response.IsFailure)
         {
             _logger.LogError("Code:{@ErrorCode},Type:{@ErrorType},Message:{@ErrorMessage}",
@@ -29,7 +29,7 @@ public sealed class FailureLoggingBehaviour<TMessage, TResponse> : IPipelineBeha
                 response.Error.Type,
                 response.Error.Message);
         }
-        
+
         return response;
     }
 }

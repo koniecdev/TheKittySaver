@@ -14,9 +14,9 @@ internal static class EndpointExtensions
                 type is { IsAbstract: false, IsInterface: false }
                 && type.IsAssignableTo(typeof(IEndpoint)))
             .Select(type => ServiceDescriptor.Transient(typeof(IEndpoint), type))];
-        
+
         services.TryAddEnumerable(endpointServiceDescriptors);
-        
+
         return services;
     }
 
@@ -25,7 +25,7 @@ internal static class EndpointExtensions
         IEnumerable<IEndpoint> endpoints = app.Services.GetRequiredService<IEnumerable<IEndpoint>>();
 
         IEndpointRouteBuilder builder = routeGroupBuilder is null ? app : routeGroupBuilder;
-        
+
         foreach (IEndpoint endpoint in endpoints)
         {
             endpoint.MapEndpoint(builder);

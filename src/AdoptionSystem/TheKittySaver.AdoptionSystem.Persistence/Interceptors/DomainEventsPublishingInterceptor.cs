@@ -37,7 +37,7 @@ internal sealed class DomainEventsPublishingInterceptor : SaveChangesInterceptor
         {
             aggregate.ClearDomainEvents();
         }
-        
+
         await using AsyncServiceScope scope = _serviceScopeFactory.CreateAsyncScope();
         IPublisher publisher = scope.ServiceProvider.GetRequiredService<IPublisher>();
         foreach (IDomainEvent domainEvent in domainEvents)

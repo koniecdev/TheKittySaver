@@ -33,19 +33,19 @@ public sealed class AdoptionAnnouncementCreationService : IAdoptionAnnouncementC
             address: address,
             email: email,
             phoneNumber: phoneNumber);
-            
+
         if (aaCreationResult.IsFailure)
         {
             return Result.Failure<AdoptionAnnouncement>(aaCreationResult.Error);
         }
-        
+
         Result assignmentResult = _assignmentService.AssignCatToAdoptionAnnouncement(
             catToAssign,
             aaCreationResult.Value,
             [],
             dateTimeOfOperation);
-            
-        return assignmentResult.IsFailure 
+
+        return assignmentResult.IsFailure
             ? Result.Failure<AdoptionAnnouncement>(assignmentResult.Error)
             : Result.Success(aaCreationResult.Value);
     }

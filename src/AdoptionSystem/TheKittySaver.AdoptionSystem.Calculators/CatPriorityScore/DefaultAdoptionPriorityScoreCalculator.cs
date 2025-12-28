@@ -43,7 +43,7 @@ internal sealed class DefaultAdoptionPriorityScoreCalculator : IAdoptionPriority
 
         return totalPoints;
     }
-    
+
     private static decimal CalculateAdoptionHistoryPoints(int returnCount)
     {
         if (returnCount == 0)
@@ -56,7 +56,7 @@ internal sealed class DefaultAdoptionPriorityScoreCalculator : IAdoptionPriority
 
         return resultPoints;
     }
-    
+
     private static decimal CalculateAgePoints(int age)
     {
         decimal points = age switch
@@ -71,7 +71,7 @@ internal sealed class DefaultAdoptionPriorityScoreCalculator : IAdoptionPriority
 
         return points;
     }
-    
+
     private static decimal CalculateColorPoints(ColorType color)
     {
         decimal points = color switch
@@ -85,7 +85,7 @@ internal sealed class DefaultAdoptionPriorityScoreCalculator : IAdoptionPriority
 
         return points;
     }
-    
+
     private static decimal CalculateGenderPoints(CatGenderType gender)
     {
         decimal points = gender switch
@@ -96,7 +96,7 @@ internal sealed class DefaultAdoptionPriorityScoreCalculator : IAdoptionPriority
 
         return points;
     }
-    
+
     private static decimal CalculateHealthPoints(HealthStatusType healthStatus)
     {
         decimal points = healthStatus switch
@@ -110,7 +110,7 @@ internal sealed class DefaultAdoptionPriorityScoreCalculator : IAdoptionPriority
 
         return points;
     }
-    
+
     private static decimal CalculateListingSourcePoints(ListingSourceType listingSource)
     {
         decimal points = listingSource switch
@@ -124,7 +124,7 @@ internal sealed class DefaultAdoptionPriorityScoreCalculator : IAdoptionPriority
 
         return points;
     }
-    
+
     private static decimal CalculateSpecialNeedsPoints(SpecialNeedsSeverityType specialNeedsSeverity)
     {
         int points = specialNeedsSeverity switch
@@ -137,7 +137,7 @@ internal sealed class DefaultAdoptionPriorityScoreCalculator : IAdoptionPriority
 
         return points;
     }
-    
+
     private static decimal CalculateTemperamentPoints(TemperamentType temperament)
     {
         decimal points = temperament switch

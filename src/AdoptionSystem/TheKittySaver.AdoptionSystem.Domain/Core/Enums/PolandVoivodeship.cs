@@ -3,7 +3,7 @@
 public enum PolandVoivodeship
 {
     Unset,
-    Wielkopolskie, 
+    Wielkopolskie,
     KujawskoXPomorskie,
     Małopolskie,
     Łódzkie,

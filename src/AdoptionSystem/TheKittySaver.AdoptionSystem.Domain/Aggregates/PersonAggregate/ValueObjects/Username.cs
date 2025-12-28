@@ -8,7 +8,7 @@ public sealed class Username : ValueObject
 {
     public const int MaxLength = 150;
     public string Value { get; }
-    
+
     public static Result<Username> Create(string value)
     {
         if (string.IsNullOrWhiteSpace(value))
@@ -26,7 +26,7 @@ public sealed class Username : ValueObject
         Username instance = new(value);
         return Result.Success(instance);
     }
-    
+
     private Username(string value)
     {
         Value = value;

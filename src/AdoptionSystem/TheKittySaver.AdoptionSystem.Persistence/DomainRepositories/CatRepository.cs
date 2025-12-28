@@ -16,20 +16,20 @@ internal sealed class CatRepository : GenericRepository<Cat, CatId>, ICatReposit
     public CatRepository(ApplicationWriteDbContext db) : base(db)
     {
     }
-    
+
     public override async Task<Maybe<Cat>> GetByIdAsync(
         CatId id,
         CancellationToken cancellationToken)
     {
         Ensure.NotEmpty(id);
-        
+
         Cat? result = await DbContext.Cats
             .Where(x => x.Id == id)
             .Include(cat => cat.Thumbnail)
             .Include(cat => cat.GalleryItems)
             .Include(cat => cat.Vaccinations)
             .FirstOrDefaultAsync(cancellationToken);
-        
+
         return Maybe<Cat>.From(result);
     }
 
@@ -38,14 +38,14 @@ internal sealed class CatRepository : GenericRepository<Cat, CatId>, ICatReposit
         CancellationToken cancellationToken)
     {
         Ensure.NotEmpty(adoptionAnnouncementId);
-        
+
         IReadOnlyCollection<Cat> result = await DbContext.Cats
             .Where(x => x.AdoptionAnnouncementId == adoptionAnnouncementId)
             .Include(cat => cat.Thumbnail)
             .Include(cat => cat.GalleryItems)
             .Include(cat => cat.Vaccinations)
             .ToListAsync(cancellationToken);
-        
+
         return result;
     }
 

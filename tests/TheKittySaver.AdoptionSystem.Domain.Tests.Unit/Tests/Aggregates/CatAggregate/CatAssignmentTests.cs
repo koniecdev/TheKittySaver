@@ -14,9 +14,9 @@ namespace TheKittySaver.AdoptionSystem.Domain.Tests.Unit.Tests.Aggregates.CatAgg
 public sealed class CatAssignmentTests
 {
     private static readonly Faker Faker = new();
-    private static readonly DateTimeOffset ValidOperationDate = 
+    private static readonly DateTimeOffset ValidOperationDate =
         new(2025, 6, 1, 0, 0, 0, TimeSpan.Zero);
-    
+
     [Fact]
     public void AssignToAdoptionAnnouncement_ShouldAssign_WhenCatIsDraftWithThumbnail()
     {
@@ -33,7 +33,7 @@ public sealed class CatAssignmentTests
         cat.Status.ShouldBe(CatStatusType.Published);
         cat.PublishedAt.ShouldNotBeNull();
     }
-    
+
     [Fact]
     public void AssignToAdoptionAnnouncement_ShouldReturnFailure_WhenCatHasNoThumbnail()
     {
@@ -121,7 +121,7 @@ public sealed class CatAssignmentTests
         cat.AdoptionAnnouncementId.ShouldBe(existingAnnouncementId);
         cat.Status.ShouldBe(CatStatusType.Draft);
     }
-    
+
     [Fact]
     public void ReassignToAnotherAdoptionAnnouncement_ShouldReassign_WhenCatIsPublished()
     {
@@ -193,7 +193,7 @@ public sealed class CatAssignmentTests
         result.Error.ShouldBe(DomainErrors.PublishedAtValueObject.CannotBeInThePast);
         cat.AdoptionAnnouncementId.ShouldBe(firstAnnouncementId);
     }
-    
+
     [Fact]
     public void UnassignFromAdoptionAnnouncement_ShouldUnassign_WhenCatIsPublished()
     {

@@ -6,13 +6,13 @@ namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.ValueObjec
 public sealed class Temperament : ValueObject
 {
     public TemperamentType Value { get; }
-    
+
     public static Temperament Friendly() => new(TemperamentType.Friendly);
     public static Temperament Independent() => new(TemperamentType.Independent);
     public static Temperament Timid() => new(TemperamentType.Timid);
     public static Temperament VeryTimid() => new(TemperamentType.VeryTimid);
     public static Temperament Aggressive() => new(TemperamentType.Aggressive);
-    
+
     private Temperament(TemperamentType value)
     {
         Value = value;

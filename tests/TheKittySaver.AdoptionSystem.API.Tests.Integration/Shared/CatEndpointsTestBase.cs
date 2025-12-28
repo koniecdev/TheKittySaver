@@ -8,7 +8,7 @@ using JsonOptions = Microsoft.AspNetCore.Http.Json.JsonOptions;
 namespace TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared;
 
 [Collection("Api")]
-public abstract class CatEndpointsTestBase : AsyncLifetimeTestBase
+internal abstract class CatEndpointsTestBase : AsyncLifetimeTestBase
 {
     protected override TestApiClient ApiClient { get; }
     protected PersonId TestPersonId { get; private set; }
