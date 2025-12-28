@@ -33,7 +33,20 @@ jobs:
           dotnet publish src/AuthSystem/TheKittySaver.AuthSystem.API/TheKittySaver.AuthSystem.API.csproj --configuration Release --no-build -o artifacts/AuthSystem.API &
           dotnet publish src/Frontend/TheKittySaver.Frontend/TheKittySaver.Frontend.csproj --configuration Release --no-build -o artifacts/Frontend &
           wait
-      - uses: actions/upload-artifact@v6
+      - name: Upload AdoptionSystem API
+        uses: actions/upload-artifact@v6
         with:
-          name: the-kitty-saver-artifact
-          path: artifacts/
+          name: adoption-system-api
+          path: artifacts/AdoptionSystem.API/
+
+      - name: Upload AuthSystem API
+        uses: actions/upload-artifact@v6
+        with:
+          name: auth-system-api
+          path: artifacts/AuthSystem.API/
+
+      - name: Upload Frontend
+        uses: actions/upload-artifact@v6
+        with:
+          name: frontend
+          path: artifacts/Frontend/
