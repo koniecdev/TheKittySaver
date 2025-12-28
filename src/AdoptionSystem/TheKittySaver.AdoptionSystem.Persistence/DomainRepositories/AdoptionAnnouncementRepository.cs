@@ -33,12 +33,12 @@ internal sealed class AdoptionAnnouncementRepository :
         CancellationToken cancellationToken)
     {
         Ensure.NotEmpty(personId);
-        
+
         List<AdoptionAnnouncement> adopAnnouncements = await DbContext.AdoptionAnnouncements
             .IgnoreQueryFilters()
-            .Where(x => x.PersonId == personId)
+            .Where(x => x.PersonId == personId && x.ArchivedAt != null)
             .ToListAsync(cancellationToken);
-        
+
         return adopAnnouncements;
     }
 }
