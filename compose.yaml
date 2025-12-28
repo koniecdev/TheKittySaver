@@ -1,4 +1,4 @@
-﻿services:
+services:
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2025-latest
     environment:
@@ -6,6 +6,12 @@
       - MSSQL_SA_PASSWORD=Haslo12345
     ports:
       - "1434:1433"
+    healthcheck:
+      test: /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "Haslo12345" -C -Q "SELECT 1" || exit 1
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
 
   thekittysaver.adoptionsystem.api:
     image: thekittysaver.adoptionsystem.api
@@ -15,9 +21,11 @@
     ports:
       - "5000:8080"
     environment:
+      - ASPNETCORE_ENVIRONMENT=local
       - ConnectionStringSettings__Database=Server=sqlserver,1433;Database=TheKittySaver;User Id=sa;Password=Haslo12345;TrustServerCertificate=True
     depends_on:
-      - sqlserver
+      sqlserver:
+        condition: service_healthy
 
   thekittysaver.frontend:
     image: thekittysaver.frontend

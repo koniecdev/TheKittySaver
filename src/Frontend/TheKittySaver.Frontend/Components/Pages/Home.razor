@@ -20,7 +20,7 @@ Health: @_health
     {
         using HttpClient client = new();
         string healthCheckResult = 
-            await client.GetStringAsync("https://thekittysaver.adoptionsystem.api:8080/health/live");
+            await client.GetStringAsync("http://thekittysaver.adoptionsystem.api:8080/health/live");
         return healthCheckResult;
     }
 }
