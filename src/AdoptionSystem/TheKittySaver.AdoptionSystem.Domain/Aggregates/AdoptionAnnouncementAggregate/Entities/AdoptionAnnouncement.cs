@@ -57,14 +57,18 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
     public Result UpdateDescription(Maybe<AdoptionAnnouncementDescription> updatedDescription)
     {
         ArgumentNullException.ThrowIfNull(updatedDescription);
-        
+        if (IsArchived(out Result? failure))
+        {
+            return failure;
+        }
+
         if (Status is not AnnouncementStatusType.Active)
         {
             return Result.Failure(DomainErrors.AdoptionAnnouncementEntity.DescriptionProperty.CanOnlyUpdateWhenActive);
         }
-        
-        Description = updatedDescription.HasValue 
-            ? updatedDescription.Value 
+
+        Description = updatedDescription.HasValue
+            ? updatedDescription.Value
             : null;
         return Result.Success();
     }
@@ -72,6 +76,10 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
     public Result UpdateAddress(AdoptionAnnouncementAddress updatedAddress)
     {
         ArgumentNullException.ThrowIfNull(updatedAddress);
+        if (IsArchived(out Result? failure))
+        {
+            return failure;
+        }
 
         if (Status is not AnnouncementStatusType.Active)
         {
@@ -85,6 +93,10 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
     public Result UpdateEmail(Email updatedEmail)
     {
         ArgumentNullException.ThrowIfNull(updatedEmail);
+        if (IsArchived(out Result? failure))
+        {
+            return failure;
+        }
 
         if (Status is not AnnouncementStatusType.Active)
         {
@@ -98,6 +110,10 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
     public Result UpdatePhoneNumber(PhoneNumber updatedPhoneNumber)
     {
         ArgumentNullException.ThrowIfNull(updatedPhoneNumber);
+        if (IsArchived(out Result? failure))
+        {
+            return failure;
+        }
 
         if (Status is not AnnouncementStatusType.Active)
         {
@@ -112,6 +128,11 @@ public sealed class AdoptionAnnouncement : AggregateRoot<AdoptionAnnouncementId>
     public Result Claim(ClaimedAt claimedAt)
     {
         ArgumentNullException.ThrowIfNull(claimedAt);
+        if (IsArchived(out Result? failure))
+        {
+            return failure;
+        }
+
         if (Status is AnnouncementStatusType.Claimed)
         {
             return Result.Failure(DomainErrors.AdoptionAnnouncementEntity.StatusProperty.AlreadyClaimed(Id));

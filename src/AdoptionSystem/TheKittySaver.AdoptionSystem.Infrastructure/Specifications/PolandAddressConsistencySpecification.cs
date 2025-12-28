@@ -181,7 +181,7 @@ public sealed partial class PolandAddressConsistencySpecification : IAddressCons
         string region,
         [NotNullWhen(false)] out Error? error)
     {
-        Ensure.IsInEnum(countryCode);
+        Ensure.IsValidEnum(countryCode);
         
         error = null;
 

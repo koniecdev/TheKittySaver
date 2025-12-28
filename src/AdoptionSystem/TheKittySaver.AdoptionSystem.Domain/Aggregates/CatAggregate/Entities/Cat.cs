@@ -205,6 +205,11 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
     public Result UpdateColor(CatColor updatedColor)
     {
         ArgumentNullException.ThrowIfNull(updatedColor);
+        if (IsArchived(out Result? failure))
+        {
+            return failure;
+        }
+
         Color = updatedColor;
         return Result.Success();
     }
@@ -338,7 +343,7 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
         DateTimeOffset dateOfOperation,
         VaccinationNote? veterinarianNote = null)
     {
-        Ensure.IsInEnum(type);
+        Ensure.IsValidEnum(type);
         if (IsArchived(out Result? failure))
         {
             return Result.Failure<Vaccination>(failure.Error);
@@ -362,7 +367,7 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
 
     public Result UpdateVaccinationType(VaccinationId vaccinationId, VaccinationType updatedType)
     {
-        Ensure.IsInEnum(updatedType);
+        Ensure.IsValidEnum(updatedType);
         Ensure.NotEmpty(vaccinationId);
         if (IsArchived(out Result? failure))
         {
