@@ -43,7 +43,7 @@ internal static class FileSignatures
         new("video/webm", ".webm", [0x1A, 0x45, 0xDF, 0xA3]),
 
         // QuickTime MOV
-        new("video/quicktime", ".mov", "ftypqt"u8.ToArray(), 4), 
+        new("video/quicktime", ".mov", "ftypqt"u8.ToArray(), 4),
         new("video/quicktime", ".mov", "moov"u8.ToArray(), 4)
     ];
 

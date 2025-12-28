@@ -8,13 +8,13 @@ namespace TheKittySaver.AdoptionSystem.Domain.SharedValueObjects;
 public sealed partial class Email : ValueObject
 {
     private static readonly Regex EmailRegex = MailRegex();
-    
+
     public const int MaxLength = 250;
     public const string RegexPattern =
         @"\A(?!.*\s)(?:[A-Za-z0-9_%+-]+(?:\.[A-Za-z0-9_%+-]+)*)@(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)(?:\.(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?))+\z";
-    
+
     public string Value { get; }
-    
+
     public static Result<Email> Create(string value)
     {
         if (string.IsNullOrWhiteSpace(value))
@@ -33,7 +33,7 @@ public sealed partial class Email : ValueObject
         {
             return Result.Failure<Email>(DomainErrors.EmailValueObject.InvalidFormat);
         }
-        
+
         Email instance = new(value);
         return Result.Success(instance);
     }
@@ -48,7 +48,7 @@ public sealed partial class Email : ValueObject
     {
         yield return Value;
     }
-    
+
     [GeneratedRegex(RegexPattern, RegexOptions.IgnoreCase | RegexOptions.Compiled)]
     private static partial Regex MailRegex();
 }

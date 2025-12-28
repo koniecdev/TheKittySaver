@@ -19,24 +19,24 @@ internal sealed class PersonRepository : GenericRepository<Person, PersonId>, IP
         CancellationToken cancellationToken)
     {
         Ensure.NotEmpty(id);
-        
+
         Person? result = await DbContext.Persons
             .Where(x => x.Id == id)
             .Include(x => x.Addresses)
             .FirstOrDefaultAsync(cancellationToken);
-        
+
         return Maybe<Person>.From(result);
     }
 
     public async Task<Maybe<Person>> GetByIdentityIdAsync(IdentityId identityId, CancellationToken cancellationToken)
     {
         Ensure.NotEmpty(identityId);
-        
+
         Person? result = await DbContext.Persons
             .Where(x => x.IdentityId == identityId)
             .Include(x => x.Addresses)
             .FirstOrDefaultAsync(cancellationToken);
-        
+
         return Maybe<Person>.From(result);
     }
 }

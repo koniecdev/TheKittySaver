@@ -29,7 +29,7 @@ internal static class AdoptionAnnouncementFactory
         PersonId thePersonId = personId ?? PersonId.Create();
 
         AdoptionAnnouncementDescription description = CreateRandomDescription(faker);
-        Maybe<AdoptionAnnouncementDescription> maybeDescription 
+        Maybe<AdoptionAnnouncementDescription> maybeDescription
             = Maybe<AdoptionAnnouncementDescription>.From(description);
 
         AdoptionAnnouncementAddress address = CreateRandomAddress(faker);

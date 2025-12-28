@@ -7,9 +7,9 @@ namespace TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.AddressCompound
 public sealed class AddressCity : ValueObject
 {
     public const int MaxLength = 100;
-    
+
     public string Value { get; }
-    
+
     public static Result<AddressCity> Create(string value)
     {
         if (string.IsNullOrWhiteSpace(value))
@@ -23,7 +23,7 @@ public sealed class AddressCity : ValueObject
         {
             return Result.Failure<AddressCity>(DomainErrors.AddressCityValueObject.LongerThanAllowed);
         }
-        
+
         AddressCity instance = new(value);
         return Result.Success(instance);
     }
@@ -32,7 +32,7 @@ public sealed class AddressCity : ValueObject
     {
         Value = value;
     }
-    
+
     public override string ToString() => Value;
     protected override IEnumerable<object> GetAtomicValues()
     {

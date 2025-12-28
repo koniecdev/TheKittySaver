@@ -20,21 +20,21 @@ internal static class PersonFactory
     {
         Result<Username> usernameCreationResult = Username.Create(faker.Person.UserName);
         usernameCreationResult.EnsureSuccess();
-        
+
         Result<Email> emailCreationResult = Email.Create(faker.Person.Email);
         emailCreationResult.EnsureSuccess();
-        
+
         PhoneNumber thePhoneNumber = PhoneNumber.CreateUnsafe(faker.Person.Phone);
-        
+
         IdentityId theIdentityId = IdentityId.Create();
-        
+
         Result<Person> personCreationResult = Person.Create(
             username: replaceUsernameWithNull ? null! : usernameCreationResult.Value,
             email: replaceEmailWithNull ? null! : emailCreationResult.Value,
             phoneNumber: replacePhoneNumberWithNull ? null! : thePhoneNumber,
             identityId: replaceIdentityIdWithEmpty ? IdentityId.Empty : theIdentityId);
         personCreationResult.EnsureSuccess();
-        
+
         return personCreationResult.Value;
     }
 }

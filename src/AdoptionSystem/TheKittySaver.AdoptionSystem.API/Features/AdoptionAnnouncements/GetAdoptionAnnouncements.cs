@@ -13,9 +13,9 @@ using TheKittySaver.AdoptionSystem.Domain.Core.Monads.OptionMonad;
 using TheKittySaver.AdoptionSystem.Persistence.DbContexts.ReadDbContexts;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
 using TheKittySaver.AdoptionSystem.ReadModels.Aggregates.AdoptionAnnouncementAggregate;
- 
+
 namespace TheKittySaver.AdoptionSystem.API.Features.AdoptionAnnouncements;
- 
+
 internal sealed class GetAdoptionAnnouncements : IEndpoint
 {
     internal sealed record Query(
@@ -44,14 +44,14 @@ internal sealed class GetAdoptionAnnouncements : IEndpoint
             IQueryable<AdoptionAnnouncementReadModel> baseQuery = _readDbContext.AdoptionAnnouncements
                 .WhereIf(query.MaybePersonId.HasValue,
                     aa => aa.PersonId == query.MaybePersonId.Value);
- 
+
             int totalCount = await baseQuery.CountAsync(cancellationToken);
- 
+
             if (!string.IsNullOrWhiteSpace(query.Sort))
             {
                 baseQuery = baseQuery.ApplyMultipleSorting(query.Sort, GetSortProperty);
             }
- 
+
             var rawItems = await baseQuery
                 .Select(aa => new
                 {
@@ -85,7 +85,7 @@ internal sealed class GetAdoptionAnnouncements : IEndpoint
                     })
                 })
                 .ToListAsync(cancellationToken);
- 
+
             IAdoptionPriorityScoreCalculator calculator = _calculatorFactory.Create();
             IEnumerable<AdoptionAnnouncementListItemResponse> items = rawItems.Select(rawAa =>
             {
@@ -105,7 +105,7 @@ internal sealed class GetAdoptionAnnouncements : IEndpoint
                         isNeutered: cat.NeuteringStatusIsNeutered))
                     .DefaultIfEmpty()
                     .Max();
- 
+
                 return new AdoptionAnnouncementListItemResponse(
                     Id: rawAa.Id,
                     PersonId: rawAa.PersonId,
@@ -122,17 +122,17 @@ internal sealed class GetAdoptionAnnouncements : IEndpoint
                     PhoneNumber: rawAa.PhoneNumber,
                     Status: rawAa.Status);
             });
- 
+
             if (string.IsNullOrWhiteSpace(query.Sort))
             {
                 items = items.OrderByDescending(x => x.PriorityScore);
             }
- 
+
             List<AdoptionAnnouncementListItemResponse> paginatedItems = items
                 .Skip((query.Page - 1) * query.PageSize)
                 .Take(query.PageSize)
                 .ToList();
- 
+
             PaginationResponse<AdoptionAnnouncementListItemResponse> paginationResponse = new()
             {
                 Items = paginatedItems,
@@ -143,7 +143,7 @@ internal sealed class GetAdoptionAnnouncements : IEndpoint
 
             return paginationResponse;
         }
- 
+
         private static Expression<Func<AdoptionAnnouncementReadModel, object>> GetSortProperty(string propertyName)
             => propertyName.ToLower(CultureInfo.InvariantCulture) switch
             {
@@ -152,9 +152,9 @@ internal sealed class GetAdoptionAnnouncements : IEndpoint
                 _ => aa => aa
             };
     }
- 
+
     private sealed record Filters(Guid? PersonId);
- 
+
     public void MapEndpoint(IEndpointRouteBuilder endpointRouteBuilder)
     {
         endpointRouteBuilder.MapGet("adoption-announcements", async (
@@ -168,9 +168,9 @@ internal sealed class GetAdoptionAnnouncements : IEndpoint
                 Page: paginationAndMultipleSorting.Page,
                 PageSize: paginationAndMultipleSorting.PageSize,
                 Sort: paginationAndMultipleSorting.Sort);
- 
+
             PaginationResponse<AdoptionAnnouncementListItemResponse> response = await sender.Send(query, cancellationToken);
- 
+
             return Results.Ok(response);
         });
     }

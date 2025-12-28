@@ -17,7 +17,7 @@ public sealed class CatVaccinationManagementTests
     private static readonly DateOnly TheVaccinationDate = new(2024, 12, 1);
     private static readonly DateOnly TestCurrentDate = new(2025, 6, 1);
     private static readonly DateOnly TestNewVaccinationDate = new(2025, 1, 1);
-    private static readonly DateTimeOffset FixedDateOfOperation = 
+    private static readonly DateTimeOffset FixedDateOfOperation =
         new(2025, 1, 2, 0, 0, 0, TimeSpan.Zero);
 
     [Fact]
@@ -43,7 +43,7 @@ public sealed class CatVaccinationManagementTests
     {
         //Arrange
         Cat cat = CatFactory.CreateRandom(Faker);
-        Result<Vaccination> addResult = 
+        Result<Vaccination> addResult =
             cat.AddVaccination(VaccinationType.Rabies, TheVaccinationDate, FixedDateOfOperation);
         VaccinationId vaccinationId = addResult.Value.Id;
 
@@ -89,7 +89,7 @@ public sealed class CatVaccinationManagementTests
     {
         //Arrange
         Cat cat = CatFactory.CreateRandom(Faker);
-        Result<Vaccination> addResult = 
+        Result<Vaccination> addResult =
             cat.AddVaccination(VaccinationType.Rabies, TheVaccinationDate, FixedDateOfOperation);
         VaccinationId vaccinationId = addResult.Value.Id;
 
@@ -121,7 +121,7 @@ public sealed class CatVaccinationManagementTests
     {
         //Arrange
         Cat cat = CatFactory.CreateRandom(Faker);
-        Result<Vaccination> addResult = 
+        Result<Vaccination> addResult =
             cat.AddVaccination(VaccinationType.Rabies, TheVaccinationDate, FixedDateOfOperation);
         VaccinationId vaccinationId = addResult.Value.Id;
 
@@ -191,7 +191,7 @@ public sealed class CatVaccinationManagementTests
     {
         //Arrange
         Cat cat = CatFactory.CreateRandom(Faker);
-        Result<Vaccination> addResult = 
+        Result<Vaccination> addResult =
             cat.AddVaccination(VaccinationType.Rabies, TheVaccinationDate, FixedDateOfOperation);
         VaccinationId vaccinationId = addResult.Value.Id;
         string newNote = Faker.Lorem.Sentence();

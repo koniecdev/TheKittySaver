@@ -11,35 +11,35 @@ public sealed class CatConfiguration : IEntityTypeConfiguration<Cat>
     public void Configure(EntityTypeBuilder<Cat> builder)
     {
         builder.ToTable("Cats");
-        
+
         builder.Property(x => x.Id)
             .ValueGeneratedNever();
-        
+
         builder.HasQueryFilter(x => x.ArchivedAt == null);
-        
+
         builder.ComplexProperty(x => x.ArchivedAt, complexBuilder =>
         {
             complexBuilder.IsRequired(false);
             complexBuilder.Property(x => x.Value)
                 .HasColumnName(nameof(Cat.ArchivedAt));
         });
-        
+
         EntityConfiguration.ConfigureCreatedAt(builder);
-        
+
         builder.ComplexProperty(x => x.ClaimedAt, complexBuilder =>
         {
             complexBuilder.IsRequired(false);
             complexBuilder.Property(x => x.Value)
                 .HasColumnName(nameof(Cat.ClaimedAt));
         });
-        
+
         builder.ComplexProperty(x => x.PublishedAt, complexBuilder =>
         {
             complexBuilder.IsRequired(false);
             complexBuilder.Property(x => x.Value)
                 .HasColumnName(nameof(Cat.PublishedAt));
         });
-        
+
         builder.ComplexProperty(x => x.Name, complexBuilder =>
         {
             complexBuilder.IsRequired();
@@ -47,7 +47,7 @@ public sealed class CatConfiguration : IEntityTypeConfiguration<Cat>
                 .HasColumnName(nameof(Cat.Name))
                 .HasMaxLength(CatName.MaxLength);
         });
-        
+
         builder.ComplexProperty(x => x.Description, complexBuilder =>
         {
             complexBuilder.IsRequired();
@@ -55,14 +55,14 @@ public sealed class CatConfiguration : IEntityTypeConfiguration<Cat>
                 .HasColumnName(nameof(Cat.Description))
                 .HasMaxLength(CatDescription.MaxLength);
         });
-        
+
         builder.ComplexProperty(x => x.Age, complexBuilder =>
         {
             complexBuilder.IsRequired();
             complexBuilder.Property(x => x.Value)
                 .HasColumnName(nameof(Cat.Age));
         });
-        
+
         builder.ComplexProperty(x => x.Gender, complexBuilder =>
         {
             complexBuilder.IsRequired();
@@ -71,7 +71,7 @@ public sealed class CatConfiguration : IEntityTypeConfiguration<Cat>
                 .HasConversion<string>()
                 .HasMaxLength(EnumConsts.MaxLength);
         });
-        
+
         builder.ComplexProperty(x => x.Color, complexBuilder =>
         {
             complexBuilder.IsRequired();
@@ -80,7 +80,7 @@ public sealed class CatConfiguration : IEntityTypeConfiguration<Cat>
                 .HasConversion<string>()
                 .HasMaxLength(EnumConsts.MaxLength);
         });
-        
+
         builder.ComplexProperty(x => x.Weight, complexBuilder =>
         {
             complexBuilder.IsRequired();
@@ -88,7 +88,7 @@ public sealed class CatConfiguration : IEntityTypeConfiguration<Cat>
                 .HasColumnName($"{nameof(Cat.Weight)}{nameof(CatWeight.ValueInKilograms)}")
                 .HasPrecision(5, 2);
         });
-        
+
         builder.ComplexProperty(x => x.HealthStatus, complexBuilder =>
         {
             complexBuilder.IsRequired();
@@ -97,26 +97,26 @@ public sealed class CatConfiguration : IEntityTypeConfiguration<Cat>
                 .HasConversion<string>()
                 .HasMaxLength(EnumConsts.MaxLength);
         });
-        
+
         builder.ComplexProperty(x => x.SpecialNeeds, complexBuilder =>
         {
             complexBuilder.IsRequired();
-            
+
             const string prefix = nameof(SpecialNeedsStatus);
-            
+
             complexBuilder.Property(x => x.HasSpecialNeeds)
                 .HasColumnName($"{prefix}{nameof(SpecialNeedsStatus.HasSpecialNeeds)}");
-            
+
             complexBuilder.Property(x => x.Description)
                 .HasColumnName($"{prefix}{nameof(SpecialNeedsStatus.Description)}")
                 .HasMaxLength(SpecialNeedsStatus.MaxDescriptionLength);
-            
+
             complexBuilder.Property(x => x.SeverityType)
                 .HasColumnName($"{prefix}{nameof(SpecialNeedsStatus.SeverityType)}")
                 .HasConversion<string>()
                 .HasMaxLength(EnumConsts.MaxLength);
         });
- 
+
         builder.ComplexProperty(x => x.Temperament, complexBuilder =>
         {
             complexBuilder.IsRequired();
@@ -125,7 +125,7 @@ public sealed class CatConfiguration : IEntityTypeConfiguration<Cat>
                 .HasConversion<string>()
                 .HasMaxLength(EnumConsts.MaxLength);
         });
-        
+
         builder.ComplexProperty(x => x.AdoptionHistory, complexBuilder =>
         {
             const string prefix = nameof(Cat.AdoptionHistory);
@@ -142,7 +142,7 @@ public sealed class CatConfiguration : IEntityTypeConfiguration<Cat>
                 .HasColumnName($"{prefix}{nameof(AdoptionHistory.LastReturnReason)}")
                 .HasMaxLength(AdoptionHistory.LastReturnReasonMaxLength);
         });
-        
+
         builder.ComplexProperty(x => x.ListingSource, complexBuilder =>
         {
             const string prefix = nameof(Cat.ListingSource);
@@ -168,7 +168,7 @@ public sealed class CatConfiguration : IEntityTypeConfiguration<Cat>
             complexBuilder.Property(x => x.IsNeutered)
                 .HasColumnName($"{prefix}{nameof(NeuteringStatus.IsNeutered)}");
         });
-        
+
         builder.ComplexProperty(x => x.InfectiousDiseaseStatus, complexBuilder =>
         {
             const string prefix = nameof(Cat.InfectiousDiseaseStatus);
@@ -188,22 +188,22 @@ public sealed class CatConfiguration : IEntityTypeConfiguration<Cat>
             complexBuilder.Property(x => x.LastTestedAt)
                 .HasColumnName($"{prefix}{nameof(InfectiousDiseaseStatus.LastTestedAt)}");
         });
-        
+
         builder.Property(x => x.Status)
             .HasConversion<string>()
             .HasMaxLength(EnumConsts.MaxLength);
-        
-        builder.HasOne(x=>x.Thumbnail)
+
+        builder.HasOne(x => x.Thumbnail)
             .WithOne()
             .HasForeignKey<CatThumbnail>(x => x.CatId)
             .OnDelete(DeleteBehavior.Cascade);
-        
-        builder.HasMany(x=>x.GalleryItems)
+
+        builder.HasMany(x => x.GalleryItems)
             .WithOne()
             .HasForeignKey(x => x.CatId)
             .OnDelete(DeleteBehavior.Cascade);
-        
-        builder.HasMany(x=>x.Vaccinations)
+
+        builder.HasMany(x => x.Vaccinations)
             .WithOne()
             .HasForeignKey(x => x.CatId)
             .OnDelete(DeleteBehavior.Cascade);

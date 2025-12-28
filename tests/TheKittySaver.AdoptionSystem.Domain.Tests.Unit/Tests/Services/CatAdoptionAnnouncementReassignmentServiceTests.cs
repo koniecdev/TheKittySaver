@@ -193,7 +193,7 @@ public sealed class CatAdoptionAnnouncementReassignmentServiceTests
         result.IsFailure.ShouldBeTrue();
         result.Error.ShouldBe(DomainErrors.CatEntity.Assignment.CannotReassignToSameAnnouncement(cat.Id));
     }
-    
+
     [Fact]
     public void ReassignCatToAnotherAdoptionAnnouncement_ShouldFail_WhenFivPositiveMixesWithFivNegative()
     {
@@ -373,5 +373,5 @@ public sealed class CatAdoptionAnnouncementReassignmentServiceTests
         return result.Value;
     }
 
-    
+
 }

@@ -129,7 +129,7 @@ internal static class UpdatePersonMappings
         {
             Ensure.NotEmpty(personId);
             ArgumentNullException.ThrowIfNull(request);
-            
+
             UpdatePerson.Command command = new(
                 PersonId: personId,
                 Username: request.Username,

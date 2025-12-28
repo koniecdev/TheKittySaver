@@ -9,10 +9,10 @@ public sealed class CatThumbnailConfiguration : IEntityTypeConfiguration<CatThum
     public void Configure(EntityTypeBuilder<CatThumbnail> builder)
     {
         builder.ToTable("CatThumbnails");
-        
+
         builder.Property(x => x.Id)
             .ValueGeneratedNever();
-        
+
         EntityConfiguration.ConfigureCreatedAt(builder);
     }
 }

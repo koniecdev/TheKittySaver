@@ -1,15 +1,15 @@
 using System.Globalization;
 using System.Reflection;
 using System.Threading.RateLimiting;
-using TheKittySaver.AdoptionSystem.API;
-using TheKittySaver.AdoptionSystem.API.Extensions;
-using TheKittySaver.AdoptionSystem.API.Middleware;
 using Asp.Versioning;
 using Asp.Versioning.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
 using Scalar.AspNetCore;
 using Serilog;
+using TheKittySaver.AdoptionSystem.API;
+using TheKittySaver.AdoptionSystem.API.Extensions;
+using TheKittySaver.AdoptionSystem.API.Middleware;
 using TheKittySaver.AdoptionSystem.Persistence;
 using TheKittySaver.AdoptionSystem.Persistence.Settings;
 
@@ -106,7 +106,7 @@ app.UseHttpsRedirection();
 app.UseRouting();
 string corsPolicy = app.Environment.EnvironmentName.ToLower(CultureInfo.InvariantCulture) switch
 {
-    productionEnvironment => productionCorsPolicy, 
+    productionEnvironment => productionCorsPolicy,
     _ => localCorsPolicy
 };
 app.UseCors(corsPolicy);

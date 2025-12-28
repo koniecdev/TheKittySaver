@@ -68,7 +68,7 @@ internal sealed class UpdateAdoptionAnnouncement : IEndpoint
             Maybe<AdoptionAnnouncementDescription> maybeDescription = Maybe<AdoptionAnnouncementDescription>.None;
             if (!string.IsNullOrWhiteSpace(command.Description))
             {
-                Result<AdoptionAnnouncementDescription> createDescriptionResult = 
+                Result<AdoptionAnnouncementDescription> createDescriptionResult =
                     AdoptionAnnouncementDescription.Create(command.Description);
                 if (createDescriptionResult.IsFailure)
                 {
@@ -187,7 +187,7 @@ internal static class UpdateAdoptionAnnouncementMappings
         {
             Ensure.NotEmpty(adoptionAnnouncementId);
             ArgumentNullException.ThrowIfNull(request);
-            
+
             UpdateAdoptionAnnouncement.Command command = new(
                 AdoptionAnnouncementId: adoptionAnnouncementId,
                 Description: request.Description,

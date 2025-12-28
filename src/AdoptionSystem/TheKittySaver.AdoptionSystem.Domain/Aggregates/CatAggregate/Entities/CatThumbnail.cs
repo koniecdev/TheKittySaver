@@ -8,11 +8,11 @@ namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Entities;
 public sealed class CatThumbnail : Entity<CatThumbnailId>
 {
     public CatId CatId { get; }
-    
+
     public static Result<CatThumbnail> Create(CatId catId)
     {
         Ensure.NotEmpty(catId);
-        
+
         CatThumbnailId id = CatThumbnailId.Create();
         CatThumbnail instance = new(catId, id);
         return Result.Success(instance);

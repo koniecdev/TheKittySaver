@@ -17,21 +17,21 @@ public sealed class PersonConfiguration : IEntityTypeConfiguration<Person>
 
         builder.Property(x => x.Id)
             .ValueGeneratedNever();
-        
+
         builder.HasQueryFilter(x => x.ArchivedAt == null);
-        
+
         builder.ComplexProperty(x => x.ArchivedAt, complexBuilder =>
         {
             complexBuilder.IsRequired(false);
             complexBuilder.Property(x => x.Value)
                 .HasColumnName(nameof(Person.ArchivedAt));
         });
-        
+
         EntityConfiguration.ConfigureCreatedAt(builder);
-        
+
         builder.Property(x => x.IdentityId);
         builder.HasIndex(x => x.IdentityId).IsUnique();
-        
+
         builder.ComplexProperty(x => x.Username, complexBuilder =>
         {
             complexBuilder.IsRequired();
@@ -39,7 +39,7 @@ public sealed class PersonConfiguration : IEntityTypeConfiguration<Person>
                 .HasColumnName(nameof(Person.Username))
                 .HasMaxLength(Username.MaxLength);
         });
-        
+
         builder.ComplexProperty(x => x.Email, complexBuilder =>
         {
             complexBuilder.IsRequired();
@@ -47,7 +47,7 @@ public sealed class PersonConfiguration : IEntityTypeConfiguration<Person>
                 .HasColumnName(nameof(Person.Email))
                 .HasMaxLength(Email.MaxLength);
         });
-        
+
         //Lack of complexproperty support - builder.HasIndex(x => x.Email).IsUnique(); - raw sql in migration.
         //20251221232841_UniqueIndexesConstraints.cs
 
@@ -58,23 +58,23 @@ public sealed class PersonConfiguration : IEntityTypeConfiguration<Person>
                 .HasColumnName(nameof(Person.PhoneNumber))
                 .HasMaxLength(PhoneNumber.MaxLength);
         });
-        
+
         //Lack of complexproperty support - builder.HasIndex(x => x.PhoneNumber).IsUnique(); - raw sql in migration.
         //20251221232841_UniqueIndexesConstraints.cs
-        
-        builder.HasMany(x=>x.Addresses)
+
+        builder.HasMany(x => x.Addresses)
             .WithOne()
-            .HasForeignKey(x=>x.PersonId)
+            .HasForeignKey(x => x.PersonId)
             .OnDelete(DeleteBehavior.Cascade);
-        
+
         builder.HasMany<Cat>()
             .WithOne()
-            .HasForeignKey(x=>x.PersonId)
+            .HasForeignKey(x => x.PersonId)
             .OnDelete(DeleteBehavior.Restrict);
-        
+
         builder.HasMany<AdoptionAnnouncement>()
             .WithOne()
-            .HasForeignKey(x=>x.PersonId)
+            .HasForeignKey(x => x.PersonId)
             .OnDelete(DeleteBehavior.Restrict);
     }
 }

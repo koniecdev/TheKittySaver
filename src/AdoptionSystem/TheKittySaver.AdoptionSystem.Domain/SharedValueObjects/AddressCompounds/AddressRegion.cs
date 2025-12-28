@@ -8,7 +8,7 @@ public sealed class AddressRegion : ValueObject
 {
     public const int MaxLength = 200;
     public string Value { get; }
-    
+
     public static Result<AddressRegion> Create(string value)
     {
         if (string.IsNullOrWhiteSpace(value))

@@ -122,7 +122,7 @@ internal static class UpdateCatVaccinationMappings
             Ensure.NotEmpty(catId);
             Ensure.NotEmpty(vaccinationId);
             ArgumentNullException.ThrowIfNull(request);
-            
+
             UpdateCatVaccination.Command command = new(
                 CatId: catId,
                 VaccinationId: vaccinationId,

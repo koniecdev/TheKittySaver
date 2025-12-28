@@ -199,7 +199,7 @@ public sealed class PersonUpdateServiceTests
         result.Error.ShouldBe(DomainErrors.PersonEntity.PhoneNumberAlreadyTaken(newPhoneNumber));
         person.PhoneNumber.ShouldNotBe(newPhoneNumber); // Phone should not change
     }
-    
+
     private static Email CreateRandomEmail()
     {
         Result<Email> result = Email.Create(Faker.Internet.Email());
@@ -213,5 +213,5 @@ public sealed class PersonUpdateServiceTests
         return result.Value;
     }
 
-    
+
 }

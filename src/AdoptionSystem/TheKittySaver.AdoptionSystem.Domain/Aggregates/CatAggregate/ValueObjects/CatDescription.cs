@@ -15,14 +15,14 @@ public sealed class CatDescription : ValueObject
         {
             return Result.Failure<CatDescription>(DomainErrors.CatEntity.DescriptionProperty.NullOrEmpty);
         }
-        
+
         value = value.Trim();
 
         if (value.Length > MaxLength)
         {
             return Result.Failure<CatDescription>(DomainErrors.CatEntity.DescriptionProperty.LongerThanAllowed);
         }
-        
+
         CatDescription instance = new(value);
         return Result.Success(instance);
     }

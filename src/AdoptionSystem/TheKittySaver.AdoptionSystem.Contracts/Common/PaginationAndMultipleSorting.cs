@@ -12,4 +12,4 @@ public interface ISortable
 }
 
 public sealed record PaginationAndMultipleSorting(int Page = 1, int PageSize = 10, string? Sort = null)
-    :  IPaginationable, ISortable;
+    : IPaginationable, ISortable;

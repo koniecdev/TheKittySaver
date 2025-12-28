@@ -8,7 +8,7 @@ public sealed class AddressLine : ValueObject
 {
     public const int MaxLength = 500;
     public string Value { get; }
-    
+
     public static Result<AddressLine> Create(string value)
     {
         if (string.IsNullOrWhiteSpace(value))

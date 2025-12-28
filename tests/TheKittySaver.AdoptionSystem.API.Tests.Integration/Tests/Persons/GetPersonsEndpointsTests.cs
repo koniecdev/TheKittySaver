@@ -14,7 +14,7 @@ public sealed class GetPersonsEndpointsTests(TheKittySaverApiFactory appFactory)
     public async Task GetPersons_ShouldReturnEmptyItemList_WhenNoPersonsExists()
     {
         //Act
-        PaginationResponse<PersonListItemResponse> response = 
+        PaginationResponse<PersonListItemResponse> response =
             await PersonApiQueryService.GetAllAsync(ApiClient);
 
         //Assert
@@ -30,7 +30,7 @@ public sealed class GetPersonsEndpointsTests(TheKittySaverApiFactory appFactory)
         PersonDetailsResponse personResponse = await PersonApiFactory.CreateRandomAsync(ApiClient, Faker);
 
         //Act
-        PaginationResponse<PersonListItemResponse> response = 
+        PaginationResponse<PersonListItemResponse> response =
             await PersonApiQueryService.GetAllAsync(ApiClient);
 
         //Assert
@@ -53,7 +53,7 @@ public sealed class GetPersonsEndpointsTests(TheKittySaverApiFactory appFactory)
         _ = await PersonApiFactory.CreateRandomAsync(ApiClient, Faker);
 
         //Act
-        PaginationResponse<PersonListItemResponse> response = 
+        PaginationResponse<PersonListItemResponse> response =
             await PersonApiQueryService.GetAllAsync(ApiClient);
 
         //Assert

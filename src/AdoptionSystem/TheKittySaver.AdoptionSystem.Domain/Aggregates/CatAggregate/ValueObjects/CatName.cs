@@ -8,7 +8,7 @@ public sealed class CatName : ValueObject
 {
     public const int MaxLength = 50;
     public string Value { get; }
-    
+
     public static Result<CatName> Create(string value)
     {
         if (string.IsNullOrWhiteSpace(value))

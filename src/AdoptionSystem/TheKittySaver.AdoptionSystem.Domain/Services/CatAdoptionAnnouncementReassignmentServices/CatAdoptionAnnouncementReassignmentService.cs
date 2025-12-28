@@ -19,14 +19,14 @@ internal sealed class CatAdoptionAnnouncementReassignmentService : ICatAdoptionA
         {
             return Result.Failure(DomainErrors.CatEntity.Assignment.CannotReassignToAnotherOwner(cat.Id));
         }
-        
+
         if (sourceAdoptionAnnouncement.Status is not AnnouncementStatusType.Active)
         {
             return Result.Failure(
                 DomainErrors.AdoptionAnnouncementEntity.StatusProperty.CannotReassignCatFromInactiveAnnouncement);
         }
-        
-        if(destinationAdoptionAnnouncement.Status is not AnnouncementStatusType.Active)
+
+        if (destinationAdoptionAnnouncement.Status is not AnnouncementStatusType.Active)
         {
             return Result.Failure(
                 DomainErrors.AdoptionAnnouncementEntity.StatusProperty.CannotReassignCatToInactiveAnnouncement);
@@ -51,7 +51,7 @@ internal sealed class CatAdoptionAnnouncementReassignmentService : ICatAdoptionA
         Result reassignmentResult = cat.ReassignToAnotherAdoptionAnnouncement(
             destinationAdoptionAnnouncement.Id,
             dateTimeOfOperation);
-        
+
         return reassignmentResult;
     }
 }

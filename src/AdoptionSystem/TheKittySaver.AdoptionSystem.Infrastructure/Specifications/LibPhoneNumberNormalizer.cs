@@ -14,8 +14,8 @@ public class LibPhoneNumberNormalizer : IPhoneNumberNormalizer
         {
             return phoneNumber;
         }
-        
-        try 
+
+        try
         {
             PhoneNumber parsedNumber = phoneNumber.StartsWith('+') || phoneNumber.StartsWith("00", StringComparison.Ordinal)
                 ? _phoneNumberUtil.Parse(phoneNumber, null)

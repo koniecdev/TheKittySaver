@@ -10,16 +10,16 @@ public sealed class InfectiousDiseaseStatus : ValueObject
     public FivStatus FivStatus { get; }
     public FelvStatus FelvStatus { get; }
     public DateOnly LastTestedAt { get; }
-    
+
     public bool HasFiv => FivStatus == FivStatus.Positive;
     public bool HasFelv => FelvStatus == FelvStatus.Positive;
     public bool HasAnyInfectiousDisease => HasFiv || HasFelv;
     public bool IsSafeToMixWithOtherCats => !HasAnyInfectiousDisease;
-    
+
     public bool IsCompatibleWith(InfectiousDiseaseStatus other)
     {
-        bool fivCompatible = FivStatus == other.FivStatus 
-                             || FivStatus is FivStatus.NotTested 
+        bool fivCompatible = FivStatus == other.FivStatus
+                             || FivStatus is FivStatus.NotTested
                              || other.FivStatus is FivStatus.NotTested;
 
         bool felvCompatible = FelvStatus == other.FelvStatus
@@ -28,7 +28,7 @@ public sealed class InfectiousDiseaseStatus : ValueObject
 
         return fivCompatible && felvCompatible;
     }
-    
+
     public static Result<InfectiousDiseaseStatus> Create(
         FivStatus fivStatus,
         FelvStatus felvStatus,

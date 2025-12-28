@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  build:
+    name: CI
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.100'
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Run Unit Tests
+        run: dotnet test --configuration Release --filter "FullyQualifiedName~Tests.Unit" --no-build --logger "console;verbosity=normal"
+
+      - name: Publish
+        run: |
+          dotnet publish src/AdoptionSystem/TheKittySaver.AdoptionSystem.API/TheKittySaver.AdoptionSystem.API.csproj --configuration Release --no-build -o artifacts/AdoptionSystem.API &
+          dotnet publish src/AuthSystem/TheKittySaver.AuthSystem.API/TheKittySaver.AuthSystem.API.csproj --configuration Release --no-build -o artifacts/AuthSystem.API &
+          dotnet publish src/Frontend/TheKittySaver.Frontend/TheKittySaver.Frontend.csproj --configuration Release --no-build -o artifacts/Frontend &
+          wait
+      - uses: actions/upload-artifact@v6
+        with:
+          name: the-kitty-saver-artifact
+          path: artifacts/

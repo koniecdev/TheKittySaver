@@ -5,9 +5,9 @@ namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.ValueObjec
 public sealed class NeuteringStatus : ValueObject
 {
     public bool IsNeutered { get; }
-    
+
     public static NeuteringStatus NotNeutered() => new(false);
-    
+
     public static NeuteringStatus Neutered() => new(true);
 
     private NeuteringStatus(bool isNeutered)

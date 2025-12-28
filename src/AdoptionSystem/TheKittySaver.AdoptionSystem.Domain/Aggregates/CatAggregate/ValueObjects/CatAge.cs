@@ -11,7 +11,7 @@ public sealed class CatAge : ValueObject
     public const int MinimumAllowedValue = 0;
     public const int MaximumAllowedValue = 40;
     public int Value { get; }
-    
+
     public static bool IsDateTooOldForCat(DateTimeOffset date, DateTimeOffset currentDate)
     {
         Ensure.NotEmpty(date);
@@ -40,10 +40,10 @@ public sealed class CatAge : ValueObject
                     DomainErrors.CatEntity.AgeProperty
                         .AboveMaximumAllowedValue(value, MaximumAllowedValue));
             default:
-            {
-                CatAge instance = new(value);
-                return Result.Success(instance);
-            }
+                {
+                    CatAge instance = new(value);
+                    return Result.Success(instance);
+                }
         }
     }
 

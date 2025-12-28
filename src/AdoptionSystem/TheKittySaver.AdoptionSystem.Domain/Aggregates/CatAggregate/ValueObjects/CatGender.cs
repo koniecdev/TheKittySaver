@@ -6,13 +6,13 @@ namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.ValueObjec
 public sealed class CatGender : ValueObject
 {
     public CatGenderType Value { get; }
-    
+
     public bool IsMale => Value is CatGenderType.Male;
     public bool IsFemale => Value is CatGenderType.Female;
-    
+
     public static CatGender Male() => new(CatGenderType.Male);
     public static CatGender Female() => new(CatGenderType.Female);
-    
+
     private CatGender(CatGenderType value)
     {
         Value = value;

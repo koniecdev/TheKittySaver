@@ -69,8 +69,8 @@ internal sealed class GetCat : IEndpoint
                         .ToList()))
                 .FirstOrDefaultAsync(cancellationToken);
 
-            return response is null 
-                ? Result.Failure<CatDetailsResponse>(DomainErrors.CatEntity.NotFound(query.CatId)) 
+            return response is null
+                ? Result.Failure<CatDetailsResponse>(DomainErrors.CatEntity.NotFound(query.CatId))
                 : Result.Success(response);
         }
     }

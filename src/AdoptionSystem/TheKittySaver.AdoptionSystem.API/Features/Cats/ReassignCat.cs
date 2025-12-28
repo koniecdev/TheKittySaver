@@ -81,8 +81,8 @@ internal sealed class ReassignCat : IEndpoint
                 return Result.Failure(DomainErrors.AdoptionAnnouncementEntity.NotFound(command.AdoptionAnnouncementId));
             }
 
-            
-            
+
+
             IReadOnlyCollection<Cat> catsInDestination = await _catRepository.GetCatsByAdoptionAnnouncementIdAsync(
                 command.AdoptionAnnouncementId,
                 cancellationToken);
@@ -132,7 +132,7 @@ internal static class ReassignCatMappings
         {
             Ensure.NotEmpty(catId);
             ArgumentNullException.ThrowIfNull(request);
-            
+
             ReassignCat.Command command = new(
                 CatId: catId,
                 AdoptionAnnouncementId: request.AdoptionAnnouncementId);

@@ -8,7 +8,7 @@ public interface IPersonUniquenessCheckerService
     Task<bool> IsEmailTakenAsync(
         Email email,
         CancellationToken cancellationToken = default);
-    
+
     Task<bool> IsPhoneNumberTakenAsync(
         PhoneNumber phoneNumber,
         CancellationToken cancellationToken = default);

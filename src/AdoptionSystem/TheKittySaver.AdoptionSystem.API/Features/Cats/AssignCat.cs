@@ -109,7 +109,7 @@ internal static class AssignCatMappings
         {
             Ensure.NotEmpty(catId);
             ArgumentNullException.ThrowIfNull(request);
-            
+
             AssignCat.Command command = new(
                 CatId: catId,
                 AdoptionAnnouncementId: request.AdoptionAnnouncementId);

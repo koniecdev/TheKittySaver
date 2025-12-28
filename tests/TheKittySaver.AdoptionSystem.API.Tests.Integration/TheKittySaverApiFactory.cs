@@ -18,7 +18,7 @@ public class TheKittySaverApiFactory : WebApplicationFactory<Program>, IAsyncLif
     private readonly MsSqlContainer _msSqlContainer = new MsSqlBuilder().Build();
 
     private string _connectionString = string.Empty;
-    
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.UseEnvironment("Testing");
@@ -37,7 +37,7 @@ public class TheKittySaverApiFactory : WebApplicationFactory<Program>, IAsyncLif
         {
             services.AddSingleton(this);
         });
-    
+
         builder.ConfigureLogging(logging =>
         {
             logging.SetMinimumLevel(LogLevel.Warning);

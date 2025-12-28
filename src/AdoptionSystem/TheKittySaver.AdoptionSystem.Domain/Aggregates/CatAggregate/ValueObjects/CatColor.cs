@@ -6,7 +6,7 @@ namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.ValueObjec
 public sealed class CatColor : ValueObject
 {
     public ColorType Value { get; }
-    
+
     public static CatColor Black() => new(ColorType.Black);
     public static CatColor White() => new(ColorType.White);
     public static CatColor Orange() => new(ColorType.Orange);
@@ -16,7 +16,7 @@ public sealed class CatColor : ValueObject
     public static CatColor Tortoiseshell() => new(ColorType.Tortoiseshell);
     public static CatColor BlackAndWhite() => new(ColorType.BlackAndWhite);
     public static CatColor Other() => new(ColorType.Other);
-    
+
     private CatColor(ColorType value)
     {
         Value = value;

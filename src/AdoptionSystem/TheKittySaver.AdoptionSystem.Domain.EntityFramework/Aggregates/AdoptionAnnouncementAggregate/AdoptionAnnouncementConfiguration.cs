@@ -15,21 +15,21 @@ public sealed class AdoptionAnnouncementConfiguration : IEntityTypeConfiguration
     public void Configure(EntityTypeBuilder<AdoptionAnnouncement> builder)
     {
         builder.ToTable("AdoptionAnnouncements");
-        
+
         builder.Property(x => x.Id)
             .ValueGeneratedNever();
-        
+
         builder.HasQueryFilter(x => x.ArchivedAt == null);
-        
+
         builder.ComplexProperty(x => x.ArchivedAt, complexBuilder =>
         {
             complexBuilder.IsRequired(false);
             complexBuilder.Property(x => x.Value)
                 .HasColumnName(nameof(AdoptionAnnouncement.ArchivedAt));
         });
-        
+
         EntityConfiguration.ConfigureCreatedAt(builder);
-        
+
         builder.ComplexProperty(x => x.ClaimedAt, complexBuilder =>
         {
             complexBuilder.IsRequired(false);
@@ -106,8 +106,8 @@ public sealed class AdoptionAnnouncementConfiguration : IEntityTypeConfiguration
         builder.Property(x => x.Status)
             .HasConversion<string>()
             .HasMaxLength(EnumConsts.MaxLength);
-        
-        builder.Ignore(x=>x.MergeLogs);
+
+        builder.Ignore(x => x.MergeLogs);
         builder.ComplexCollection<List<AdoptionAnnouncementMergeLog>, AdoptionAnnouncementMergeLog>("_mergeLogs", complexBuilder =>
         {
             complexBuilder.ToJson();
@@ -119,10 +119,10 @@ public sealed class AdoptionAnnouncementConfiguration : IEntityTypeConfiguration
                     .HasJsonPropertyName(nameof(AdoptionAnnouncementMergeLog.MergedAt));
             });
         });
-        
+
         builder.HasMany<Cat>()
             .WithOne()
-            .HasForeignKey(x=>x.AdoptionAnnouncementId)
+            .HasForeignKey(x => x.AdoptionAnnouncementId)
             .OnDelete(DeleteBehavior.SetNull);
     }
 }

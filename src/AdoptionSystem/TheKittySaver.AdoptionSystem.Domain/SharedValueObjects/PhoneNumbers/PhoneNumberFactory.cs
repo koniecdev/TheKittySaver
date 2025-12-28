@@ -15,7 +15,7 @@ internal sealed class PhoneNumberFactory : IPhoneNumberFactory
         _specification = specification;
         _phoneNumberNormalizer = phoneNumberNormalizer;
     }
-    
+
     public Result<PhoneNumber> Create(string value)
     {
         if (string.IsNullOrWhiteSpace(value))
@@ -37,10 +37,10 @@ internal sealed class PhoneNumberFactory : IPhoneNumberFactory
             return Result.Failure<PhoneNumber>(
                 DomainErrors.PhoneNumberValueObject.InvalidFormat);
         }
-        
+
         value = _phoneNumberNormalizer.Normalize(value);
         PhoneNumber instance = PhoneNumber.CreateUnsafe(value);
-        
+
         return Result.Success(instance);
     }
 }

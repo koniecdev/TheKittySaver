@@ -12,7 +12,7 @@ internal sealed class AdoptionPriorityScoreCalculatorFactory : IAdoptionPriority
     {
         _optionsMonitor = optionsMonitor;
     }
-    
+
     public IAdoptionPriorityScoreCalculator Create()
     {
         string implementationName = _optionsMonitor.CurrentValue.AdoptionPriorityScoreCalculator;
@@ -20,7 +20,7 @@ internal sealed class AdoptionPriorityScoreCalculatorFactory : IAdoptionPriority
         {
             _ => new DefaultAdoptionPriorityScoreCalculator()
         };
-        
+
         return calculator;
     }
 }

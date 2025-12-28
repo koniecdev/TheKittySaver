@@ -152,7 +152,7 @@ internal static class CatFactory
         result.EnsureSuccess();
         return result.Value;
     }
-    
+
     public static InfectiousDiseaseStatus CreateRandomInfectiousDiseaseStatus(Faker faker)
     {
         DateOnly currentDate = new(2025, 6, 1);

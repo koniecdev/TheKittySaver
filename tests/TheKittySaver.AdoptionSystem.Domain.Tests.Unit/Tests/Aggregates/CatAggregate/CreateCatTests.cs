@@ -40,7 +40,7 @@ public sealed class CreateCatTests
         cat.GalleryItems.Count.ShouldBe(0);
         cat.AdoptionAnnouncementId.ShouldBeNull();
         cat.ClaimedAt.ShouldBeNull();
-        cat.PublishedAt.ShouldBeNull(); 
+        cat.PublishedAt.ShouldBeNull();
     }
 
     [Fact]

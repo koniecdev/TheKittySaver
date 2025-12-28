@@ -1,13 +1,13 @@
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Entities;
-using AdoptionHistoryValueObject =
-    TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.ValueObjects.AdoptionHistory;
-using ListingSourceValueObject = TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.ValueObjects.ListingSource;
-using InfectiousDiseaseStatusValueObject =
-    TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.ValueObjects.InfectiousDiseaseStatus;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.ValueObjects;
 using TheKittySaver.AdoptionSystem.Domain.Core.BuildingBlocks;
 using TheKittySaver.AdoptionSystem.Domain.Core.Enums;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate;
+using AdoptionHistoryValueObject =
+    TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.ValueObjects.AdoptionHistory;
+using InfectiousDiseaseStatusValueObject =
+    TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.ValueObjects.InfectiousDiseaseStatus;
+using ListingSourceValueObject = TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.ValueObjects.ListingSource;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 
@@ -51,13 +51,13 @@ public static partial class DomainErrors
                 "The reorder operation is invalid. The number of items in the new order must match the current gallery items count.",
                 "InvalidReorderOperation",
                 TypeOfError.Validation);
-        
+
         public static Error TheOnlyAdoptionAnnouncementCatRemoval
             => InvalidDeleteOperation(
                 nameof(CatEntity),
                 "Cannot remove cat from an adoption announcement that has no other cats assigned to it. Please unassign it first.",
                 "TheOnlyAdoptionAnnouncementCatRemoval");
-        
+
         public static Error ClaimedCatRemoval
             => InvalidDeleteOperation(
                 nameof(CatEntity),

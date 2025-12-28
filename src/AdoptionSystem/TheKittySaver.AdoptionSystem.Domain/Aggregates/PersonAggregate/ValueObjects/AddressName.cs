@@ -8,7 +8,7 @@ public sealed class AddressName : ValueObject
 {
     public const int MaxLength = 150;
     public string Value { get; }
-    
+
     public static Result<AddressName> Create(string value)
     {
         if (string.IsNullOrWhiteSpace(value))

@@ -20,7 +20,7 @@ internal static class ErrorExtensions
             };
             return response;
         }
-        
+
         private ProblemDetails CreateProblemDetails(int statusCode) =>
             new()
             {

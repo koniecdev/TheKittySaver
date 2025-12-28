@@ -9,12 +9,12 @@ public sealed class CatGalleryItemConfiguration : IEntityTypeConfiguration<CatGa
     public void Configure(EntityTypeBuilder<CatGalleryItem> builder)
     {
         builder.ToTable("CatGalleryItems");
-        
+
         builder.Property(x => x.Id)
             .ValueGeneratedNever();
-        
+
         EntityConfiguration.ConfigureCreatedAt(builder);
-        
+
         builder.ComplexProperty(x => x.DisplayOrder, complexBuilder =>
         {
             complexBuilder.IsRequired();

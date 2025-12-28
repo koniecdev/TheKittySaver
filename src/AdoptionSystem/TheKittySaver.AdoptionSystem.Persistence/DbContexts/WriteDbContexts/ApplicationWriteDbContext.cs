@@ -14,17 +14,17 @@ internal sealed class ApplicationWriteDbContext : DbContext, IUnitOfWork
     public ApplicationWriteDbContext(DbContextOptions<ApplicationWriteDbContext> options) : base(options)
     {
     }
-    
+
     public DbSet<Person> Persons => Set<Person>();
     public DbSet<Cat> Cats => Set<Cat>();
     public DbSet<AdoptionAnnouncement> AdoptionAnnouncements => Set<AdoptionAnnouncement>();
-    
+
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
     {
         configurationBuilder.RegisterAllStronglyTypedIdConverters();
         base.ConfigureConventions(configurationBuilder);
     }
-    
+
     /// <inheritdoc />
     public Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default)
         => Database.BeginTransactionAsync(cancellationToken);

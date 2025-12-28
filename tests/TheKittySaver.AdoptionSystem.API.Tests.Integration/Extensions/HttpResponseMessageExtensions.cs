@@ -20,7 +20,7 @@ internal static class HttpResponseMessageExtensions
                 PropertyNameCaseInsensitive = true,
                 Converters = { new JsonStringEnumConverter() }
             };
-            
+
             if (response.StatusCode is HttpStatusCode.NoContent)
             {
                 return string.Empty;
@@ -32,7 +32,7 @@ internal static class HttpResponseMessageExtensions
             {
                 return content;
             }
-            
+
             ProblemDetails? problemDetails = JsonSerializer.Deserialize<ProblemDetails>(content, jsonOptions);
 
             if (problemDetails is not null)

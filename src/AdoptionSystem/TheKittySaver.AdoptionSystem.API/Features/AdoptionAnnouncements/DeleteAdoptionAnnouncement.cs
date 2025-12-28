@@ -43,9 +43,9 @@ internal sealed class DeleteAdoptionAnnouncement : IEndpoint
             {
                 return Result.Failure(DomainErrors.AdoptionAnnouncementEntity.NotFound(command.AdoptionAnnouncementId));
             }
-            
+
             AdoptionAnnouncement adoptionAnnouncement = maybeAa.Value;
-            
+
             IReadOnlyCollection<Cat> catsInAnnouncement =
                 await _catRepository.GetCatsByAdoptionAnnouncementIdAsync(
                     command.AdoptionAnnouncementId, cancellationToken);
@@ -54,7 +54,7 @@ internal sealed class DeleteAdoptionAnnouncement : IEndpoint
             {
                 return Result.Failure(DomainErrors.AdoptionAnnouncementEntity.CannotDeleteAnnouncementWithClaimedCats);
             }
-            
+
             foreach (Cat cat in catsInAnnouncement)
             {
                 Result catUnassignFromAdoptionAnnouncementResult = cat.UnassignFromAdoptionAnnouncement();
@@ -63,7 +63,7 @@ internal sealed class DeleteAdoptionAnnouncement : IEndpoint
                     return catUnassignFromAdoptionAnnouncementResult;
                 }
             }
-            
+
             _adoptionAnnouncementRepository.Remove(adoptionAnnouncement);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 

@@ -107,7 +107,7 @@ internal static class CreateCatVaccinationMappings
         {
             Ensure.NotEmpty(catId);
             ArgumentNullException.ThrowIfNull(request);
-            
+
             CreateCatVaccination.Command command = new(
                 CatId: catId,
                 Type: request.Type,

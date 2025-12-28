@@ -20,7 +20,7 @@ public abstract class Entity<TId> : IEntity<TId> where TId : struct
     }
 
     public TId Id { get; }
-    
+
     public static bool operator ==(Entity<TId>? a, Entity<TId>? b)
     {
         if (a is null && b is null)
