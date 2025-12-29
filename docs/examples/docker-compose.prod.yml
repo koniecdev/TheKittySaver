@@ -1,0 +1,164 @@
+# =============================================================================
+# DOCKER COMPOSE - PRODUKCJA
+# =============================================================================
+# Ten plik żyje na serwerze produkcyjnym (VPS)
+# CD pipeline robi: docker compose pull && docker compose up -d
+# =============================================================================
+
+services:
+  # ===========================================================================
+  # TRAEFIK - REVERSE PROXY / LOAD BALANCER
+  # ===========================================================================
+  # Traefik automatycznie:
+  # - Routuje ruch do odpowiednich serwisów
+  # - Generuje certyfikaty SSL (Let's Encrypt)
+  # - Robi load balancing
+  # ===========================================================================
+  traefik:
+    image: traefik:v3.0
+    container_name: traefik
+    restart: unless-stopped
+    command:
+      - "--api.dashboard=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      # Automatyczne SSL od Let's Encrypt
+      - "--certificatesresolvers.letsencrypt.acme.httpchallenge=true"
+      - "--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web"
+      - "--certificatesresolvers.letsencrypt.acme.email=admin@thekittysaver.com"
+      - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro  # Traefik widzi inne kontenery
+      - traefik-certificates:/letsencrypt
+    networks:
+      - web
+
+  # ===========================================================================
+  # ADOPTION API
+  # ===========================================================================
+  adoption-api:
+    image: ghcr.io/koniecdev/thekittysaver/adoption-api:latest
+    container_name: adoption-api
+    restart: unless-stopped
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__Database=${DB_CONNECTION_STRING}
+      - Jwt__Secret=${JWT_SECRET}
+    labels:
+      # Traefik automatycznie routuje ruch na podstawie tych labels
+      - "traefik.enable=true"
+      - "traefik.http.routers.adoption-api.rule=Host(`api.thekittysaver.com`) && PathPrefix(`/adoption`)"
+      - "traefik.http.routers.adoption-api.entrypoints=websecure"
+      - "traefik.http.routers.adoption-api.tls.certresolver=letsencrypt"
+      - "traefik.http.services.adoption-api.loadbalancer.server.port=8080"
+    networks:
+      - web
+      - internal
+    depends_on:
+      - postgres
+    # Health check - Traefik nie routuje do niezdrowych kontenerów
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # ===========================================================================
+  # AUTH API
+  # ===========================================================================
+  auth-api:
+    image: ghcr.io/koniecdev/thekittysaver/auth-api:latest
+    container_name: auth-api
+    restart: unless-stopped
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__Database=${DB_CONNECTION_STRING}
+      - Jwt__Secret=${JWT_SECRET}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.auth-api.rule=Host(`api.thekittysaver.com`) && PathPrefix(`/auth`)"
+      - "traefik.http.routers.auth-api.entrypoints=websecure"
+      - "traefik.http.routers.auth-api.tls.certresolver=letsencrypt"
+      - "traefik.http.services.auth-api.loadbalancer.server.port=8080"
+    networks:
+      - web
+      - internal
+    depends_on:
+      - postgres
+
+  # ===========================================================================
+  # FRONTEND (Blazor)
+  # ===========================================================================
+  frontend:
+    image: ghcr.io/koniecdev/thekittysaver/frontend:latest
+    container_name: frontend
+    restart: unless-stopped
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ApiBaseUrl=https://api.thekittysaver.com
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend.rule=Host(`thekittysaver.com`) || Host(`www.thekittysaver.com`)"
+      - "traefik.http.routers.frontend.entrypoints=websecure"
+      - "traefik.http.routers.frontend.tls.certresolver=letsencrypt"
+      - "traefik.http.services.frontend.loadbalancer.server.port=8080"
+      # Redirect www -> non-www
+      - "traefik.http.middlewares.www-redirect.redirectregex.regex=^https://www\\.(.+)"
+      - "traefik.http.middlewares.www-redirect.redirectregex.replacement=https://$${1}"
+      - "traefik.http.routers.frontend.middlewares=www-redirect"
+    networks:
+      - web
+
+  # ===========================================================================
+  # POSTGRESQL
+  # ===========================================================================
+  postgres:
+    image: postgres:16-alpine
+    container_name: postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=thekittysaver
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - internal
+    # NIE wystawiamy portu na zewnątrz! Tylko internal network
+
+  # ===========================================================================
+  # REDIS (cache / sessions)
+  # ===========================================================================
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    volumes:
+      - redis-data:/data
+    networks:
+      - internal
+
+# =============================================================================
+# NETWORKS
+# =============================================================================
+networks:
+  web:        # Publiczna sieć - Traefik + serwisy wystawione na świat
+    driver: bridge
+  internal:   # Prywatna sieć - baza danych, cache (niedostępne z zewnątrz!)
+    driver: bridge
+    internal: true
+
+# =============================================================================
+# VOLUMES - Persystentne dane
+# =============================================================================
+volumes:
+  postgres-data:
+  redis-data:
+  traefik-certificates:

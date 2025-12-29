@@ -1,0 +1,187 @@
+# =============================================================================
+# PRZYKŁADOWY PLIK CI/CD - DO NAUKI, NIE DO UŻYCIA BEZPOŚREDNIO
+# =============================================================================
+# Ten plik pokazuje pełny flow: Build → Test → Push Image → Deploy
+# =============================================================================
+
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+# Zmienne środowiskowe dostępne w całym workflow
+env:
+  REGISTRY: ghcr.io                                    # GitHub Container Registry
+  IMAGE_NAME: ${{ github.repository }}                 # np. "koniecdev/thekittysaver"
+
+jobs:
+  # ===========================================================================
+  # JOB 1: BUILD & TEST
+  # ===========================================================================
+  # Ten job ZAWSZE się odpala - na PR i na push do main
+  # Cel: Szybko sprawdzić czy kod się kompiluje i testy przechodzą
+  # ===========================================================================
+  build-and-test:
+    name: Build & Test
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.100'
+
+      # Cache NuGet - przyspiesza kolejne buildy o 30-60 sekund
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+          restore-keys: ${{ runner.os }}-nuget-
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Run Unit Tests
+        run: dotnet test --configuration Release --filter "FullyQualifiedName~Tests.Unit" --no-build
+
+      - name: Run Integration Tests
+        run: dotnet test --configuration Release --filter "FullyQualifiedName~Tests.Integration" --no-build
+
+  # ===========================================================================
+  # JOB 2: BUILD & PUSH DOCKER IMAGES
+  # ===========================================================================
+  # Ten job odpala się TYLKO na PUSH do MAIN (nie na PR!)
+  # Cel: Zbudować obrazy Docker i wypchnąć do registry
+  # ===========================================================================
+  build-and-push-images:
+    name: Build & Push Docker Images
+    runs-on: ubuntu-24.04
+    needs: build-and-test                              # Czeka aż testy przejdą!
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    # Uprawnienia potrzebne do GHCR
+    permissions:
+      contents: read
+      packages: write
+
+    strategy:
+      matrix:
+        # Budujemy 3 obrazy równolegle (oszczędność czasu!)
+        include:
+          - service: adoption-api
+            dockerfile: src/AdoptionSystem/TheKittySaver.AdoptionSystem.API/Dockerfile
+          - service: auth-api
+            dockerfile: src/AuthSystem/TheKittySaver.AuthSystem.API/Dockerfile
+          - service: frontend
+            dockerfile: src/Frontend/TheKittySaver.Frontend/Dockerfile
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      # Logowanie do GitHub Container Registry
+      - name: Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}                # Twój GitHub username
+          password: ${{ secrets.GITHUB_TOKEN }}        # Automatyczny token od GitHub
+
+      # Przygotowanie metadanych (tagi, labels)
+      - name: Extract metadata for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/${{ matrix.service }}
+          tags: |
+            # Tag "latest" dla głównej gałęzi
+            type=raw,value=latest,enable={{is_default_branch}}
+            # Tag z SHA commita (do rollbacków!)
+            type=sha,prefix=
+            # Tag z datą (opcjonalnie)
+            type=raw,value={{date 'YYYYMMDD-HHmmss'}}
+
+      # Budowanie i pushowanie obrazu
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .                                   # Kontekst = root repo
+          file: ${{ matrix.dockerfile }}
+          push: true                                   # Push do registry
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          # Cache warstw Docker (MEGA przyspiesza buildy!)
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # ===========================================================================
+  # JOB 3: DEPLOY TO PRODUCTION
+  # ===========================================================================
+  # Ten job odpala się PO ZBUDOWANIU OBRAZÓW
+  # Cel: Zaktualizować aplikację na serwerze produkcyjnym
+  # ===========================================================================
+  deploy:
+    name: Deploy to Production
+    runs-on: ubuntu-24.04
+    needs: build-and-push-images                       # Czeka na obrazy!
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    # OPCJA: Wymagaj manualnej akceptacji przed deployem
+    # environment:
+    #   name: production
+    #   url: https://thekittysaver.com
+
+    steps:
+      # WARIANT A: Deploy przez SSH na VPS
+      # -----------------------------------
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}                # np. "123.45.67.89"
+          username: ${{ secrets.VPS_USER }}            # np. "deploy"
+          key: ${{ secrets.VPS_SSH_KEY }}              # Klucz prywatny SSH
+          script: |
+            cd /opt/thekittysaver
+
+            # Zaloguj się do GHCR (potrzebne do pull prywatnych obrazów)
+            echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+            # Pobierz najnowsze obrazy
+            docker compose pull
+
+            # Zrestartuj kontenery (zero-downtime z --no-deps)
+            docker compose up -d --no-deps --build
+
+            # Posprzątaj stare obrazy (oszczędność miejsca)
+            docker image prune -f
+
+      # WARIANT B: Deploy do Azure Container Apps (zamiast VPS)
+      # --------------------------------------------------------
+      # - name: Deploy to Azure Container Apps
+      #   uses: azure/container-apps-deploy-action@v1
+      #   with:
+      #     imageToDeploy: ghcr.io/${{ env.IMAGE_NAME }}/adoption-api:latest
+      #     containerAppName: thekittysaver-api
+      #     resourceGroup: thekittysaver-rg
+
+      # Powiadomienie o sukcesie (opcjonalne)
+      - name: Notify on Slack
+        if: success()
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          payload: |
+            {
+              "text": "✅ Deployed to production: ${{ github.sha }}"
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
