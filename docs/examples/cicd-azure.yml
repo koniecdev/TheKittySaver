@@ -1,0 +1,131 @@
+# =============================================================================
+# CI/CD z Azure Container Apps
+# =============================================================================
+# Flow: Build .NET → Test → Build Docker → Push ACR → Deploy Azure
+# =============================================================================
+
+name: CI/CD
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+env:
+  # Azure Container Registry (nie GHCR - Azure woli swoje)
+  REGISTRY: thekittysaver.azurecr.io
+  RESOURCE_GROUP: thekittysaver-rg
+  LOCATION: westeurope
+
+jobs:
+  # ===========================================================================
+  # JOB 1: BUILD & TEST (bez zmian - Twój obecny CI)
+  # ===========================================================================
+  build-and-test:
+    name: Build & Test
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.100'
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Run Unit Tests
+        run: dotnet test --configuration Release --filter "FullyQualifiedName~Tests.Unit" --no-build --logger "console;verbosity=normal"
+
+  # ===========================================================================
+  # JOB 2: BUILD & PUSH DOCKER IMAGES (tylko na PUSH do main)
+  # ===========================================================================
+  build-images:
+    name: Build & Push Images
+    runs-on: ubuntu-24.04
+    needs: build-and-test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    strategy:
+      matrix:
+        include:
+          - service: adoption-api
+            dockerfile: src/AdoptionSystem/TheKittySaver.AdoptionSystem.API/Dockerfile
+          - service: auth-api
+            dockerfile: src/AuthSystem/TheKittySaver.AuthSystem.API/Dockerfile
+          - service: frontend
+            dockerfile: src/Frontend/TheKittySaver.Frontend/Dockerfile
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      # Logowanie do Azure Container Registry
+      - name: Login to ACR
+        uses: azure/docker-login@v2
+        with:
+          login-server: ${{ env.REGISTRY }}
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ${{ matrix.dockerfile }}
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ matrix.service }}:latest
+            ${{ env.REGISTRY }}/${{ matrix.service }}:${{ github.sha }}
+
+  # ===========================================================================
+  # JOB 3: DEPLOY TO AZURE CONTAINER APPS
+  # ===========================================================================
+  deploy:
+    name: Deploy to Azure
+    runs-on: ubuntu-24.04
+    needs: build-images
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      # Logowanie do Azure (Service Principal)
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          # To jest JSON z danymi Service Principal:
+          # {
+          #   "clientId": "xxx",
+          #   "clientSecret": "xxx",
+          #   "subscriptionId": "xxx",
+          #   "tenantId": "xxx"
+          # }
+
+      # Deploy każdej aplikacji do Container Apps
+      - name: Deploy Adoption API
+        uses: azure/container-apps-deploy-action@v1
+        with:
+          resourceGroup: ${{ env.RESOURCE_GROUP }}
+          containerAppName: adoption-api
+          imageToDeploy: ${{ env.REGISTRY }}/adoption-api:${{ github.sha }}
+
+      - name: Deploy Auth API
+        uses: azure/container-apps-deploy-action@v1
+        with:
+          resourceGroup: ${{ env.RESOURCE_GROUP }}
+          containerAppName: auth-api
+          imageToDeploy: ${{ env.REGISTRY }}/auth-api:${{ github.sha }}
+
+      - name: Deploy Frontend
+        uses: azure/container-apps-deploy-action@v1
+        with:
+          resourceGroup: ${{ env.RESOURCE_GROUP }}
+          containerAppName: frontend
+          imageToDeploy: ${{ env.REGISTRY }}/frontend:${{ github.sha }}
