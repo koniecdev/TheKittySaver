@@ -7,7 +7,6 @@ using AdoptionHistoryValueObject =
     TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.ValueObjects.AdoptionHistory;
 using InfectiousDiseaseStatusValueObject =
     TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.ValueObjects.InfectiousDiseaseStatus;
-using ListingSourceValueObject = TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.ValueObjects.ListingSource;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 
@@ -126,22 +125,6 @@ public static partial class DomainErrors
                     AdoptionHistoryValueObject.LastReturnReasonMaxLength);
         }
 
-        public static class ListingSourceProperty
-        {
-            public static Error SourceNameNullOrEmpty
-                => Required(nameof(CatEntity),
-                    $"{nameof(Cat.ListingSource)}.{nameof(ListingSourceValueObject.SourceName)}");
-
-            public static Error SourceNameLongerThanAllowed
-                => TooManyCharacters(
-                    nameof(CatEntity),
-                    $"{nameof(Cat.ListingSource)}.{nameof(ListingSourceValueObject.SourceName)}",
-                    ListingSourceValueObject.MaxSourceNameLength);
-
-            public static Error TypeIsUnset
-                => Required(nameof(CatEntity), $"{nameof(Cat.ListingSource)}.{nameof(ListingSourceValueObject.Type)}");
-        }
-
         public static class SpecialNeedsProperty
         {
             public static Error DescriptionNullOrEmpty
@@ -177,6 +160,10 @@ public static partial class DomainErrors
 
         public static class InfectiousDiseaseStatusProperty
         {
+            public static Error TestDateRequired
+                => Required(nameof(CatEntity),
+                    $"{nameof(Cat.InfectiousDiseaseStatus)}.{nameof(InfectiousDiseaseStatusValueObject.LastTestedAt)}");
+
             public static Error TestDateInFuture(DateOnly lastTestedAt, DateOnly currentDate)
                 => CustomMessage(
                     nameof(CatEntity),

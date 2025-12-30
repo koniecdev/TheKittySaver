@@ -2,6 +2,7 @@
 
 public enum FelvStatus
 {
+    Unset,
     NotTested,
     Negative,
     Positive

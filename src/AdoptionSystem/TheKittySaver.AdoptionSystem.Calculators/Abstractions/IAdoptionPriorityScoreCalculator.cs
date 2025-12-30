@@ -10,7 +10,6 @@ public interface IAdoptionPriorityScoreCalculator
         ColorType color,
         CatGenderType gender,
         HealthStatusType healthStatus,
-        ListingSourceType listingSourceType,
         SpecialNeedsSeverityType specialNeedsSeverityType,
         TemperamentType temperament,
         FivStatus fivStatus,

@@ -27,8 +27,6 @@ public sealed record CatReadModel(
     int AdoptionHistoryReturnCount,
     DateTimeOffset? AdoptionHistoryLastReturnDate,
     string? AdoptionHistoryLastReturnReason,
-    ListingSourceType ListingSourceType,
-    string ListingSourceSourceName,
     bool NeuteringStatusIsNeutered,
     FivStatus InfectiousDiseaseStatusFivStatus,
     FelvStatus InfectiousDiseaseStatusFelvStatus,

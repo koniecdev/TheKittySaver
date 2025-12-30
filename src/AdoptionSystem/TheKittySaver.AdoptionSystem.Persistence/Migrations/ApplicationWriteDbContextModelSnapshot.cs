@@ -279,26 +279,9 @@ namespace TheKittySaver.AdoptionSystem.Persistence.Migrations
                                 .HasColumnType("nvarchar(100)")
                                 .HasColumnName("InfectiousDiseaseStatusFivStatus");
 
-                            b1.Property<DateOnly>("LastTestedAt")
+                            b1.Property<DateOnly?>("LastTestedAt")
                                 .HasColumnType("date")
                                 .HasColumnName("InfectiousDiseaseStatusLastTestedAt");
-                        });
-
-                    b.ComplexProperty(typeof(Dictionary<string, object>), "ListingSource", "TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Entities.Cat.ListingSource#ListingSource", b1 =>
-                        {
-                            b1.IsRequired();
-
-                            b1.Property<string>("SourceName")
-                                .IsRequired()
-                                .HasMaxLength(100)
-                                .HasColumnType("nvarchar(100)")
-                                .HasColumnName("ListingSourceSourceName");
-
-                            b1.Property<string>("Type")
-                                .IsRequired()
-                                .HasMaxLength(100)
-                                .HasColumnType("nvarchar(100)")
-                                .HasColumnName("ListingSourceType");
                         });
 
                     b.ComplexProperty(typeof(Dictionary<string, object>), "Name", "TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Entities.Cat.Name#CatName", b1 =>

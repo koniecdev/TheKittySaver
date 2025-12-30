@@ -143,22 +143,6 @@ public sealed class CatConfiguration : IEntityTypeConfiguration<Cat>
                 .HasMaxLength(AdoptionHistory.LastReturnReasonMaxLength);
         });
 
-        builder.ComplexProperty(x => x.ListingSource, complexBuilder =>
-        {
-            const string prefix = nameof(Cat.ListingSource);
-
-            complexBuilder.IsRequired();
-
-            complexBuilder.Property(x => x.Type)
-                .HasColumnName($"{prefix}{nameof(ListingSource.Type)}")
-                .HasConversion<string>()
-                .HasMaxLength(EnumConsts.MaxLength);
-
-            complexBuilder.Property(x => x.SourceName)
-                .HasColumnName($"{prefix}{nameof(ListingSource.SourceName)}")
-                .HasMaxLength(ListingSource.MaxSourceNameLength);
-        });
-
         builder.ComplexProperty(x => x.NeuteringStatus, complexBuilder =>
         {
             const string prefix = nameof(Cat.NeuteringStatus);

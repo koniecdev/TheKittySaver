@@ -2,7 +2,7 @@
 
 public enum VaccinationType
 {
-    Unset = 0,
+    Unset,
     FvrcpPanleukopenia,
     FvrcpRhinotracheitis,
     FvrcpCalicivirus,

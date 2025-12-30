@@ -28,9 +28,6 @@ public sealed class CatReadModelConfiguration : IEntityTypeConfiguration<CatRead
         builder.Property(catReadModel => catReadModel.Temperament)
             .HasConversion<string>();
 
-        builder.Property(catReadModel => catReadModel.ListingSourceType)
-            .HasConversion<string>();
-
         builder.Property(catReadModel => catReadModel.InfectiousDiseaseStatusFivStatus)
             .HasConversion<string>();
 

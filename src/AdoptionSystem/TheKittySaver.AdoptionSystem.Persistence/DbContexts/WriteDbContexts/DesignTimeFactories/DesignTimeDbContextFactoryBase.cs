@@ -9,7 +9,7 @@ internal abstract class DesignTimeDbContextFactoryBase<TContext> : IDesignTimeDb
 {
     private const string ConfigurationSection = "ConnectionStringSettings";
     private const string DefaultConnectionStringName = "Database";
-    private const string DefaultEnvironment = "Development";
+    private const string DefaultEnvironment = "Local";
 
     protected virtual string ConnectionStringName => DefaultConnectionStringName;
 

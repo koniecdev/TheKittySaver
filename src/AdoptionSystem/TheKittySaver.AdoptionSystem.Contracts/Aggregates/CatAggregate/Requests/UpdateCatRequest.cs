@@ -17,11 +17,9 @@ public sealed record UpdateCatRequest(
     int AdoptionHistoryReturnCount,
     DateTimeOffset? AdoptionHistoryLastReturnDate,
     string? AdoptionHistoryLastReturnReason,
-    ListingSourceType ListingSourceType,
-    string ListingSourceSourceName,
     bool IsNeutered,
     FivStatus FivStatus,
     FelvStatus FelvStatus,
-    DateOnly InfectiousDiseaseStatusLastTestedAt
+    DateOnly? InfectiousDiseaseStatusLastTestedAt
 );
 

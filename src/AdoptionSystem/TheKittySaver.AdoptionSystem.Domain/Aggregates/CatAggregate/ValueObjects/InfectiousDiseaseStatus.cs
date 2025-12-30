@@ -2,6 +2,7 @@
 using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate.Enums;
+using TheKittySaver.AdoptionSystem.Primitives.Guards;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.ValueObjects;
 
@@ -9,10 +10,10 @@ public sealed class InfectiousDiseaseStatus : ValueObject
 {
     public FivStatus FivStatus { get; }
     public FelvStatus FelvStatus { get; }
-    public DateOnly LastTestedAt { get; }
+    public DateOnly? LastTestedAt { get; }
 
-    public bool HasFiv => FivStatus == FivStatus.Positive;
-    public bool HasFelv => FelvStatus == FelvStatus.Positive;
+    public bool HasFiv => FivStatus is FivStatus.Positive;
+    public bool HasFelv => FelvStatus is FelvStatus.Positive;
     public bool HasAnyInfectiousDisease => HasFiv || HasFelv;
     public bool IsSafeToMixWithOtherCats => !HasAnyInfectiousDisease;
 
@@ -32,19 +33,33 @@ public sealed class InfectiousDiseaseStatus : ValueObject
     public static Result<InfectiousDiseaseStatus> Create(
         FivStatus fivStatus,
         FelvStatus felvStatus,
-        DateOnly lastTestedAt,
+        DateOnly? lastTestedAt,
         DateOnly currentDate)
     {
-        if (lastTestedAt > currentDate)
+        Ensure.IsValidNonDefaultEnum(fivStatus);
+        Ensure.IsValidNonDefaultEnum(felvStatus);
+
+        if(fivStatus is FivStatus.NotTested && felvStatus is FelvStatus.NotTested)
         {
-            return Result.Failure<InfectiousDiseaseStatus>(
-                DomainErrors.CatEntity.InfectiousDiseaseStatusProperty.TestDateInFuture(lastTestedAt, currentDate));
+            return Result.Success(new InfectiousDiseaseStatus(fivStatus, felvStatus, null));
         }
 
-        if (CatAge.IsDateTooOldForCat(lastTestedAt, currentDate))
+        if (lastTestedAt is null)
         {
             return Result.Failure<InfectiousDiseaseStatus>(
-                DomainErrors.CatEntity.InfectiousDiseaseStatusProperty.TestDateTooOld(lastTestedAt, currentDate));
+                DomainErrors.CatEntity.InfectiousDiseaseStatusProperty.TestDateRequired);
+        }
+        
+        if (lastTestedAt.Value > currentDate)
+        {
+            return Result.Failure<InfectiousDiseaseStatus>(
+                DomainErrors.CatEntity.InfectiousDiseaseStatusProperty.TestDateInFuture(lastTestedAt.Value, currentDate));
+        }
+
+        if (CatAge.IsDateTooOldForCat(lastTestedAt.Value, currentDate))
+        {
+            return Result.Failure<InfectiousDiseaseStatus>(
+                DomainErrors.CatEntity.InfectiousDiseaseStatusProperty.TestDateTooOld(lastTestedAt.Value, currentDate));
         }
 
         InfectiousDiseaseStatus instance = new(fivStatus, felvStatus, lastTestedAt);
@@ -54,7 +69,7 @@ public sealed class InfectiousDiseaseStatus : ValueObject
     private InfectiousDiseaseStatus(
         FivStatus fivStatus,
         FelvStatus felvStatus,
-        DateOnly lastTestedAt)
+        DateOnly? lastTestedAt)
     {
         FivStatus = fivStatus;
         FelvStatus = felvStatus;
@@ -72,6 +87,9 @@ public sealed class InfectiousDiseaseStatus : ValueObject
     {
         yield return FivStatus;
         yield return FelvStatus;
-        yield return LastTestedAt;
+        if (LastTestedAt is not null)
+        {
+            yield return LastTestedAt;
+        }
     }
 }

@@ -2,6 +2,7 @@
 
 public enum CatGenderType
 {
+    Unset,
     Male,
     Female
 }

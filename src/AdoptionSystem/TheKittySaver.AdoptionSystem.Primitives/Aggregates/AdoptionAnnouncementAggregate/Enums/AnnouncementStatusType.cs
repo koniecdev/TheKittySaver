@@ -2,6 +2,7 @@
 
 public enum AnnouncementStatusType
 {
+    Unset,
     Active,
     Claimed
 }

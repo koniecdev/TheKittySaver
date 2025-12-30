@@ -65,7 +65,7 @@ public sealed class Address : Entity<AddressId>
     {
         ArgumentNullException.ThrowIfNull(specification);
         Ensure.NotEmpty(personId);
-        Ensure.IsValidEnum(countryCode);
+        Ensure.IsValidNonDefaultEnum(countryCode);
         ArgumentNullException.ThrowIfNull(name);
         ArgumentNullException.ThrowIfNull(postalCode);
         ArgumentNullException.ThrowIfNull(region);

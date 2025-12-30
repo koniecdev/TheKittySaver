@@ -2,6 +2,7 @@
 
 public enum ColorType
 {
+    Unset,
     Black,
     White,
     Orange,

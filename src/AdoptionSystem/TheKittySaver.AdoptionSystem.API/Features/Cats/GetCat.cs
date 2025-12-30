@@ -47,8 +47,6 @@ internal sealed class GetCat : IEndpoint
                     AdoptionHistoryReturnCount: cat.AdoptionHistoryReturnCount,
                     AdoptionHistoryLastReturnDate: cat.AdoptionHistoryLastReturnDate,
                     AdoptionHistoryLastReturnReason: cat.AdoptionHistoryLastReturnReason,
-                    ListingSourceType: cat.ListingSourceType,
-                    ListingSourceSourceName: cat.ListingSourceSourceName,
                     IsNeutered: cat.NeuteringStatusIsNeutered,
                     InfectiousDiseaseStatusFivStatus: cat.InfectiousDiseaseStatusFivStatus,
                     InfectiousDiseaseStatusFelvStatus: cat.InfectiousDiseaseStatusFelvStatus,

@@ -25,8 +25,6 @@ public sealed record CatListItemResponse(
     int AdoptionHistoryReturnCount,
     DateTimeOffset? AdoptionHistoryLastReturnDate,
     string? AdoptionHistoryLastReturnReason,
-    ListingSourceType ListingSourceType,
-    string ListingSourceSourceName,
     bool IsNeutered,
     FivStatus InfectiousDiseaseStatusFivStatus,
     FelvStatus InfectiousDiseaseStatusFelvStatus,

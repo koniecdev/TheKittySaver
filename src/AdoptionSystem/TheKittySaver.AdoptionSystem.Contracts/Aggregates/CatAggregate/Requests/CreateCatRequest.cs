@@ -12,17 +12,15 @@ public sealed record CreateCatRequest(
     ColorType Color,
     decimal WeightValueInKilograms,
     HealthStatusType HealthStatus,
-    bool SpecialNeedsStatusHasSpecialNeeds,
-    string? SpecialNeedsStatusDescription,
-    SpecialNeedsSeverityType SpecialNeedsStatusSeverityType,
+    bool HasSpecialNeeds,
+    string? SpecialNeedsDescription,
+    SpecialNeedsSeverityType SpecialNeedsSeverityType,
     TemperamentType Temperament,
     int AdoptionHistoryReturnCount,
     DateTimeOffset? AdoptionHistoryLastReturnDate,
     string? AdoptionHistoryLastReturnReason,
-    ListingSourceType ListingSourceType,
-    string ListingSourceSourceName,
     bool IsNeutered,
-    FivStatus InfectiousDiseaseStatusFivStatus,
-    FelvStatus InfectiousDiseaseStatusFelvStatus,
-    DateOnly InfectiousDiseaseStatusLastTestedAt);
+    FivStatus FivStatus,
+    FelvStatus FelvStatus,
+    DateOnly? InfectiousDiseaseStatusLastTestedAt);
 

@@ -2,6 +2,7 @@
 
 public enum TemperamentType
 {
+    Unset,
     Friendly,
     Independent,
     Timid,
