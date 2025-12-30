@@ -41,6 +41,12 @@ public sealed class InfectiousDiseaseStatus : ValueObject
 
         if(fivStatus is FivStatus.NotTested && felvStatus is FelvStatus.NotTested)
         {
+            if (lastTestedAt is not null)
+            {
+                return Result.Failure<InfectiousDiseaseStatus>(
+                    DomainErrors.CatEntity.InfectiousDiseaseStatusProperty.TestDateMustBeEmpty);
+            }
+            
             return Result.Success(new InfectiousDiseaseStatus(fivStatus, felvStatus, null));
         }
 
