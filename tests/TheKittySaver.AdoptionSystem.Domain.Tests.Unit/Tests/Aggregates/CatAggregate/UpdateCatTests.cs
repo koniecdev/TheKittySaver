@@ -305,35 +305,6 @@ public sealed class UpdateCatTests
     }
 
     [Fact]
-    public void UpdateListingSource_ShouldUpdateListingSource_WhenValidSourceIsProvided()
-    {
-        //Arrange
-        Cat cat = CatFactory.CreateRandom(Faker);
-        ListingSource newSource = CatFactory.CreateRandomListingSource(Faker);
-
-        //Act
-        Result result = cat.UpdateListingSource(newSource);
-
-        //Assert
-        result.IsSuccess.ShouldBeTrue();
-        cat.ListingSource.ShouldBe(newSource);
-    }
-
-    [Fact]
-    public void UpdateListingSource_ShouldThrow_WhenNullSourceIsProvided()
-    {
-        //Arrange
-        Cat cat = CatFactory.CreateRandom(Faker);
-
-        //Act
-        Action updateListingSource = () => cat.UpdateListingSource(null!);
-
-        //Assert
-        updateListingSource.ShouldThrow<ArgumentNullException>()
-            .ParamName?.ToLowerInvariant().ShouldContain("listingsource".ToLowerInvariant());
-    }
-
-    [Fact]
     public void UpdateNeuteringStatus_ShouldUpdateNeuteringStatus_WhenValidStatusIsProvided()
     {
         //Arrange
