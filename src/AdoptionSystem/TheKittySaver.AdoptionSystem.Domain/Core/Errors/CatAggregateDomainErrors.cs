@@ -151,20 +151,16 @@ public static partial class DomainErrors
 
         public static class WeightProperty
         {
-            public static Error BelowMinimum(int actual, int minimum)
+            public static Error BelowMinimum(decimal actual, decimal minimum)
                 => BelowValue(nameof(CatEntity), nameof(Cat.Weight), actual, minimum);
 
-            public static Error AboveMaximum(int actual, int maximum)
+            public static Error AboveMaximum(decimal actual, decimal maximum)
                 => AboveValue(nameof(CatEntity), nameof(Cat.Weight), actual, maximum);
         }
 
         public static class InfectiousDiseaseStatusProperty
         {
             public static Error TestDateRequired
-                => Required(nameof(CatEntity),
-                    $"{nameof(Cat.InfectiousDiseaseStatus)}.{nameof(InfectiousDiseaseStatusValueObject.LastTestedAt)}");
-            
-            public static Error TestDateMustBeEmpty
                 => Required(nameof(CatEntity),
                     $"{nameof(Cat.InfectiousDiseaseStatus)}.{nameof(InfectiousDiseaseStatusValueObject.LastTestedAt)}");
 
