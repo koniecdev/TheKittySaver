@@ -163,6 +163,10 @@ public static partial class DomainErrors
             public static Error TestDateRequired
                 => Required(nameof(CatEntity),
                     $"{nameof(Cat.InfectiousDiseaseStatus)}.{nameof(InfectiousDiseaseStatusValueObject.LastTestedAt)}");
+            
+            public static Error TestDateMustBeEmpty
+                => Required(nameof(CatEntity),
+                    $"{nameof(Cat.InfectiousDiseaseStatus)}.{nameof(InfectiousDiseaseStatusValueObject.LastTestedAt)}");
 
             public static Error TestDateInFuture(DateOnly lastTestedAt, DateOnly currentDate)
                 => CustomMessage(

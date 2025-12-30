@@ -15,7 +15,7 @@ internal static class CatApiFactory
 {
     public static CreateCatRequest GenerateRandomCreateRequest(Faker faker, PersonId personId)
     {
-        bool hasSpecialNeeds = faker.PickRandom<bool>();
+        bool hasSpecialNeeds = faker.PickRandom(true, false);
         string? description = hasSpecialNeeds 
             ? faker.Lorem.Sentence() 
             : null;
@@ -58,7 +58,7 @@ internal static class CatApiFactory
 
     public static UpdateCatRequest GenerateRandomUpdateRequest(Faker faker)
     {
-        bool hasSpecialNeeds = faker.PickRandom<bool>();
+        bool hasSpecialNeeds = faker.PickRandom(true, false);
         string? description = hasSpecialNeeds 
             ? faker.Lorem.Sentence() 
             : null;

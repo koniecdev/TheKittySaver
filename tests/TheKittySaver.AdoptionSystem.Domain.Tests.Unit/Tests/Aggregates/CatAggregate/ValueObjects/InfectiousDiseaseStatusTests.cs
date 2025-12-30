@@ -306,7 +306,7 @@ public sealed class InfectiousDiseaseStatusTests
     }
 
     [Fact]
-    public void Create_ShouldReturnSuccess_WhenTestDateIsToday()
+    public void Create_ShouldReturnFailure_WhenLastTestedAtIsProvidedWithNotTestedStatuses()
     {
         //Arrange
         const FivStatus fivStatus = FivStatus.NotTested;
@@ -320,8 +320,8 @@ public sealed class InfectiousDiseaseStatusTests
             CurrentDate);
 
         //Assert
-        result.IsSuccess.ShouldBeTrue();
-        result.Value.LastTestedAt.ShouldBe(CurrentDate);
+        result.IsFailure.ShouldBeTrue();
+        result.Error.ShouldBe(DomainErrors.CatEntity.InfectiousDiseaseStatusProperty.TestDateMustBeEmpty);
     }
 
     [Fact]
@@ -392,7 +392,11 @@ public sealed class InfectiousDiseaseStatusTests
         FelvStatus felvStatus = FelvStatus.Negative,
         DateOnly? testDate = null)
     {
-        DateOnly lastTestedAt = testDate ?? ValidTestDate;
+        DateOnly? lastTestedAt = testDate ?? ValidTestDate;
+        if (fivStatus is FivStatus.NotTested && felvStatus is FelvStatus.NotTested)
+        {
+            lastTestedAt = null;
+        }
 
         Result<InfectiousDiseaseStatus> result = InfectiousDiseaseStatus.Create(
             fivStatus,
