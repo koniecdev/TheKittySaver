@@ -151,10 +151,10 @@ public static partial class DomainErrors
 
         public static class WeightProperty
         {
-            public static Error BelowMinimum(decimal actual, decimal minimum)
+            public static Error BelowMinimum(int actual, int minimum)
                 => BelowValue(nameof(CatEntity), nameof(Cat.Weight), actual, minimum);
 
-            public static Error AboveMaximum(decimal actual, decimal maximum)
+            public static Error AboveMaximum(int actual, int maximum)
                 => AboveValue(nameof(CatEntity), nameof(Cat.Weight), actual, maximum);
         }
 
