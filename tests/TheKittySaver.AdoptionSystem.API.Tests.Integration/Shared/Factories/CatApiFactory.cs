@@ -34,6 +34,7 @@ internal static class CatApiFactory
             || infectiousDiseaseStatusFivStatus is not FivStatus.NotTested
             ? DateOnly.FromDateTime(faker.Date.PastOffset().DateTime) 
             : null;
+        
         return new CreateCatRequest(
             PersonId: personId,
             Name: faker.Name.FirstName(),
@@ -77,6 +78,7 @@ internal static class CatApiFactory
             || infectiousDiseaseStatusFivStatus is not FivStatus.NotTested
             ? DateOnly.FromDateTime(faker.Date.PastOffset().DateTime) 
             : null;
+        
         return new UpdateCatRequest(
             Name: faker.Name.FirstName(),
             Description: faker.Lorem.Sentence(),
@@ -97,22 +99,23 @@ internal static class CatApiFactory
             FelvStatus: infectiousDiseaseStatusFelvStatus,
             InfectiousDiseaseStatusLastTestedAt: infectiousDiseaseStatusLastTestedAt);
     }
-    
-    public static async Task<CatId> CreateRandomAndGetIdAsync(TestApiClient apiClient, Faker faker, PersonId personId)
-    {
-        CreateCatRequest request = GenerateRandomCreateRequest(faker, personId);
 
+    public static async Task<CatId> CreateAndGetIdAsync(TestApiClient apiClient, CreateCatRequest request)
+    {
         HttpResponseMessage httpResponseMessage =
             await apiClient.Http.PostAsJsonAsync(new Uri("api/v1/cats", UriKind.Relative), request);
         string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
 
         return JsonSerializer.Deserialize<CatId>(stringResponse, apiClient.JsonOptions);
     }
+    
+    public static async Task<CatId> CreateRandomAndGetIdAsync(TestApiClient apiClient, Faker faker, PersonId personId)
+    {
+        CreateCatRequest request = GenerateRandomCreateRequest(faker, personId);
+        return await CreateAndGetIdAsync(apiClient, request);
+    }
 
-    public static async Task<CatDetailsResponse> CreateRandomAsync(
-        TestApiClient apiClient,
-        Faker faker,
-        PersonId personId)
+    public static async Task<CatDetailsResponse> CreateRandomAsync(TestApiClient apiClient, Faker faker, PersonId personId)
     {
         CatId catId = await CreateRandomAndGetIdAsync(apiClient, faker, personId);
         return await CatApiQueryService.GetByIdAsync(apiClient, catId);
