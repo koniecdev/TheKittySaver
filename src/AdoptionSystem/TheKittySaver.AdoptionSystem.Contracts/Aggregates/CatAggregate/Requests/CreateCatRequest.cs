@@ -10,7 +10,7 @@ public sealed record CreateCatRequest(
     int Age,
     CatGenderType Gender,
     ColorType Color,
-    decimal WeightValueInKilograms,
+    int WeightInGrams,
     HealthStatusType HealthStatus,
     bool HasSpecialNeeds,
     string? SpecialNeedsDescription,

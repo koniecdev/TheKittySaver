@@ -24,7 +24,7 @@ internal sealed class CreateCat : IEndpoint
         int Age,
         CatGenderType Gender,
         ColorType Color,
-        decimal WeightValueInKilograms,
+        int WeightInGrams,
         HealthStatusType HealthStatus,
         bool SpecialNeedsStatusHasSpecialNeeds,
         string? SpecialNeedsStatusDescription,
@@ -99,7 +99,7 @@ internal sealed class CreateCat : IEndpoint
                 _ => CatColor.Other()
             })();
 
-            Result<CatWeight> createWeightResult = CatWeight.Create(command.WeightValueInKilograms);
+            Result<CatWeight> createWeightResult = CatWeight.Create(command.WeightInGrams);
             if (createWeightResult.IsFailure)
             {
                 return Result.Failure<CatId>(createWeightResult.Error);
@@ -237,7 +237,7 @@ internal static class CreateCatMappings
                 Age: request.Age,
                 Gender: request.Gender,
                 Color: request.Color,
-                WeightValueInKilograms: request.WeightValueInKilograms,
+                WeightInGrams: request.WeightInGrams,
                 HealthStatus: request.HealthStatus,
                 SpecialNeedsStatusHasSpecialNeeds: request.HasSpecialNeeds,
                 SpecialNeedsStatusDescription: request.SpecialNeedsDescription,

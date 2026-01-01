@@ -122,7 +122,7 @@ internal static class CatFactory
 
     public static CatWeight CreateRandomWeight(Faker faker)
     {
-        Result<CatWeight> result = CatWeight.Create(faker.Random.Decimal(CatWeight.MinWeightKg, CatWeight.MaxWeightKg));
+        Result<CatWeight> result = CatWeight.Create(faker.Random.Int(CatWeight.MinWeightGrams, CatWeight.MaxWeightGrams));
         result.EnsureSuccess();
         return result.Value;
     }

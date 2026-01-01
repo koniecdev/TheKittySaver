@@ -38,7 +38,7 @@ internal sealed class GetCat : IEndpoint
                     Age: cat.Age,
                     Gender: cat.Gender,
                     Color: cat.Color,
-                    WeightValueInKilograms: cat.WeightValueInKilograms,
+                    WeightInGrams: cat.WeightInGrams,
                     HealthStatus: cat.HealthStatus,
                     SpecialNeedsStatusHasSpecialNeeds: cat.SpecialNeedsStatusHasSpecialNeeds,
                     SpecialNeedsDescription: cat.SpecialNeedsStatusDescription,

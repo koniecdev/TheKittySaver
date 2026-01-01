@@ -37,9 +37,6 @@ public sealed class CatReadModelConfiguration : IEntityTypeConfiguration<CatRead
         builder.Property(catReadModel => catReadModel.Status)
             .HasConversion<string>();
 
-        builder.Property(x => x.WeightValueInKilograms)
-            .HasPrecision(5, 2);
-
         builder.HasQueryFilter(catReadModel => catReadModel.ArchivedAt == null);
 
         builder.HasOne(catReadModel => catReadModel.AdoptionAnnouncement)

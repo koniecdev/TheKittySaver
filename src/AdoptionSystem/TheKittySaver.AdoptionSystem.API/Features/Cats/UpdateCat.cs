@@ -24,7 +24,7 @@ internal sealed class UpdateCat : IEndpoint
         int Age,
         CatGenderType Gender,
         ColorType Color,
-        decimal WeightValueInKilograms,
+        int WeightInGrams,
         HealthStatusType HealthStatus,
         bool HasSpecialNeeds,
         string? SpecialNeedsDescription,
@@ -129,7 +129,7 @@ internal sealed class UpdateCat : IEndpoint
                 return updateColorResult;
             }
 
-            Result<CatWeight> createWeightResult = CatWeight.Create(command.WeightValueInKilograms);
+            Result<CatWeight> createWeightResult = CatWeight.Create(command.WeightInGrams);
             if (createWeightResult.IsFailure)
             {
                 return Result.Failure(createWeightResult.Error);
@@ -288,7 +288,7 @@ internal static class UpdateCatMappings
                 Age: request.Age,
                 Gender: request.Gender,
                 Color: request.Color,
-                WeightValueInKilograms: request.WeightValueInKilograms,
+                WeightInGrams: request.WeightInGrams,
                 HealthStatus: request.HealthStatus,
                 HasSpecialNeeds: request.HasSpecialNeeds,
                 SpecialNeedsDescription: request.SpecialNeedsDescription,

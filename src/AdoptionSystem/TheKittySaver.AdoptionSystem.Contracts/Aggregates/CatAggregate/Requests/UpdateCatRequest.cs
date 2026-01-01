@@ -8,7 +8,7 @@ public sealed record UpdateCatRequest(
     int Age,
     CatGenderType Gender,
     ColorType Color,
-    decimal WeightValueInKilograms,
+    int WeightInGrams,
     HealthStatusType HealthStatus,
     bool HasSpecialNeeds,
     string? SpecialNeedsDescription,

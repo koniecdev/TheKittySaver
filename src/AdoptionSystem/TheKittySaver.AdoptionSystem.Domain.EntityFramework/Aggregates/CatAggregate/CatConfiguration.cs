@@ -84,9 +84,8 @@ public sealed class CatConfiguration : IEntityTypeConfiguration<Cat>
         builder.ComplexProperty(x => x.Weight, complexBuilder =>
         {
             complexBuilder.IsRequired();
-            complexBuilder.Property(x => x.ValueInKilograms)
-                .HasColumnName($"{nameof(Cat.Weight)}{nameof(CatWeight.ValueInKilograms)}")
-                .HasPrecision(5, 2);
+            complexBuilder.Property(x => x.ValueInGrams)
+                .HasColumnName($"{nameof(Cat.Weight)}{nameof(CatWeight.ValueInGrams)}");
         });
 
         builder.ComplexProperty(x => x.HealthStatus, complexBuilder =>

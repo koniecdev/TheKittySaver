@@ -17,7 +17,7 @@ public sealed record CatDetailsResponse(
     int Age,
     CatGenderType Gender,
     ColorType Color,
-    decimal WeightValueInKilograms,
+    int WeightInGrams,
     HealthStatusType HealthStatus,
     bool SpecialNeedsStatusHasSpecialNeeds,
     string? SpecialNeedsDescription,

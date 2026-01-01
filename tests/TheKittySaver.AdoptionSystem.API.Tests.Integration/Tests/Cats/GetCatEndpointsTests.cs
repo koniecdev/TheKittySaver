@@ -49,7 +49,7 @@ public sealed class GetCatEndpointsTests(TheKittySaverApiFactory appFactory)
         response.Age.ShouldBe(createCatRequest.Age);
         response.Gender.ShouldBe(createCatRequest.Gender);
         response.Color.ShouldBe(createCatRequest.Color);
-        response.WeightValueInKilograms.ShouldBe(createCatRequest.WeightValueInKilograms);
+        response.WeightInGrams.ShouldBe(createCatRequest.WeightInGrams);
         response.HealthStatus.ShouldBe(createCatRequest.HealthStatus);
         response.SpecialNeedsDescription.ShouldBe(createCatRequest.SpecialNeedsDescription);
         response.SpecialNeedsSeverityType.ShouldBe(createCatRequest.SpecialNeedsSeverityType);
