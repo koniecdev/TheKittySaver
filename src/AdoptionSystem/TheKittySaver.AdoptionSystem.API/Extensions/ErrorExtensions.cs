@@ -25,6 +25,7 @@ internal static class ErrorExtensions
             new()
             {
                 Status = statusCode,
+                Type = $"https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/{statusCode}",
                 Title = GetTitle(error.Type),
                 Detail = error.Message,
                 Extensions = { ["errorCode"] = error.Code }

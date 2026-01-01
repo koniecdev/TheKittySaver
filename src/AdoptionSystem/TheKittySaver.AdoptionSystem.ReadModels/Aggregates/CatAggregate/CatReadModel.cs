@@ -18,7 +18,7 @@ public sealed record CatReadModel(
     int Age,
     CatGenderType Gender,
     ColorType Color,
-    int WeightInGrams,
+    int WeightValueInGrams,
     HealthStatusType HealthStatus,
     bool SpecialNeedsStatusHasSpecialNeeds,
     string? SpecialNeedsStatusDescription,

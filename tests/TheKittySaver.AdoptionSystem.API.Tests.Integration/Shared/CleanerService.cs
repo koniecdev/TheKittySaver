@@ -1,10 +1,7 @@
-﻿using System.Text.Json;
-using TheKittySaver.AdoptionSystem.API.Tests.Integration.Extensions;
-using TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared.Factories;
+﻿using TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared.Factories;
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.PersonAggregate.Responses;
 using TheKittySaver.AdoptionSystem.Contracts.Common;
 
-// Shared/CleanerService.cs
 namespace TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared;
 
 internal static class CleanerService

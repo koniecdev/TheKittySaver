@@ -33,6 +33,14 @@ internal static class HttpResponseMessageExtensions
                 return content;
             }
 
+            if (string.IsNullOrWhiteSpace(content))
+            {
+                throw new HttpRequestException(
+                    $"Response status code does not indicate success: {(int)response.StatusCode} ({response.StatusCode}). " +
+                    $"Response body was empty - expected ProblemDetails JSON. " +
+                    $"RequestUri: {response.RequestMessage?.RequestUri}");
+            }
+
             ProblemDetails? problemDetails = JsonSerializer.Deserialize<ProblemDetails>(content, jsonOptions);
 
             if (problemDetails is not null)
