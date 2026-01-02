@@ -38,7 +38,6 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
     public SpecialNeedsStatus SpecialNeeds { get; private set; }
     public Temperament Temperament { get; private set; }
     public AdoptionHistory AdoptionHistory { get; private set; }
-    public ListingSource ListingSource { get; private set; }
     public NeuteringStatus NeuteringStatus { get; private set; }
     public InfectiousDiseaseStatus InfectiousDiseaseStatus { get; private set; }
     public CatThumbnail? Thumbnail { get; private set; }
@@ -274,18 +273,6 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
         return Result.Success();
     }
 
-    public Result UpdateListingSource(ListingSource updatedListingSource)
-    {
-        ArgumentNullException.ThrowIfNull(updatedListingSource);
-        if (IsArchived(out Result? failure))
-        {
-            return failure;
-        }
-
-        ListingSource = updatedListingSource;
-        return Result.Success();
-    }
-
     public Result UpdateNeuteringStatus(NeuteringStatus updatedNeuteringStatus)
     {
         ArgumentNullException.ThrowIfNull(updatedNeuteringStatus);
@@ -343,7 +330,7 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
         DateTimeOffset dateOfOperation,
         VaccinationNote? veterinarianNote = null)
     {
-        Ensure.IsValidEnum(type);
+        Ensure.IsValidNonDefaultEnum(type);
         if (IsArchived(out Result? failure))
         {
             return Result.Failure<Vaccination>(failure.Error);
@@ -367,7 +354,7 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
 
     public Result UpdateVaccinationType(VaccinationId vaccinationId, VaccinationType updatedType)
     {
-        Ensure.IsValidEnum(updatedType);
+        Ensure.IsValidNonDefaultEnum(updatedType);
         Ensure.NotEmpty(vaccinationId);
         if (IsArchived(out Result? failure))
         {
@@ -686,7 +673,6 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
         SpecialNeedsStatus specialNeeds,
         Temperament temperament,
         AdoptionHistory adoptionHistory,
-        ListingSource listingSource,
         NeuteringStatus neuteringStatus,
         InfectiousDiseaseStatus infectiousDiseaseStatus)
     {
@@ -701,7 +687,6 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
         ArgumentNullException.ThrowIfNull(specialNeeds);
         ArgumentNullException.ThrowIfNull(temperament);
         ArgumentNullException.ThrowIfNull(adoptionHistory);
-        ArgumentNullException.ThrowIfNull(listingSource);
         ArgumentNullException.ThrowIfNull(neuteringStatus);
         ArgumentNullException.ThrowIfNull(infectiousDiseaseStatus);
 
@@ -719,7 +704,6 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
             specialNeeds,
             temperament,
             adoptionHistory,
-            listingSource,
             neuteringStatus,
             infectiousDiseaseStatus);
 
@@ -739,7 +723,6 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
         SpecialNeedsStatus specialNeeds,
         Temperament temperament,
         AdoptionHistory adoptionHistory,
-        ListingSource listingSource,
         NeuteringStatus neuteringStatus,
         InfectiousDiseaseStatus infectiousDiseaseStatus) : base(id)
     {
@@ -754,7 +737,6 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
         SpecialNeeds = specialNeeds;
         Temperament = temperament;
         AdoptionHistory = adoptionHistory;
-        ListingSource = listingSource;
         NeuteringStatus = neuteringStatus;
         InfectiousDiseaseStatus = infectiousDiseaseStatus;
     }
@@ -771,7 +753,6 @@ public sealed class Cat : AggregateRoot<CatId>, IClaimable, IPublishable, IArchi
         SpecialNeeds = null!;
         Temperament = null!;
         AdoptionHistory = null!;
-        ListingSource = null!;
         NeuteringStatus = null!;
         InfectiousDiseaseStatus = null!;
     }

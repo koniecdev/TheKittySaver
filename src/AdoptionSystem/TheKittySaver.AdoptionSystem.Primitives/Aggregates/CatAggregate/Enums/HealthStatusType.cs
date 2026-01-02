@@ -2,6 +2,7 @@
 
 public enum HealthStatusType
 {
+    Unset,
     Healthy,
     MinorIssues,
     Recovering,

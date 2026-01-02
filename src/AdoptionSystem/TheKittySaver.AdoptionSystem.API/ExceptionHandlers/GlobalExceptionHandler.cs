@@ -6,10 +6,12 @@ namespace TheKittySaver.AdoptionSystem.API.ExceptionHandlers;
 internal sealed class GlobalExceptionHandler : IExceptionHandler
 {
     private readonly ILogger<GlobalExceptionHandler> _logger;
+    private readonly IHostEnvironment _environment;
 
-    public GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger)
+    public GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger, IHostEnvironment environment)
     {
         _logger = logger;
+        _environment = environment;
     }
 
     public async ValueTask<bool> TryHandleAsync(
@@ -23,6 +25,13 @@ internal sealed class GlobalExceptionHandler : IExceptionHandler
             Type = "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500",
             Title = "Sorry, an internal server error has occurred, there is nothing You can do."
         };
+
+        if (_environment.IsEnvironment("Testing") || _environment.IsEnvironment("Local"))
+        {
+            problemDetails.Detail = exception.Message;
+            problemDetails.Extensions["exceptionType"] = exception.GetType().Name;
+            problemDetails.Extensions["stackTrace"] = exception.StackTrace;
+        }
 
         _logger.LogError(
             exception,

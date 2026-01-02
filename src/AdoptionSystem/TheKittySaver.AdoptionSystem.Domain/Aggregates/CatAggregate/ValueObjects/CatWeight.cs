@@ -6,38 +6,38 @@ namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.ValueObjec
 
 public sealed class CatWeight : ValueObject
 {
-    public const decimal MinWeightKg = 0.1m;
-    public const decimal MaxWeightKg = 20m;
+    public const int MinWeightGrams = 100;
+    public const int MaxWeightGrams = 20000;
 
-    public decimal ValueInKilograms { get; }
+    public int ValueInGrams { get; }
 
-    public static Result<CatWeight> Create(decimal valueInKilograms)
+    public static Result<CatWeight> Create(int valueInGrams)
     {
-        switch (valueInKilograms)
+        switch (valueInGrams)
         {
-            case < MinWeightKg:
+            case < MinWeightGrams:
                 return Result.Failure<CatWeight>(
-                    DomainErrors.CatEntity.WeightProperty.BelowMinimum(valueInKilograms, MinWeightKg));
-            case > MaxWeightKg:
+                    DomainErrors.CatEntity.WeightProperty.BelowMinimum(valueInGrams, MinWeightGrams));
+            case > MaxWeightGrams:
                 return Result.Failure<CatWeight>(
-                    DomainErrors.CatEntity.WeightProperty.AboveMaximum(valueInKilograms, MaxWeightKg));
+                    DomainErrors.CatEntity.WeightProperty.AboveMaximum(valueInGrams, MaxWeightGrams));
             default:
                 {
-                    CatWeight instance = new(valueInKilograms);
+                    CatWeight instance = new(valueInGrams);
                     return Result.Success(instance);
                 }
         }
     }
 
-    private CatWeight(decimal valueInKilograms)
+    private CatWeight(int valueInGrams)
     {
-        ValueInKilograms = valueInKilograms;
+        ValueInGrams = valueInGrams;
     }
 
-    public override string ToString() => string.Format(System.Globalization.CultureInfo.InvariantCulture, "{0} kg", ValueInKilograms);
+    public override string ToString() => string.Format(System.Globalization.CultureInfo.InvariantCulture, "{0:0.###} kg", ValueInGrams / 1000.0m);
 
     protected override IEnumerable<object> GetAtomicValues()
     {
-        yield return ValueInKilograms;
+        yield return ValueInGrams;
     }
 }

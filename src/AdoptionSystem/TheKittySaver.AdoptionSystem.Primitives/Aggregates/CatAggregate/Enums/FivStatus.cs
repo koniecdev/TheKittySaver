@@ -2,6 +2,7 @@
 
 public enum FivStatus
 {
+    Unset,
     NotTested,
     Negative,
     Positive

@@ -21,15 +21,19 @@ internal static class PersonApiFactory
         faker.Internet.Email(),
         faker.Person.PolishPhoneNumber());
 
-    public static async Task<PersonId> CreateRandomAndGetIdAsync(TestApiClient apiClient, Faker faker)
+    public static async Task<PersonId> CreateAndGetIdAsync(TestApiClient apiClient, CreatePersonRequest request)
     {
-        CreatePersonRequest request = GenerateRandomCreateRequest(faker);
-
         HttpResponseMessage httpResponseMessage =
             await apiClient.Http.PostAsJsonAsync(new Uri("api/v1/persons", UriKind.Relative), request);
         string stringResponse = await httpResponseMessage.EnsureSuccessWithDetailsAsync();
 
         return JsonSerializer.Deserialize<PersonId>(stringResponse, apiClient.JsonOptions);
+    }
+    
+    public static async Task<PersonId> CreateRandomAndGetIdAsync(TestApiClient apiClient, Faker faker)
+    {
+        CreatePersonRequest request = GenerateRandomCreateRequest(faker);
+        return await CreateAndGetIdAsync(apiClient, request);
     }
 
     public static async Task<PersonDetailsResponse> CreateRandomAsync(TestApiClient apiClient, Faker faker)

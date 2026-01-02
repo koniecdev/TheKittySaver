@@ -84,7 +84,7 @@ public sealed class Vaccination : Entity<VaccinationId>, IArchivable
         VaccinationNote? veterinarianNote = null)
     {
         Ensure.NotEmpty(catId);
-        Ensure.IsValidEnum(type);
+        Ensure.IsValidNonDefaultEnum(type);
 
         Result<VaccinationDate> dateResult = VaccinationDate.Create(
             vaccinationDate,

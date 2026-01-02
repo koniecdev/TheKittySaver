@@ -11,32 +11,32 @@ public sealed class CatWeightTests
     public void Create_ShouldReturnSuccess_WhenValidValueProvided()
     {
         //Arrange & Act
-        Result<CatWeight> result = CatWeight.Create(5.5m);
+        Result<CatWeight> result = CatWeight.Create(5500);
 
         //Assert
         result.IsSuccess.ShouldBeTrue();
-        result.Value.ValueInKilograms.ShouldBe(5.5m);
+        result.Value.ValueInGrams.ShouldBe(5500);
     }
 
     [Fact]
     public void Create_ShouldReturnFailure_WhenValueBelowMinimum()
     {
         //Arrange & Act
-        Result<CatWeight> result = CatWeight.Create(0.05m);
+        Result<CatWeight> result = CatWeight.Create(50);
 
         //Assert
         result.IsFailure.ShouldBeTrue();
-        result.Error.ShouldBe(DomainErrors.CatEntity.WeightProperty.BelowMinimum(0.05m, CatWeight.MinWeightKg));
+        result.Error.ShouldBe(DomainErrors.CatEntity.WeightProperty.BelowMinimum(50, CatWeight.MinWeightGrams));
     }
 
     [Fact]
     public void Create_ShouldReturnFailure_WhenValueAboveMaximum()
     {
         //Arrange & Act
-        Result<CatWeight> result = CatWeight.Create(25m);
+        Result<CatWeight> result = CatWeight.Create(25000);
 
         //Assert
         result.IsFailure.ShouldBeTrue();
-        result.Error.ShouldBe(DomainErrors.CatEntity.WeightProperty.AboveMaximum(25m, CatWeight.MaxWeightKg));
+        result.Error.ShouldBe(DomainErrors.CatEntity.WeightProperty.AboveMaximum(25000, CatWeight.MaxWeightGrams));
     }
 }

@@ -28,9 +28,6 @@ public sealed class CatReadModelConfiguration : IEntityTypeConfiguration<CatRead
         builder.Property(catReadModel => catReadModel.Temperament)
             .HasConversion<string>();
 
-        builder.Property(catReadModel => catReadModel.ListingSourceType)
-            .HasConversion<string>();
-
         builder.Property(catReadModel => catReadModel.InfectiousDiseaseStatusFivStatus)
             .HasConversion<string>();
 
@@ -39,9 +36,6 @@ public sealed class CatReadModelConfiguration : IEntityTypeConfiguration<CatRead
 
         builder.Property(catReadModel => catReadModel.Status)
             .HasConversion<string>();
-
-        builder.Property(x => x.WeightValueInKilograms)
-            .HasPrecision(5, 2);
 
         builder.HasQueryFilter(catReadModel => catReadModel.ArchivedAt == null);
 

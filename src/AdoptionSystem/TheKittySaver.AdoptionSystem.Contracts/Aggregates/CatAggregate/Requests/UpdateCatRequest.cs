@@ -8,7 +8,7 @@ public sealed record UpdateCatRequest(
     int Age,
     CatGenderType Gender,
     ColorType Color,
-    decimal WeightValueInKilograms,
+    int WeightInGrams,
     HealthStatusType HealthStatus,
     bool HasSpecialNeeds,
     string? SpecialNeedsDescription,
@@ -17,11 +17,9 @@ public sealed record UpdateCatRequest(
     int AdoptionHistoryReturnCount,
     DateTimeOffset? AdoptionHistoryLastReturnDate,
     string? AdoptionHistoryLastReturnReason,
-    ListingSourceType ListingSourceType,
-    string ListingSourceSourceName,
     bool IsNeutered,
     FivStatus FivStatus,
     FelvStatus FelvStatus,
-    DateOnly InfectiousDiseaseStatusLastTestedAt
+    DateOnly? InfectiousDiseaseStatusLastTestedAt
 );
 

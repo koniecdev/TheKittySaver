@@ -84,9 +84,8 @@ public sealed class CatConfiguration : IEntityTypeConfiguration<Cat>
         builder.ComplexProperty(x => x.Weight, complexBuilder =>
         {
             complexBuilder.IsRequired();
-            complexBuilder.Property(x => x.ValueInKilograms)
-                .HasColumnName($"{nameof(Cat.Weight)}{nameof(CatWeight.ValueInKilograms)}")
-                .HasPrecision(5, 2);
+            complexBuilder.Property(x => x.ValueInGrams)
+                .HasColumnName($"{nameof(Cat.Weight)}{nameof(CatWeight.ValueInGrams)}");
         });
 
         builder.ComplexProperty(x => x.HealthStatus, complexBuilder =>
@@ -141,22 +140,6 @@ public sealed class CatConfiguration : IEntityTypeConfiguration<Cat>
             complexBuilder.Property(x => x.LastReturnReason)
                 .HasColumnName($"{prefix}{nameof(AdoptionHistory.LastReturnReason)}")
                 .HasMaxLength(AdoptionHistory.LastReturnReasonMaxLength);
-        });
-
-        builder.ComplexProperty(x => x.ListingSource, complexBuilder =>
-        {
-            const string prefix = nameof(Cat.ListingSource);
-
-            complexBuilder.IsRequired();
-
-            complexBuilder.Property(x => x.Type)
-                .HasColumnName($"{prefix}{nameof(ListingSource.Type)}")
-                .HasConversion<string>()
-                .HasMaxLength(EnumConsts.MaxLength);
-
-            complexBuilder.Property(x => x.SourceName)
-                .HasColumnName($"{prefix}{nameof(ListingSource.SourceName)}")
-                .HasMaxLength(ListingSource.MaxSourceNameLength);
         });
 
         builder.ComplexProperty(x => x.NeuteringStatus, complexBuilder =>

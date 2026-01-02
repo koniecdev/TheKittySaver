@@ -361,7 +361,9 @@ public sealed class CatAdoptionAnnouncementReassignmentServiceTests
     private static InfectiousDiseaseStatus CreateDiseaseStatus(FivStatus fivStatus, FelvStatus felvStatus)
     {
         DateOnly currentDate = new(2025, 6, 1);
-        DateOnly testDate = new(2025, 5, 1);
+        DateOnly? testDate = fivStatus is FivStatus.NotTested && felvStatus is FelvStatus.NotTested
+            ? null
+            : new DateOnly(2025, 5, 1);
 
         Result<InfectiousDiseaseStatus> result = InfectiousDiseaseStatus.Create(
             fivStatus,

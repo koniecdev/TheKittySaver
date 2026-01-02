@@ -24,7 +24,7 @@ internal sealed class CreateCat : IEndpoint
         int Age,
         CatGenderType Gender,
         ColorType Color,
-        decimal WeightValueInKilograms,
+        int WeightInGrams,
         HealthStatusType HealthStatus,
         bool SpecialNeedsStatusHasSpecialNeeds,
         string? SpecialNeedsStatusDescription,
@@ -33,12 +33,10 @@ internal sealed class CreateCat : IEndpoint
         int AdoptionHistoryReturnCount,
         DateTimeOffset? AdoptionHistoryLastReturnDate,
         string? AdoptionHistoryLastReturnReason,
-        ListingSourceType ListingSourceType,
-        string ListingSourceSourceName,
         bool IsNeutered,
         FivStatus InfectiousDiseaseStatusFivStatus,
         FelvStatus InfectiousDiseaseStatusFelvStatus,
-        DateOnly InfectiousDiseaseStatusLastTestedAt) : ICommand<Result<CatId>>;
+        DateOnly? InfectiousDiseaseStatusLastTestedAt) : ICommand<Result<CatId>>;
 
     internal sealed class Handler : ICommandHandler<Command, Result<CatId>>
     {
@@ -101,7 +99,7 @@ internal sealed class CreateCat : IEndpoint
                 _ => CatColor.Other()
             })();
 
-            Result<CatWeight> createWeightResult = CatWeight.Create(command.WeightValueInKilograms);
+            Result<CatWeight> createWeightResult = CatWeight.Create(command.WeightInGrams);
             if (createWeightResult.IsFailure)
             {
                 return Result.Failure<CatId>(createWeightResult.Error);
@@ -162,19 +160,6 @@ internal sealed class CreateCat : IEndpoint
                 adoptionHistory = AdoptionHistory.CatHasNeverBeenAdopted;
             }
 
-            Result<ListingSource> createListingSourceResult = command.ListingSourceType switch
-            {
-                ListingSourceType.PrivatePerson => ListingSource.PrivatePerson(command.ListingSourceSourceName),
-                ListingSourceType.PrivatePersonUrgent => ListingSource.PrivatePerson(command.ListingSourceSourceName, isUrgent: true),
-                ListingSourceType.Shelter => ListingSource.Shelter(command.ListingSourceSourceName),
-                ListingSourceType.Foundation => ListingSource.Foundation(command.ListingSourceSourceName),
-                _ => ListingSource.PrivatePerson(command.ListingSourceSourceName)
-            };
-            if (createListingSourceResult.IsFailure)
-            {
-                return Result.Failure<CatId>(createListingSourceResult.Error);
-            }
-
             NeuteringStatus neuteringStatus = command.IsNeutered
                 ? NeuteringStatus.Neutered()
                 : NeuteringStatus.NotNeutered();
@@ -202,7 +187,6 @@ internal sealed class CreateCat : IEndpoint
                 specialNeeds,
                 temperament,
                 adoptionHistory,
-                createListingSourceResult.Value,
                 neuteringStatus,
                 createInfectiousDiseaseStatusResult.Value);
 
@@ -253,20 +237,18 @@ internal static class CreateCatMappings
                 Age: request.Age,
                 Gender: request.Gender,
                 Color: request.Color,
-                WeightValueInKilograms: request.WeightValueInKilograms,
+                WeightInGrams: request.WeightInGrams,
                 HealthStatus: request.HealthStatus,
-                SpecialNeedsStatusHasSpecialNeeds: request.SpecialNeedsStatusHasSpecialNeeds,
-                SpecialNeedsStatusDescription: request.SpecialNeedsStatusDescription,
-                SpecialNeedsStatusSeverityType: request.SpecialNeedsStatusSeverityType,
+                SpecialNeedsStatusHasSpecialNeeds: request.HasSpecialNeeds,
+                SpecialNeedsStatusDescription: request.SpecialNeedsDescription,
+                SpecialNeedsStatusSeverityType: request.SpecialNeedsSeverityType,
                 Temperament: request.Temperament,
                 AdoptionHistoryReturnCount: request.AdoptionHistoryReturnCount,
                 AdoptionHistoryLastReturnDate: request.AdoptionHistoryLastReturnDate,
                 AdoptionHistoryLastReturnReason: request.AdoptionHistoryLastReturnReason,
-                ListingSourceType: request.ListingSourceType,
-                ListingSourceSourceName: request.ListingSourceSourceName,
                 IsNeutered: request.IsNeutered,
-                InfectiousDiseaseStatusFivStatus: request.InfectiousDiseaseStatusFivStatus,
-                InfectiousDiseaseStatusFelvStatus: request.InfectiousDiseaseStatusFelvStatus,
+                InfectiousDiseaseStatusFivStatus: request.FivStatus,
+                InfectiousDiseaseStatusFelvStatus: request.FelvStatus,
                 InfectiousDiseaseStatusLastTestedAt: request.InfectiousDiseaseStatusLastTestedAt);
             return command;
         }

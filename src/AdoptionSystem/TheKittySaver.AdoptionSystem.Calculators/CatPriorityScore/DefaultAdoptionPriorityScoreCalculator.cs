@@ -11,7 +11,6 @@ internal sealed class DefaultAdoptionPriorityScoreCalculator : IAdoptionPriority
         ColorType color,
         CatGenderType gender,
         HealthStatusType healthStatus,
-        ListingSourceType listingSourceType,
         SpecialNeedsSeverityType specialNeedsSeverityType,
         TemperamentType temperament,
         FivStatus fivStatus,
@@ -23,7 +22,6 @@ internal sealed class DefaultAdoptionPriorityScoreCalculator : IAdoptionPriority
         decimal colorPoints = CalculateColorPoints(color);
         decimal genderPoints = CalculateGenderPoints(gender);
         decimal healthPoints = CalculateHealthPoints(healthStatus);
-        decimal listingSourcePoints = CalculateListingSourcePoints(listingSourceType);
         decimal specialNeedsPoints = CalculateSpecialNeedsPoints(specialNeedsSeverityType);
         decimal temperamentPoints = CalculateTemperamentPoints(temperament);
         decimal infectiousDiseasePoints = CalculateInfectiousDiseasePoints(fivStatus, felvStatus);
@@ -35,7 +33,6 @@ internal sealed class DefaultAdoptionPriorityScoreCalculator : IAdoptionPriority
             colorPoints +
             genderPoints +
             healthPoints +
-            listingSourcePoints +
             specialNeedsPoints +
             temperamentPoints +
             infectiousDiseasePoints +
@@ -105,20 +102,6 @@ internal sealed class DefaultAdoptionPriorityScoreCalculator : IAdoptionPriority
             HealthStatusType.ChronicIllness => 35,
             HealthStatusType.Recovering => 25,
             HealthStatusType.MinorIssues => 15,
-            _ => 0
-        };
-
-        return points;
-    }
-
-    private static decimal CalculateListingSourcePoints(ListingSourceType listingSource)
-    {
-        decimal points = listingSource switch
-        {
-            ListingSourceType.PrivatePersonUrgent => 20,
-            ListingSourceType.PrivatePerson => 18,
-            ListingSourceType.Foundation => 10,
-            ListingSourceType.Shelter => 5,
             _ => 0
         };
 

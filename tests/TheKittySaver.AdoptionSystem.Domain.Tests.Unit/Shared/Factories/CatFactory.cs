@@ -25,7 +25,6 @@ internal static class CatFactory
         bool replaceSpecialNeedsWithNull = false,
         bool replaceTemperamentWithNull = false,
         bool replaceAdoptionHistoryWithNull = false,
-        bool replaceListingSourceWithNull = false,
         bool replaceNeuteringStatusWithNull = false,
         bool replaceInfectiousDiseaseStatusWithNull = false)
     {
@@ -69,7 +68,6 @@ internal static class CatFactory
                 currentDate: new DateTimeOffset(2025, 6, 1, 0, 0, 0, TimeSpan.Zero),
                 lastReturn: new DateTimeOffset(2025, 5, 1, 0, 0, 0, TimeSpan.Zero),
                 reason: faker.Lorem.Sentence()).Value);
-        ListingSource listingSource = CreateRandomListingSource(faker);
         NeuteringStatus neuteringStatus = faker.PickRandomParam(
             NeuteringStatus.NotNeutered(),
             NeuteringStatus.Neutered());
@@ -87,7 +85,6 @@ internal static class CatFactory
             specialNeeds: replaceSpecialNeedsWithNull ? null! : specialNeeds,
             temperament: replaceTemperamentWithNull ? null! : temperament,
             adoptionHistory: replaceAdoptionHistoryWithNull ? null! : adoptionHistory,
-            listingSource: replaceListingSourceWithNull ? null! : listingSource,
             neuteringStatus: replaceNeuteringStatusWithNull ? null! : neuteringStatus,
             infectiousDiseaseStatus: replaceInfectiousDiseaseStatusWithNull ? null! : infectiousDiseaseStatus);
         catResult.EnsureSuccess();
@@ -125,17 +122,7 @@ internal static class CatFactory
 
     public static CatWeight CreateRandomWeight(Faker faker)
     {
-        Result<CatWeight> result = CatWeight.Create(faker.Random.Decimal(CatWeight.MinWeightKg, CatWeight.MaxWeightKg));
-        result.EnsureSuccess();
-        return result.Value;
-    }
-
-    public static ListingSource CreateRandomListingSource(Faker faker)
-    {
-        Result<ListingSource> result = faker.PickRandomParam(
-            ListingSource.Shelter(faker.Company.CompanyName()),
-            ListingSource.PrivatePerson(faker.Name.FullName()),
-            ListingSource.Foundation(faker.Company.CompanyName()));
+        Result<CatWeight> result = CatWeight.Create(faker.Random.Int(CatWeight.MinWeightGrams, CatWeight.MaxWeightGrams));
         result.EnsureSuccess();
         return result.Value;
     }
@@ -156,10 +143,15 @@ internal static class CatFactory
     public static InfectiousDiseaseStatus CreateRandomInfectiousDiseaseStatus(Faker faker)
     {
         DateOnly currentDate = new(2025, 6, 1);
-        DateOnly lastTestedAt = new(2025, 5, 1);
+        FivStatus fivStatus = faker.PickRandomParam(FivStatus.Negative, FivStatus.Positive, FivStatus.NotTested);
+        FelvStatus felvStatus = faker.PickRandomParam(FelvStatus.Negative, FelvStatus.Positive, FelvStatus.NotTested);
+
+        bool bothNotTested = fivStatus is FivStatus.NotTested && felvStatus is FelvStatus.NotTested;
+        DateOnly? lastTestedAt = bothNotTested ? null : new DateOnly(2025, 5, 1);
+
         Result<InfectiousDiseaseStatus> result = InfectiousDiseaseStatus.Create(
-            faker.PickRandomParam(FivStatus.Negative, FivStatus.Positive, FivStatus.NotTested),
-            faker.PickRandomParam(FelvStatus.Negative, FelvStatus.Positive, FelvStatus.NotTested),
+            fivStatus,
+            felvStatus,
             lastTestedAt,
             currentDate);
         result.EnsureSuccess();

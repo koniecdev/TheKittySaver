@@ -27,7 +27,6 @@ internal abstract class AdoptionAnnouncementEndpointsTestBase : AsyncLifetimeTes
     {
         await base.InitializeAsync();
         TestPersonId = await PersonApiFactory.CreateRandomAndGetIdAsync(ApiClient, Faker);
-        TestCatId = await CatApiFactory.CreateRandomAndGetIdAsync(ApiClient, Faker, TestPersonId);
         _ = await CatGalleryApiFactory.UpsertThumbnailAsync(ApiClient, TestCatId);
     }
 }

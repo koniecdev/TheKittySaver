@@ -15,14 +15,14 @@ public static class Ensure
     /// attribute name of the argument being checked.</param>
     /// <exception cref="ArgumentException">if the specified value is Unset (0).</exception>
     /// <exception cref="ArgumentOutOfRangeException">if the specified value is not defined in the enum.</exception>
-    public static void IsValidEnum<TEnum>(
+    public static void IsValidNonDefaultEnum<TEnum>(
         TEnum value,
         [CallerArgumentExpression(nameof(value))] string argumentName = "")
         where TEnum : struct, Enum
     {
         if (EqualityComparer<TEnum>.Default.Equals(value, default))
         {
-            throw new ArgumentException($"{argumentName} cannot be Unset.", argumentName);
+            throw new ArgumentException($"{argumentName} cannot be default.", argumentName);
         }
 
         if (!Enum.IsDefined(value))

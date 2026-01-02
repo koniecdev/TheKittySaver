@@ -79,10 +79,7 @@ builder.Services.AddRateLimiter(options =>
 
 WebApplication app = builder.Build();
 
-const string localEnvironment = "local";
-const string productionEnvironment = "production";
-
-if (app.Environment.IsEnvironment(localEnvironment))
+if (app.Environment.IsLocal())
 {
     await app.Services.MigrateDatabaseAsync();
 }
@@ -106,14 +103,17 @@ app.UseHttpsRedirection();
 app.UseRouting();
 string corsPolicy = app.Environment.EnvironmentName.ToLower(CultureInfo.InvariantCulture) switch
 {
-    productionEnvironment => productionCorsPolicy,
+    EnvironmentsExtensions.ProductionName => productionCorsPolicy,
     _ => localCorsPolicy
 };
 app.UseCors(corsPolicy);
 
-app.UseRateLimiter();
+if (!app.Environment.IsTesting() && !app.Environment.IsLocal())
+{
+    app.UseRateLimiter();
+}
 
-if (app.Environment.IsEnvironment(localEnvironment))
+if (app.Environment.IsLocal())
 {
     app.MapOpenApi();
     app.MapScalarApiReference();
@@ -135,8 +135,12 @@ ApiVersionSet apiVersionSet = app.NewApiVersionSet()
     .Build();
 RouteGroupBuilder versionedGroup = app
     .MapGroup("api/v{apiVersion:apiVersion}")
-    .WithApiVersionSet(apiVersionSet)
-    .RequireRateLimiting(rateLimitPolicy);
+    .WithApiVersionSet(apiVersionSet);
+
+if (!app.Environment.IsTesting() && !app.Environment.IsLocal())
+{
+    versionedGroup.RequireRateLimiting(rateLimitPolicy);
+}
 
 app.MapEndpoints(versionedGroup);
 

@@ -24,7 +24,7 @@ internal sealed class UpdateCat : IEndpoint
         int Age,
         CatGenderType Gender,
         ColorType Color,
-        decimal WeightValueInKilograms,
+        int WeightInGrams,
         HealthStatusType HealthStatus,
         bool HasSpecialNeeds,
         string? SpecialNeedsDescription,
@@ -33,12 +33,10 @@ internal sealed class UpdateCat : IEndpoint
         int AdoptionHistoryReturnCount,
         DateTimeOffset? AdoptionHistoryLastReturnDate,
         string? AdoptionHistoryLastReturnReason,
-        ListingSourceType ListingSourceType,
-        string ListingSourceSourceName,
         bool IsNeutered,
         FivStatus FivStatus,
         FelvStatus FelvStatus,
-        DateOnly InfectiousDiseaseStatusLastTestedAt) : ICommand<Result>;
+        DateOnly? InfectiousDiseaseStatusLastTestedAt) : ICommand<Result>;
 
     internal sealed class Handler : ICommandHandler<Command, Result>
     {
@@ -131,7 +129,7 @@ internal sealed class UpdateCat : IEndpoint
                 return updateColorResult;
             }
 
-            Result<CatWeight> createWeightResult = CatWeight.Create(command.WeightValueInKilograms);
+            Result<CatWeight> createWeightResult = CatWeight.Create(command.WeightInGrams);
             if (createWeightResult.IsFailure)
             {
                 return Result.Failure(createWeightResult.Error);
@@ -222,25 +220,6 @@ internal sealed class UpdateCat : IEndpoint
                 return updateAdoptionHistoryResult;
             }
 
-            Result<ListingSource> createListingSourceResult = command.ListingSourceType switch
-            {
-                ListingSourceType.PrivatePerson => ListingSource.PrivatePerson(command.ListingSourceSourceName),
-                ListingSourceType.PrivatePersonUrgent => ListingSource.PrivatePerson(command.ListingSourceSourceName, isUrgent: true),
-                ListingSourceType.Shelter => ListingSource.Shelter(command.ListingSourceSourceName),
-                ListingSourceType.Foundation => ListingSource.Foundation(command.ListingSourceSourceName),
-                _ => ListingSource.PrivatePerson(command.ListingSourceSourceName)
-            };
-            if (createListingSourceResult.IsFailure)
-            {
-                return Result.Failure(createListingSourceResult.Error);
-            }
-
-            Result updateListingSourceResult = cat.UpdateListingSource(createListingSourceResult.Value);
-            if (updateListingSourceResult.IsFailure)
-            {
-                return updateListingSourceResult;
-            }
-
             NeuteringStatus neuteringStatus = command.IsNeutered
                 ? NeuteringStatus.Neutered()
                 : NeuteringStatus.NotNeutered();
@@ -309,7 +288,7 @@ internal static class UpdateCatMappings
                 Age: request.Age,
                 Gender: request.Gender,
                 Color: request.Color,
-                WeightValueInKilograms: request.WeightValueInKilograms,
+                WeightInGrams: request.WeightInGrams,
                 HealthStatus: request.HealthStatus,
                 HasSpecialNeeds: request.HasSpecialNeeds,
                 SpecialNeedsDescription: request.SpecialNeedsDescription,
@@ -318,8 +297,6 @@ internal static class UpdateCatMappings
                 AdoptionHistoryReturnCount: request.AdoptionHistoryReturnCount,
                 AdoptionHistoryLastReturnDate: request.AdoptionHistoryLastReturnDate,
                 AdoptionHistoryLastReturnReason: request.AdoptionHistoryLastReturnReason,
-                ListingSourceType: request.ListingSourceType,
-                ListingSourceSourceName: request.ListingSourceSourceName,
                 IsNeutered: request.IsNeutered,
                 FivStatus: request.FivStatus,
                 FelvStatus: request.FelvStatus,
