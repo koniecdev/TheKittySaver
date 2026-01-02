@@ -143,10 +143,15 @@ internal static class CatFactory
     public static InfectiousDiseaseStatus CreateRandomInfectiousDiseaseStatus(Faker faker)
     {
         DateOnly currentDate = new(2025, 6, 1);
-        DateOnly lastTestedAt = new(2025, 5, 1);
+        FivStatus fivStatus = faker.PickRandomParam(FivStatus.Negative, FivStatus.Positive, FivStatus.NotTested);
+        FelvStatus felvStatus = faker.PickRandomParam(FelvStatus.Negative, FelvStatus.Positive, FelvStatus.NotTested);
+
+        bool bothNotTested = fivStatus is FivStatus.NotTested && felvStatus is FelvStatus.NotTested;
+        DateOnly? lastTestedAt = bothNotTested ? null : new DateOnly(2025, 5, 1);
+
         Result<InfectiousDiseaseStatus> result = InfectiousDiseaseStatus.Create(
-            faker.PickRandomParam(FivStatus.Negative, FivStatus.Positive, FivStatus.NotTested),
-            faker.PickRandomParam(FelvStatus.Negative, FelvStatus.Positive, FelvStatus.NotTested),
+            fivStatus,
+            felvStatus,
             lastTestedAt,
             currentDate);
         result.EnsureSuccess();
