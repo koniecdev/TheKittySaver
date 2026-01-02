@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using TheKittySaver.AdoptionSystem.Calculators.Abstractions;
 using TheKittySaver.AdoptionSystem.Calculators.Factories;
 
 namespace TheKittySaver.AdoptionSystem.Calculators;

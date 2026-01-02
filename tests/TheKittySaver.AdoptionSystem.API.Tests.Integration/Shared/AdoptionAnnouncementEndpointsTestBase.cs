@@ -1,4 +1,3 @@
-using System.Text.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared.Factories;

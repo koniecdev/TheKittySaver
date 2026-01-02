@@ -1,5 +1,4 @@
 using Microsoft.Extensions.Options;
-using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Services;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate;
 using TheKittySaver.AdoptionSystem.Primitives.Guards;

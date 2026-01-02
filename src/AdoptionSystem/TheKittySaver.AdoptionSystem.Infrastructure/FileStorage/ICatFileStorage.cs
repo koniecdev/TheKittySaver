@@ -1,9 +1,9 @@
-using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
+﻿using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate;
 
-namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Services;
+namespace TheKittySaver.AdoptionSystem.Infrastructure.FileStorage;
 
-public interface ICatFileStorage //todo: I dont think it is domain
+public interface ICatFileStorage
 {
     Task<Result> SaveThumbnailAsync(
         CatId catId,
@@ -38,11 +38,4 @@ public interface ICatFileStorage //todo: I dont think it is domain
         CatId catId,
         CatGalleryItemId galleryItemId,
         CancellationToken cancellationToken);
-}
-
-public sealed class CatFileData
-{
-    public required Stream FileStream { get; init; }
-    public required string ContentType { get; init; }
-    public required string FileName { get; init; }
 }

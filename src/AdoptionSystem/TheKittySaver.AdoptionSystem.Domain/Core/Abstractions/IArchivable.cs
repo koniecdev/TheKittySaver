@@ -1,5 +1,4 @@
-﻿using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
-using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.Timestamps;
+﻿using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.Timestamps;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Core.Abstractions;
 

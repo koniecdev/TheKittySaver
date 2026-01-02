@@ -30,7 +30,7 @@ public sealed record CatReadModel(
     bool NeuteringStatusIsNeutered,
     FivStatus InfectiousDiseaseStatusFivStatus,
     FelvStatus InfectiousDiseaseStatusFelvStatus,
-    DateOnly InfectiousDiseaseStatusLastTestedAt,
+    DateOnly? InfectiousDiseaseStatusLastTestedAt,
     CatStatusType Status,
     DateTimeOffset CreatedAt,
     DateTimeOffset? ArchivedAt) : IReadOnlyEntity<CatId>

@@ -33,10 +33,9 @@ internal sealed class GetPersons : IEndpoint
 
             int totalCount = await sortedQuery.CountAsync(cancellationToken);
 
-            if (!string.IsNullOrWhiteSpace(query.Sort))
-            {
-                sortedQuery = sortedQuery.ApplyMultipleSorting(query.Sort, GetSortProperty);
-            }
+            sortedQuery = !string.IsNullOrWhiteSpace(query.Sort) 
+                ? sortedQuery.ApplyMultipleSorting(query.Sort, GetSortProperty) 
+                : sortedQuery.OrderBy(p => p.Username);
 
             IReadOnlyList<PersonListItemResponse> items = await sortedQuery
                 .ApplyPagination(page: query.Page, pageSize: query.PageSize)

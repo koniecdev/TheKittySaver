@@ -1,7 +1,4 @@
-using System.Net.Http.Json;
-using System.Text.Json;
 using Bogus;
-using TheKittySaver.AdoptionSystem.API.Tests.Integration.Extensions;
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.PersonAggregate.Requests;
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.PersonAggregate.Responses;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;

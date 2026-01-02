@@ -1,6 +1,5 @@
 // Tests/Persons/GetPersonsEndpointsTests.cs
 
-using Shouldly;
 using TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared;
 using TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared.Factories;
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.PersonAggregate.Responses;
