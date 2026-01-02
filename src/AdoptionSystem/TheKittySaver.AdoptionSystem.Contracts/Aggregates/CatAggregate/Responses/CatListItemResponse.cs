@@ -28,7 +28,7 @@ public sealed record CatListItemResponse(
     bool IsNeutered,
     FivStatus InfectiousDiseaseStatusFivStatus,
     FelvStatus InfectiousDiseaseStatusFelvStatus,
-    DateOnly InfectiousDiseaseStatusLastTestedAt,
+    DateOnly? InfectiousDiseaseStatusLastTestedAt,
     IReadOnlyCollection<CatGalleryItemEmbeddedDto> GalleryItems) : ILinksResponse
 {
     public IReadOnlyCollection<LinkDto> Links { get; set; } = [];

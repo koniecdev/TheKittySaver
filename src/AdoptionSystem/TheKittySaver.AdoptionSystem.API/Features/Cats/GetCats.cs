@@ -46,10 +46,9 @@ internal sealed class GetCats : IEndpoint
 
             int totalCount = await sortedQuery.CountAsync(cancellationToken);
 
-            if (!string.IsNullOrWhiteSpace(query.Sort))
-            {
-                sortedQuery = sortedQuery.ApplyMultipleSorting(query.Sort, GetSortProperty);
-            }
+            sortedQuery = !string.IsNullOrWhiteSpace(query.Sort) 
+                ? sortedQuery.ApplyMultipleSorting(query.Sort, GetSortProperty) 
+                : sortedQuery.OrderBy(c => c.Name);
 
             IReadOnlyList<CatListItemResponse> items = await sortedQuery
                 .ApplyPagination(page: query.Page, pageSize: query.PageSize)
@@ -121,7 +120,7 @@ internal sealed class GetCats : IEndpoint
                 Sort: paginationAndMultipleSorting.Sort);
 
             PaginationResponse<CatListItemResponse> response = await sender.Send(query, cancellationToken);
-
+ 
             return Results.Ok(response);
         });
     }
