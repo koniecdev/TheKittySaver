@@ -1,4 +1,3 @@
-using Microsoft.Extensions.DependencyInjection;
 using TheKittySaver.AdoptionSystem.API.ExceptionHandlers;
 using TheKittySaver.AdoptionSystem.API.Pipeline;
 

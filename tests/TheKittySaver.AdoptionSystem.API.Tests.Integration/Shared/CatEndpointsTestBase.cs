@@ -1,8 +1,5 @@
-using System.Text.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared.Factories;
-using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
 using JsonOptions = Microsoft.AspNetCore.Http.Json.JsonOptions;
 
 namespace TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared;

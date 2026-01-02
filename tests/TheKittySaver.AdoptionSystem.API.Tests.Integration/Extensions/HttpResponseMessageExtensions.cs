@@ -1,10 +1,5 @@
-﻿using System.Net;
-using System.Net.Http.Json;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using Microsoft.AspNetCore.Http;
+﻿using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
-using Shouldly;
 
 namespace TheKittySaver.AdoptionSystem.API.Tests.Integration.Extensions;
 

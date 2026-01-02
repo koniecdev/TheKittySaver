@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Entities;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.ValueObjects;
 using TheKittySaver.AdoptionSystem.Domain.EntityFramework.Consts;
-using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.Timestamps;
 
 namespace TheKittySaver.AdoptionSystem.Domain.EntityFramework.Aggregates.CatAggregate;
 

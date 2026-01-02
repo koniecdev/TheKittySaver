@@ -1,9 +1,5 @@
-using System.Net;
-using System.Net.Http.Json;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Shouldly;
-using TheKittySaver.AdoptionSystem.API.Tests.Integration.Extensions;
 using TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared;
 using TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared.Factories;
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.PersonAggregate.Requests;

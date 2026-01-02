@@ -1,6 +1,5 @@
 ﻿// Shared/PersonEndpointsTestBase.cs
 
-using System.Text.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using JsonOptions = Microsoft.AspNetCore.Http.Json.JsonOptions;

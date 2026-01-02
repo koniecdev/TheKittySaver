@@ -1,6 +1,4 @@
-﻿using System.Text.Json;
-
-namespace TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared;
+﻿namespace TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared;
 
 public sealed class TestApiClient(HttpClient httpClient, JsonSerializerOptions jsonSerializerOptions)
 {

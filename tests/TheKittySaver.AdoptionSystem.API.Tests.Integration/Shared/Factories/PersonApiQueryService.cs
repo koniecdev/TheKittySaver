@@ -1,6 +1,4 @@
-﻿using System.Text.Json;
-using TheKittySaver.AdoptionSystem.API.Tests.Integration.Extensions;
-using TheKittySaver.AdoptionSystem.Contracts.Aggregates.PersonAggregate.Responses;
+﻿using TheKittySaver.AdoptionSystem.Contracts.Aggregates.PersonAggregate.Responses;
 using TheKittySaver.AdoptionSystem.Contracts.Common;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
 

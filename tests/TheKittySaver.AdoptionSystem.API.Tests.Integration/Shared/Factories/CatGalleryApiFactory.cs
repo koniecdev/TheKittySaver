@@ -1,6 +1,4 @@
 using System.Net.Http.Headers;
-using System.Text.Json;
-using TheKittySaver.AdoptionSystem.API.Tests.Integration.Extensions;
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.CatAggregate.Gallery.Responses;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate;
 
