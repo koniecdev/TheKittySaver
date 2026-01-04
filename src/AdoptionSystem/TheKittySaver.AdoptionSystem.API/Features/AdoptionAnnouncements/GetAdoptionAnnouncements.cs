@@ -11,6 +11,7 @@ using TheKittySaver.AdoptionSystem.Contracts.Common;
 using TheKittySaver.AdoptionSystem.Domain.Core.Extensions;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.OptionMonad;
 using TheKittySaver.AdoptionSystem.Persistence.DbContexts.ReadDbContexts;
+using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
 using TheKittySaver.AdoptionSystem.ReadModels.Aggregates.AdoptionAnnouncementAggregate;
 
@@ -69,8 +70,8 @@ internal sealed class GetAdoptionAnnouncements : IEndpoint
                     aa.Status,
                     Cats = aa.Cats.Select(cat => new
                     {
+                        cat.Id,
                         cat.Name,
-                        ThumbnailId = cat.Thumbnail!.Id,
                         cat.AdoptionHistoryReturnCount,
                         cat.Age,
                         cat.Color,
@@ -104,6 +105,8 @@ internal sealed class GetAdoptionAnnouncements : IEndpoint
                     .DefaultIfEmpty()
                     .Max();
 
+                IReadOnlyList<CatId> catIds = rawAa.Cats.Select(c => c.Id).ToList();
+
                 return new AdoptionAnnouncementListItemResponse(
                     Id: rawAa.Id,
                     PersonId: rawAa.PersonId,
@@ -118,7 +121,8 @@ internal sealed class GetAdoptionAnnouncements : IEndpoint
                     AddressLine: rawAa.AddressLine,
                     Email: rawAa.Email,
                     PhoneNumber: rawAa.PhoneNumber,
-                    Status: rawAa.Status);
+                    Status: rawAa.Status,
+                    CatIds: catIds);
             });
 
             if (string.IsNullOrWhiteSpace(query.Sort))

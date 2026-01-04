@@ -57,29 +57,8 @@ internal sealed class GetCats : IEndpoint
                     PersonId: c.PersonId,
                     AdoptionAnnouncementId: c.AdoptionAnnouncementId,
                     Name: c.Name,
-                    Description: c.Description,
-                    Age: c.Age,
-                    Gender: c.Gender,
-                    Color: c.Color,
-                    WeightInGrams: c.WeightValueInGrams,
-                    HealthStatus: c.HealthStatus,
-                    SpecialNeedsStatusHasSpecialNeeds: c.SpecialNeedsStatusHasSpecialNeeds,
-                    SpecialNeedsStatusDescription: c.SpecialNeedsStatusDescription,
-                    SpecialNeedsStatusSeverityType: c.SpecialNeedsStatusSeverityType,
-                    Temperament: c.Temperament,
-                    AdoptionHistoryReturnCount: c.AdoptionHistoryReturnCount,
-                    AdoptionHistoryLastReturnDate: c.AdoptionHistoryLastReturnDate,
-                    AdoptionHistoryLastReturnReason: c.AdoptionHistoryLastReturnReason,
-                    IsNeutered: c.NeuteringStatusIsNeutered,
-                    InfectiousDiseaseStatusFivStatus: c.InfectiousDiseaseStatusFivStatus,
-                    InfectiousDiseaseStatusFelvStatus: c.InfectiousDiseaseStatusFelvStatus,
-                    InfectiousDiseaseStatusLastTestedAt: c.InfectiousDiseaseStatusLastTestedAt,
-                    GalleryItems: c.GalleryItems
-                        .OrderBy(g => g.DisplayOrder)
-                        .Select(g => new CatGalleryItemEmbeddedDto(
-                            Path: $"cats/{c.Id}/gallery/{g.Id}/file",
-                            DisplayOrder: g.DisplayOrder))
-                        .ToList()))
+                    FivStatus: c.InfectiousDiseaseStatusFivStatus,
+                    FelvStatus: c.InfectiousDiseaseStatusFelvStatus))
                 .ToListAsync(cancellationToken);
 
             PaginationResponse<CatListItemResponse> response = new()

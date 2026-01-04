@@ -1,6 +1,7 @@
 using TheKittySaver.AdoptionSystem.Contracts.Common;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.AdoptionAnnouncementAggregate;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.AdoptionAnnouncementAggregate.Enums;
+using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
 using TheKittySaver.AdoptionSystem.Primitives.Enums;
 
@@ -20,8 +21,8 @@ public sealed record AdoptionAnnouncementListItemResponse(
     string? AddressLine,
     string Email,
     string PhoneNumber,
-    AnnouncementStatusType Status
-    ) : ILinksResponse
+    AnnouncementStatusType Status,
+    IReadOnlyList<CatId> CatIds) : ILinksResponse
 {
     public IReadOnlyCollection<LinkDto> Links { get; set; } = [];
 }

@@ -48,8 +48,8 @@ public sealed class GetPersonsEndpointsTests(TheKittySaverApiFactory appFactory)
     public async Task GetPersons_ShouldReturnMultiplePersons_WhenMultiplePersonsExists()
     {
         //Arrange
-        _ = await PersonApiFactory.CreateRandomAsync(ApiClient, Faker);
-        _ = await PersonApiFactory.CreateRandomAsync(ApiClient, Faker);
+        _ = await PersonApiFactory.CreateRandomAndGetIdAsync(ApiClient, Faker);
+        _ = await PersonApiFactory.CreateRandomAndGetIdAsync(ApiClient, Faker);
 
         //Act
         PaginationResponse<PersonListItemResponse> response =

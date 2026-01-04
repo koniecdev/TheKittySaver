@@ -12,24 +12,8 @@ public sealed record CatListItemResponse(
     PersonId PersonId,
     AdoptionAnnouncementId? AdoptionAnnouncementId,
     string Name,
-    string Description,
-    int Age,
-    CatGenderType Gender,
-    ColorType Color,
-    int WeightInGrams,
-    HealthStatusType HealthStatus,
-    bool SpecialNeedsStatusHasSpecialNeeds,
-    string? SpecialNeedsStatusDescription,
-    SpecialNeedsSeverityType SpecialNeedsStatusSeverityType,
-    TemperamentType Temperament,
-    int AdoptionHistoryReturnCount,
-    DateTimeOffset? AdoptionHistoryLastReturnDate,
-    string? AdoptionHistoryLastReturnReason,
-    bool IsNeutered,
-    FivStatus InfectiousDiseaseStatusFivStatus,
-    FelvStatus InfectiousDiseaseStatusFelvStatus,
-    DateOnly? InfectiousDiseaseStatusLastTestedAt,
-    IReadOnlyCollection<CatGalleryItemEmbeddedDto> GalleryItems) : ILinksResponse
+    FivStatus FivStatus,
+    FelvStatus FelvStatus) : ILinksResponse
 {
     public IReadOnlyCollection<LinkDto> Links { get; set; } = [];
 }
