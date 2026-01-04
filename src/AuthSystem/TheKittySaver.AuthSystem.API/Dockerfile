@@ -20,4 +20,7 @@ RUN dotnet publish "./TheKittySaver.AuthSystem.API.csproj" -c $BUILD_CONFIGURATI
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+
+USER app
+
 ENTRYPOINT ["dotnet", "TheKittySaver.AuthSystem.API.dll"]
