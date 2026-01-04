@@ -1,0 +1,37 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path=".github/workflows/pr-verify.yml" />
+    <File Path=".gitignore" />
+    <File Path="compose.yaml" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+  </Folder>
+  <Folder Name="/src/" />
+  <Folder Name="/src/AdoptionSystem/">
+    <Project Path="src/AdoptionSystem/TheKittySaver.AdoptionSystem.API/TheKittySaver.AdoptionSystem.API.csproj" />
+    <Project Path="src/AdoptionSystem/TheKittySaver.AdoptionSystem.Infrastructure/TheKittySaver.AdoptionSystem.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/src/AdoptionSystem/Core/">
+    <Project Path="src/AdoptionSystem/TheKittySaver.AdoptionSystem.Calculators/TheKittySaver.AdoptionSystem.Calculators.csproj" />
+    <Project Path="src/AdoptionSystem/TheKittySaver.AdoptionSystem.Contracts/TheKittySaver.AdoptionSystem.Contracts.csproj" />
+    <Project Path="src/AdoptionSystem/TheKittySaver.AdoptionSystem.Domain/TheKittySaver.AdoptionSystem.Domain.csproj" />
+    <Project Path="src/AdoptionSystem/TheKittySaver.AdoptionSystem.Primitives/TheKittySaver.AdoptionSystem.Primitives.csproj" />
+    <Project Path="src/AdoptionSystem/TheKittySaver.AdoptionSystem.ReadModels/TheKittySaver.AdoptionSystem.ReadModels.csproj" />
+  </Folder>
+  <Folder Name="/src/AdoptionSystem/EntityFrameworkRelated/">
+    <Project Path="src/AdoptionSystem/TheKittySaver.AdoptionSystem.Domain.EntityFramework/TheKittySaver.AdoptionSystem.Domain.EntityFramework.csproj" />
+    <Project Path="src/AdoptionSystem/TheKittySaver.AdoptionSystem.Persistence/TheKittySaver.AdoptionSystem.Persistence.csproj" />
+    <Project Path="src/AdoptionSystem/TheKittySaver.AdoptionSystem.ReadModels.EntityFramework/TheKittySaver.AdoptionSystem.ReadModels.EntityFramework.csproj" />
+  </Folder>
+  <Folder Name="/src/AuthSystem/">
+    <Project Path="src/AuthSystem/TheKittySaver.AuthSystem.API/TheKittySaver.AuthSystem.API.csproj" />
+  </Folder>
+  <Folder Name="/src/Frontend/">
+    <Project Path="src/Frontend/TheKittySaver.Frontend/TheKittySaver.Frontend.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/TheKittySaver.AdoptionSystem.API.Tests.Integration/TheKittySaver.AdoptionSystem.API.Tests.Integration.csproj" />
+    <Project Path="tests/TheKittySaver.AdoptionSystem.Domain.Tests.Unit/TheKittySaver.AdoptionSystem.Domain.Tests.Unit.csproj" />
+  </Folder>
+</Solution>
