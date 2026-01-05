@@ -1,3 +1,5 @@
+using SkiaSharp;
+
 namespace TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared.Factories;
 
 internal static class ImageContentFactory
@@ -18,40 +20,16 @@ internal static class ImageContentFactory
         ];
     }
 
-    public static byte[] CreatePngWithDimensions(int width, int height)
+    public static byte[] CreateValidPng(int width, int height)
     {
-        byte[] widthBytes =
-        [
-            (byte)((width >> 24) & 0xFF),
-            (byte)((width >> 16) & 0xFF),
-            (byte)((width >> 8) & 0xFF),
-            (byte)(width & 0xFF)
-        ];
+        using SKBitmap bitmap = new(width, height, SKColorType.Rgba8888, SKAlphaType.Premul);
+        using SKCanvas canvas = new(bitmap);
+        canvas.Clear(SKColors.White);
 
-        byte[] heightBytes =
-        [
-            (byte)((height >> 24) & 0xFF),
-            (byte)((height >> 16) & 0xFF),
-            (byte)((height >> 8) & 0xFF),
-            (byte)(height & 0xFF)
-        ];
+        using SKImage image = SKImage.FromBitmap(bitmap);
+        using SKData data = image.Encode(SKEncodedImageFormat.Png, 100);
 
-        byte[] header =
-        [
-            0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, // PNG signature
-            0x00, 0x00, 0x00, 0x0D, 0x49, 0x48, 0x44, 0x52, // IHDR chunk length and type
-            widthBytes[0], widthBytes[1], widthBytes[2], widthBytes[3],
-            heightBytes[0], heightBytes[1], heightBytes[2], heightBytes[3],
-            0x08, 0x02, 0x00, 0x00, 0x00,
-            0x00, 0x00, 0x00, 0x00, // CRC placeholder (invalid but sufficient for dimension reading)
-            0x00, 0x00, 0x00, 0x0C, 0x49, 0x44, 0x41, 0x54,
-            0x08, 0xD7, 0x63, 0xF8, 0xFF, 0xFF, 0x3F,
-            0x00, 0x05, 0xFE, 0x02, 0xFE, 0xDC, 0xCC, 0x59,
-            0xE7, 0x00, 0x00, 0x00, 0x00, 0x49, 0x45, 0x4E,
-            0x44, 0xAE, 0x42, 0x60, 0x82
-        ];
-
-        return header;
+        return data.ToArray();
     }
 
     public static byte[] CreateMinimalJpeg()

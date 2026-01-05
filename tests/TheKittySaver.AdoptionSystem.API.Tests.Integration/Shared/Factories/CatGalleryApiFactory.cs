@@ -24,9 +24,9 @@ internal static class CatGalleryApiFactory
                ?? throw new JsonException("Failed to deserialize CatGalleryItemResponse");
     }
 
-    public static async Task<CatThumbnailResponse> UpsertThumbnailAsync(TestApiClient apiClient, CatId catId)
+    public static async Task<CatThumbnailResponse> UpsertRandomThumbnailAsync(TestApiClient apiClient, CatId catId)
     {
-        byte[] imageBytes = ImageContentFactory.CreateMinimalPng();
+        byte[] imageBytes = ImageContentFactory.CreateValidPng(100, 100);
 
         using MultipartFormDataContent content = [];
         using ByteArrayContent fileContent = new(imageBytes);
