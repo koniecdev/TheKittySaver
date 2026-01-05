@@ -8,9 +8,12 @@ using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
 
 namespace TheKittySaver.AdoptionSystem.API.Tests.Integration.Tests.Cats.Thumbnails;
 
-public sealed class UpsertCatThumbnailTests(TheKittySaverApiFactory appFactory)
-    : CatEndpointsTestBase(appFactory)
+public sealed class UpsertCatThumbnailTests : EndpointsTestBase
 {
+    public UpsertCatThumbnailTests(TheKittySaverApiFactory appFactory) : base(appFactory)
+    {
+    }
+
     [Fact]
     public async Task UpsertCat_ShouldBeSuccessful_WhenValidDataIsProvided()
     {

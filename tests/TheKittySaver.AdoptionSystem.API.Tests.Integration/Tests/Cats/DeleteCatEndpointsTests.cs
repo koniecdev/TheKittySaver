@@ -7,9 +7,12 @@ using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
 
 namespace TheKittySaver.AdoptionSystem.API.Tests.Integration.Tests.Cats;
 
-public sealed class DeleteCatEndpointsTests(TheKittySaverApiFactory appFactory)
-    : CatEndpointsTestBase(appFactory)
+public sealed class DeleteCatEndpointsTests : EndpointsTestBase
 {
+    public DeleteCatEndpointsTests(TheKittySaverApiFactory appFactory) : base(appFactory)
+    {
+    }
+
     [Fact]
     public async Task DeleteCat_ShouldReturnNoContent_WhenExistingCatIdIsProvided()
     {

@@ -7,8 +7,12 @@ using TheKittySaver.AdoptionSystem.Contracts.Common;
 
 namespace TheKittySaver.AdoptionSystem.API.Tests.Integration.Tests.Persons;
 
-public sealed class GetPersonsEndpointsTests(TheKittySaverApiFactory appFactory) : PersonEndpointsTestBase(appFactory)
+public sealed class GetPersonsEndpointsTests : EndpointsTestBase
 {
+    public GetPersonsEndpointsTests(TheKittySaverApiFactory appFactory) : base(appFactory)
+    {
+    }
+
     [Fact]
     public async Task GetPersons_ShouldReturnEmptyItemList_WhenNoPersonsExists()
     {

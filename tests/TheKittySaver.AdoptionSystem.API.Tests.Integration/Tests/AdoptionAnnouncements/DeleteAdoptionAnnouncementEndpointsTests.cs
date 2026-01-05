@@ -10,7 +10,7 @@
 // namespace TheKittySaver.AdoptionSystem.API.Tests.Integration.Tests.AdoptionAnnouncements;
 //
 // public sealed class DeleteAdoptionAnnouncementEndpointsTests(TheKittySaverApiFactory appFactory)
-//     : AdoptionAnnouncementEndpointsTestBase(appFactory)
+//     : EndpointsTestBase(appFactory)
 // {
 //     [Fact]
 //     public async Task DeleteAdoptionAnnouncement_ShouldReturnNoContent_WhenExistingAnnouncementIdIsProvided()

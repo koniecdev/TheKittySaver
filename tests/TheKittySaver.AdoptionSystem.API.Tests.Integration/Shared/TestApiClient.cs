@@ -1,7 +1,13 @@
 ﻿namespace TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared;
 
-public sealed class TestApiClient(HttpClient httpClient, JsonSerializerOptions jsonSerializerOptions)
+public sealed class TestApiClient
 {
-    public HttpClient Http { get; } = httpClient;
-    public JsonSerializerOptions JsonOptions { get; } = jsonSerializerOptions;
+    public TestApiClient(HttpClient httpClient, JsonSerializerOptions jsonSerializerOptions)
+    {
+        Http = httpClient;
+        JsonOptions = jsonSerializerOptions;
+    }
+
+    public HttpClient Http { get; }
+    public JsonSerializerOptions JsonOptions { get; }
 }

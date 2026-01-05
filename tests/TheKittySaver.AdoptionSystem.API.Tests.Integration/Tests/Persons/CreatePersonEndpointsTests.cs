@@ -8,9 +8,12 @@ using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
 
 namespace TheKittySaver.AdoptionSystem.API.Tests.Integration.Tests.Persons;
 
-public sealed class CreatePersonEndpointsTests(TheKittySaverApiFactory appFactory)
-    : PersonEndpointsTestBase(appFactory)
+public sealed class CreatePersonEndpointsTests : EndpointsTestBase
 {
+    public CreatePersonEndpointsTests(TheKittySaverApiFactory appFactory) : base(appFactory)
+    {
+    }
+
     [Fact]
     public async Task CreatePerson_ShouldReturnPersonId_WhenValidDataIsProvided()
     {

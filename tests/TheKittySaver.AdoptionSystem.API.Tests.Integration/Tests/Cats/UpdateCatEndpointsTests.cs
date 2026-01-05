@@ -9,9 +9,12 @@ using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
 
 namespace TheKittySaver.AdoptionSystem.API.Tests.Integration.Tests.Cats;
 
-public sealed class UpdateCatEndpointsTests(TheKittySaverApiFactory appFactory)
-    : CatEndpointsTestBase(appFactory)
+public sealed class UpdateCatEndpointsTests : EndpointsTestBase
 {
+    public UpdateCatEndpointsTests(TheKittySaverApiFactory appFactory) : base(appFactory)
+    {
+    }
+
     [Fact]
     public async Task UpdateCat_ShouldMapEveryRequestProperty_WhenValidDataIsProvided()
     {

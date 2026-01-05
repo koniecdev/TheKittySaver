@@ -8,7 +8,7 @@
 // namespace TheKittySaver.AdoptionSystem.API.Tests.Integration.Tests.AdoptionAnnouncements;
 //
 // public sealed class GetAdoptionAnnouncementsEndpointsTests(TheKittySaverApiFactory appFactory)
-//     : AdoptionAnnouncementEndpointsTestBase(appFactory)
+//     : EndpointsTestBase(appFactory)
 // {
 //     [Fact]
 //     public async Task GetAdoptionAnnouncements_ShouldReturnEmptyItemList_WhenNoAnnouncementsExist()

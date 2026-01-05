@@ -11,7 +11,7 @@
 // namespace TheKittySaver.AdoptionSystem.API.Tests.Integration.Tests.AdoptionAnnouncements;
 //
 // public sealed class GetAdoptionAnnouncementEndpointsTests(TheKittySaverApiFactory appFactory)
-//     : AdoptionAnnouncementEndpointsTestBase(appFactory)
+//     : EndpointsTestBase(appFactory)
 // {
 //     [Fact]
 //     public async Task GetAdoptionAnnouncement_ShouldReturnNotFound_WhenRandomIdIsProvided()

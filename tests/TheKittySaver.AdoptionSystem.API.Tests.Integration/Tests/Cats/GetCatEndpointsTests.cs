@@ -9,9 +9,12 @@ using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
 
 namespace TheKittySaver.AdoptionSystem.API.Tests.Integration.Tests.Cats;
 
-public sealed class GetCatEndpointsTests(TheKittySaverApiFactory appFactory)
-    : CatEndpointsTestBase(appFactory)
+public sealed class GetCatEndpointsTests : EndpointsTestBase
 {
+    public GetCatEndpointsTests(TheKittySaverApiFactory appFactory) : base(appFactory)
+    {
+    }
+
     [Fact]
     public async Task GetCat_ShouldReturnNotFound_WhenRandomIdIsProvided()
     {

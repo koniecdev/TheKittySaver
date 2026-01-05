@@ -7,9 +7,12 @@ using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
 
 namespace TheKittySaver.AdoptionSystem.API.Tests.Integration.Tests.Cats;
 
-public sealed class CreateCatEndpointsTests(TheKittySaverApiFactory appFactory)
-    : CatEndpointsTestBase(appFactory)
+public sealed class CreateCatEndpointsTests : EndpointsTestBase
 {
+    public CreateCatEndpointsTests(TheKittySaverApiFactory appFactory) : base(appFactory)
+    {
+    }
+
     [Fact]
     public async Task CreateCat_ShouldBeSuccessful_WhenValidDataIsProvided()
     {

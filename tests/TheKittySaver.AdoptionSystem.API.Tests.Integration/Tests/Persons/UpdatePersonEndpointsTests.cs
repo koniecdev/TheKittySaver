@@ -7,9 +7,12 @@ using TheKittySaver.AdoptionSystem.Contracts.Aggregates.PersonAggregate.Response
 
 namespace TheKittySaver.AdoptionSystem.API.Tests.Integration.Tests.Persons;
 
-public sealed class UpdatePersonEndpointsTests(TheKittySaverApiFactory appFactory)
-    : PersonEndpointsTestBase(appFactory)
+public sealed class UpdatePersonEndpointsTests : EndpointsTestBase
 {
+    public UpdatePersonEndpointsTests(TheKittySaverApiFactory appFactory) : base(appFactory)
+    {
+    }
+
     [Fact]
     public async Task UpdatePerson_ShouldMapEveryRequestProperty_WhenValidDataIsProvided()
     {

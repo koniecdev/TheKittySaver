@@ -12,7 +12,7 @@
 // namespace TheKittySaver.AdoptionSystem.API.Tests.Integration.Tests.AdoptionAnnouncements;
 //
 // public sealed class UpdateAdoptionAnnouncementEndpointsTests(TheKittySaverApiFactory appFactory)
-//     : AdoptionAnnouncementEndpointsTestBase(appFactory)
+//     : EndpointsTestBase(appFactory)
 // {
 //     [Fact]
 //     public async Task UpdateAdoptionAnnouncement_ShouldMapEveryRequestProperty_WhenValidDataIsProvided()
