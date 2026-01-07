@@ -29,6 +29,12 @@ public static partial class DomainErrors
                 "Cannot delete announcement with claimed cats. Please unassign cats that are not claimed first - this will make the announcement claimed as well.",
                 nameof(CannotDeleteAnnouncementWithClaimedCats));
 
+        public static Error NoCatsProvided
+            => InvalidOperation(
+                nameof(AdoptionAnnouncementEntity),
+                "At least one cat must be provided to create an adoption announcement.",
+                nameof(NoCatsProvided));
+
         public static class StatusProperty
         {
             public static Error UnavailableForAssigning

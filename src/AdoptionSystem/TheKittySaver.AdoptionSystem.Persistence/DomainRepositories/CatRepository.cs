@@ -32,6 +32,23 @@ internal sealed class CatRepository : GenericRepository<Cat, CatId>, ICatReposit
 
         return Maybe<Cat>.From(result);
     }
+    
+    public async Task<IReadOnlyCollection<Cat>> GetByIdsAsync(
+        IEnumerable<CatId> ids,
+        CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(ids);
+        List<CatId> catIds = ids.ToList();
+
+        List<Cat> results = await DbContext.Cats
+            .Where(x => catIds.Contains(x.Id))
+            .Include(cat => cat.Thumbnail)
+            .Include(cat => cat.GalleryItems)
+            .Include(cat => cat.Vaccinations)
+            .ToListAsync(cancellationToken);
+
+        return results;
+    }
 
     public async Task<IReadOnlyCollection<Cat>> GetCatsByAdoptionAnnouncementIdAsync(
         AdoptionAnnouncementId adoptionAnnouncementId,

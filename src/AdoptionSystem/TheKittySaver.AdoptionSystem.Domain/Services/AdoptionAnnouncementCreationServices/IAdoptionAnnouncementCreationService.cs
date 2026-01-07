@@ -11,7 +11,7 @@ namespace TheKittySaver.AdoptionSystem.Domain.Services.AdoptionAnnouncementCreat
 public interface IAdoptionAnnouncementCreationService
 {
     Result<AdoptionAnnouncement> Create(
-        Cat catToAssign,
+        IReadOnlyCollection<Cat> catsToAssign,
         AdoptionAnnouncementAddress address,
         Email email,
         PhoneNumber phoneNumber,

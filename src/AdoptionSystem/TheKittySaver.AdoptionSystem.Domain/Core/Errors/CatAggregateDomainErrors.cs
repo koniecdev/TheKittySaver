@@ -17,6 +17,12 @@ public static partial class DomainErrors
         public static Error NotFound(CatId id)
             => HasNotBeenFound(nameof(CatEntity), id.Value);
 
+        public static Error SomeNotFound(IEnumerable<CatId> notFoundIds)
+            => new(
+                $"{nameof(CatEntity)}.SomeNotFound",
+                $"The following cats have not been found: {string.Join(", ", notFoundIds.Select(id => id.Value))}.",
+                TypeOfError.NotFound);
+
         public static Error IsArchived(CatId id)
             => InvalidOperation(
                 nameof(CatEntity),

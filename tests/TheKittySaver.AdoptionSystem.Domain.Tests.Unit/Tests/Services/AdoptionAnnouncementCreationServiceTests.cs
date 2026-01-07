@@ -42,7 +42,7 @@ public sealed class AdoptionAnnouncementCreationServiceTests
 
         //Act
         Result<AdoptionAnnouncement> result = _service.Create(
-            cat,
+            [cat],
             address,
             email,
             phoneNumber,
@@ -73,7 +73,7 @@ public sealed class AdoptionAnnouncementCreationServiceTests
 
         //Act
         Result<AdoptionAnnouncement> result = _service.Create(
-            cat,
+            [cat],
             address,
             email,
             phoneNumber,
@@ -98,7 +98,7 @@ public sealed class AdoptionAnnouncementCreationServiceTests
 
         //Act
         Result<AdoptionAnnouncement> result = _service.Create(
-            cat,
+            [cat],
             address,
             email,
             phoneNumber,
@@ -124,7 +124,7 @@ public sealed class AdoptionAnnouncementCreationServiceTests
 
         //Act
         Result<AdoptionAnnouncement> result = _service.Create(
-            cat,
+            [cat],
             address,
             email,
             phoneNumber,
@@ -154,7 +154,7 @@ public sealed class AdoptionAnnouncementCreationServiceTests
 
         //Act
         Result<AdoptionAnnouncement> result = _service.Create(
-            cat,
+            [cat],
             address,
             email,
             phoneNumber,
@@ -179,7 +179,7 @@ public sealed class AdoptionAnnouncementCreationServiceTests
 
         //Act
         Result<AdoptionAnnouncement> result = _service.Create(
-            cat,
+            [cat],
             address,
             email,
             phoneNumber,
@@ -204,7 +204,7 @@ public sealed class AdoptionAnnouncementCreationServiceTests
 
         //Act
         Result<AdoptionAnnouncement> result = _service.Create(
-            cat,
+            [cat],
             address,
             email,
             phoneNumber,
@@ -230,7 +230,7 @@ public sealed class AdoptionAnnouncementCreationServiceTests
 
         //Act
         Result<AdoptionAnnouncement> result = _service.Create(
-            cat,
+            [cat],
             address,
             email,
             phoneNumber,
@@ -255,7 +255,7 @@ public sealed class AdoptionAnnouncementCreationServiceTests
 
         //Act
         Result<AdoptionAnnouncement> result = _service.Create(
-            cat,
+            [cat],
             address,
             email,
             phoneNumber,

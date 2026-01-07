@@ -45,6 +45,19 @@ public static class Ensure
             throw new ArgumentException($"{argumentName} cannot be empty.", argumentName);
         }
     }
+    
+    /// <summary>
+    /// Ensures that the specified strongly-typed ID value is not empty.
+    /// </summary>
+    public static void NotEmpty(
+        Guid id,
+        [CallerArgumentExpression(nameof(id))] string argumentName = "")
+    {
+        if (id == Guid.Empty)
+        {
+            throw new ArgumentException($"{argumentName} cannot be empty.", argumentName);
+        }
+    }
 
     /// <summary>
     /// Ensures that the specified <see cref="DateTimeOffset"/> value is not the default value.

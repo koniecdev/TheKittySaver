@@ -24,6 +24,7 @@ internal static class CatGalleryApiFactory
                ?? throw new JsonException("Failed to deserialize CatGalleryItemResponse");
     }
 
+    //todo: CatId is not for requests
     public static async Task<CatThumbnailResponse> UpsertRandomThumbnailAsync(TestApiClient apiClient, CatId catId)
     {
         byte[] imageBytes = ImageContentFactory.CreateValidPng(100, 100);

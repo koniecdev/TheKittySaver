@@ -4,7 +4,7 @@ using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
 namespace TheKittySaver.AdoptionSystem.Contracts.Aggregates.CatAggregate.Requests;
 
 public sealed record CreateCatRequest(
-    PersonId PersonId,
+    Guid PersonId,
     string Name,
     string Description,
     int Age,

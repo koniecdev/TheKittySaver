@@ -30,6 +30,7 @@ internal sealed class GetAdoptionAnnouncement : IEndpoint
                 .Select(aa => new AdoptionAnnouncementDetailsResponse(
                     Id: aa.Id,
                     PersonId: aa.PersonId,
+                    Title: string.Join(", ", aa.Cats.OrderBy(x=>x.Name).Select(c => c.Name)),
                     Username: aa.Person.Username,
                     Description: aa.Description,
                     AddressCountryCode: aa.AddressCountryCode,

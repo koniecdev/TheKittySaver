@@ -9,6 +9,10 @@ namespace TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Repositori
 
 public interface ICatRepository : IRepository<Cat, CatId>
 {
+    Task<IReadOnlyCollection<Cat>> GetByIdsAsync(
+        IEnumerable<CatId> ids,
+        CancellationToken cancellationToken);
+    
     public Task<IReadOnlyCollection<Cat>> GetCatsByAdoptionAnnouncementIdAsync(
         AdoptionAnnouncementId adoptionAnnouncementId,
         CancellationToken cancellationToken);

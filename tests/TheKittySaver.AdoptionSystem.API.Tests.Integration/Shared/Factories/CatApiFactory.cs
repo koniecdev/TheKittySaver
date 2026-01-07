@@ -10,30 +10,37 @@ namespace TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared.Factories;
 
 internal static class CatApiFactory
 {
-    public static CreateCatRequest GenerateRandomCreateRequest(Faker faker, PersonId personId)
+    public static CreateCatRequest GenerateRandomCreateRequest(
+        Faker faker,
+        PersonId personId,
+        bool isHealthy = false)
     {
         bool hasSpecialNeeds = faker.PickRandom(true, false);
-        string? description = hasSpecialNeeds 
-            ? faker.Lorem.Sentence() 
+        string? description = hasSpecialNeeds
+            ? faker.Lorem.Sentence()
             : null;
-        SpecialNeedsSeverityType specialNeedsSeverityType = hasSpecialNeeds 
-            ? faker.PickRandomWithout(SpecialNeedsSeverityType.Unset) 
+        SpecialNeedsSeverityType specialNeedsSeverityType = hasSpecialNeeds
+            ? faker.PickRandomWithout(SpecialNeedsSeverityType.Unset)
             : SpecialNeedsSeverityType.None;
-        
+
         int returnCount = faker.Random.Int(0, 3);
         string? lastReturnReason = returnCount > 0 ? faker.Lorem.Sentence() : null;
         DateTimeOffset? lastReturnDate = returnCount > 0 ? faker.Date.PastOffset(returnCount) : null;
 
-        FivStatus infectiousDiseaseStatusFivStatus = faker.PickRandomWithout(FivStatus.Unset);
-        FelvStatus infectiousDiseaseStatusFelvStatus = faker.PickRandomWithout(FelvStatus.Unset);
-        DateOnly? infectiousDiseaseStatusLastTestedAt = 
+        FivStatus infectiousDiseaseStatusFivStatus = isHealthy
+            ? FivStatus.Negative
+            : faker.PickRandomWithout(FivStatus.Unset, FivStatus.NotTested);
+        FelvStatus infectiousDiseaseStatusFelvStatus = isHealthy
+            ? FelvStatus.Negative
+            : faker.PickRandomWithout(FelvStatus.Unset, FelvStatus.NotTested);
+        DateOnly? infectiousDiseaseStatusLastTestedAt =
             infectiousDiseaseStatusFelvStatus is not FelvStatus.NotTested
             || infectiousDiseaseStatusFivStatus is not FivStatus.NotTested
-            ? DateOnly.FromDateTime(faker.Date.PastOffset().DateTime) 
+            ? DateOnly.FromDateTime(faker.Date.PastOffset().DateTime)
             : null;
-        
+
         return new CreateCatRequest(
-            PersonId: personId,
+            PersonId: personId.Value,
             Name: faker.Name.FirstName(),
             Description: faker.Lorem.Sentence(),
             Age: faker.Random.Int(CatAge.MinimumAllowedValue, CatAge.MaximumAllowedValue),
@@ -54,28 +61,32 @@ internal static class CatApiFactory
             InfectiousDiseaseStatusLastTestedAt: infectiousDiseaseStatusLastTestedAt);
     }
 
-    public static UpdateCatRequest GenerateRandomUpdateRequest(Faker faker)
+    public static UpdateCatRequest GenerateRandomUpdateRequest(Faker faker, bool isHealthy = false)
     {
         bool hasSpecialNeeds = faker.PickRandom(true, false);
-        string? description = hasSpecialNeeds 
-            ? faker.Lorem.Sentence() 
+        string? description = hasSpecialNeeds
+            ? faker.Lorem.Sentence()
             : null;
-        SpecialNeedsSeverityType specialNeedsSeverityType = hasSpecialNeeds 
-            ? faker.PickRandomWithout(SpecialNeedsSeverityType.Unset) 
+        SpecialNeedsSeverityType specialNeedsSeverityType = hasSpecialNeeds
+            ? faker.PickRandomWithout(SpecialNeedsSeverityType.Unset)
             : SpecialNeedsSeverityType.None;
-        
+
         int returnCount = faker.Random.Int(0, 3);
         string? lastReturnReason = returnCount > 0 ? faker.Lorem.Sentence() : null;
         DateTimeOffset? lastReturnDate = returnCount > 0 ? faker.Date.PastOffset(returnCount) : null;
 
-        FivStatus infectiousDiseaseStatusFivStatus = faker.PickRandomWithout(FivStatus.Unset);
-        FelvStatus infectiousDiseaseStatusFelvStatus = faker.PickRandomWithout(FelvStatus.Unset);
-        DateOnly? infectiousDiseaseStatusLastTestedAt = 
+        FivStatus infectiousDiseaseStatusFivStatus = isHealthy
+            ? FivStatus.Negative
+            : faker.PickRandomWithout(FivStatus.Unset);
+        FelvStatus infectiousDiseaseStatusFelvStatus = isHealthy
+            ? FelvStatus.Negative
+            : faker.PickRandomWithout(FelvStatus.Unset);
+        DateOnly? infectiousDiseaseStatusLastTestedAt =
             infectiousDiseaseStatusFelvStatus is not FelvStatus.NotTested
             || infectiousDiseaseStatusFivStatus is not FivStatus.NotTested
-            ? DateOnly.FromDateTime(faker.Date.PastOffset().DateTime) 
+            ? DateOnly.FromDateTime(faker.Date.PastOffset().DateTime)
             : null;
-        
+
         return new UpdateCatRequest(
             Name: faker.Name.FirstName(),
             Description: faker.Lorem.Sentence(),
@@ -106,15 +117,23 @@ internal static class CatApiFactory
         return JsonSerializer.Deserialize<CatId>(stringResponse, apiClient.JsonOptions);
     }
     
-    public static async Task<CatId> CreateRandomAndGetIdAsync(TestApiClient apiClient, Faker faker, PersonId personId)
+    public static async Task<CatId> CreateRandomAndGetIdAsync(
+        TestApiClient apiClient,
+        Faker faker,
+        PersonId personId,
+        bool isHealthy = false)
     {
-        CreateCatRequest request = GenerateRandomCreateRequest(faker, personId);
+        CreateCatRequest request = GenerateRandomCreateRequest(faker, personId, isHealthy);
         return await CreateAndGetIdAsync(apiClient, request);
     }
 
-    public static async Task<CatDetailsResponse> CreateRandomAsync(TestApiClient apiClient, Faker faker, PersonId personId)
+    public static async Task<CatDetailsResponse> CreateRandomAsync(
+        TestApiClient apiClient,
+        Faker faker,
+        PersonId personId,
+        bool isHealthy = false)
     {
-        CatId catId = await CreateRandomAndGetIdAsync(apiClient, faker, personId);
+        CatId catId = await CreateRandomAndGetIdAsync(apiClient, faker, personId, isHealthy);
         return await CatApiQueryService.GetByIdAsync(apiClient, catId);
     }
 }

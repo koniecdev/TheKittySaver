@@ -9,6 +9,7 @@ namespace TheKittySaver.AdoptionSystem.Contracts.Aggregates.AdoptionAnnouncement
 public sealed record AdoptionAnnouncementDetailsResponse(
     AdoptionAnnouncementId Id,
     PersonId PersonId,
+    string Title,
     string Username,
     string? Description,
     CountryCode AddressCountryCode,

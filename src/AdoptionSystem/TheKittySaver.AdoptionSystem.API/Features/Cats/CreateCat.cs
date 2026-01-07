@@ -231,7 +231,7 @@ internal static class CreateCatMappings
             ArgumentNullException.ThrowIfNull(request);
 
             CreateCat.Command command = new(
-                PersonId: request.PersonId,
+                PersonId: PersonId.Create(request.PersonId),
                 Name: request.Name,
                 Description: request.Description,
                 Age: request.Age,

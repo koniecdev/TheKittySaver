@@ -1,11 +1,13 @@
 ﻿using TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAggregate.Entities;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.AdoptionAnnouncementAggregate.ValueObjects;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.Entities;
+using TheKittySaver.AdoptionSystem.Domain.Core.Errors;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.OptionMonad;
 using TheKittySaver.AdoptionSystem.Domain.Core.Monads.ResultMonad;
 using TheKittySaver.AdoptionSystem.Domain.Services.CatAdoptionAnnouncementServices;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects;
 using TheKittySaver.AdoptionSystem.Domain.SharedValueObjects.PhoneNumbers;
+using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
 
 namespace TheKittySaver.AdoptionSystem.Domain.Services.AdoptionAnnouncementCreationServices;
 
@@ -20,15 +22,22 @@ public sealed class AdoptionAnnouncementCreationService : IAdoptionAnnouncementC
     }
 
     public Result<AdoptionAnnouncement> Create(
-        Cat catToAssign,
+        IReadOnlyCollection<Cat> catsToAssign,
         AdoptionAnnouncementAddress address,
         Email email,
         PhoneNumber phoneNumber,
         Maybe<AdoptionAnnouncementDescription> description,
         DateTimeOffset dateTimeOfOperation)
     {
+        if (catsToAssign.Count == 0)
+        {
+            return Result.Failure<AdoptionAnnouncement>(DomainErrors.AdoptionAnnouncementEntity.NoCatsProvided);
+        }
+
+        PersonId personId = catsToAssign.First().PersonId;
+
         Result<AdoptionAnnouncement> aaCreationResult = AdoptionAnnouncement.Create(
-            personId: catToAssign.PersonId,
+            personId: personId,
             description: description,
             address: address,
             email: email,
@@ -39,14 +48,25 @@ public sealed class AdoptionAnnouncementCreationService : IAdoptionAnnouncementC
             return Result.Failure<AdoptionAnnouncement>(aaCreationResult.Error);
         }
 
-        Result assignmentResult = _assignmentService.AssignCatToAdoptionAnnouncement(
-            catToAssign,
-            aaCreationResult.Value,
-            [],
-            dateTimeOfOperation);
+        AdoptionAnnouncement announcement = aaCreationResult.Value;
+        List<Cat> assignedCats = [];
 
-        return assignmentResult.IsFailure
-            ? Result.Failure<AdoptionAnnouncement>(assignmentResult.Error)
-            : Result.Success(aaCreationResult.Value);
+        foreach (Cat cat in catsToAssign)
+        {
+            Result assignmentResult = _assignmentService.AssignCatToAdoptionAnnouncement(
+                cat,
+                announcement,
+                assignedCats,
+                dateTimeOfOperation);
+
+            if (assignmentResult.IsFailure)
+            {
+                return Result.Failure<AdoptionAnnouncement>(assignmentResult.Error);
+            }
+
+            assignedCats.Add(cat);
+        }
+
+        return Result.Success(announcement);
     }
 }

@@ -25,7 +25,7 @@ namespace TheKittySaver.AdoptionSystem.API.Features.AdoptionAnnouncements;
 internal sealed class CreateAdoptionAnnouncement : IEndpoint
 {
     internal sealed record Command(
-        CatId CatId,
+        IEnumerable<CatId> CatIds,
         string? Description,
         CountryCode AddressCountryCode,
         string AddressPostalCode,
@@ -65,13 +65,16 @@ internal sealed class CreateAdoptionAnnouncement : IEndpoint
 
         public async ValueTask<Result<AdoptionAnnouncementId>> Handle(Command command, CancellationToken cancellationToken)
         {
-            Maybe<Cat> maybeCat = await _catRepository.GetByIdAsync(command.CatId, cancellationToken);
-            if (maybeCat.HasNoValue)
-            {
-                return Result.Failure<AdoptionAnnouncementId>(DomainErrors.CatEntity.NotFound(command.CatId));
-            }
+            IReadOnlyCollection<Cat> cats = await _catRepository.GetByIdsAsync(command.CatIds, cancellationToken);
 
-            Cat cat = maybeCat.Value;
+            List<CatId> notFoundCatIds = command.CatIds
+                .Except(cats.Select(c => c.Id))
+                .ToList();
+
+            if (notFoundCatIds.Count > 0)
+            {
+                return Result.Failure<AdoptionAnnouncementId>(DomainErrors.CatEntity.SomeNotFound(notFoundCatIds));
+            }
 
             Maybe<AdoptionAnnouncementDescription> maybeDescription = Maybe<AdoptionAnnouncementDescription>.None;
             if (!string.IsNullOrWhiteSpace(command.Description))
@@ -139,7 +142,7 @@ internal sealed class CreateAdoptionAnnouncement : IEndpoint
             }
 
             Result<AdoptionAnnouncement> createAnnouncementResult = _adoptionAnnouncementCreationService.Create(
-                cat,
+                cats,
                 createAddressResult.Value,
                 createEmailResult.Value,
                 createPhoneNumberResult.Value,
@@ -187,7 +190,7 @@ internal static class CreateAdoptionAnnouncementMappings
             ArgumentNullException.ThrowIfNull(request);
 
             CreateAdoptionAnnouncement.Command command = new(
-                CatId: request.CatId,
+                CatIds: request.CatIds.Select(CatId.Create).ToList(),
                 Description: request.Description,
                 AddressCountryCode: request.AddressCountryCode,
                 AddressPostalCode: request.AddressPostalCode,
