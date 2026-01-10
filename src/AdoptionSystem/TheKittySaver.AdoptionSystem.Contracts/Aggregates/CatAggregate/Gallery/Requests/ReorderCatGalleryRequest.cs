@@ -1,3 +1,5 @@
+using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate;
+
 namespace TheKittySaver.AdoptionSystem.Contracts.Aggregates.CatAggregate.Gallery.Requests;
 
 public sealed record ReorderCatGalleryRequest(
@@ -5,6 +7,6 @@ public sealed record ReorderCatGalleryRequest(
 );
 
 public sealed record GalleryItemOrderEntry(
-    Guid GalleryItemId,
+    CatGalleryItemId GalleryItemId,
     int DisplayOrder
 );

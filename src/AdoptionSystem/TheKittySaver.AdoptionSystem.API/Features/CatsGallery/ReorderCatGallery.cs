@@ -46,7 +46,6 @@ internal sealed class ReorderCatGallery : IEndpoint
             Dictionary<CatGalleryItemId, CatGalleryItemDisplayOrder> newOrdersDictionary = new();
             foreach (GalleryItemOrderEntry entry in command.NewOrders)
             {
-                CatGalleryItemId galleryItemId = new(entry.GalleryItemId);
                 Result<CatGalleryItemDisplayOrder> displayOrderResult = CatGalleryItemDisplayOrder.Create(
                     entry.DisplayOrder,
                     Cat.MaximumGalleryItemsCount);
@@ -56,7 +55,7 @@ internal sealed class ReorderCatGallery : IEndpoint
                     return Result.Failure<IReadOnlyList<CatGalleryItemResponse>>(displayOrderResult.Error);
                 }
 
-                newOrdersDictionary[galleryItemId] = displayOrderResult.Value;
+                newOrdersDictionary[entry.GalleryItemId] = displayOrderResult.Value;
             }
 
             Result reorderResult = cat.ReorderGalleryItems(newOrdersDictionary);

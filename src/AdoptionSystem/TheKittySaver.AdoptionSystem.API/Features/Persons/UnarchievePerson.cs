@@ -83,7 +83,7 @@ internal sealed class UnarchievePerson : IEndpoint
             ISender sender,
             CancellationToken cancellationToken) =>
         {
-            Command command = new(IdentityId.Create(request.IdentityId));
+            Command command = new(request.IdentityId);
 
             Result commandResult = await sender.Send(command, cancellationToken);
 

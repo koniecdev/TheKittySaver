@@ -1,3 +1,5 @@
-﻿namespace TheKittySaver.AdoptionSystem.Contracts.Aggregates.PersonAggregate.Requests;
+﻿using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
 
-public sealed record UnarchievePersonRequest(Guid IdentityId);
+namespace TheKittySaver.AdoptionSystem.Contracts.Aggregates.PersonAggregate.Requests;
+
+public sealed record UnarchievePersonRequest(IdentityId IdentityId);
