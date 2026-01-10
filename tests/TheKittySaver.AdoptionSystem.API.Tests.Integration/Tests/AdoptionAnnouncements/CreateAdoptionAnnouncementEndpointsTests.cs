@@ -26,7 +26,7 @@ public sealed class CreateAdoptionAnnouncementEndpointsTests : EndpointsTestBase
         _ = await CatGalleryApiFactory.UpsertRandomThumbnailAsync(ApiClient, catId);
         
         CreateAdoptionAnnouncementRequest request = 
-            AdoptionAnnouncementApiFactory.GenerateRandomCreateRequest(Faker, [catId.Value]);
+            AdoptionAnnouncementApiFactory.GenerateRandomCreateRequest(Faker, [catId]);
 
         //Act
         HttpResponseMessage httpResponseMessage =
@@ -62,7 +62,7 @@ public sealed class CreateAdoptionAnnouncementEndpointsTests : EndpointsTestBase
         _ = await CatGalleryApiFactory.UpsertRandomThumbnailAsync(ApiClient, anotherCatId);
         
         CreateAdoptionAnnouncementRequest createAaRequest = 
-            AdoptionAnnouncementApiFactory.GenerateRandomCreateRequest(Faker, [catId.Value, anotherCatId.Value]);
+            AdoptionAnnouncementApiFactory.GenerateRandomCreateRequest(Faker, [catId, anotherCatId]);
 
         //Act
         HttpResponseMessage httpResponseMessage = await ApiClient.Http.PostAsJsonAsync(
@@ -101,7 +101,7 @@ public sealed class CreateAdoptionAnnouncementEndpointsTests : EndpointsTestBase
         _ = await CatGalleryApiFactory.UpsertRandomThumbnailAsync(ApiClient, sickCatId);
         
         CreateAdoptionAnnouncementRequest createAaRequest = 
-            AdoptionAnnouncementApiFactory.GenerateRandomCreateRequest(Faker, [catId.Value, sickCatId.Value]);
+            AdoptionAnnouncementApiFactory.GenerateRandomCreateRequest(Faker, [catId, sickCatId]);
 
         //Act
         HttpResponseMessage httpResponseMessage = await ApiClient.Http.PostAsJsonAsync(
@@ -121,7 +121,7 @@ public sealed class CreateAdoptionAnnouncementEndpointsTests : EndpointsTestBase
         //Arrange
         CatId nonExistentCatId = CatId.Create();
         CreateAdoptionAnnouncementRequest request = 
-            AdoptionAnnouncementApiFactory.GenerateRandomCreateRequest(Faker, [nonExistentCatId.Value]);
+            AdoptionAnnouncementApiFactory.GenerateRandomCreateRequest(Faker, [nonExistentCatId]);
 
         //Act
         HttpResponseMessage httpResponseMessage =

@@ -2,13 +2,14 @@ using Bogus;
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.AdoptionAnnouncementAggregate.Requests;
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.AdoptionAnnouncementAggregate.Responses;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.AdoptionAnnouncementAggregate;
+using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate;
 using TheKittySaver.AdoptionSystem.Primitives.Enums;
 
 namespace TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared.Factories;
 
 internal static class AdoptionAnnouncementApiFactory
 {
-    public static CreateAdoptionAnnouncementRequest GenerateRandomCreateRequest(Faker faker, IEnumerable<Guid> catIds)
+    public static CreateAdoptionAnnouncementRequest GenerateRandomCreateRequest(Faker faker, IEnumerable<CatId> catIds)
     {
         PolishAddressData addressData = faker.PolishAddress();
 
@@ -53,7 +54,7 @@ internal static class AdoptionAnnouncementApiFactory
     public static async Task<AdoptionAnnouncementId> CreateRandomAndGetIdAsync(
         TestApiClient apiClient,
         Faker faker,
-        IEnumerable<Guid> catIds)
+        IEnumerable<CatId> catIds)
     {
         CreateAdoptionAnnouncementRequest request = GenerateRandomCreateRequest(faker, catIds);
         return await CreateAndGetIdAsync(apiClient, request);
@@ -62,7 +63,7 @@ internal static class AdoptionAnnouncementApiFactory
     public static async Task<AdoptionAnnouncementDetailsResponse> CreateRandomAsync(
         TestApiClient apiClient,
         Faker faker,
-        IEnumerable<Guid> catIds)
+        IEnumerable<CatId> catIds)
     {
         AdoptionAnnouncementId announcementId = await CreateRandomAndGetIdAsync(apiClient, faker, catIds);
         return await AdoptionAnnouncementApiQueryService.GetByIdAsync(apiClient, announcementId);

@@ -190,7 +190,7 @@ internal static class CreateAdoptionAnnouncementMappings
             ArgumentNullException.ThrowIfNull(request);
 
             CreateAdoptionAnnouncement.Command command = new(
-                CatIds: request.CatIds.Select(CatId.Create).ToList(),
+                CatIds: request.CatIds,
                 Description: request.Description,
                 AddressCountryCode: request.AddressCountryCode,
                 AddressPostalCode: request.AddressPostalCode,

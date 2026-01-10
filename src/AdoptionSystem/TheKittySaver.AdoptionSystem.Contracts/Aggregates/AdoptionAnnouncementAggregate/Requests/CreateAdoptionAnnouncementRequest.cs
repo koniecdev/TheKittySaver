@@ -4,7 +4,7 @@ using TheKittySaver.AdoptionSystem.Primitives.Enums;
 namespace TheKittySaver.AdoptionSystem.Contracts.Aggregates.AdoptionAnnouncementAggregate.Requests;
 
 public sealed record CreateAdoptionAnnouncementRequest(
-    IEnumerable<Guid> CatIds,
+    IEnumerable<CatId> CatIds,
     string? Description,
     CountryCode AddressCountryCode,
     string AddressPostalCode,

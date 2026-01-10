@@ -1,4 +1,3 @@
-using Shouldly;
 using TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared;
 using TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared.Factories;
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.AdoptionAnnouncementAggregate.Requests;
@@ -35,7 +34,7 @@ public sealed class GetAdoptionAnnouncementsEndpointsTests(TheKittySaverApiFacto
         CatId catId = await CatApiFactory.CreateRandomAndGetIdAsync(ApiClient, Faker, personId);
         _ = await CatGalleryApiFactory.UpsertRandomThumbnailAsync(ApiClient, catId);
         CreateAdoptionAnnouncementRequest request = 
-            AdoptionAnnouncementApiFactory.GenerateRandomCreateRequest(Faker, [catId.Value]);
+            AdoptionAnnouncementApiFactory.GenerateRandomCreateRequest(Faker, [catId]);
         AdoptionAnnouncementId aaId = await AdoptionAnnouncementApiFactory.CreateAndGetIdAsync(ApiClient, request);
 
         //Act
@@ -81,9 +80,9 @@ public sealed class GetAdoptionAnnouncementsEndpointsTests(TheKittySaverApiFacto
         await Task.WhenAll(catThumbnailTask, secondcatThumbnailTask);
         
         Task<AdoptionAnnouncementId> adoptionAnnouncementIdTask = AdoptionAnnouncementApiFactory
-            .CreateRandomAndGetIdAsync(ApiClient, Faker, [catIdTask.Result.Value]);
+            .CreateRandomAndGetIdAsync(ApiClient, Faker, [await catIdTask]);
         Task<AdoptionAnnouncementId> secondAdoptionAnnouncementIdTask = AdoptionAnnouncementApiFactory
-            .CreateRandomAndGetIdAsync(ApiClient, Faker, [secondCatIdTask.Result.Value]);
+            .CreateRandomAndGetIdAsync(ApiClient, Faker, [await secondCatIdTask]);
         await Task.WhenAll(adoptionAnnouncementIdTask, secondAdoptionAnnouncementIdTask);
         
         //Act
