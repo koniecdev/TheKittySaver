@@ -108,11 +108,11 @@ public sealed class CreateAdoptionAnnouncementEndpointsTests : EndpointsTestBase
             new Uri("api/v1/adoption-announcements", UriKind.Relative), createAaRequest);
 
         //Assert
-        httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.Conflict);
         ProblemDetails? problemDetails =
             await httpResponseMessage.Content.ReadFromJsonAsync<ProblemDetails>(ApiClient.JsonOptions);
         problemDetails.ShouldNotBeNull();
-        problemDetails.Status.ShouldBe(StatusCodes.Status400BadRequest);
+        problemDetails.Status.ShouldBe(StatusCodes.Status409Conflict);
     }
 
     [Fact]
