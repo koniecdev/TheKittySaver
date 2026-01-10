@@ -1,68 +1,98 @@
-// using Shouldly;
-// using TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared;
-// using TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared.Factories;
-// using TheKittySaver.AdoptionSystem.Contracts.Aggregates.AdoptionAnnouncementAggregate.Responses;
-// using TheKittySaver.AdoptionSystem.Contracts.Common;
-// using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate;
-//
-// namespace TheKittySaver.AdoptionSystem.API.Tests.Integration.Tests.AdoptionAnnouncements;
-//
-// public sealed class GetAdoptionAnnouncementsEndpointsTests(TheKittySaverApiFactory appFactory)
-//     : EndpointsTestBase(appFactory)
-// {
-//     [Fact]
-//     public async Task GetAdoptionAnnouncements_ShouldReturnEmptyItemList_WhenNoAnnouncementsExist()
-//     {
-//         //Act
-//         PaginationResponse<AdoptionAnnouncementListItemResponse> response =
-//             await AdoptionAnnouncementApiQueryService.GetAllAsync(ApiClient);
-//
-//         //Assert
-//         response.ShouldNotBeNull();
-//         response.Items.ShouldNotBeNull();
-//         response.Items.Count.ShouldBe(0);
-//     }
-//
-//     [Fact]
-//     public async Task GetAdoptionAnnouncements_ShouldMapAllProperties_WhenAnnouncementExists()
-//     {
-//         //Arrange
-//         AdoptionAnnouncementDetailsResponse announcementResponse =
-//             await AdoptionAnnouncementApiFactory.CreateRandomAsync(ApiClient, Faker, TestCatId);
-//
-//         //Act
-//         PaginationResponse<AdoptionAnnouncementListItemResponse> response =
-//             await AdoptionAnnouncementApiQueryService.GetAllAsync(ApiClient);
-//
-//         //Assert
-//         response.ShouldNotBeNull();
-//         response.Items.ShouldNotBeNull();
-//         response.Items.Count.ShouldBe(1);
-//
-//         AdoptionAnnouncementListItemResponse announcementFromList = response.Items.First();
-//         announcementFromList.Id.ShouldBe(announcementResponse.Id);
-//         announcementFromList.PersonId.ShouldBe(announcementResponse.PersonId);
-//         announcementFromList.Description.ShouldBe(announcementResponse.Description);
-//         announcementFromList.AddressCity.ShouldBe(announcementResponse.AddressCity);
-//         announcementFromList.Email.ShouldBe(announcementResponse.Email);
-//     }
-//
-//     [Fact]
-//     public async Task GetAdoptionAnnouncements_ShouldReturnMultipleAnnouncements_WhenMultipleAnnouncementsExist()
-//     {
-//         //Arrange
-//         _ = await AdoptionAnnouncementApiFactory.CreateRandomAsync(ApiClient, Faker, TestCatId);
-//
-//         CatId anotherCatId = await CatApiFactory.CreateRandomWithThumbnailAndGetIdAsync(ApiClient, Faker, TestPersonId);
-//         _ = await AdoptionAnnouncementApiFactory.CreateRandomAsync(ApiClient, Faker, anotherCatId);
-//
-//         //Act
-//         PaginationResponse<AdoptionAnnouncementListItemResponse> response =
-//             await AdoptionAnnouncementApiQueryService.GetAllAsync(ApiClient);
-//
-//         //Assert
-//         response.ShouldNotBeNull();
-//         response.Items.ShouldNotBeNull();
-//         response.Items.Count.ShouldBe(2);
-//     }
-// }
+using Shouldly;
+using TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared;
+using TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared.Factories;
+using TheKittySaver.AdoptionSystem.Contracts.Aggregates.AdoptionAnnouncementAggregate.Requests;
+using TheKittySaver.AdoptionSystem.Contracts.Aggregates.AdoptionAnnouncementAggregate.Responses;
+using TheKittySaver.AdoptionSystem.Contracts.Aggregates.CatAggregate.Gallery.Responses;
+using TheKittySaver.AdoptionSystem.Contracts.Common;
+using TheKittySaver.AdoptionSystem.Primitives.Aggregates.AdoptionAnnouncementAggregate;
+using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate;
+using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
+
+namespace TheKittySaver.AdoptionSystem.API.Tests.Integration.Tests.AdoptionAnnouncements;
+
+public sealed class GetAdoptionAnnouncementsEndpointsTests(TheKittySaverApiFactory appFactory)
+    : EndpointsTestBase(appFactory)
+{
+    [Fact]
+    public async Task GetAdoptionAnnouncements_ShouldReturnEmptyItemList_WhenNoAnnouncementsExist()
+    {
+        //Act
+        PaginationResponse<AdoptionAnnouncementListItemResponse> response =
+            await AdoptionAnnouncementApiQueryService.GetAllAsync(ApiClient);
+
+        //Assert
+        response.ShouldNotBeNull();
+        response.Items.ShouldNotBeNull();
+        response.Items.Count.ShouldBe(0);
+    }
+
+    [Fact]
+    public async Task GetAdoptionAnnouncements_ShouldMapAllProperties_WhenAnnouncementExists()
+    {
+        //Arrange
+        PersonId personId = await PersonApiFactory.CreateRandomAndGetIdAsync(ApiClient, Faker);
+        CatId catId = await CatApiFactory.CreateRandomAndGetIdAsync(ApiClient, Faker, personId);
+        _ = await CatGalleryApiFactory.UpsertRandomThumbnailAsync(ApiClient, catId);
+        CreateAdoptionAnnouncementRequest request = 
+            AdoptionAnnouncementApiFactory.GenerateRandomCreateRequest(Faker, [catId.Value]);
+        AdoptionAnnouncementId aaId = await AdoptionAnnouncementApiFactory.CreateAndGetIdAsync(ApiClient, request);
+
+        //Act
+        PaginationResponse<AdoptionAnnouncementListItemResponse> response =
+            await AdoptionAnnouncementApiQueryService.GetAllAsync(ApiClient);
+
+        //Assert
+        response.ShouldNotBeNull();
+        response.Items.ShouldNotBeNull();
+        response.Items.Count.ShouldBe(1);
+
+        AdoptionAnnouncementListItemResponse announcementFromList = response.Items.First();
+        announcementFromList.Id.ShouldBe(aaId);
+        announcementFromList.PersonId.ShouldBe(personId);
+        announcementFromList.Title.ShouldNotBeEmpty();
+        announcementFromList.Description.ShouldBe(request.Description);
+        announcementFromList.AddressCountryCode.ShouldBe(request.AddressCountryCode);
+        announcementFromList.AddressRegion.ShouldBe(request.AddressRegion);
+        announcementFromList.AddressCity.ShouldBe(request.AddressCity);
+        announcementFromList.AddressPostalCode.ShouldBe(request.AddressPostalCode);
+        announcementFromList.AddressCity.ShouldBe(request.AddressCity);
+        announcementFromList.AddressLine.ShouldBe(request.AddressLine);
+        announcementFromList.Email.ShouldBe(request.Email);
+        announcementFromList.PhoneNumber.ShouldBe(request.PhoneNumber);
+    }
+
+    [Fact]
+    public async Task GetAdoptionAnnouncements_ShouldReturnMultipleAnnouncements_WhenMultipleAnnouncementsExist()
+    {
+        //Arrange
+        Task<PersonId> personIdTask = PersonApiFactory.CreateRandomAndGetIdAsync(ApiClient, Faker);
+        Task<PersonId> secondPersonIdTask = PersonApiFactory.CreateRandomAndGetIdAsync(ApiClient, Faker);
+        await Task.WhenAll(personIdTask, secondPersonIdTask);
+        
+        Task<CatId> catIdTask = CatApiFactory.CreateRandomAndGetIdAsync(ApiClient, Faker, await personIdTask);
+        Task<CatId> secondCatIdTask = CatApiFactory.CreateRandomAndGetIdAsync(ApiClient, Faker, await secondPersonIdTask);
+        await Task.WhenAll(catIdTask, secondCatIdTask);
+        
+        Task<CatThumbnailResponse> catThumbnailTask = 
+            CatGalleryApiFactory.UpsertRandomThumbnailAsync(ApiClient, await catIdTask);
+        Task<CatThumbnailResponse> secondcatThumbnailTask = 
+            CatGalleryApiFactory.UpsertRandomThumbnailAsync(ApiClient, await secondCatIdTask);
+        await Task.WhenAll(catThumbnailTask, secondcatThumbnailTask);
+        
+        Task<AdoptionAnnouncementId> adoptionAnnouncementIdTask = AdoptionAnnouncementApiFactory
+            .CreateRandomAndGetIdAsync(ApiClient, Faker, [catIdTask.Result.Value]);
+        Task<AdoptionAnnouncementId> secondAdoptionAnnouncementIdTask = AdoptionAnnouncementApiFactory
+            .CreateRandomAndGetIdAsync(ApiClient, Faker, [secondCatIdTask.Result.Value]);
+        await Task.WhenAll(adoptionAnnouncementIdTask, secondAdoptionAnnouncementIdTask);
+        
+        //Act
+        PaginationResponse<AdoptionAnnouncementListItemResponse> response =
+            await AdoptionAnnouncementApiQueryService.GetAllAsync(ApiClient);
+
+        //Assert
+        response.ShouldNotBeNull();
+        response.Items.ShouldNotBeNull();
+        response.Items.Count.ShouldBe(2);
+    }
+}
