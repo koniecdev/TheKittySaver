@@ -27,17 +27,25 @@ internal static class CatApiFactory
         string? lastReturnReason = returnCount > 0 ? faker.Lorem.Sentence() : null;
         DateTimeOffset? lastReturnDate = returnCount > 0 ? faker.Date.PastOffset(returnCount) : null;
 
-        FivStatus infectiousDiseaseStatusFivStatus = isHealthy
-            ? FivStatus.Negative
-            : faker.PickRandomWithout(FivStatus.Unset, FivStatus.NotTested);
-        FelvStatus infectiousDiseaseStatusFelvStatus = isHealthy
-            ? FelvStatus.Negative
-            : faker.PickRandomWithout(FelvStatus.Unset, FelvStatus.NotTested);
+        FivStatus infectiousDiseaseStatusFivStatus;
+        FelvStatus infectiousDiseaseStatusFelvStatus;
+
+        if (isHealthy)
+        {
+            infectiousDiseaseStatusFivStatus = FivStatus.Negative;
+            infectiousDiseaseStatusFelvStatus = FelvStatus.Negative;
+        }
+        else
+        {
+            bool fivPositive = faker.Random.Bool();
+            bool felvPositive = !fivPositive || faker.Random.Bool();
+
+            infectiousDiseaseStatusFivStatus = fivPositive ? FivStatus.Positive : FivStatus.Negative;
+            infectiousDiseaseStatusFelvStatus = felvPositive ? FelvStatus.Positive : FelvStatus.Negative;
+        }
+
         DateOnly? infectiousDiseaseStatusLastTestedAt =
-            infectiousDiseaseStatusFelvStatus is not FelvStatus.NotTested
-            || infectiousDiseaseStatusFivStatus is not FivStatus.NotTested
-            ? DateOnly.FromDateTime(faker.Date.PastOffset().DateTime)
-            : null;
+            DateOnly.FromDateTime(faker.Date.PastOffset().DateTime);
 
         return new CreateCatRequest(
             PersonId: personId.Value,
@@ -75,17 +83,26 @@ internal static class CatApiFactory
         string? lastReturnReason = returnCount > 0 ? faker.Lorem.Sentence() : null;
         DateTimeOffset? lastReturnDate = returnCount > 0 ? faker.Date.PastOffset(returnCount) : null;
 
-        FivStatus infectiousDiseaseStatusFivStatus = isHealthy
-            ? FivStatus.Negative
-            : faker.PickRandomWithout(FivStatus.Unset);
-        FelvStatus infectiousDiseaseStatusFelvStatus = isHealthy
-            ? FelvStatus.Negative
-            : faker.PickRandomWithout(FelvStatus.Unset);
+        FivStatus infectiousDiseaseStatusFivStatus;
+        FelvStatus infectiousDiseaseStatusFelvStatus;
+
+        if (isHealthy)
+        {
+            infectiousDiseaseStatusFivStatus = FivStatus.Negative;
+            infectiousDiseaseStatusFelvStatus = FelvStatus.Negative;
+        }
+        else
+        {
+            // Ensure at least one is positive when not healthy
+            bool fivPositive = faker.Random.Bool();
+            bool felvPositive = !fivPositive || faker.Random.Bool();
+
+            infectiousDiseaseStatusFivStatus = fivPositive ? FivStatus.Positive : FivStatus.Negative;
+            infectiousDiseaseStatusFelvStatus = felvPositive ? FelvStatus.Positive : FelvStatus.Negative;
+        }
+
         DateOnly? infectiousDiseaseStatusLastTestedAt =
-            infectiousDiseaseStatusFelvStatus is not FelvStatus.NotTested
-            || infectiousDiseaseStatusFivStatus is not FivStatus.NotTested
-            ? DateOnly.FromDateTime(faker.Date.PastOffset().DateTime)
-            : null;
+            DateOnly.FromDateTime(faker.Date.PastOffset().DateTime);
 
         return new UpdateCatRequest(
             Name: faker.Name.FirstName(),

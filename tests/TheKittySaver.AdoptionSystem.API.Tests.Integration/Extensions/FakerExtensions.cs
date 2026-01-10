@@ -2,7 +2,26 @@
 
 namespace TheKittySaver.AdoptionSystem.API.Tests.Integration.Extensions;
 
-internal sealed record PolishAddressData(string PostalCode, string Region, string City);
+internal sealed record PolishAddressData
+{
+    public PolishAddressData(string PostalCode, string Region, string City)
+    {
+        this.PostalCode = PostalCode;
+        this.Region = Region;
+        this.City = City;
+    }
+
+    public string PostalCode { get; init; }
+    public string Region { get; init; }
+    public string City { get; init; }
+
+    public void Deconstruct(out string PostalCode, out string Region, out string City)
+    {
+        PostalCode = this.PostalCode;
+        Region = this.Region;
+        City = this.City;
+    }
+}
 
 internal static class FakerInternetExtensions
 {

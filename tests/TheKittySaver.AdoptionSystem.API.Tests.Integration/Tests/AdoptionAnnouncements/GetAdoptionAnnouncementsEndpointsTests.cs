@@ -10,9 +10,12 @@ using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
 
 namespace TheKittySaver.AdoptionSystem.API.Tests.Integration.Tests.AdoptionAnnouncements;
 
-public sealed class GetAdoptionAnnouncementsEndpointsTests(TheKittySaverApiFactory appFactory)
-    : EndpointsTestBase(appFactory)
+public sealed class GetAdoptionAnnouncementsEndpointsTests : EndpointsTestBase
 {
+    public GetAdoptionAnnouncementsEndpointsTests(TheKittySaverApiFactory appFactory) : base(appFactory)
+    {
+    }
+
     [Fact]
     public async Task GetAdoptionAnnouncements_ShouldReturnEmptyItemList_WhenNoAnnouncementsExist()
     {
