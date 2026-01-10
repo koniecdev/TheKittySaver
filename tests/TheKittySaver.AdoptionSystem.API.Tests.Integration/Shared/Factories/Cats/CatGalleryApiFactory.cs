@@ -2,7 +2,7 @@ using System.Net.Http.Headers;
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.CatAggregate.Gallery.Responses;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate;
 
-namespace TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared.Factories;
+namespace TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared.Factories.Cats;
 
 internal static class CatGalleryApiFactory
 {

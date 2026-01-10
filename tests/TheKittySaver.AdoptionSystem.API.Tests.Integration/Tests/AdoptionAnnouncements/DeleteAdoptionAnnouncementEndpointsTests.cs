@@ -1,7 +1,11 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared;
+using TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared.Bases;
 using TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared.Factories;
+using TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared.Factories.AdoptionAnnouncements;
+using TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared.Factories.Cats;
+using TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared.Factories.Persons;
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.AdoptionAnnouncementAggregate.Requests;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.AdoptionAnnouncementAggregate;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate;

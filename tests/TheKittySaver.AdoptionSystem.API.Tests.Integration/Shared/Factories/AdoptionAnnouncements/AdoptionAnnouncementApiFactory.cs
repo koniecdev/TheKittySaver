@@ -1,11 +1,12 @@
 using Bogus;
+using TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared.QueryServices.AdoptionAnnouncements;
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.AdoptionAnnouncementAggregate.Requests;
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.AdoptionAnnouncementAggregate.Responses;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.AdoptionAnnouncementAggregate;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate;
 using TheKittySaver.AdoptionSystem.Primitives.Enums;
 
-namespace TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared.Factories;
+namespace TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared.Factories.AdoptionAnnouncements;
 
 internal static class AdoptionAnnouncementApiFactory
 {

@@ -2,7 +2,7 @@
 using TheKittySaver.AdoptionSystem.Contracts.Common;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
 
-namespace TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared.Factories;
+namespace TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared.QueryServices.Persons;
 
 internal static class PersonApiQueryService
 {

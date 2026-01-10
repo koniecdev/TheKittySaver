@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared;
+using TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared.Bases;
 using TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared.Factories;
+using TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared.Factories.Persons;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
 
 namespace TheKittySaver.AdoptionSystem.API.Tests.Integration.Tests.Persons;

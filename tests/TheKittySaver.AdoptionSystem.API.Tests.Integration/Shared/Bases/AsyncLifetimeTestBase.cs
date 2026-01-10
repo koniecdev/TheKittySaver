@@ -1,6 +1,6 @@
 ﻿using Bogus;
 
-namespace TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared;
+namespace TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared.Bases;
 
 public abstract class AsyncLifetimeTestBase : IAsyncLifetime
 {

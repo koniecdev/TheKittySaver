@@ -1,9 +1,10 @@
 using Bogus;
+using TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared.QueryServices.Persons;
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.PersonAggregate.Requests;
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.PersonAggregate.Responses;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
 
-namespace TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared.Factories;
+namespace TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared.Factories.Persons;
 
 internal static class PersonApiFactory
 {

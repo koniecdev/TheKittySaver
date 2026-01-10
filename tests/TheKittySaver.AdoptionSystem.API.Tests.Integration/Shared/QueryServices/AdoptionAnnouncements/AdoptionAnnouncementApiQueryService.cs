@@ -2,7 +2,7 @@ using TheKittySaver.AdoptionSystem.Contracts.Aggregates.AdoptionAnnouncementAggr
 using TheKittySaver.AdoptionSystem.Contracts.Common;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.AdoptionAnnouncementAggregate;
 
-namespace TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared.Factories;
+namespace TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared.QueryServices.AdoptionAnnouncements;
 
 internal static class AdoptionAnnouncementApiQueryService
 {

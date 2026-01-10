@@ -1,4 +1,7 @@
 using TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared.Factories;
+using TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared.QueryServices.AdoptionAnnouncements;
+using TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared.QueryServices.Cats;
+using TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared.QueryServices.Persons;
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.AdoptionAnnouncementAggregate.Responses;
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.CatAggregate.Responses;
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.PersonAggregate.Responses;
@@ -22,7 +25,8 @@ internal static class CleanerService
 
         foreach (AdoptionAnnouncementListItemResponse announcement in announcementsResponse.Items)
         {
-            await apiClient.Http.DeleteAsync(new Uri($"api/v1/adoption-announcements/{announcement.Id.Value}", UriKind.Relative));
+            await apiClient.Http.DeleteAsync(
+                new Uri($"api/v1/adoption-announcements/{announcement.Id.Value}", UriKind.Relative));
         }
     }
 

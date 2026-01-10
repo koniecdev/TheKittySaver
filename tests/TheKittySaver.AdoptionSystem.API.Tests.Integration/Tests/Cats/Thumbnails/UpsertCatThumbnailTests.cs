@@ -1,5 +1,8 @@
 ﻿using TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared;
+using TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared.Bases;
 using TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared.Factories;
+using TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared.Factories.Cats;
+using TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared.Factories.Persons;
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.CatAggregate.Gallery.Responses;
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.CatAggregate.Requests;
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.CatAggregate.Responses;

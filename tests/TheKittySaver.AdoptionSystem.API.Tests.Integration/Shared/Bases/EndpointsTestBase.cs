@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using JsonOptions = Microsoft.AspNetCore.Http.Json.JsonOptions;
 
-namespace TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared;
+namespace TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared.Bases;
 
 [Collection("Api")]
 public abstract class EndpointsTestBase : AsyncLifetimeTestBase

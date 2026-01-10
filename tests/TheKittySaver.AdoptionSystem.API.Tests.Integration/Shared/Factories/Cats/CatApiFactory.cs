@@ -1,4 +1,5 @@
 using Bogus;
+using TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared.QueryServices.Cats;
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.CatAggregate.Requests;
 using TheKittySaver.AdoptionSystem.Contracts.Aggregates.CatAggregate.Responses;
 using TheKittySaver.AdoptionSystem.Domain.Aggregates.CatAggregate.ValueObjects;
@@ -6,7 +7,7 @@ using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.CatAggregate.Enums;
 using TheKittySaver.AdoptionSystem.Primitives.Aggregates.PersonAggregate;
 
-namespace TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared.Factories;
+namespace TheKittySaver.AdoptionSystem.API.Tests.Integration.Shared.Factories.Cats;
 
 internal static class CatApiFactory
 {
