@@ -102,11 +102,14 @@ public sealed class GetPersonAddressEndpointsTests : EndpointsTestBase
     public async Task GetPersonAddress_ShouldReturnNotFound_WhenAddressBelongsToDifferentPerson()
     {
         //Arrange
-        PersonId firstPersonId = await PersonApiFactory.CreateRandomAndGetIdAsync(ApiClient, Faker);
-        PersonId secondPersonId = await PersonApiFactory.CreateRandomAndGetIdAsync(ApiClient, Faker);
-        AddressId addressId = await PersonAddressApiFactory.CreateRandomAndGetIdAsync(ApiClient, Faker, firstPersonId);
+        Task<PersonId> firstPersonIdTask = PersonApiFactory.CreateRandomAndGetIdAsync(ApiClient, Faker);
+        Task<PersonId> secondPersonIdTask = PersonApiFactory.CreateRandomAndGetIdAsync(ApiClient, Faker);
+        await Task.WhenAll(firstPersonIdTask, secondPersonIdTask);
+
+        AddressId addressId = await PersonAddressApiFactory.CreateRandomAndGetIdAsync(ApiClient, Faker, await firstPersonIdTask);
 
         //Act
+        PersonId secondPersonId = await secondPersonIdTask;
         HttpResponseMessage httpResponseMessage = await ApiClient.Http.GetAsync(
             new Uri($"api/v1/persons/{secondPersonId.Value}/addresses/{addressId.Value}", UriKind.Relative));
 

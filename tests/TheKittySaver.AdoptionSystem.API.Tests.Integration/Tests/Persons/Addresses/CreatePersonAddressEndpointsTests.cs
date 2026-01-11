@@ -108,12 +108,16 @@ public sealed class CreatePersonAddressEndpointsTests : EndpointsTestBase
         CreatePersonAddressRequest secondRequest = PersonAddressApiFactory.GenerateRandomCreateRequest(Faker);
 
         //Act
-        HttpResponseMessage firstHttpResponseMessage = await ApiClient.Http.PostAsJsonAsync(
+        Task<HttpResponseMessage> firstHttpResponseMessageTask = ApiClient.Http.PostAsJsonAsync(
             new Uri($"api/v1/persons/{personId.Value}/addresses", UriKind.Relative), firstRequest);
-        HttpResponseMessage secondHttpResponseMessage = await ApiClient.Http.PostAsJsonAsync(
+        Task<HttpResponseMessage> secondHttpResponseMessageTask = ApiClient.Http.PostAsJsonAsync(
             new Uri($"api/v1/persons/{personId.Value}/addresses", UriKind.Relative), secondRequest);
+        await Task.WhenAll(firstHttpResponseMessageTask, secondHttpResponseMessageTask);
 
         //Assert
+        HttpResponseMessage firstHttpResponseMessage = await firstHttpResponseMessageTask;
+        HttpResponseMessage secondHttpResponseMessage = await secondHttpResponseMessageTask;
+
         firstHttpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.Created);
         secondHttpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.Created);
 

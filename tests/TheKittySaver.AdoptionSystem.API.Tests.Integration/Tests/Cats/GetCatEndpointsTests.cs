@@ -78,8 +78,12 @@ public sealed class GetCatEndpointsTests : EndpointsTestBase
     {
         //Arrange
         PersonId personId = await PersonApiFactory.CreateRandomAndGetIdAsync(ApiClient, Faker);
-        CatDetailsResponse cat = await CatApiFactory.CreateRandomAsync(ApiClient, Faker, personId);
-        _ = await CatApiFactory.CreateRandomAsync(ApiClient, Faker, personId);
+
+        Task<CatDetailsResponse> catTask = CatApiFactory.CreateRandomAsync(ApiClient, Faker, personId);
+        Task<CatDetailsResponse> anotherCatTask = CatApiFactory.CreateRandomAsync(ApiClient, Faker, personId);
+        await Task.WhenAll(catTask, anotherCatTask);
+
+        CatDetailsResponse cat = await catTask;
 
         //Act
         CatDetailsResponse response = await CatApiQueryService.GetByIdAsync(ApiClient, cat.Id);

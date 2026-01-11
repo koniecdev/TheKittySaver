@@ -109,12 +109,15 @@ public sealed class UpdatePersonAddressEndpointsTests : EndpointsTestBase
     public async Task UpdatePersonAddress_ShouldReturnNotFound_WhenAddressBelongsToDifferentPerson()
     {
         //Arrange
-        PersonId firstPersonId = await PersonApiFactory.CreateRandomAndGetIdAsync(ApiClient, Faker);
-        PersonId secondPersonId = await PersonApiFactory.CreateRandomAndGetIdAsync(ApiClient, Faker);
-        AddressId addressId = await PersonAddressApiFactory.CreateRandomAndGetIdAsync(ApiClient, Faker, firstPersonId);
+        Task<PersonId> firstPersonIdTask = PersonApiFactory.CreateRandomAndGetIdAsync(ApiClient, Faker);
+        Task<PersonId> secondPersonIdTask = PersonApiFactory.CreateRandomAndGetIdAsync(ApiClient, Faker);
+        await Task.WhenAll(firstPersonIdTask, secondPersonIdTask);
+
+        AddressId addressId = await PersonAddressApiFactory.CreateRandomAndGetIdAsync(ApiClient, Faker, await firstPersonIdTask);
         UpdatePersonAddressRequest request = PersonAddressApiFactory.GenerateRandomUpdateRequest(Faker);
 
         //Act
+        PersonId secondPersonId = await secondPersonIdTask;
         HttpResponseMessage httpResponseMessage = await ApiClient.Http.PutAsJsonAsync(
             new Uri($"api/v1/persons/{secondPersonId.Value}/addresses/{addressId.Value}", UriKind.Relative), request);
 
@@ -130,9 +133,12 @@ public sealed class UpdatePersonAddressEndpointsTests : EndpointsTestBase
         CreatePersonAddressRequest firstCreateRequest = PersonAddressApiFactory.GenerateRandomCreateRequest(Faker);
         CreatePersonAddressRequest secondCreateRequest = PersonAddressApiFactory.GenerateRandomCreateRequest(Faker);
 
-        AddressId firstAddressId = await PersonAddressApiFactory.CreateAndGetIdAsync(ApiClient, personId, firstCreateRequest);
-        AddressId secondAddressId = await PersonAddressApiFactory.CreateAndGetIdAsync(ApiClient, personId, secondCreateRequest);
+        Task<AddressId> firstAddressIdTask = PersonAddressApiFactory.CreateAndGetIdAsync(ApiClient, personId, firstCreateRequest);
+        Task<AddressId> secondAddressIdTask = PersonAddressApiFactory.CreateAndGetIdAsync(ApiClient, personId, secondCreateRequest);
+        await Task.WhenAll(firstAddressIdTask, secondAddressIdTask);
 
+        AddressId firstAddressId = await firstAddressIdTask;
+        AddressId secondAddressId = await secondAddressIdTask;
         UpdatePersonAddressRequest updateRequest = PersonAddressApiFactory.GenerateRandomUpdateRequest(Faker);
 
         //Act
@@ -142,8 +148,12 @@ public sealed class UpdatePersonAddressEndpointsTests : EndpointsTestBase
         //Assert
         httpResponseMessage.StatusCode.ShouldBe(HttpStatusCode.NoContent);
 
-        PersonAddressResponse firstAddressResponse = await PersonAddressApiQueryService.GetByIdAsync(ApiClient, personId, firstAddressId);
-        PersonAddressResponse secondAddressResponse = await PersonAddressApiQueryService.GetByIdAsync(ApiClient, personId, secondAddressId);
+        Task<PersonAddressResponse> firstAddressResponseTask = PersonAddressApiQueryService.GetByIdAsync(ApiClient, personId, firstAddressId);
+        Task<PersonAddressResponse> secondAddressResponseTask = PersonAddressApiQueryService.GetByIdAsync(ApiClient, personId, secondAddressId);
+        await Task.WhenAll(firstAddressResponseTask, secondAddressResponseTask);
+
+        PersonAddressResponse firstAddressResponse = await firstAddressResponseTask;
+        PersonAddressResponse secondAddressResponse = await secondAddressResponseTask;
 
         firstAddressResponse.Name.ShouldBe(updateRequest.Name);
         secondAddressResponse.Name.ShouldBe(secondCreateRequest.Name);

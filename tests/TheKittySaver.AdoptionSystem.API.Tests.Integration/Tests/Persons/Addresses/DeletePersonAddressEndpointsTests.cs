@@ -68,11 +68,14 @@ public sealed class DeletePersonAddressEndpointsTests : EndpointsTestBase
     public async Task DeletePersonAddress_ShouldReturnNotFound_WhenAddressBelongsToDifferentPerson()
     {
         //Arrange
-        PersonId firstPersonId = await PersonApiFactory.CreateRandomAndGetIdAsync(ApiClient, Faker);
-        PersonId secondPersonId = await PersonApiFactory.CreateRandomAndGetIdAsync(ApiClient, Faker);
-        AddressId addressId = await PersonAddressApiFactory.CreateRandomAndGetIdAsync(ApiClient, Faker, firstPersonId);
+        Task<PersonId> firstPersonIdTask = PersonApiFactory.CreateRandomAndGetIdAsync(ApiClient, Faker);
+        Task<PersonId> secondPersonIdTask = PersonApiFactory.CreateRandomAndGetIdAsync(ApiClient, Faker);
+        await Task.WhenAll(firstPersonIdTask, secondPersonIdTask);
+
+        AddressId addressId = await PersonAddressApiFactory.CreateRandomAndGetIdAsync(ApiClient, Faker, await firstPersonIdTask);
 
         //Act
+        PersonId secondPersonId = await secondPersonIdTask;
         HttpResponseMessage httpResponseMessage = await ApiClient.Http.DeleteAsync(
             new Uri($"api/v1/persons/{secondPersonId.Value}/addresses/{addressId.Value}", UriKind.Relative));
 
@@ -85,8 +88,13 @@ public sealed class DeletePersonAddressEndpointsTests : EndpointsTestBase
     {
         //Arrange
         PersonId personId = await PersonApiFactory.CreateRandomAndGetIdAsync(ApiClient, Faker);
-        AddressId firstAddressId = await PersonAddressApiFactory.CreateRandomAndGetIdAsync(ApiClient, Faker, personId);
-        AddressId secondAddressId = await PersonAddressApiFactory.CreateRandomAndGetIdAsync(ApiClient, Faker, personId);
+
+        Task<AddressId> firstAddressIdTask = PersonAddressApiFactory.CreateRandomAndGetIdAsync(ApiClient, Faker, personId);
+        Task<AddressId> secondAddressIdTask = PersonAddressApiFactory.CreateRandomAndGetIdAsync(ApiClient, Faker, personId);
+        await Task.WhenAll(firstAddressIdTask, secondAddressIdTask);
+
+        AddressId firstAddressId = await firstAddressIdTask;
+        AddressId secondAddressId = await secondAddressIdTask;
 
         //Act
         HttpResponseMessage httpResponseMessage = await ApiClient.Http.DeleteAsync(
